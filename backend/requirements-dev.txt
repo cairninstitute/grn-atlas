@@ -1,0 +1,6 @@
+# Dev/build/test dependencies (not needed to serve the API).
+# numpy: motif-scan PWM math (scan_*_motifs.py)
+# pytest/httpx: test suite (backend/tests)
+numpy==2.5.1
+pytest==9.1.1
+httpx==0.28.1

@@ -1,0 +1,412 @@
+"""
+One-time enrichment step for the PLANT side of the genome comparison: fetch gene
+coordinates and cross-species orthologs for Arabidopsis, tomato, and petunia from
+PLAZA Dicots 4.5 (https://bioinformatics.psb.ugent.be/plaza/), and cache to
+committed JSON so runtime needs no network access.
+
+PLAZA is used for plants because petunia is absent from OMA. PLAZA Dicots
+provides all three species with a single integrative-orthology table and
+per-species GFF annotations, and its Arabidopsis gene ids are AGI locus codes
+(e.g. AT1G01020), which match our existing Arabidopsis genes -- so Arabidopsis is
+the shared join point between the OMA (animal) and PLAZA (plant) data.
+
+The PLAZA petunia annotation (P. axillaris v1.6.2) is scaffold-level. We lift its
+gene coordinates onto 7 chromosomes using the DNA Zoo Hi-C .assembly (same v1.6.2
+annotation, so gene ids are identical and PLAZA orthology is preserved). That
+assembly is vendored gzipped in backend/data/ so the build needs no third-party
+host; if the local copy is missing it is downloaded, and if that also fails
+petunia falls back to its largest scaffolds.
+
+Outputs (under backend/data/):
+  - plaza_positions.json     : { gene_id: {species, chromosome, start, end, strand} }
+  - orthologs_plaza.json     : [ {gene_a, species_a, gene_b, species_b, rel_type, score} ]
+  - genome_genes_plaza.json  : { gene_id: {species, symbol, name, is_tf} }  (tomato/petunia)
+
+Usage: python backend/scripts/fetch_plaza_data.py
+"""
+import gzip
+import json
+import sqlite3
+import urllib.request
+from bisect import bisect_right
+from collections import OrderedDict, defaultdict
+from pathlib import Path
+
+DATA_DIR = Path(__file__).parent.parent / "data"
+DB_PATH = DATA_DIR / "grn.sqlite3"
+POSITIONS_JSON = DATA_DIR / "plaza_positions.json"
+ORTHOLOGS_JSON = DATA_DIR / "orthologs_plaza.json"
+GENES_JSON = DATA_DIR / "genome_genes_plaza.json"
+SYMBOLS_JSON = DATA_DIR / "gene_symbols_plaza.json"
+ORTHOLOG_MAP_JSON = DATA_DIR / "ortholog_map_plaza.json"
+MAX_SYMBOLS_PER_GENE = 8
+MAX_ORTHOLOGS_PER_GENE = 3   # cap plant orthologs per Arabidopsis gene (per species)
+
+BASE = "https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_04_5"
+# Anchor points = synteny-based colinear gene pairs. Chosen over the gene-family
+# ORTHO relation because synteny is the right (and far sparser, near-1:1) signal
+# for a chromosome-vs-chromosome comparison.
+ANCHOR_URL = f"{BASE}/IntegrativeOrthology/integrative_orthology.anchor_point.csv.gz"
+# BHIF (Best-Hits-and-Inparalogs Family) = broad homology, used only to attach
+# Arabidopsis gene symbols to tomato/petunia (the same principle as eggNOG's
+# Preferred_name: a gene's searchable symbol taken from its reference ortholog).
+BHIF_URL = f"{BASE}/IntegrativeOrthology/integrative_orthology.BHIF.csv.gz"
+GFF_URL = "{base}/GFF/{sp}/annotation.selected_transcript.all_features.{sp}.gff3.gz"
+DESC_URL = "{base}/Descriptions/gene_description.{sp}.csv.gz"
+
+# PLAZA 3-letter code -> our internal species name. 'ath' already exists in the
+# DB (Arabidopsis); 'sly'/'pax' are new species inserted by build_db.
+PLAZA_SPECIES = {
+    "ath": "arabidopsis",
+    "sly": "tomato",
+    "pax": "petunia",
+}
+NEW_SPECIES = {"sly", "pax"}       # not already in our genes table
+SCAFFOLD_CAP = 25                  # fallback: max scaffolds to keep per species
+UA = {"User-Agent": "grn-atlas-build/1.0 (genome data enrichment)"}
+
+# DNA Zoo Hi-C assembly of P. axillaris v1.6.2 (7 chromosomes). 3D-DNA .assembly
+# format: scaffolds split into fragments, ordered/oriented into super-scaffolds.
+# Vendored (gzipped) into the repo so the build is self-contained; the remote
+# URL is only a fallback if the local copy is missing.
+PETUNIA_HIC_LOCAL = DATA_DIR / "petunia_axillaris_v1.6.2_hic.assembly.gz"
+PETUNIA_HIC_URL = (
+    "https://www.dropbox.com/s/81n270pmo0ssej2/"
+    "Petunia_axillaris_v1.6.2_genome_HiC.assembly?dl=1"
+)
+PETUNIA_N_CHROMS = 7
+
+
+def stream_lines(url):
+    """Yield decoded text lines from a gzipped remote file."""
+    req = urllib.request.Request(url, headers=UA)
+    with urllib.request.urlopen(req, timeout=120) as resp:
+        with gzip.GzipFile(fileobj=resp) as gz:
+            for raw in gz:
+                yield raw.decode("utf-8", "replace").rstrip("\n")
+
+
+def load_arab_ids():
+    conn = sqlite3.connect(DB_PATH)
+    ids = {r[0].upper() for r in conn.execute("SELECT id FROM genes WHERE species='arabidopsis'")}
+    conn.close()
+    return ids
+
+
+def load_orthologs(arab_ids):
+    """Collect unordered ortholog pairs among the PLAZA species. Pairs involving
+    Arabidopsis are kept only if the AGI gene exists in our DB. Returns the pair
+    list and the set of referenced gene ids per species."""
+    seen = set()
+    pairs = []
+    referenced = set()
+    print("Downloading synteny anchor-point table…")
+    for line in stream_lines(ANCHOR_URL):
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split("\t")
+        if len(parts) < 4:
+            continue
+        qg, qs, og, os_ = parts[0], parts[1], parts[2], parts[3]
+        if qs not in PLAZA_SPECIES or os_ not in PLAZA_SPECIES or qs == os_:
+            continue
+        # Require Arabidopsis genes to be in our DB.
+        if qs == "ath" and qg.upper() not in arab_ids:
+            continue
+        if os_ == "ath" and og.upper() not in arab_ids:
+            continue
+        key = tuple(sorted([f"{qs}:{qg}", f"{os_}:{og}"]))
+        if key in seen:
+            continue
+        seen.add(key)
+        pairs.append({
+            "gene_a": qg, "species_a": PLAZA_SPECIES[qs],
+            "gene_b": og, "species_b": PLAZA_SPECIES[os_],
+            "rel_type": "synteny", "score": None,
+        })
+        referenced.add((qs, qg))
+        referenced.add((os_, og))
+    print(f"  kept {len(pairs)} cross-species ortholog pairs")
+    return pairs, referenced
+
+
+def load_descriptions(sp):
+    """Return {gene_id: functional description} from PLAZA. These are the only
+    human-readable names available for tomato/petunia (there are no short gene
+    symbols), so they double as the searchable gene name."""
+    desc = {}
+    print(f"Downloading {sp} gene descriptions…")
+    for line in stream_lines(DESC_URL.format(base=BASE, sp=sp)):
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split("\t")
+        if len(parts) >= 3 and parts[1] == "description" and parts[2]:
+            desc.setdefault(parts[0], parts[2])
+    print(f"  {sp}: {len(desc)} descriptions")
+    return desc
+
+
+def parse_gff(sp, wanted_ids):
+    """Parse a species GFF, returning {gene_id: (chromosome,start,end,strand,symbol)}
+    for gene features whose id is in wanted_ids (or all, if wanted_ids is None)."""
+    out = {}
+    print(f"Downloading {sp} GFF…")
+    for line in stream_lines(GFF_URL.format(base=BASE, sp=sp)):
+        if not line or line.startswith("#"):
+            continue
+        cols = line.split("\t")  # source column contains spaces -> must split on tab
+        if len(cols) != 9 or cols[2] != "gene":
+            continue
+        attrs = {}
+        for field in cols[8].split(";"):
+            if "=" in field:
+                k, v = field.split("=", 1)
+                attrs[k] = v
+        gid = attrs.get("gene_id") or attrs.get("ID")
+        if not gid:
+            continue
+        if wanted_ids is not None and gid not in wanted_ids:
+            continue
+        strand = 1 if cols[6] == "+" else -1 if cols[6] == "-" else 0
+        out[gid] = (cols[0], int(cols[3]), int(cols[4]), strand, attrs.get("symbol") or gid)
+    print(f"  {sp}: {len(out)} genes located")
+    return out
+
+
+def build_petunia_lift():
+    """Parse the DNA Zoo Hi-C .assembly and return (lift, chrom_len):
+      lift(scaffold, pos) -> (chrom_name, chrom_pos) or None
+      chrom_len          -> {chrom_name: length}
+    Returns (None, None) if the assembly cannot be fetched/parsed."""
+    try:
+        if PETUNIA_HIC_LOCAL.exists():
+            print(f"Reading vendored petunia Hi-C assembly ({PETUNIA_HIC_LOCAL.name})…")
+            with gzip.open(PETUNIA_HIC_LOCAL, "rt", encoding="utf-8", errors="replace") as fh:
+                raw = fh.read()
+        else:
+            print("Downloading petunia Hi-C assembly (no vendored copy found)…")
+            req = urllib.request.Request(PETUNIA_HIC_URL, headers=UA)
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                raw = resp.read().decode("utf-8", "replace")
+    except Exception as e:
+        print(f"  ! could not load Hi-C assembly ({e}); falling back to scaffolds")
+        return None, None
+
+    lift, chrom_len = build_lift_from_text(raw, PETUNIA_N_CHROMS)
+    print(f"  lifted assembly: {len(chrom_len)} chromosomes, "
+          f"{sum(chrom_len.values()) / 1e9:.2f} Gb anchored")
+    return lift, chrom_len
+
+
+def build_lift_from_text(raw, n_chroms):
+    """Parse a 3D-DNA .assembly (text) and return (lift, chrom_len):
+      lift(scaffold, pos) -> (chrom_name, chrom_pos) or None
+      chrom_len          -> {chrom_name: length}
+    The n_chroms longest super-scaffolds become chromosomes "1".."n" by length."""
+    frags = {}          # cprops index -> (scaffold, length)
+    scaf_frags = {}     # scaffold -> [(index, length), …] in scaffold order
+    order_lines = []    # each = signed cprops indices forming a super-scaffold
+    for line in raw.splitlines():
+        if line.startswith(">"):
+            name, idx, length = line[1:].rsplit(" ", 2)
+            idx, length = int(idx), int(length)
+            scaf = name.split(":::")[0]
+            frags[idx] = (scaf, length)
+            scaf_frags.setdefault(scaf, []).append((idx, length))
+        elif line.strip():
+            order_lines.append([int(x) for x in line.split()])
+
+    ranked = sorted(
+        ((sum(frags[abs(x)][1] for x in ol), li) for li, ol in enumerate(order_lines)),
+        reverse=True)[:n_chroms]
+    chrom_of_line = {li: str(rank + 1) for rank, (_, li) in enumerate(ranked)}
+    chrom_len = {str(rank + 1): L for rank, (L, _) in enumerate(ranked)}
+
+    place = {}          # index -> (chrom_name, chrom_offset, sign, length)
+    for li, ol in enumerate(order_lines):
+        chrom = chrom_of_line.get(li)
+        if chrom is None:
+            continue
+        off = 0
+        for x in ol:
+            idx, length = abs(x), frags[abs(x)][1]
+            place[idx] = (chrom, off, 1 if x > 0 else -1, length)
+            off += length
+
+    scaf_lookup = {}
+    for scaf, fl in scaf_frags.items():
+        starts, items, off = [], [], 0
+        for idx, length in fl:
+            starts.append(off); items.append((idx, length)); off += length
+        scaf_lookup[scaf] = (starts, items)
+
+    def lift(scaf, pos):
+        entry = scaf_lookup.get(scaf)
+        if not entry:
+            return None
+        starts, items = entry
+        j = bisect_right(starts, pos) - 1
+        if j < 0:
+            return None
+        idx, _ = items[j]
+        placed = place.get(idx)
+        if not placed:
+            return None
+        chrom, coff, sign, flen = placed
+        off_in = pos - starts[j]
+        return chrom, coff + off_in if sign > 0 else coff + (flen - off_in)
+
+    return lift, chrom_len
+
+
+def lift_petunia(located, lift):
+    """Remap scaffold-based petunia genes to chromosome coordinates; drop genes
+    on unplaced scaffolds."""
+    out = {}
+    for gid, (chrom, start, end, strand, symbol) in located.items():
+        r = lift(chrom, (start + end) // 2)
+        if not r:
+            continue
+        new_chrom, pos = r
+        out[gid] = (new_chrom, pos, pos + (end - start), strand, symbol)
+    print(f"  petunia: {len(out)}/{len(located)} genes lifted onto chromosomes")
+    return out
+
+
+def cap_scaffolds(genes):
+    """Keep only the SCAFFOLD_CAP most gene-dense chromosomes/scaffolds."""
+    counts = {}
+    for chrom, *_ in genes.values():
+        counts[chrom] = counts.get(chrom, 0) + 1
+    if len(counts) <= SCAFFOLD_CAP:
+        return genes, set(counts)
+    keep = {c for c, _ in sorted(counts.items(), key=lambda kv: -kv[1])[:SCAFFOLD_CAP]}
+    kept = {g: v for g, v in genes.items() if v[0] in keep}
+    print(f"  capped {len(counts)} scaffolds -> {len(keep)}; {len(kept)} genes retained")
+    return kept, keep
+
+
+def load_ath_symbols():
+    """AGI -> [gene symbol + aliases] from the Arabidopsis GFF (symbol=, Alias=).
+    These are the real, searchable short names (e.g. TT4, CHS) we can lend to
+    tomato/petunia via orthology."""
+    syms = {}
+    print("Reading Arabidopsis gene symbols from GFF…")
+    for line in stream_lines(GFF_URL.format(base=BASE, sp="ath")):
+        if not line or line.startswith("#"):
+            continue
+        cols = line.split("\t")
+        if len(cols) != 9 or cols[2] != "gene":
+            continue
+        attrs = dict(f.split("=", 1) for f in cols[8].split(";") if "=" in f)
+        agi = (attrs.get("gene_id") or attrs.get("ID") or "").upper()
+        if not agi:
+            continue
+        vals = []
+        if attrs.get("symbol"):
+            vals.append(attrs["symbol"])
+        if attrs.get("Alias"):
+            vals += attrs["Alias"].split(",")
+        clean = []
+        for v in vals:
+            v = v.strip()
+            if v and v.upper() != agi and v not in clean:
+                clean.append(v)
+        if clean:
+            syms[agi] = clean
+    print(f"  {len(syms)} Arabidopsis genes carry a symbol/alias")
+    return syms
+
+
+def stream_bhif(ath_symbols, keep_ids, arab_ids):
+    """Single BHIF pass producing two things:
+      - symbols: {plant_gene: [Arabidopsis symbols]} (for search)
+      - omap:    {AGI: {species: [plant genes]}} for Arabidopsis genes in our
+                 regulatory set, used to project the Arabidopsis network."""
+    symbols = defaultdict(OrderedDict)
+    omap = defaultdict(lambda: defaultdict(list))
+    print("Streaming BHIF orthology (large file)…")
+    for line in stream_lines(BHIF_URL):
+        if not line or line.startswith("#"):
+            continue
+        p = line.split("\t")
+        if len(p) < 4:
+            continue
+        qg, qs, og, os_ = p[0], p[1], p[2], p[3]
+        if qs == "ath" and os_ in NEW_SPECIES:
+            agi, plant, plant_code = qg, og, os_
+        elif os_ == "ath" and qs in NEW_SPECIES:
+            agi, plant, plant_code = og, qg, qs
+        else:
+            continue
+        if plant not in keep_ids:
+            continue
+        agi_u = agi.upper()
+        for s in ath_symbols.get(agi_u, []):
+            if len(symbols[plant]) < MAX_SYMBOLS_PER_GENE:
+                symbols[plant][s] = None
+        if agi_u in arab_ids:
+            lst = omap[agi_u][PLAZA_SPECIES[plant_code]]
+            if plant not in lst and len(lst) < MAX_ORTHOLOGS_PER_GENE:
+                lst.append(plant)
+    sym_out = {gid: list(s) for gid, s in symbols.items() if s}
+    omap_out = {agi: dict(sp) for agi, sp in omap.items()}
+    print(f"  inferred symbols for {len(sym_out)} genes; "
+          f"ortholog map for {len(omap_out)} Arabidopsis genes")
+    return sym_out, omap_out
+
+
+def main():
+    arab_ids = load_arab_ids()
+    print(f"Arabidopsis genes in DB: {len(arab_ids)}")
+
+    pairs, referenced = load_orthologs(arab_ids)
+
+    # Which gene ids we need coordinates for, per PLAZA species code.
+    wanted = {sp: set() for sp in PLAZA_SPECIES}
+    for sp, gid in referenced:
+        wanted[sp].add(gid)
+
+    petunia_lift, _ = build_petunia_lift()
+
+    positions = {}
+    genes = {}
+    for sp, species in PLAZA_SPECIES.items():
+        located = parse_gff(sp, wanted[sp])
+        if sp == "pax" and petunia_lift:
+            located = lift_petunia(located, petunia_lift)
+        elif sp in NEW_SPECIES:
+            located, _ = cap_scaffolds(located)  # fallback (e.g. Hi-C unavailable)
+        # Functional descriptions serve as the searchable name for new species.
+        descriptions = load_descriptions(sp) if sp in NEW_SPECIES else {}
+        for gid, (chrom, start, end, strand, symbol) in located.items():
+            positions[gid] = {"species": species, "chromosome": chrom,
+                              "start": start, "end": end, "strand": strand}
+            if sp in NEW_SPECIES:
+                genes[gid] = {"species": species, "symbol": symbol,
+                             "name": descriptions.get(gid, symbol), "is_tf": False}
+
+    # Drop ortholog pairs whose genes were not located (e.g. capped-out petunia).
+    located_ids = set(positions)
+    pairs = [p for p in pairs if p["gene_a"] in located_ids and p["gene_b"] in located_ids]
+
+    # Single BHIF pass: inferred Arabidopsis symbols (e.g. CHS) for search, and
+    # an Arabidopsis->plant ortholog map used to project the regulatory network.
+    ath_symbols = load_ath_symbols()
+    inferred_symbols, ortholog_map = stream_bhif(ath_symbols, set(genes), arab_ids)
+
+    POSITIONS_JSON.write_text(json.dumps(positions, indent=1, sort_keys=True))
+    ORTHOLOGS_JSON.write_text(json.dumps(
+        sorted(pairs, key=lambda p: (p["gene_a"], p["gene_b"])), indent=1))
+    GENES_JSON.write_text(json.dumps(genes, indent=1, sort_keys=True))
+    SYMBOLS_JSON.write_text(json.dumps(inferred_symbols, indent=1, sort_keys=True))
+    ORTHOLOG_MAP_JSON.write_text(json.dumps(ortholog_map, indent=1, sort_keys=True))
+    print(f"Wrote {POSITIONS_JSON} ({len(positions)} positions)")
+    print(f"Wrote {ORTHOLOGS_JSON} ({len(pairs)} ortholog pairs)")
+    print(f"Wrote {GENES_JSON} ({len(genes)} tomato/petunia genes)")
+    print(f"Wrote {SYMBOLS_JSON} ({len(inferred_symbols)} genes with inferred symbols)")
+    print(f"Wrote {ORTHOLOG_MAP_JSON} ({len(ortholog_map)} Arabidopsis genes mapped)")
+
+
+if __name__ == "__main__":
+    main()

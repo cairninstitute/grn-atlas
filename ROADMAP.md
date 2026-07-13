@@ -1,0 +1,326 @@
+# GRN Atlas — Capabilities & Roadmap (living document)
+
+> This is the single, continuously-updated map of what GRN Atlas can do, where it
+> falls short, and what we're building next. **Update it every iteration:** when a
+> capability ships, move it up; when a gap closes, strike it; append to the
+> Iteration Log. The working loop is: _build → test → document here → find gaps →
+> plan → repeat._
+
+Last updated: 2026-07-26 · Baseline: backend 78 tests, frontend 5 tests, build clean.
+
+---
+
+## 1. What we can do today (capabilities → problems solved)
+
+### Regulatory structure
+- **Who regulates gene X / what does TF Y target** — neighborhood + network view,
+  filterable by direction, confidence, evidence source, and measured-vs-inferred;
+  PubMed links per edge.
+- **Path from A → B** — pathfinding (BFS over signed edges).
+- **Master regulators / core circuit** — Organism tab (hub ranking, core-circuit graph).
+
+### Gene-set interpretation
+- **Functional theme of a set** — GO enrichment (hypergeometric + BH FDR).
+- **Pathway membership of a set** — pathway enrichment (`/api/v1/pathway_enrichment`),
+  Plant Reactome (arabidopsis + tomato) and Reactome/WikiPathways via mygene (human);
+  same hypergeometric+BH machinery. In the gene-set panel.
+- **Phenotype/trait linkage (human)** — GWAS Catalog associations: per-gene traits
+  (`/api/v1/traits/{id}`) and trait enrichment for a gene set / regulon
+  (`/api/v1/trait_enrichment`). Statistical (SNP→mapped gene→trait), not mechanistic.
+  Verified: SP1's targets enrich for Alzheimer's disease (q=0.043) + HDL/lipid traits.
+- **Which TFs drive a set** — motif enrichment over the scanned-promoter background,
+  now for tomato, petunia, and **arabidopsis** (e.g. AN2 top-enriched in petunia
+  flavonoid promoters q=4e-5; BPC1 targets enrich the BPC1 motif in arabidopsis q=1.9e-83).
+- **Actionable coordinates** — export of signed edges + confidence + genomic coords
+  + promoter windows + predicted binding sites (tomato/petunia).
+
+### Expression & co-expression (all three plant species)
+- **Per-tissue expression profile** — `GET /api/v1/expression/{gene_id}`: TPM across a
+  species' RNA-seq panel, quantified with kallisto vs PLAZA CDS. Petunia (29 samples,
+  floral/pigmentation), tomato (20: leaf/root/stem/flower/bud/fruit/apex/cotyledon),
+  arabidopsis (18: shoot/inflorescence/root/seedling). Predicted/shallow (subsampled);
+  the endpoint auto-selects by gene species.
+- **Predicted co-expression** — `POST /api/v1/coexpression`: Pearson on log2(TPM+1),
+  labeled `Inferred:Expression`, undirected (not causal, not measured regulation).
+  `tf_only` restricts partners to candidate TF regulators. Shown in the gene detail panel.
+- Verified: AN2 peaks in flower/corolla/petal-limb; co-expresses with petal-identity
+  genes (PI/AP3); 3 of AN2's 18 network targets are independently co-expressed —
+  expression corroborating a subset of projected edges.
+
+### dsRNA / RNAi design (in-silico gene silencing)
+- **Design a dsRNA or predict its silencing** — `POST /api/v1/dsrna`: analyze mode (given a
+  dsRNA → on-target coverage + ranked off-target genes + specificity, both strands, exact
+  siRNA k-mer match) or design mode (given a target gene → most-specific window). Chains
+  `silenced_genes` → `/perturb` for the predicted downstream phenotype, and annotates
+  off-targets with tissue expression. Predicted, not measured (labelled). `🧬 dsRNA` panel.
+  Verified: a designed 250 nt dsRNA vs petunia AN2 → 0 off-targets (specificity 100%),
+  230 on-target sites, → predicted anthocyanin-target down-regulation.
+- **Batch pathway screen** — `POST /api/v1/dsrna/screen`: rank a gene set / Reactome pathway
+  by dsRNA-designability (fewest off-targets in the best window; one transcriptome pass) +
+  the combined-silencing predicted effect. Available for petunia, tomato, arabidopsis
+  (transcript stores committed); turnkey for any species with `transcripts_<species>.fasta.gz`.
+
+### Perturbation prediction
+- **Predict downstream effects of a TF knockout/over-expression** — `POST /api/v1/perturb`
+  propagates signs along the network (activation +1 / repression −1 × intervention sign),
+  confidence-weighted and depth-damped. Returns predicted up/down/unknown per reachable
+  gene with the path. Unsigned edges → "unknown"; inferred routes flagged. Drives the
+  Intervention Designer. Verified: AN2 knockout → its anthocyanin targets predicted down.
+
+### Comparative / evolutionary
+- **Edge conservation across species** — `/api/v1/conservation` joins orthologs +
+  both networks (JAF13→CHS conserved petunia↔tomato; AN2→CHS diverged).
+- **Synteny / orthologs** — genome view, ideograms, ribbons.
+
+### Practical / trust
+- **Gene identification despite messy annotation** — BLAST regulator ID + synonym search.
+- **Cite & reproduce** — provenance manifest + BibTeX + versioned methods in exports.
+- **Judge data currency** — freshness audit (`/api/v1/provenance/freshness`): each source's
+  loaded version vs the latest available release, with an "update available" badge in the
+  Data & citations panel. Re-runnable via `check_source_freshness.py`.
+- **Share** — permalinks; exports (PNG/SVG/GraphML/JSON/CSV/TSV); collections.
+- **Teach** — student scaffolding (examples, glossary, inferred-edge explainers).
+
+### Species & data
+- 5 species: human, mouse, arabidopsis, tomato, petunia.
+- Measured edges: TRRUST v2 (human), PlantRegMap FunTFBS (tomato, arabidopsis).
+- Inferred edges: Arabidopsis network projected onto tomato/petunia (`Inferred:Arabidopsis`).
+- Sequence context: promoter/gene-body windows + JASPAR-scan binding sites (tomato/petunia).
+- Orthology/coords: OMA, PLAZA Dicots 4.5, DNA Zoo *P. axillaris* Hi-C.
+
+---
+
+## 2. Honest boundaries (what bounds rigor today)
+
+- **Expression covers the three plant species only, and is shallow** — subsampled panels
+  (petunia 29, tomato 20, arabidopsis 18); relative/co-expression signal, not absolute.
+  Human/mouse have no expression axis. (Tomato: only atlas genes whose PLAZA CDS version
+  matches get expression.)
+- **No dynamics** — the cascade/intervention view is a toy, not a quantitative model.
+- **Petunia edges are inferred** — hypotheses, not evidence; no measured petunia GRN.
+- **No accessibility (ATAC), PPI/complexes, or phenotype/QTL linkage.**
+- **Data currency** — PLAZA 4.5 is 2018 (dicots 5.0 now exists, flagged by the freshness
+  audit); TRRUST v2 is older. Currency is now *surfaced*; actual re-fetch/rebuild to newer
+  releases (and adding species e.g. wheat/cotton) remains future work.
+
+**Guiding principle:** never fabricate scientific data. Inferred/predicted/curated
+data must always be labeled distinct from measured (inferred edges, JASPAR_scan
+sites, BLAST_curated symbols). New inferred layers inherit this rule.
+
+---
+
+## 3. Expansion plan — items 1–6 (value-ranked)
+
+Numbered by research value. **Execution order differs** (feasibility-first): the
+data-free item ships first, then the expression linchpin, then the rest.
+
+| # | Feature | Unlocks | New data needed | Effort |
+|---|---------|---------|-----------------|--------|
+| 1 | **Expression integration** | condition/tissue-specificity, co-expression, expression-weighted TFBS | RNA-seq atlases | High |
+| 2 | **Network inference from expression** (GENIE3/ARACNe-style) | a data-driven petunia network (not just projected) | uses #1 data | High |
+| 3 | **Perturbation modeling upgrade** | "predict effect of knocking out AN2" via signed-path propagation | none | Medium |
+| 4 | **Base-resolution binding for human/arabidopsis** | motif enrichment + seq context for best-measured species | JASPAR/ReMap ChIP | Medium |
+| 5 | **Broader enrichment + trait linkage** | KEGG/MapMan pathways; QTL/GWAS→gene | KEGG, GWAS/QTL | Medium |
+| 6 | **Taxonomic scope / freshness** | wheat/cotton homoeologs; refreshed PLAZA/TRRUST | newer releases | Medium |
+
+### Execution sequence (feasibility-first)
+1. **#3 perturbation** — no external data; uses existing signed edges. *Start here.*
+2. **#1 + #2 expression + inference** — the linchpin; do together (inference consumes
+   the loaded expression). Removes the static + petunia-only-inferred ceiling.
+3. **#4 base-resolution binding** — extends the strongest existing analysis to human/arabidopsis.
+4. **#5 enrichment + trait linkage.**
+5. **#6 scope/freshness.**
+
+### Per-item design sketch
+- **#3:** replace toy cascade with signed-path propagation over `interactions`
+  (sign = activation/repression product along path, with sign-flip on repression;
+  damped by confidence & depth). Endpoint `POST /api/v1/perturb` (KO/OE list →
+  predicted up/down per reachable gene, with path evidence). Honest labeling:
+  output is "predicted direction," qualitative, gated by inferred-edge inclusion.
+- **#1:** new `expression(gene_id, species, sample, tpm)` + `samples(...)` tables from
+  public RNA-seq (tomato PRJNA980935 / expression atlases; Arabidopsis; petunia if
+  available). Endpoints: per-gene expression profile; expression-weighted edge/motif
+  views. Cache to committed JSON like other fetchers; runtime stays offline.
+- **#2:** `infer_network.py` — GENIE3-style tree importance (or correlation fallback)
+  per species from #1's matrix → `Inferred:Expression` edges, labeled distinct from
+  both measured and Arabidopsis-projected. Compare against projection in the UI.
+- **#4:** extend `motifs`/`motif_hits` + crosswalk to human/arabidopsis using
+  JASPAR/ReMap; reuse existing motif-enrichment + seq-context machinery.
+- **#5:** `go_annotations`-style tables for KEGG/MapMan; QTL/GWAS→gene mapping table;
+  reuse hypergeometric+BH; new "trait" lookup endpoint.
+- **#6:** refresh fetchers to current PLAZA/TRRUST; add wheat/cotton with homoeolog
+  handling.
+
+---
+
+## 4. Known gaps / backlog (revisit each iteration)
+- ~~Perturbation model is a toy~~ ✅ shipped (#3): signed-path propagation, honest unknown/inferred labels.
+- ~~Static network — no time/condition axis~~ ✅ shipped (#1) for petunia: 29-sample expression profiles.
+- ~~Petunia has no data-derived network~~ ✅ shipped (#2): co-expression inference (`Inferred:Expression`).
+  Follow-ups: ✅ expression extended to tomato/arabidopsis. **GENIE3/tree-based directed network is
+  NOT viable on available data** — validated at BOTH 29 and 63 samples that tree-importance
+  doesn't reliably recover known edges (see log); needs condition/perturbation-rich data (not
+  just more tissue replicates) before it's honest to ship.
+- ~~Sequence layer absent for arabidopsis~~ ✅ shipped (#4, plant side): TAIR10 JASPAR scan (95k sites).
+  Human base-resolution binding (ReMap/JASPAR vertebrate) still pending — larger genome + peak ingest.
+- ~~Only GO enrichment~~ ✅ #5 shipped: pathway enrichment (Plant Reactome, plant side) +
+  trait linkage (GWAS Catalog, human). Pending: human/mouse pathways (Reactome, needs
+  ENSG→symbol map); plant QTL trait data (sparse, no clean gene-mapped source).
+- ~~No visibility into stale releases~~ ✅ #6 (freshness half): currency audit surfaces
+  staleness (PLAZA 4.5→5.0 flagged). Actual refresh-to-newer + new species (wheat/cotton) still open.
+- ~~Older scaffold docs predate recent features~~ ✅ pruned; docs are now README + DEVELOPMENT + ONBOARDING_SPECIES + ROADMAP.
+
+## 5. Iteration Log
+
+- **2026-07-28** — **Human base-resolution binding (#45): assessed, deferred with a plan.**
+  The useful ReMap-2022 human file (per-TF peaks) is 1.4 GB; the alternative JASPAR-vertebrate
+  scan needs the ~3 GB human genome + promoter extraction. Either is a full new pipeline
+  (promoter windows from our 1,991 human GRCh38 coords → peak/PWM mapping → motif_hits →
+  `_ASSEMBLY_OF['human']='GRCh38'`). Priority-4, and human already has measured TRRUST edges,
+  so the marginal value (human motif enrichment) doesn't justify the download/compute now.
+  **Concrete plan when prioritised:** stream ReMap nr BED, keep only peaks within ±2 kb of a
+  human TSS, aggregate per (TF, target) → predicted binding-site table (tier='ReMap_ChIP',
+  measured), reuse the existing motif-enrichment machinery. No data shipped by design.
+- **2026-07-28** — **Deepened petunia expression + re-ran the GENIE3 gate — still negative
+  (honest result).** Quantified a 63-sample petunia panel (up from 29; all 71 available P.
+  axillaris SRA runs, 8 failed to pseudoalign) and re-tested tree-importance recovery of
+  known anthocyanin regulation. It did NOT improve: JAF13→CHS stayed decent (~14/616) but
+  AN2→CHS (256) and every DFR regulator (112–264) remained noise — no better than at 29
+  samples. Conclusion: GENIE3 is **not viable on the available petunia data** (mostly
+  tissue/replicate variance across a few studies, not the perturbation diversity GENIE3
+  needs; MBW-complex control isn't captured by single-TF importance; shallow subsampled
+  quant). Not shipped — pairwise co-expression (#2) remains the honest tool. The clean
+  29-sample curated panel is kept (a 63-sample study grab-bag adds batch effects with
+  generic labels). Revisit only with condition/perturbation-rich data (e.g. dahlia).
+
+- **2026-07-27** — **PLAZA 5.0 refresh: investigated, deferred (honest call).** Probed
+  dicots_05: it has the same species (pax/sly/ath) with the SAME gene IDs (no break) and
+  adds `symbol=`/`uniprot=` GFF fields — BUT those symbol fields are **empty for petunia
+  and tomato** (0 annotations) and redundant for arabidopsis (already mygene-annotated).
+  A full migration means re-running every plant fetcher (coords/synteny/orthology/GO/seqctx)
+  + rebuild + re-verifying all plant layers for marginal benefit and real regression risk.
+  Deferred as a dedicated future project; the freshness audit (#6) continues to flag 4.5 to
+  users transparently. No changes shipped by design.
+- **2026-07-27** — **#38 pathway half shipped: human pathway enrichment.**
+  `fetch_pathways_animal.py` pulls Reactome + WikiPathways for human/mouse gene symbols
+  directly from mygene (no ENSG map needed) → 940 pathways / 11,034 annotations (1,674 human
+  genes); `load_pathways_animal.py` loads additively; build_db globs pick them up. Verified:
+  a p53 gene set enriches "TP53 network" (q=1.8e-12), DNA-damage-response, p53 pathway.
+  Human **base-resolution binding** (JASPAR-vertebrate / ReMap over the ~3 GB human genome)
+  is the heavy remaining half — deferred with a note (much larger than the plant scans;
+  human already has measured TRRUST edges). +1 API test (106 backend).
+- **2026-07-27** — **GENIE3 data-derived petunia network: investigated, deferred (honest
+  call).** Ran ExtraTrees tree-importance (GENIE3) over the 29-sample petunia panel and
+  checked whether it recovers KNOWN anthocyanin regulation: JAF13→CHS ranked 11/616 TFs
+  (encouraging) but AN2→CHS ranked 162 and all three known DFR regulators ranked 233–441
+  (noise). **29 shallow samples is too few for a trustworthy directed network**, so we do
+  NOT ship one (it would present spurious edges as confident) — the pairwise co-expression
+  endpoint (#2) remains the appropriately-humble tool. Prerequisite for revisiting: deepen
+  the expression panel (petunia has ~166 public SRA runs; we quantified 29) or use the
+  incoming dahlia data. (scikit-learn is now available in the venv for when that lands.)
+
+
+- **2026-07-27** — Replaced inferred labels with **real curated symbols** where an authoritative
+  source exists. `fetch_curated_symbols.py`: tomato from UniProt Swiss-Prot via EnsemblPlants
+  Solyc xref (direct); petunia from UniProt *P. hybrida* reviewed proteins tblastn-mapped to
+  Peaxi162 loci at ≥90% identity (`UniProt:homology`). `load_curated_symbols.py` + build_db
+  durability promote them into `genes.symbol` only where no native symbol existed (AN2 etc.
+  preserved), recording a new `symbol_source` column. **155 loci now show real names**
+  (PHYB1, ACS2, CCOAOMT1…) instead of loci/inferred; surfaced via `symbol_source` +
+  `label_inferred=False`. UniProt added to provenance. +1 API test (94 backend). Arabidopsis
+  already mygene-annotated; dahlia will arrive with its own annotation.
+
+- **2026-07-26** — Established this roadmap + baseline (61 backend / 5 frontend green).
+  Prior shipped: provenance/citations, cross-species conservation, motif enrichment.
+- **2026-07-26** — Shipped **#3 perturbation**: `/api/v1/perturb` signed-path propagation
+  replacing the toy cascade; rewired the Intervention Designer to it. +3 API tests
+  (64 backend / 5 frontend green). Verified AN2 KO → anthocyanin targets down.
+  Next: **#1 + #2** — expression integration + network inference (the linchpin). This
+  needs external RNA-seq; first step is a data-availability check + a fetch script
+  (cache to committed JSON like other fetchers, runtime stays offline).
+- **2026-07-26** — Shipped **#1 + #2 (petunia)**. Reference unblocked via PLAZA pax CDS
+  (SGN was down). Built `fetch_petunia_expression.py`: streams subsampled reads for a
+  curated 29-sample panel from ENA, kallisto-quantifies to Peaxi162 TPM. New
+  `expression.py` + `/api/v1/expression/{id}` (#1) and `/api/v1/coexpression` (#2,
+  `Inferred:Expression`, undirected). `ExpressionPanel` in the gene detail view. +7 tests
+  (71 backend / 5 frontend). Verified: AN2 pigmented-tissue-specific; co-expresses PI/AP3;
+  corroborates 3/18 projected AN2 targets.
+- **2026-07-26** — Shipped **#4 (plant side)**: Arabidopsis base-resolution TF binding.
+  Reused the plant seqctx/scan machinery — PLAZA ath GFF → TAIR10 promoter windows;
+  JASPAR-plant PWM scan (symbol-mapped, 346 TFs) → 95,132 predicted sites; targeted DB
+  loader (no full rebuild); enabled arabidopsis in `_ASSEMBLY_OF` so motif enrichment +
+  sequence-context now work for it. +1 DB-invariant test (72 backend). Verified: BPC1
+  targets enrich BPC1 motif (q=1.9e-83), paralogs BPC5/6 co-enrich.
+  Next: **human** base-resolution binding (ReMap/JASPAR vertebrate), then **#5**
+  (KEGG/MapMan + trait linkage); also extend expression to tomato/arabidopsis.
+- **2026-07-26** — Shipped **#5 (pathway half, plant side)**: Reactome pathway enrichment.
+  `fetch_pathways.py` (Plant Reactome → arabidopsis + tomato, version-tolerant tomato match,
+  523 pathways / 8,108 annotations) + `load_pathways.py` (targeted) + build_db durability
+  (schema + glob). `POST /api/v1/pathway_enrichment` mirrors GO enrichment (hypergeometric+BH);
+  gene-set panel gains a Reactome section; Plant Reactome added to provenance/citations.
+  +2 API tests (74 backend). Verified: a metabolism gene set enriches Homoserine/Lysine
+  biosynthesis (q=0.012).
+- **2026-07-26** — Finished **#5** with **trait linkage (human, GWAS Catalog)**:
+  `fetch_traits.py` matches GWAS MAPPED_GENE symbols to atlas human IDs → 108,485
+  associations (1,977 genes, 21,391 traits); `load_traits.py` + build_db durability.
+  `GET /api/v1/traits/{id}` + `POST /api/v1/trait_enrichment` (hypergeometric+BH); gene-set
+  panel gains a GWAS trait section; GWAS Catalog added to provenance. +3 API tests (77 backend).
+  Verified: SP1 targets enrich Alzheimer's (q=0.043) + HDL/lipid traits.
+  **1–6 core plan now complete.** Remaining follow-ups: #6 freshness/scope; human
+  base-resolution binding + human/mouse pathways (ENSG→symbol map); extend expression
+  to tomato/arabidopsis; upgrade co-expression to tree-based (GENIE3).
+- **2026-07-26** — Shipped **#6 (freshness half)**: data-currency audit.
+  `check_source_freshness.py` live-probes each source's latest release (PLAZA dicots,
+  Reactome) and writes `source_freshness.json`; `provenance.freshness()` +
+  `GET /api/v1/provenance/freshness`; Data & citations panel shows an "update available"
+  badge. +1 API test (78 backend). Verified: PLAZA correctly flagged stale (4.5 vs 5.0);
+  sentinel-versioned sources (GWAS "latest", Plant Reactome "current") correctly read as
+  current. **All of 1–6 now have a shipped increment.** Deeper #6 (re-fetch to newer
+  releases + rebuild; add wheat/cotton) remains future work, now visible via the audit.
+- **2026-07-26** — Backlog: **extended expression + co-expression to tomato**. Generalized
+  `expression.get_matrix(species)` + endpoints auto-select the matrix by gene species (petunia
+  tests unchanged). `fetch_tomato_expression.py` reuses the petunia ENA/kallisto helpers over a
+  curated 20-sample tissue panel vs PLAZA sly CDS (Solyc IDs join the atlas directly) →
+  `expression_tomato.json.gz` (34,725 genes). +1 API test (79 backend). Verified: a leaf-marker
+  gene (leaf 48k vs root 52 TPM) co-expresses r≥0.93 with a coherent leaf/photosynthesis module.
+  Next backlog options: arabidopsis expression; tree-based co-expression (GENIE3); human
+  binding/pathways (ENSG→symbol map).
+- **2026-07-26** — Backlog: **arabidopsis expression** (completes the plant expression stack).
+  `fetch_arabidopsis_expression.py` (18-sample panel: vegetative shoot / inflorescence / root
+  / seedling) vs PLAZA ath CDS → `expression_arabidopsis.json.gz` (27,655 genes). No backend
+  changes needed — the multi-species machinery handled it. Verified: floral organ-identity
+  genes AP3/AG/AP1 are inflorescence-specific (0 TPM in vegetative shoot); AP3 co-expresses
+  with MYB21 + floral genes. **All three plant species now have expression + binding + pathways.**
+- **2026-07-26** — Shipped **Dahlia-onboarding prep** (real data incoming from Alex/Zach;
+  see [memory] grn-atlas-dahlia-collaboration): (1) `species_config.py` central per-species
+  registry (with a `dahlia` placeholder); (2) **trait linkage generalized to any species** —
+  `ingest_trait_table.py` loads any gene→trait TSV keyed to atlas ids (verified end-to-end on
+  a non-human species), and the `/trait_enrichment` note is now dynamic; (3) `GET /api/v1/species`
+  capability matrix (network/orthologs/binding/expression/pathways/traits per species) — the
+  onboarding-readiness view; (4) `docs/ONBOARDING_SPECIES.md` runbook. +2 API tests (80 backend).
+  When Dahlia data lands: add its `species_config` entry + genome/CDS/orthologs, run the
+  fetchers, and `ingest_trait_table.py` for Zach's GWAS. Optional follow-up: surface `/species`
+  in the UI; fold the near-duplicate seqctx/scan scripts into fully generic config-driven ones.
+- **2026-07-27** — Shipped **generic ingestion pipeline + cleanup**. Collapsed the 8
+  per-species scripts into 4 config-driven ones off `species_config.py`: `fetch_seqctx.py`
+  (PLAZA-identity), `motif_scan.py` (PWM core + scan), `fetch_expression.py` (ENA/kallisto),
+  `load_seqctx.py`. Config now carries assembly/URLs/promoter/chrom_norm/scan_edge_sql/
+  expr panels per species (tomato seqctx stays bespoke — SGN ITAG lift-over). Verified
+  faithful by regeneration+diff: arabidopsis seqctx & motif_hits **byte-identical**, all 3
+  expression matrices **identical**, petunia seqctx a +4-gene superset (current DB).
+  Cleanup: removed dead unimported `backend/app/` scaffold; standardized tomato motif caches
+  to `_tomato` suffix; repointed `test_science.py` to the generic modules. 80 backend / 5
+  frontend green. Adding Dahlia is now: config entry + drop-in refs + run the generic scripts.
+- **2026-07-27** — Shipped **dsRNA / RNAi design + off-target analysis** (for spraying dsRNA
+  on petunia/dahlia). New `rnai.py` (pure: dice→siRNA k-mers both strands, transcriptome
+  scan, specificity, design-window search) + committed `transcripts_petunia.fasta.gz` store;
+  `POST /api/v1/dsrna` (analyze + design), chaining silenced genes → `/perturb` and
+  annotating off-targets with expression; `🧬 dsRNA` frontend panel. +9 tests (6 unit,
+  3 API) → 89 backend / 5 frontend. Verified: designed dsRNA vs AN2 is fully specific
+  (0 off-targets) and predicts anthocyanin-target knockdown. Dahlia-ready (drop in its
+  transcript store) — polyploid homeolog off-targets will surface once its transcriptome lands.
+- **2026-07-27** — Extended dsRNA to **tomato + arabidopsis** (committed transcript stores;
+  verified a tomato design is fully specific) and added **batch pathway screening**
+  (`/api/v1/dsrna/screen` + `rnai.screen`, one transcriptome pass, ranked by designability
+  + combined effect) with a screen mode in the 🧬 panel. +2 tests → 91 backend / 5 frontend.
+  Verified: petunia anthocyanin set (AN2/JAF13/AN1) all designable; silencing all → 14 down.

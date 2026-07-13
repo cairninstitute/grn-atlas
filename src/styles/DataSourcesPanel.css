@@ -1,0 +1,97 @@
+.ds-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.ds-modal {
+  background: var(--surface-0);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  width: min(640px, 92vw);
+  max-height: 85vh;
+  overflow: auto;
+  padding: var(--space-xl);
+}
+
+.ds-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ds-header h2 { font-size: var(--text-xl); margin: 0; }
+
+.ds-close {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+.ds-close:hover { color: var(--text-primary); }
+
+.ds-stats {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: var(--space-xs) 0 var(--space-md);
+}
+
+.ds-note {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  background: var(--bg-warning);
+  border-left: 3px solid var(--warning-dark);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.ds-downloads { display: flex; gap: var(--space-sm); margin-bottom: var(--space-lg); flex-wrap: wrap; }
+.ds-dl-btn {
+  padding: 6px 12px;
+  font-size: var(--text-sm);
+  background: var(--surface-0);
+  color: var(--text-accent);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.ds-dl-btn:hover { background: var(--bg-accent); }
+.ds-dl-btn:disabled { opacity: 0.5; cursor: default; }
+
+.ds-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-md); }
+.ds-item { border-bottom: 1px solid var(--border); padding-bottom: var(--space-md); }
+.ds-name { font-weight: 600; color: var(--text-accent); text-decoration: none; }
+.ds-name:hover { text-decoration: underline; }
+.ds-provides { font-size: var(--text-sm); margin-top: 2px; }
+.ds-cite { font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px; font-style: italic; }
+
+.ds-subhead { font-size: var(--text-lg); margin: var(--space-lg) 0 var(--space-sm); }
+.ds-glossary { margin: 0; }
+.ds-term { margin-bottom: var(--space-sm); }
+.ds-term dt { font-weight: 600; font-size: var(--text-sm); }
+.ds-term dd { margin: 0; font-size: var(--text-sm); color: var(--text-secondary); }
+
+.ds-badge {
+  display: inline-block; margin-left: 8px; font-size: 10px; font-weight: 600;
+  padding: 1px 7px; border-radius: 9px; vertical-align: middle;
+}
+.ds-badge.stale   { background: var(--warning-bg, #fdf0e3); color: var(--warning-dark, #b5651d); }
+.ds-badge.current { background: var(--success-bg, #e8f6ee); color: var(--text-success, #2a8a52); }
+
+.ds-coverage { margin: 12px 0; }
+.ds-cov-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.ds-cov-table th, .ds-cov-table td { padding: 3px 6px; text-align: right; border-bottom: 1px solid var(--border, #eee); }
+.ds-cov-table th:first-child, .ds-cov-table td:first-child { text-align: left; }
+.ds-cov-table th { color: var(--text-secondary, #888); font-weight: 600; }
+.ds-cov-sp { font-weight: 600; text-transform: capitalize; }
+.ds-cov-yes { font-variant-numeric: tabular-nums; }
+.ds-cov-no { color: var(--text-muted, #bbb); }
+.ds-cov-inf { color: var(--text-accent, #46c); font-size: 11px; }

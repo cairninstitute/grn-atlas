@@ -1,0 +1,347 @@
+:root {
+  /* Color Palette */
+  --primary: #3B8BD4;
+  --primary-light: #5BA3E0;
+  --primary-dark: #185FA5;
+  
+  --accent: #7F77DD;
+  --accent-light: #9B8FED;
+  --accent-dark: #5F5AA8;
+  
+  --success: #4CAF50;
+  --success-light: #66BB6A;
+  --success-dark: #388E3C;
+  
+  --warning: #FDD835;
+  --warning-light: #FEE082;
+  --warning-dark: #F9A825;
+  
+  --danger: #F44336;
+  --danger-light: #EF5350;
+  --danger-dark: #D32F2F;
+
+  /* Surface Colors */
+  --surface-0: #FFFFFF;
+  --surface-1: #F8F8F8;
+  --surface-2: #F0F0F0;
+  
+  /* Dark Mode Surfaces (unused in light theme but available)*/
+  --surface-0-dark: #121212;
+  --surface-1-dark: #1E1E1E;
+  --surface-2-dark: #2A2A2A;
+
+  /* Text Colors */
+  --text-primary: #1F1F1F;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --text-accent: #3B8BD4;
+  --text-success: #4CAF50;
+  --text-danger: #F44336;
+  --text-warning: #FDD835;
+
+  /* Border Colors */
+  --border: #E0E0E0;
+  --border-strong: #D0D0D0;
+  --border-stronger: #B0B0B0;
+  --border-danger: #FFCDD2;
+
+  /* Background Colors */
+  --bg-accent: rgba(59, 139, 212, 0.1);
+  --bg-success: rgba(76, 175, 80, 0.1);
+  --bg-danger: rgba(244, 67, 54, 0.08);
+  --bg-warning: rgba(253, 216, 53, 0.1);
+
+  /* Fill Colors (for buttons, etc.) */
+  --fill-accent: #3B8BD4;
+  --fill-success: #4CAF50;
+  --fill-danger: #F44336;
+
+  /* On-fill Colors (text on filled backgrounds) */
+  --on-accent: #FFFFFF;
+  --on-success: #FFFFFF;
+  --on-danger: #FFFFFF;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.2);
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
+
+  /* Font Sizes */
+  --text-xs: 10px;
+  --text-sm: 12px;
+  --text-base: 13px;
+  --text-lg: 14px;
+  --text-xl: 16px;
+  --text-2xl: 18px;
+  --text-3xl: 20px;
+
+  /* Line Heights */
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+
+  /* Letter Spacing */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.05em;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+
+  /* Border Radius */
+  --radius: 6px;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.15s;
+  --transition-normal: 0.3s;
+  --transition-slow: 0.5s;
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Z-Index Scale */
+  --z-hide: -1;
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 500;
+  --z-fixed: 1000;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-tooltip: 1070;
+
+  /* Opacity */
+  --opacity-disabled: 0.5;
+  --opacity-hover: 0.85;
+  --opacity-active: 0.7;
+}
+
+/* Dark Mode (optional - can be enabled with data-theme="dark" on html) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-0: #121212;
+    --surface-1: #1E1E1E;
+    --surface-2: #2A2A2A;
+
+    --text-primary: #FFFFFF;
+    --text-secondary: #BDBDBD;
+    --text-muted: #757575;
+    --text-accent: #64B5F6;
+
+    --border: #333333;
+    --border-strong: #424242;
+    --border-stronger: #555555;
+    --border-danger: #5E35B1;
+
+    --bg-accent: rgba(100, 181, 246, 0.15);
+    --bg-success: rgba(76, 175, 80, 0.15);
+    --bg-danger: rgba(244, 67, 54, 0.15);
+  }
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  background-color: var(--surface-0);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  background-color: var(--surface-0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Text Utilities */
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-accent {
+  color: var(--text-accent);
+}
+
+.text-success {
+  color: var(--text-success);
+}
+
+.text-danger {
+  color: var(--text-danger);
+}
+
+.text-warning {
+  color: var(--text-warning);
+}
+
+/* Font Weight Utilities */
+.font-normal {
+  font-weight: 400;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+/* Font Size Utilities */
+.text-xs {
+  font-size: var(--text-xs);
+}
+
+.text-sm {
+  font-size: var(--text-sm);
+}
+
+.text-base {
+  font-size: var(--text-base);
+}
+
+.text-lg {
+  font-size: var(--text-lg);
+}
+
+.text-xl {
+  font-size: var(--text-xl);
+}
+
+.text-2xl {
+  font-size: var(--text-2xl);
+}
+
+/* Spacing Utilities */
+.m-0 { margin: 0; }
+.m-1 { margin: var(--space-xs); }
+.m-2 { margin: var(--space-sm); }
+.m-3 { margin: var(--space-md); }
+.m-4 { margin: var(--space-lg); }
+
+.p-0 { padding: 0; }
+.p-1 { padding: var(--space-xs); }
+.p-2 { padding: var(--space-sm); }
+.p-3 { padding: var(--space-md); }
+.p-4 { padding: var(--space-lg); }
+
+/* Display Utilities */
+.flex {
+  display: flex;
+}
+
+.grid {
+  display: grid;
+}
+
+.hidden {
+  display: none;
+}
+
+.inline {
+  display: inline;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+/* Opacity Utilities */
+.opacity-50 {
+  opacity: 0.5;
+}
+
+.opacity-75 {
+  opacity: 0.75;
+}
+
+.opacity-disabled {
+  opacity: var(--opacity-disabled);
+}
+
+/* Cursor Utilities */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-default {
+  cursor: default;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* User Select Utilities */
+.select-none {
+  user-select: none;
+}
+
+.select-text {
+  user-select: text;
+}
+
+/* Overflow Utilities */
+.overflow-auto {
+  overflow: auto;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background-color: white;
+  }
+  
+  .no-print {
+    display: none;
+  }
+}

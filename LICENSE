@@ -1,0 +1,42 @@
+Copyright (c) 2026 CAIRN Institute. All rights reserved.
+
+SOURCE-AVAILABLE LICENSE — NON-COMMERCIAL USE ONLY
+
+1. GRANT. Subject to the terms below, CAIRN Institute grants you a
+   non-exclusive, non-transferable, royalty-free licence to use, copy, and
+   modify the Software for non-commercial purposes only — including academic
+   research, education, and personal experimentation.
+
+2. RESTRICTIONS. You may NOT, without prior written permission from
+   CAIRN Institute:
+   a. Use the Software, or any derivative work, for commercial purposes —
+      including incorporation into a paid product or service, internal
+      business use that generates revenue, or offering the Software as
+      part of a hosted/managed service.
+   b. Sublicense, sell, lease, or otherwise commercially distribute the
+      Software or derivative works.
+
+3. ATTRIBUTION. You must retain this copyright notice and licence in all
+   copies or substantial portions of the Software and cite CAIRN Institute
+   in any publications or presentations that make use of the Software.
+
+4. COMMERCIAL LICENSING. To obtain a licence for commercial use, contact
+   CAIRN Institute at sales@cairninstitute.com.
+
+5. NO WARRANTY. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+   KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+   IN NO EVENT SHALL CAIRN INSTITUTE BE LIABLE FOR ANY CLAIM, DAMAGES OR
+   OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+   OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+NOTE ON DATA: This licence covers the SOFTWARE (code) only. The atlas integrates
+third-party data (TRRUST, PlantRegMap, PLAZA, OMA, JASPAR, Plant Reactome, GWAS
+Catalog, UniProt, mygene.info, and others), each under its OWN upstream licence
+and terms — several are academic-use-only. The repository does not redistribute
+that data; it is fetched from the original sources at build time (see the fetch
+scripts and docs/DEVELOPMENT.md). Consult each source's licence, cited in the
+provenance manifest (GET /api/v1/provenance), before use or redistribution.

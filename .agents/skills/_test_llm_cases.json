@@ -1,0 +1,7130 @@
+[
+  {
+    "skill": "grn-gene-search",
+    "label": "search: TP53 exact in human",
+    "question": "Search for the gene TP53 in humans and show me the top 5 results.",
+    "expected_tools": [
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "limit",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-search",
+    "label": "search: MYB in arabidopsis limit 3",
+    "question": "Find MYB genes in Arabidopsis. Show me at most 3 results.",
+    "expected_tools": [
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "MYB"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "limit",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-search",
+    "label": "search: nonexistent gene returns empty",
+    "question": "Search for the gene ZZZZNOTAREAL_GENE_XYZ in humans. Does it exist in the atlas?",
+    "expected_tools": [
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "ZZZZNOTAREAL_GENE_XYZ"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-search",
+    "label": "search: BRCA partial match",
+    "question": "Search for genes matching 'BRCA' in humans. I want to find both BRCA1 and BRCA2.",
+    "expected_tools": [
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "BRCA"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-search",
+    "label": "search: by name substring 'apoptosis'",
+    "question": "Search for human genes related to apoptosis, show 5 results.",
+    "expected_tools": [
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "apoptosis"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "limit",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-search",
+    "label": "search: MYC limit 1",
+    "question": "Search for MYC in humans and return only the top result.",
+    "expected_tools": [
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "MYC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "limit",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-search",
+    "label": "search: HY5 arabidopsis",
+    "question": "Search for the gene HY5 in Arabidopsis. What is its locus ID?",
+    "expected_tools": [
+      "grn_gene_search",
+      "grn_gene_info"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search",
+          "grn_gene_info"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "HY5"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-search",
+    "label": "search: AN1 in tomato",
+    "question": "Search for the gene AN1 in tomato.",
+    "expected_tools": [
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "AN1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-search",
+    "label": "search: ABF broad match arabidopsis",
+    "question": "Search for all ABF family genes in Arabidopsis. Return up to 50 results.",
+    "expected_tools": [
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "ABF"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-search",
+    "label": "search: BCL2 no species filter",
+    "question": "Search for the gene BCL2 across all species. Is it a transcription factor?",
+    "expected_tools": [
+      "grn_gene_search",
+      "grn_gene_info"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search",
+          "grn_gene_info"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "BCL2"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-search",
+    "label": "search: STAT3 is TF",
+    "question": "Search for STAT3 in humans. Is it a transcription factor and what type of gene is it?",
+    "expected_tools": [
+      "grn_gene_search",
+      "grn_gene_info"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search",
+          "grn_gene_info"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "STAT3"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-search",
+    "label": "search: NFKB1 in mouse (may not exist)",
+    "question": "Search for NFKB1 in mouse. Does it exist in the atlas?",
+    "expected_tools": [
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "NFKB1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "mouse"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-info",
+    "label": "info: TP53 by id",
+    "question": "Give me detailed information about the gene TP53.",
+    "expected_tools": [
+      "grn_gene_search",
+      "grn_gene_info"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_info",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-info",
+    "label": "info: ABF1 by symbol",
+    "question": "Look up the gene ABF1 in Arabidopsis. What is its locus identifier?",
+    "expected_tools": [
+      "grn_gene_search",
+      "grn_gene_info"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_info",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "ABF1"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-info",
+    "label": "info: nonexistent gene",
+    "question": "Get information about the gene FAKEGENE999. Does it exist?",
+    "expected_tools": [
+      "grn_gene_info",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_info",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-info",
+    "label": "info: MYC by id",
+    "question": "What type of gene is MYC? Is it a transcription factor?",
+    "expected_tools": [
+      "grn_gene_info",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_info",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "MYC"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-info",
+    "label": "info: BCL2 non-TF",
+    "question": "Is BCL2 a transcription factor? Get its gene info.",
+    "expected_tools": [
+      "grn_gene_info",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_info",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "BCL2"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-info",
+    "label": "info: BAX non-TF",
+    "question": "Get detailed info on the BAX gene. Is it a transcription factor?",
+    "expected_tools": [
+      "grn_gene_info",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_info",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "BAX"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-info",
+    "label": "info: HY5 by symbol",
+    "question": "What is the Arabidopsis locus ID for HY5 (AT5G11260)?",
+    "expected_tools": [
+      "grn_gene_search",
+      "grn_gene_info"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_info",
+          "grn_gene_search"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-info",
+    "label": "info: HY5 by AT id",
+    "question": "What gene corresponds to the Arabidopsis locus AT5G11260?",
+    "expected_tools": [
+      "grn_gene_search",
+      "grn_gene_info"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_info",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT5G11260"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-info",
+    "label": "info: NFKB1",
+    "question": "Give me the gene info for NFKB1. Is it a transcription factor?",
+    "expected_tools": [
+      "grn_gene_info",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_info",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "NFKB1"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-info",
+    "label": "info: MDM2",
+    "question": "Look up MDM2. Is it a transcription factor and what species is it from?",
+    "expected_tools": [
+      "grn_gene_info",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_info",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "MDM2"
+      }
+    ]
+  },
+  {
+    "skill": "grn-gene-info",
+    "label": "info: PIF4 by symbol",
+    "question": "What is the locus ID for PIF4 in Arabidopsis?",
+    "expected_tools": [
+      "grn_gene_search",
+      "grn_gene_info"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_gene_info",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "PIF4"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: TP53 both",
+    "question": "Show me all the regulators and targets of TP53 in the gene regulatory network.",
+    "expected_tools": [
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: TP53 regulators only",
+    "question": "What transcription factors regulate TP53? Show only its upstream regulators.",
+    "expected_tools": [
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "direction",
+        "value": "regulators"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: TP53 targets only",
+    "question": "What genes does TP53 regulate? Show only its downstream targets.",
+    "expected_tools": [
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "direction",
+        "value": "targets"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: TP53 confidence >= 0.7",
+    "question": "Show TP53's regulatory connections with confidence score at least 0.7.",
+    "expected_tools": [
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_gte",
+        "arg": "min_confidence",
+        "value": 0.7
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: ABF1 targets",
+    "question": "What are the downstream targets of ABF1 (AT1G49720) in Arabidopsis?",
+    "expected_tools": [
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "direction",
+        "value": "targets"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: ABF1 regulators",
+    "question": "What transcription factors regulate ABF1 (AT1G49720) in Arabidopsis?",
+    "expected_tools": [
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "direction",
+        "value": "regulators"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: MYC both",
+    "question": "Show me the full regulatory network for MYC -- both its regulators and its targets.",
+    "expected_tools": [
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "MYC"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: HY5 both",
+    "question": "Show me all regulators and targets of HY5 (AT5G11260) in the GRN.",
+    "expected_tools": [
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT5G11260"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: NFKB1",
+    "question": "What are all the regulatory connections for NFKB1?",
+    "expected_tools": [
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "NFKB1"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: E2F1",
+    "question": "Show me the regulatory network for E2F1 -- who regulates it and what does it regulate?",
+    "expected_tools": [
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "E2F1"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: nonexistent gene",
+    "question": "Show me the regulatory network for FAKEGENE.",
+    "expected_tools": [
+      "grn_network",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network",
+    "label": "network: gene with 0 targets",
+    "question": "What are the regulators and targets of AT5G13930 in Arabidopsis?",
+    "expected_tools": [
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT5G13930"
+      }
+    ]
+  },
+  {
+    "skill": "grn-pathfinding",
+    "label": "path: TP53->BAX depth 1 (direct)",
+    "question": "Find the regulatory path from TP53 to BAX with maximum depth 1.",
+    "expected_tools": [
+      "grn_pathfinding"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_pathfinding"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target",
+        "value": "BAX"
+      }
+    ]
+  },
+  {
+    "skill": "grn-pathfinding",
+    "label": "path: TP53->TERT depth 1 (direct)",
+    "question": "Is there a direct regulatory connection from TP53 to TERT? Search with max depth 1.",
+    "expected_tools": [
+      "grn_pathfinding"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_pathfinding"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target",
+        "value": "TERT"
+      }
+    ]
+  },
+  {
+    "skill": "grn-pathfinding",
+    "label": "path: TP53->TERT depth 2 (direct + via MYC)",
+    "question": "Find all regulatory paths from TP53 to TERT, including indirect paths up to depth 2.",
+    "expected_tools": [
+      "grn_pathfinding"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_pathfinding"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target",
+        "value": "TERT"
+      }
+    ]
+  },
+  {
+    "skill": "grn-pathfinding",
+    "label": "path: TP53->BAX depth 2",
+    "question": "Find both direct and indirect regulatory paths from TP53 to BAX, up to 2 steps.",
+    "expected_tools": [
+      "grn_pathfinding"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_pathfinding"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target",
+        "value": "BAX"
+      }
+    ]
+  },
+  {
+    "skill": "grn-pathfinding",
+    "label": "path: to nonexistent gene",
+    "question": "Find a regulatory path from TP53 to ZZZZFAKE with max depth 2.",
+    "expected_tools": [
+      "grn_pathfinding",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_pathfinding",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "target",
+        "value": "ZZZZFAKE"
+      }
+    ]
+  },
+  {
+    "skill": "grn-pathfinding",
+    "label": "path: TP53->E2F1 direct (repression)",
+    "question": "Does TP53 directly regulate E2F1? Find the regulatory path with max depth 1.",
+    "expected_tools": [
+      "grn_pathfinding"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_pathfinding"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target",
+        "value": "E2F1"
+      }
+    ]
+  },
+  {
+    "skill": "grn-pathfinding",
+    "label": "path: E2F1->TP53 (reverse direction, activation)",
+    "question": "Does E2F1 regulate TP53? Find the direct regulatory path from E2F1 to TP53.",
+    "expected_tools": [
+      "grn_pathfinding"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_pathfinding"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source",
+        "value": "E2F1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target",
+        "value": "TP53"
+      }
+    ]
+  },
+  {
+    "skill": "grn-pathfinding",
+    "label": "path: MYC->CDKN1A (repression, conf=0.95)",
+    "question": "Find the regulatory path from MYC to CDKN1A with max depth 1.",
+    "expected_tools": [
+      "grn_pathfinding"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_pathfinding"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source",
+        "value": "MYC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target",
+        "value": "CDKN1A"
+      }
+    ]
+  },
+  {
+    "skill": "grn-pathfinding",
+    "label": "path: NFKB1->MYC (activation, conf=0.7)",
+    "question": "Find the regulatory path from NFKB1 to MYC with max depth 1.",
+    "expected_tools": [
+      "grn_pathfinding"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_pathfinding"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source",
+        "value": "NFKB1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target",
+        "value": "MYC"
+      }
+    ]
+  },
+  {
+    "skill": "grn-pathfinding",
+    "label": "path: TP53->BAX high confidence only",
+    "question": "Find regulatory paths from TP53 to BAX up to depth 2, but only high-confidence edges (minimum 0.9 confidence).",
+    "expected_tools": [
+      "grn_pathfinding"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_pathfinding"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_gte",
+        "arg": "min_confidence",
+        "value": 0.9
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: GO TP53 targets",
+    "question": "Run Gene Ontology enrichment analysis on these genes: TP53, BAX, BCL2, CDKN1A, MDM2.",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "go"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: pathway TP53 targets",
+    "question": "What pathways are enriched among TP53, BAX, BCL2, CDKN1A, and MDM2?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "pathway"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: trait TP53 targets",
+    "question": "What traits or diseases are associated with the gene set TP53, BAX, BCL2, CDKN1A, MDM2?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "trait"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: motif arabidopsis ABFs",
+    "question": "Run motif enrichment analysis on these Arabidopsis genes: AT1G49720, AT1G45249, AT4G34000.",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "motif"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: GO 6 human TFs",
+    "question": "Run GO enrichment on these human transcription factors: TP53, MYC, E2F1, NFKB1, STAT3, BRCA1.",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "STAT3"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "go"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: pathway 6 human TFs",
+    "question": "What pathways are enriched for TP53, MYC, E2F1, NFKB1, STAT3, and BRCA1?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "pathway"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: trait 6 human TFs",
+    "question": "What traits are associated with the gene set TP53, MYC, E2F1, NFKB1, STAT3, BRCA1?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "trait"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: GO arabidopsis light TFs (HY5,PIF4,PIL5)",
+    "question": "Run GO enrichment on these Arabidopsis light-responsive TFs: AT5G11260 (HY5), AT2G43010 (PIF4), AT2G20180 (PIL5).",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "go"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: GO nonexistent genes",
+    "question": "Run GO enrichment on FAKEGENE1 and FAKEGENE2.",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "FAKEGENE1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "go"
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: GO single gene",
+    "question": "Run GO enrichment analysis on TP53 alone.",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "go"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: motif arabidopsis light TFs",
+    "question": "Run motif enrichment on AT5G11260, AT2G43010, and AT2G20180.",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "motif"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich: pathway arabidopsis light TFs",
+    "question": "What pathways are enriched for the Arabidopsis genes AT5G11260, AT2G43010, AT2G20180?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "pathway"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich-content: GO apoptosis terms present",
+    "question": "Run GO enrichment on TP53, BAX, BCL2, CDKN1A, MDM2. Do the results include apoptosis-related terms?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "go"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich-content: TP53 network pathway enriched",
+    "question": "Run pathway enrichment on TP53, BAX, BCL2, CDKN1A, MDM2. Is the p53 signaling pathway enriched?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "pathway"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich-content: trait results have structure",
+    "question": "Run trait enrichment on TP53, BAX, BCL2, CDKN1A, MDM2. What traits are associated?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "trait"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrich-content: GO results sorted by p-value",
+    "question": "Run GO enrichment on TP53, BAX, BCL2, CDKN1A, MDM2. Are the results sorted by significance?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "go"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-expression",
+    "label": "expr: ABF1 arabidopsis (has expression)",
+    "question": "Show me the expression profile for ABF1 (AT1G49720) in Arabidopsis.",
+    "expected_tools": [
+      "grn_expression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_expression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT1G49720"
+      }
+    ]
+  },
+  {
+    "skill": "grn-expression",
+    "label": "expr: HY5 arabidopsis",
+    "question": "What is the expression profile for HY5 (AT5G11260)?",
+    "expected_tools": [
+      "grn_expression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_expression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT5G11260"
+      }
+    ]
+  },
+  {
+    "skill": "grn-expression",
+    "label": "expr: PIF4 arabidopsis",
+    "question": "Show me expression data for PIF4 (AT2G43010).",
+    "expected_tools": [
+      "grn_expression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_expression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT2G43010"
+      }
+    ]
+  },
+  {
+    "skill": "grn-expression",
+    "label": "expr: TP53 human (no human expression file)",
+    "question": "What is the expression profile for TP53?",
+    "expected_tools": [
+      "grn_expression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_expression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-expression",
+    "label": "expr: nonexistent gene",
+    "question": "Show me expression data for FAKEGENE.",
+    "expected_tools": [
+      "grn_expression",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_expression",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-expression",
+    "label": "expr: ABF2 arabidopsis",
+    "question": "What is the expression profile for ABF2 (AT1G45249)?",
+    "expected_tools": [
+      "grn_expression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_expression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT1G45249"
+      }
+    ]
+  },
+  {
+    "skill": "grn-expression",
+    "label": "expr: ABI3 arabidopsis",
+    "question": "Show the expression profile for ABI3 (AT3G24650) in Arabidopsis.",
+    "expected_tools": [
+      "grn_expression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_expression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT3G24650"
+      }
+    ]
+  },
+  {
+    "skill": "grn-expression",
+    "label": "expr: ABI5 arabidopsis",
+    "question": "What is the expression data for ABI5 (AT2G36270)?",
+    "expected_tools": [
+      "grn_expression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_expression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT2G36270"
+      }
+    ]
+  },
+  {
+    "skill": "grn-expression",
+    "label": "expr: EIN3 arabidopsis",
+    "question": "Show expression data for EIN3 (AT3G20770).",
+    "expected_tools": [
+      "grn_expression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_expression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT3G20770"
+      }
+    ]
+  },
+  {
+    "skill": "grn-expression",
+    "label": "expr: tomato AG (has expression)",
+    "question": "Show expression data for the tomato gene Solyc02g071730.2.",
+    "expected_tools": [
+      "grn_expression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_expression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "Solyc02g071730.2"
+      }
+    ]
+  },
+  {
+    "skill": "grn-coexpression",
+    "label": "coexpr: ABF1 top 5",
+    "question": "What are the top 5 coexpressed genes with ABF1 (AT1G49720)?",
+    "expected_tools": [
+      "grn_coexpression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coexpression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-coexpression",
+    "label": "coexpr: HY5 top 10",
+    "question": "Find the top 10 genes coexpressed with HY5 (AT5G11260).",
+    "expected_tools": [
+      "grn_coexpression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coexpression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 10
+      }
+    ]
+  },
+  {
+    "skill": "grn-coexpression",
+    "label": "coexpr: PIF4 top 5",
+    "question": "What genes are coexpressed with PIF4 (AT2G43010)? Show the top 5.",
+    "expected_tools": [
+      "grn_coexpression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coexpression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT2G43010"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-coexpression",
+    "label": "coexpr: ABF1 high correlation (r>=0.8)",
+    "question": "Find genes highly coexpressed with ABF1 (AT1G49720), with correlation at least 0.8. Show top 3.",
+    "expected_tools": [
+      "grn_coexpression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coexpression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 3
+      },
+      {
+        "type": "arg_gte",
+        "arg": "min_r",
+        "value": 0.8
+      }
+    ]
+  },
+  {
+    "skill": "grn-coexpression",
+    "label": "coexpr: ABF1 top 20",
+    "question": "Show the top 20 coexpression partners for ABF1 (AT1G49720).",
+    "expected_tools": [
+      "grn_coexpression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coexpression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 20
+      }
+    ]
+  },
+  {
+    "skill": "grn-coexpression",
+    "label": "coexpr: TP53 (no human expression)",
+    "question": "What genes are coexpressed with TP53? Show top 5.",
+    "expected_tools": [
+      "grn_coexpression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coexpression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-coexpression",
+    "label": "coexpr: nonexistent gene",
+    "question": "Find genes coexpressed with FAKEGENE. Show top 5.",
+    "expected_tools": [
+      "grn_coexpression",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coexpression",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-coexpression",
+    "label": "coexpr: ABF2",
+    "question": "What are the top 5 coexpression partners of ABF2 (AT1G45249)?",
+    "expected_tools": [
+      "grn_coexpression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coexpression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT1G45249"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-coexpression",
+    "label": "coexpr: EIN3",
+    "question": "Find the top 5 genes coexpressed with EIN3 (AT3G20770).",
+    "expected_tools": [
+      "grn_coexpression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coexpression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT3G20770"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-coexpression",
+    "label": "coexpr: tomato AG",
+    "question": "What genes are coexpressed with the tomato gene Solyc02g071730.2? Show top 5.",
+    "expected_tools": [
+      "grn_coexpression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coexpression"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "Solyc02g071730.2"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb: TP53 KO",
+    "question": "What would happen if TP53 were knocked out? Simulate the perturbation.",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "action",
+        "value": "ko"
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb: TP53 OE",
+    "question": "Simulate overexpression of TP53. What genes would be affected?",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "action",
+        "value": "oe"
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb: MYC KO",
+    "question": "What would be the downstream effects of knocking out MYC?",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "MYC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "action",
+        "value": "ko"
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb: NFKB1 KO (176 targets)",
+    "question": "Simulate a knockout of NFKB1. How many downstream genes are affected?",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "NFKB1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "action",
+        "value": "ko"
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb: E2F1 OE",
+    "question": "Simulate overexpression of E2F1. What genes change?",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "E2F1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "action",
+        "value": "oe"
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb: HY5 KO (arabidopsis)",
+    "question": "What happens if we knock out HY5 (AT5G11260) in Arabidopsis?",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "action",
+        "value": "ko"
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb: ABF1 KO (1458 targets)",
+    "question": "Simulate knocking out ABF1 (AT1G49720). How many genes are affected?",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "action",
+        "value": "ko"
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb: TP53 KO depth 2",
+    "question": "Simulate TP53 knockout with cascade depth 2 to see indirect effects.",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "action",
+        "value": "ko"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "depth",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb: TP53 KO high confidence",
+    "question": "Simulate TP53 knockout using only high-confidence edges (minimum 0.9 confidence).",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "action",
+        "value": "ko"
+      },
+      {
+        "type": "arg_gte",
+        "arg": "min_confidence",
+        "value": 0.9
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb: BAX KO (non-TF, 0 targets)",
+    "question": "What would happen if BAX were knocked out? It's not a transcription factor.",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "action",
+        "value": "ko"
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb-multi: TP53 KO + MYC OE",
+    "question": "Simulate a combined perturbation: knock out TP53 and overexpress MYC simultaneously.",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "MYC"
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb-multi: TP53 KO + E2F1 KO",
+    "question": "What happens if both TP53 and E2F1 are knocked out at the same time?",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "E2F1"
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb-multi: 3 TF simultaneous KO",
+    "question": "Simulate simultaneously knocking out NFKB1, STAT3, and MYC. What is the combined effect?",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "NFKB1"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "STAT3"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "MYC"
+      }
+    ]
+  },
+  {
+    "skill": "grn-perturbation",
+    "label": "perturb-multi: opposing actions (TP53 OE + MYC KO)",
+    "question": "What happens if TP53 is overexpressed while MYC is knocked out simultaneously?",
+    "expected_tools": [
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_perturbation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "MYC"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: design ABF1 arabidopsis",
+    "question": "Design a dsRNA construct to silence ABF1 (AT1G49720) in Arabidopsis.",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: analyze 48nt sequence",
+    "question": "Analyze this 48-nucleotide sequence for potential off-target siRNAs in Arabidopsis: ATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCA",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "sequence",
+        "value": "ATGCATGCATGC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: design HY5",
+    "question": "Design a dsRNA to knock down HY5 (AT5G11260) in Arabidopsis.",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: design PIF4",
+    "question": "Design a dsRNA construct targeting PIF4 (AT2G43010) in Arabidopsis.",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "AT2G43010"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: analyze with k=19",
+    "question": "Analyze this sequence for siRNA off-targets in Arabidopsis using k-mer size 19: ATGATGATGATGATGATGATGATGATGATGATGATGATGATGATGATGA",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "sequence",
+        "value": "ATGATGATG"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "k",
+        "value": 19
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: design EIN3",
+    "question": "Design a dsRNA to silence EIN3 (AT3G20770) in Arabidopsis.",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "AT3G20770"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: analyze GC-rich sequence",
+    "question": "Analyze this GC-rich sequence for off-target effects in Arabidopsis: GCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGC",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "sequence",
+        "value": "GCGCGCGC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: design ABF1 k=25",
+    "question": "Design a dsRNA for ABF1 (AT1G49720) in Arabidopsis using k-mer size 25.",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "k",
+        "value": 25
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: design tomato AN1",
+    "question": "Design a dsRNA to silence AN1 (Solyc09g065100.1) in tomato.",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "Solyc09g065100.1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: analyze AT-rich in tomato",
+    "question": "Analyze this AT-rich sequence for off-targets in tomato: ATATATATATATATATATATATATATATATATATATATATATATATATATA",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "sequence",
+        "value": "ATATATAT"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: human gene (no transcript file)",
+    "question": "Can I design a dsRNA for TP53 in human?",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: mouse gene (no transcript file)",
+    "question": "Design a dsRNA for MOUSE05861 in mouse.",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "MOUSE05861"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "mouse"
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna-content: design output has expected fields",
+    "question": "Design a dsRNA construct for ABF1 (AT1G49720) in Arabidopsis and show me the specificity and off-target details.",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna-content: analyze output has expected fields",
+    "question": "Analyze this sequence for siRNA properties in Arabidopsis: ATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCA. How many siRNAs are generated and what are the off-targets?",
+    "expected_tools": [
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "sequence",
+        "value": "ATGCATGCATGC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna",
+    "label": "dsrna: nonexistent gene in valid species",
+    "question": "Design a dsRNA for the gene FAKEGENE999 in Arabidopsis.",
+    "expected_tools": [
+      "grn_dsrna",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-orthology",
+    "label": "ortho: TP53 default species",
+    "question": "What are the orthologs of TP53 across species in the atlas?",
+    "expected_tools": [
+      "grn_orthology"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_orthology"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      }
+    ]
+  },
+  {
+    "skill": "grn-orthology",
+    "label": "ortho: TP53 -> mouse",
+    "question": "What is the mouse ortholog of TP53?",
+    "expected_tools": [
+      "grn_orthology"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_orthology"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "mouse"
+      }
+    ]
+  },
+  {
+    "skill": "grn-orthology",
+    "label": "ortho: TP53 -> human,mouse",
+    "question": "Find orthologs of TP53 in both human and mouse.",
+    "expected_tools": [
+      "grn_orthology"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_orthology"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_present",
+        "arg": "species"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "mouse"
+      }
+    ]
+  },
+  {
+    "skill": "grn-orthology",
+    "label": "ortho: MYC default",
+    "question": "What are the orthologs of MYC across all species?",
+    "expected_tools": [
+      "grn_orthology"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_orthology"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "MYC"
+      }
+    ]
+  },
+  {
+    "skill": "grn-orthology",
+    "label": "ortho: HY5 arabidopsis",
+    "question": "Find orthologs of HY5 (AT5G11260) across species.",
+    "expected_tools": [
+      "grn_orthology"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_orthology"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT5G11260"
+      }
+    ]
+  },
+  {
+    "skill": "grn-orthology",
+    "label": "ortho: HY5 -> tomato",
+    "question": "What is the tomato ortholog of HY5 (AT5G11260)?",
+    "expected_tools": [
+      "grn_orthology"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_orthology"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-orthology",
+    "label": "ortho: E2F1 default",
+    "question": "What are the orthologs of E2F1 across species?",
+    "expected_tools": [
+      "grn_orthology"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_orthology"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "E2F1"
+      }
+    ]
+  },
+  {
+    "skill": "grn-orthology",
+    "label": "ortho: NFKB1 -> mouse",
+    "question": "Does NFKB1 have a mouse ortholog?",
+    "expected_tools": [
+      "grn_orthology"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_orthology"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "NFKB1"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "mouse"
+      }
+    ]
+  },
+  {
+    "skill": "grn-orthology",
+    "label": "ortho: nonexistent gene",
+    "question": "Find orthologs of FAKEGENE across species.",
+    "expected_tools": [
+      "grn_orthology",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_orthology",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-orthology",
+    "label": "ortho: BRCA1 -> mouse",
+    "question": "What is the mouse ortholog of BRCA1?",
+    "expected_tools": [
+      "grn_orthology"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_orthology"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "BRCA1"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "mouse"
+      }
+    ]
+  },
+  {
+    "skill": "grn-conservation",
+    "label": "conserv: 5 human genes -> mouse",
+    "question": "How conserved is the regulatory network around TP53, BAX, BCL2, CDKN1A, and MDM2 between human and mouse?",
+    "expected_tools": [
+      "grn_conservation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_conservation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species_b",
+        "value": "mouse"
+      }
+    ]
+  },
+  {
+    "skill": "grn-conservation",
+    "label": "conserv: TFs -> mouse",
+    "question": "Compare regulatory conservation of TP53, MYC, and E2F1 between human and mouse.",
+    "expected_tools": [
+      "grn_conservation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_conservation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "MYC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species_b",
+        "value": "mouse"
+      }
+    ]
+  },
+  {
+    "skill": "grn-conservation",
+    "label": "conserv: arabidopsis HY5,PIF4 -> tomato",
+    "question": "Is the regulatory network around HY5 (AT5G11260) and PIF4 (AT2G43010) conserved between Arabidopsis and tomato?",
+    "expected_tools": [
+      "grn_conservation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_conservation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT2G43010"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species_b",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-conservation",
+    "label": "conserv: ABF1 -> tomato",
+    "question": "How conserved is the ABF1 (AT1G49720) regulatory network between Arabidopsis and tomato?",
+    "expected_tools": [
+      "grn_conservation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_conservation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species_b",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-conservation",
+    "label": "conserv: ABF1 -> petunia",
+    "question": "Is the ABF1 (AT1G49720) regulatory network conserved between Arabidopsis and petunia?",
+    "expected_tools": [
+      "grn_conservation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_conservation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species_b",
+        "value": "petunia"
+      }
+    ]
+  },
+  {
+    "skill": "grn-conservation",
+    "label": "conserv: single gene TP53 -> mouse",
+    "question": "How conserved is the TP53 regulatory network between human and mouse?",
+    "expected_tools": [
+      "grn_conservation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_conservation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species_b",
+        "value": "mouse"
+      }
+    ]
+  },
+  {
+    "skill": "grn-conservation",
+    "label": "conserv: 3 TFs -> mouse",
+    "question": "Compare regulatory conservation for NFKB1, STAT3, and BRCA1 between human and mouse.",
+    "expected_tools": [
+      "grn_conservation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_conservation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "NFKB1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species_b",
+        "value": "mouse"
+      }
+    ]
+  },
+  {
+    "skill": "grn-conservation",
+    "label": "conserv: 4 arabidopsis TFs -> tomato",
+    "question": "How conserved are the regulatory networks of AT5G11260, AT2G43010, AT2G20180, and AT3G20770 between Arabidopsis and tomato?",
+    "expected_tools": [
+      "grn_conservation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_conservation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species_b",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-conservation",
+    "label": "conserv: nonexistent genes",
+    "question": "Check regulatory conservation for FAKEGENE1 and FAKEGENE2 between human and mouse.",
+    "expected_tools": [
+      "grn_conservation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_conservation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "FAKEGENE1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species_b",
+        "value": "mouse"
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-conservation",
+    "label": "conserv: HY5 -> petunia",
+    "question": "Is the HY5 (AT5G11260) regulatory network conserved between Arabidopsis and petunia?",
+    "expected_tools": [
+      "grn_conservation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_conservation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species_b",
+        "value": "petunia"
+      }
+    ]
+  },
+  {
+    "skill": "grn-subgraph",
+    "label": "subgraph: 5 TP53-related genes",
+    "question": "Extract the regulatory subgraph among TP53, BAX, BCL2, CDKN1A, and MDM2.",
+    "expected_tools": [
+      "grn_export",
+      "grn_subgraph",
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_subgraph",
+          "grn_network",
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BAX"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-subgraph",
+    "label": "subgraph: 4 TFs with known interactions",
+    "question": "Show me the regulatory interactions among TP53, MYC, E2F1, and NFKB1.",
+    "expected_tools": [
+      "grn_export",
+      "grn_subgraph",
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_subgraph",
+          "grn_network",
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "MYC"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "E2F1"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "NFKB1"
+      }
+    ]
+  },
+  {
+    "skill": "grn-subgraph",
+    "label": "subgraph: 2 genes TP53,MYC",
+    "question": "Show the regulatory edges between TP53 and MYC.",
+    "expected_tools": [
+      "grn_export",
+      "grn_subgraph",
+      "grn_pathfinding",
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_subgraph",
+          "grn_pathfinding",
+          "grn_network",
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "MYC"
+      }
+    ]
+  },
+  {
+    "skill": "grn-subgraph",
+    "label": "subgraph: 2 non-TFs (no edges expected)",
+    "question": "Extract the regulatory subgraph between BAX and BCL2.",
+    "expected_tools": [
+      "grn_export",
+      "grn_subgraph",
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_subgraph",
+          "grn_pathfinding",
+          "grn_network",
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BCL2"
+      }
+    ]
+  },
+  {
+    "skill": "grn-subgraph",
+    "label": "subgraph: arabidopsis HY5,PIF4,PIL5",
+    "question": "Show the regulatory subnetwork among HY5 (AT5G11260), PIF4 (AT2G43010), and PIL5 (AT2G20180) in Arabidopsis.",
+    "expected_tools": [
+      "grn_export",
+      "grn_subgraph",
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_subgraph",
+          "grn_network",
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT2G43010"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT2G20180"
+      }
+    ]
+  },
+  {
+    "skill": "grn-subgraph",
+    "label": "subgraph: 8 genes large set",
+    "question": "Extract the regulatory subgraph among these 8 genes: TP53, BAX, BCL2, CDKN1A, MDM2, MYC, E2F1, NFKB1.",
+    "expected_tools": [
+      "grn_export",
+      "grn_subgraph",
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_subgraph",
+          "grn_network",
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "NFKB1"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-subgraph",
+    "label": "subgraph: nonexistent genes",
+    "question": "Show the regulatory subgraph for FAKEGENE1 and FAKEGENE2.",
+    "expected_tools": [
+      "grn_export",
+      "grn_subgraph",
+      "grn_network",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_subgraph",
+          "grn_gene_search",
+          "grn_network",
+          "grn_export"
+        ]
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-subgraph",
+    "label": "subgraph: single gene",
+    "question": "Extract the subgraph for just TP53.",
+    "expected_tools": [
+      "grn_export",
+      "grn_subgraph",
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_subgraph",
+          "grn_network",
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      }
+    ]
+  },
+  {
+    "skill": "grn-subgraph",
+    "label": "subgraph: STAT3->MYC (known edge)",
+    "question": "Show the regulatory interactions between STAT3 and MYC in a subgraph.",
+    "expected_tools": [
+      "grn_export",
+      "grn_subgraph",
+      "grn_pathfinding",
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_subgraph",
+          "grn_pathfinding",
+          "grn_network",
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "STAT3"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "MYC"
+      }
+    ]
+  },
+  {
+    "skill": "grn-subgraph",
+    "label": "subgraph: TP53<->E2F1 (bidirectional)",
+    "question": "Show the bidirectional regulatory interactions between TP53 and E2F1.",
+    "expected_tools": [
+      "grn_export",
+      "grn_subgraph",
+      "grn_pathfinding",
+      "grn_network"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_subgraph",
+          "grn_pathfinding",
+          "grn_network",
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "E2F1"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export: 3 genes JSON",
+    "question": "Export the regulatory network data for TP53, BAX, and BCL2 in JSON format.",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "json"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export: 3 genes TSV",
+    "question": "Export the regulatory network for TP53, BAX, and BCL2 in TSV format.",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "tsv"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export: single gene",
+    "question": "Export the regulatory data for TP53 in JSON format.",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "json"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export: 5 TFs JSON",
+    "question": "Export the regulatory network for TP53, MYC, E2F1, NFKB1, and STAT3 as JSON.",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "STAT3"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "json"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export: arabidopsis genes JSON",
+    "question": "Export regulatory data for AT5G11260 and AT2G43010 in JSON format.",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "json"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export: arabidopsis genes TSV",
+    "question": "Export regulatory data for AT5G11260 and AT2G43010 in TSV format.",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "tsv"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export: MYC,CDKN1A",
+    "question": "Export the regulatory data for MYC and CDKN1A as JSON.",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "MYC"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "CDKN1A"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "json"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export: nonexistent gene",
+    "question": "Export regulatory data for FAKEGENE in JSON format.",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "FAKEGENE"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "json"
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export: non-TF gene",
+    "question": "Export the regulatory network data for BAX in JSON format.",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "json"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export: BRCA1,BRCA2",
+    "question": "Export the regulatory data for BRCA1 and BRCA2 in JSON format.",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BRCA1"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BRCA2"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "json"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export-content: JSON edges have expected fields",
+    "question": "Export TP53 and BAX regulatory edges as JSON. Do the edges include source, target, regulation type, and confidence?",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "json"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export-content: JSON edges have coordinates",
+    "question": "Export TP53 and BAX edges as JSON. Do the exported edges include genomic coordinates?",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "json"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export-content: TSV has header and columns",
+    "question": "Export TP53 and BAX regulatory edges in TSV format. Does the output have proper headers?",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "tsv"
+      }
+    ]
+  },
+  {
+    "skill": "grn-export",
+    "label": "export-content: TSV arabidopsis genes",
+    "question": "Export regulatory edges for AT5G11260 and AT2G43010 in TSV format.",
+    "expected_tools": [
+      "grn_export"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_export"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "format",
+        "value": "tsv"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov: basic manifest",
+    "question": "Show me the provenance and data sources used to build the GRN Atlas.",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov: sources have DOIs",
+    "question": "Do the data sources in the GRN Atlas have DOIs or URLs for citation?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov: methods documented",
+    "question": "What methods were used to build the GRN Atlas? How was enrichment done?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov: version is string",
+    "question": "What version of the GRN Atlas is currently loaded?",
+    "expected_tools": [
+      "grn_provenance",
+      "grn_stats"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance",
+          "grn_stats"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov: has generated timestamp",
+    "question": "When was the GRN Atlas data generated?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov: motif_scan method",
+    "question": "How does the GRN Atlas perform motif scanning?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov: inferred_edges method",
+    "question": "How are inferred edges determined in the GRN Atlas?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov: has JASPAR source",
+    "question": "Does the GRN Atlas use JASPAR as a data source?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov: coordinate_systems method",
+    "question": "What coordinate systems are used in the GRN Atlas?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov: regulator_identification method",
+    "question": "How does the GRN Atlas identify transcription factor regulators?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-species",
+    "label": "species: returns all species",
+    "question": "What species are available in the GRN Atlas?",
+    "expected_tools": [
+      "grn_species"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_species"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-species",
+    "label": "species: has human",
+    "question": "Is human included as a species in the GRN Atlas?",
+    "expected_tools": [
+      "grn_species"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_species"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-species",
+    "label": "species: has arabidopsis",
+    "question": "Does the GRN Atlas include Arabidopsis?",
+    "expected_tools": [
+      "grn_species"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_species"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-species",
+    "label": "species: has tomato",
+    "question": "Is tomato available in the GRN Atlas?",
+    "expected_tools": [
+      "grn_species"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_species"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-species",
+    "label": "species: has petunia",
+    "question": "Does the GRN Atlas have regulatory data for petunia?",
+    "expected_tools": [
+      "grn_species"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_species"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-species",
+    "label": "species: has mouse",
+    "question": "Is mouse included in the GRN Atlas?",
+    "expected_tools": [
+      "grn_species"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_species"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-species",
+    "label": "species: capability fields present",
+    "question": "What data types are available for each species in the GRN Atlas? Expression? Motifs? Traits?",
+    "expected_tools": [
+      "grn_species"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_species"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-species",
+    "label": "species: returns consistent data",
+    "question": "List all species in the GRN Atlas database.",
+    "expected_tools": [
+      "grn_species"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_species"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-species",
+    "label": "species: no empty species names",
+    "question": "Show me all the species names in the atlas. Are they all properly named?",
+    "expected_tools": [
+      "grn_species"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_species"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-species",
+    "label": "species: gene counts present",
+    "question": "How many genes are available for each species in the GRN Atlas?",
+    "expected_tools": [
+      "grn_species",
+      "grn_stats"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_species",
+          "grn_stats"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-stats",
+    "label": "stats: global stats",
+    "question": "Give me overall statistics for the GRN Atlas: how many species, genes, and interactions?",
+    "expected_tools": [
+      "grn_stats"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_stats"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-stats",
+    "label": "stats: human species",
+    "question": "How many genes, transcription factors, and interactions are in the human GRN?",
+    "expected_tools": [
+      "grn_stats"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_stats"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-stats",
+    "label": "stats: arabidopsis species",
+    "question": "What are the statistics for Arabidopsis in the GRN Atlas?",
+    "expected_tools": [
+      "grn_stats"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_stats"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-stats",
+    "label": "stats: mouse species",
+    "question": "How many genes and interactions are in the mouse GRN?",
+    "expected_tools": [
+      "grn_stats"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_stats"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "mouse"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-stats",
+    "label": "stats: tomato species",
+    "question": "Show me the GRN statistics for tomato.",
+    "expected_tools": [
+      "grn_stats"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_stats"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "tomato"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-stats",
+    "label": "stats: petunia species",
+    "question": "What are the GRN statistics for petunia?",
+    "expected_tools": [
+      "grn_stats"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_stats"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-stats",
+    "label": "stats: nonexistent species",
+    "question": "What are the GRN statistics for the species FAKEFAKE?",
+    "expected_tools": [
+      "grn_stats"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_stats"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "FAKEFAKE"
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-stats",
+    "label": "stats: global has databases",
+    "question": "What databases are used in the GRN Atlas? Is TRRUST included?",
+    "expected_tools": [
+      "grn_stats",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_stats",
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-stats",
+    "label": "stats: global has version",
+    "question": "What version is the GRN Atlas?",
+    "expected_tools": [
+      "grn_stats",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_stats",
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-stats",
+    "label": "stats: human TF count > 100",
+    "question": "How many transcription factors are in the human GRN?",
+    "expected_tools": [
+      "grn_stats"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_stats"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-cascade",
+    "label": "cascade: TP53 with SIRT1 up",
+    "question": "What happens to TP53 and its downstream targets if SIRT1 is upregulated 1.5-fold? Simulate the regulatory cascade.",
+    "expected_tools": [
+      "grn_cascade"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_cascade"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "interventions",
+        "value": "SIRT1"
+      }
+    ]
+  },
+  {
+    "skill": "grn-cascade",
+    "label": "cascade: TP53 with two interventions",
+    "question": "Simulate the cascade effect on TP53 if SIRT1 is upregulated 1.5x and MDM2 is downregulated 0.5x.",
+    "expected_tools": [
+      "grn_cascade"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_cascade"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "interventions",
+        "value": "SIRT1"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "interventions",
+        "value": "MDM2"
+      }
+    ]
+  },
+  {
+    "skill": "grn-cascade",
+    "label": "cascade: MYC with STAT3 up",
+    "question": "What is the downstream cascade from MYC if STAT3 is upregulated 2-fold?",
+    "expected_tools": [
+      "grn_cascade"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_cascade"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "MYC"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "interventions",
+        "value": "STAT3"
+      }
+    ]
+  },
+  {
+    "skill": "grn-cascade",
+    "label": "cascade: TP53 with MDM2 down",
+    "question": "What happens downstream of TP53 if MDM2 is downregulated to 0.3x?",
+    "expected_tools": [
+      "grn_cascade"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_cascade"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "interventions",
+        "value": "MDM2"
+      }
+    ]
+  },
+  {
+    "skill": "grn-cascade",
+    "label": "cascade-content: effects have expected fields",
+    "question": "Simulate the cascade on TP53 with SIRT1 upregulated 1.5x. Show detailed cascade effects including magnitude, confidence, and direction for each gene.",
+    "expected_tools": [
+      "grn_cascade"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_cascade"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "interventions",
+        "value": "SIRT1"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-cascade",
+    "label": "cascade: arabidopsis HY5 with PIF4 up",
+    "question": "What happens to HY5 (AT5G11260) and its targets if PIF4 (AT2G43010) is upregulated 1.5x?",
+    "expected_tools": [
+      "grn_cascade"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_cascade"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "interventions",
+        "value": "AT2G43010"
+      }
+    ]
+  },
+  {
+    "skill": "grn-cascade",
+    "label": "cascade: NFKB1 with STAT3 up",
+    "question": "Simulate the cascade on NFKB1 if STAT3 is upregulated 1x.",
+    "expected_tools": [
+      "grn_cascade"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_cascade"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "NFKB1"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "interventions",
+        "value": "STAT3"
+      }
+    ]
+  },
+  {
+    "skill": "grn-cascade",
+    "label": "cascade: nonexistent gene",
+    "question": "Simulate the cascade effect on FAKEGENE if gene X is upregulated.",
+    "expected_tools": [
+      "grn_cascade"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_cascade"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "target_gene",
+        "value": "FAKEGENE"
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-cascade",
+    "label": "cascade: custom depth",
+    "question": "Simulate the regulatory cascade on TP53 with SIRT1 upregulated 1.5x, using a cascade depth of 5.",
+    "expected_tools": [
+      "grn_cascade"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_cascade"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_gene",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "interventions",
+        "value": "SIRT1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "depth",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-cascade",
+    "label": "cascade: E2F1 with TP53 down",
+    "question": "What happens to E2F1 and its downstream targets if TP53 is downregulated 0.5x?",
+    "expected_tools": [
+      "grn_cascade",
+      "grn_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_cascade",
+          "grn_perturbation"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-citations",
+    "label": "citations: returns BibTeX",
+    "question": "Give me the citations for the GRN Atlas data sources in BibTeX format.",
+    "expected_tools": [
+      "grn_citations",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_citations",
+          "grn_provenance"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-citations",
+    "label": "citations: has PlantRegMap",
+    "question": "Is PlantRegMap cited in the GRN Atlas references?",
+    "expected_tools": [
+      "grn_citations",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_citations",
+          "grn_provenance"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-citations",
+    "label": "citations: has DOIs",
+    "question": "Do the GRN Atlas citations include DOIs?",
+    "expected_tools": [
+      "grn_citations",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_citations",
+          "grn_provenance"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-citations",
+    "label": "citations: has JASPAR",
+    "question": "Is JASPAR included in the GRN Atlas citations?",
+    "expected_tools": [
+      "grn_citations",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_citations",
+          "grn_provenance"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-citations",
+    "label": "citations: valid BibTeX structure",
+    "question": "Show me the GRN Atlas citations. Are they valid BibTeX entries with title and year?",
+    "expected_tools": [
+      "grn_citations",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_citations",
+          "grn_provenance"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-citations",
+    "label": "citations: has journal",
+    "question": "Do the GRN Atlas citations include journal names?",
+    "expected_tools": [
+      "grn_citations",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_citations",
+          "grn_provenance"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-citations",
+    "label": "citations: has URL",
+    "question": "Do the GRN Atlas references include URLs?",
+    "expected_tools": [
+      "grn_citations",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_citations",
+          "grn_provenance"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-citations",
+    "label": "citations: has author",
+    "question": "Show me the authors of the data sources used in the GRN Atlas.",
+    "expected_tools": [
+      "grn_citations",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_citations",
+          "grn_provenance"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-citations",
+    "label": "citations: multiple entries",
+    "question": "How many citation entries does the GRN Atlas have?",
+    "expected_tools": [
+      "grn_citations",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_citations",
+          "grn_provenance"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-citations",
+    "label": "citations: has OMA or UniProt",
+    "question": "Does the GRN Atlas cite OMA or UniProt in its references?",
+    "expected_tools": [
+      "grn_citations",
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_citations",
+          "grn_provenance"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna-screen",
+    "label": "screen: 3 arabidopsis genes",
+    "question": "Screen these 3 Arabidopsis genes for dsRNA designability: AT1G49720, AT5G11260, AT2G43010.",
+    "expected_tools": [
+      "grn_dsrna_screen"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna_screen"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna-screen",
+    "label": "screen: without effect prediction",
+    "question": "Screen AT1G49720, AT5G11260, AT2G43010 in Arabidopsis for dsRNA design, but skip the effect prediction.",
+    "expected_tools": [
+      "grn_dsrna_screen"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna_screen"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna-screen",
+    "label": "screen-content: results have expected fields",
+    "question": "Screen AT1G49720, AT5G11260, AT2G43010 for dsRNA in Arabidopsis. Show designability, symbols, and off-target counts.",
+    "expected_tools": [
+      "grn_dsrna_screen"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna_screen"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna-screen",
+    "label": "screen-content: has predicted_effect with stats",
+    "question": "Screen AT1G49720, AT5G11260, AT2G43010 in Arabidopsis for dsRNA. What is the predicted effect on the network?",
+    "expected_tools": [
+      "grn_dsrna_screen"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna_screen"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna-screen",
+    "label": "screen: single gene",
+    "question": "Screen AT1G49720 alone for dsRNA design in Arabidopsis.",
+    "expected_tools": [
+      "grn_dsrna_screen",
+      "grn_dsrna"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna_screen",
+          "grn_dsrna"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna-screen",
+    "label": "screen: human genes (no transcripts)",
+    "question": "Screen TP53 and MYC for dsRNA design in human.",
+    "expected_tools": [
+      "grn_dsrna_screen"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna_screen"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna-screen",
+    "label": "screen: custom k=25",
+    "question": "Screen AT1G49720 and AT5G11260 for dsRNA in Arabidopsis using k-mer size 25.",
+    "expected_tools": [
+      "grn_dsrna_screen"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna_screen"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "k",
+        "value": 25
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna-screen",
+    "label": "screen: custom design window",
+    "question": "Screen AT1G49720 and AT5G11260 for dsRNA in Arabidopsis with a design window of 100bp.",
+    "expected_tools": [
+      "grn_dsrna_screen"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna_screen"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna-screen",
+    "label": "screen: tomato genes",
+    "question": "Screen these tomato genes for dsRNA designability: Solyc09g065100.1, Solyc02g071730.2.",
+    "expected_tools": [
+      "grn_dsrna_screen"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna_screen"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "Solyc09g065100.1"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna-screen",
+    "label": "screen: results ranked by off-target burden",
+    "question": "Screen AT1G49720, AT5G11260, AT2G43010 in Arabidopsis for dsRNA. Rank the results by off-target burden.",
+    "expected_tools": [
+      "grn_dsrna_screen"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna_screen"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov-freshness: returns data",
+    "question": "Check how fresh the GRN Atlas data sources are. Are any out of date?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov-freshness: sources have status",
+    "question": "What is the freshness status of each data source in the GRN Atlas?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov-freshness: has stale list",
+    "question": "Are there any stale data sources in the GRN Atlas?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov-freshness: sources have version info",
+    "question": "What versions of each data source does the GRN Atlas use?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-provenance",
+    "label": "prov-freshness: TRRUST in sources",
+    "question": "Is TRRUST listed in the freshness check of GRN Atlas data sources?",
+    "expected_tools": [
+      "grn_provenance"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_provenance"
+        ]
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrichment-trait: TP53 single-gene traits",
+    "question": "What GWAS traits are associated with TP53?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "trait"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrichment-trait: traits have expected fields",
+    "question": "Look up GWAS traits for TP53. Do the results include PubMed IDs and source information?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "trait"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrichment-trait: TP53 has cancer trait",
+    "question": "Is TP53 associated with cancer in GWAS data?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "trait"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrichment-trait: nonexistent gene",
+    "question": "What GWAS traits are associated with FAKEGENE999?",
+    "expected_tools": [
+      "grn_enrichment",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enrichment",
+    "label": "enrichment-trait: MYC single-gene traits",
+    "question": "What GWAS traits are associated with MYC?",
+    "expected_tools": [
+      "grn_enrichment"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_enrichment"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "type",
+        "value": "trait"
+      }
+    ]
+  },
+  {
+    "skill": "grn-regulon",
+    "label": "regulon: TP53 depth=1",
+    "question": "Show me the full regulon of TP53 at depth 1 -- all its direct targets.",
+    "expected_tools": [
+      "grn_regulon"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_regulon"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "depth",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "skill": "grn-regulon",
+    "label": "regulon: TP53 depth=2 larger than depth=1",
+    "question": "Show me the TP53 regulon at depth 2 to include indirect targets.",
+    "expected_tools": [
+      "grn_regulon"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_regulon"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "depth",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "skill": "grn-regulon",
+    "label": "regulon: BAX non-TF has 0 targets",
+    "question": "What is the regulon of BAX? Does it have any downstream targets?",
+    "expected_tools": [
+      "grn_gene_search",
+      "grn_gene_info",
+      "grn_regulon"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_regulon",
+          "grn_gene_search",
+          "grn_gene_info"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "BAX"
+      }
+    ]
+  },
+  {
+    "skill": "grn-regulon",
+    "label": "regulon: nonexistent gene",
+    "question": "Show the regulon for NONEXISTENT_GENE_XYZ.",
+    "expected_tools": [
+      "grn_regulon",
+      "grn_gene_search"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_regulon",
+          "grn_gene_search"
+        ]
+      },
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-regulon",
+    "label": "regulon: TP53 high confidence filter",
+    "question": "Show the TP53 regulon at depth 1, but only edges with confidence >= 0.99.",
+    "expected_tools": [
+      "grn_regulon"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_regulon"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "depth",
+        "value": 1
+      },
+      {
+        "type": "arg_gte",
+        "arg": "min_confidence",
+        "value": 0.99
+      }
+    ]
+  },
+  {
+    "skill": "grn-regulon",
+    "label": "regulon: arabidopsis TF",
+    "question": "Show the regulon of HY5 (AT5G11260) at depth 1.",
+    "expected_tools": [
+      "grn_regulon"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_regulon"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "depth",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "skill": "grn-regulon-compare",
+    "label": "regulon-compare: TP53 vs self",
+    "question": "Compare the regulon of TP53 with itself at depth 1. What is the Jaccard similarity?",
+    "expected_tools": [
+      "grn_regulon_compare"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_regulon_compare"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "tf_a",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "tf_b",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "depth",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "skill": "grn-regulon-compare",
+    "label": "regulon-compare: TP53 vs MYC",
+    "question": "Compare the regulons of TP53 and MYC at depth 1. How much do their target genes overlap?",
+    "expected_tools": [
+      "grn_regulon_compare"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_regulon_compare"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "tf_a",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "tf_b",
+        "value": "MYC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "depth",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "skill": "grn-regulon-compare",
+    "label": "regulon-compare: cross-species no overlap",
+    "question": "Compare the regulons of TP53 (human) and AT5G11260 (Arabidopsis HY5) at depth 1. Is there any cross-species overlap?",
+    "expected_tools": [
+      "grn_regulon_compare"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_regulon_compare"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "tf_a",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "tf_b",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "depth",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "skill": "grn-regulon-compare",
+    "label": "regulon-compare: tf metadata present",
+    "question": "Compare the regulons of TP53 and MYC at depth 1. Show the metadata for each TF including regulon sizes.",
+    "expected_tools": [
+      "grn_regulon_compare"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_regulon_compare"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "tf_a",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "tf_b",
+        "value": "MYC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "depth",
+        "value": 1
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-upstream",
+    "label": "upstream: TP53 targets should predict TP53",
+    "question": "Given this set of genes (BAX, BCL2, CDKN1A, MDM2, GADD45A, BBC3, PMAIP1, SESN1, TIGAR, DRAM1), which transcription factors are most likely to be their common upstream regulators?",
+    "expected_tools": [
+      "grn_upstream"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_upstream"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "CDKN1A"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-upstream",
+    "label": "upstream: explicit species",
+    "question": "Find the upstream regulators of BAX, BCL2, and CDKN1A in human.",
+    "expected_tools": [
+      "grn_upstream"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_upstream"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "data_nonempty"
+      }
+    ]
+  },
+  {
+    "skill": "grn-upstream",
+    "label": "upstream: top=5 limit",
+    "question": "Find the top 5 upstream regulators of BAX, BCL2, and CDKN1A.",
+    "expected_tools": [
+      "grn_upstream"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_upstream"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-upstream",
+    "label": "upstream: min-overlap=3 filter",
+    "question": "Find upstream regulators of BAX, BCL2, and CDKN1A that regulate at least 3 of these genes.",
+    "expected_tools": [
+      "grn_upstream"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_upstream"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BAX"
+      }
+    ]
+  },
+  {
+    "skill": "grn-upstream",
+    "label": "upstream: nonexistent genes",
+    "question": "Find the common upstream regulators of NONEXISTENT1, NONEXISTENT2, and NONEXISTENT3.",
+    "expected_tools": [
+      "grn_upstream"
+    ],
+    "checks": [
+      {
+        "type": "data_handles_error"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network-patterns",
+    "label": "patterns: human autoregulation",
+    "question": "Find autoregulatory loops in the human gene regulatory network.",
+    "expected_tools": [
+      "grn_network_patterns"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network_patterns"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "types",
+        "value": "autoregulation"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network-patterns",
+    "label": "patterns: human FFL limit 10",
+    "question": "Find feed-forward loops in the human GRN. Show at most 10.",
+    "expected_tools": [
+      "grn_network_patterns"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network_patterns"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "types",
+        "value": "ffl"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "limit",
+        "value": 10
+      }
+    ]
+  },
+  {
+    "skill": "grn-network-patterns",
+    "label": "patterns: multiple types",
+    "question": "Find both autoregulatory loops and feed-forward loops in the human GRN.",
+    "expected_tools": [
+      "grn_network_patterns"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network_patterns"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "types",
+        "value": "autoregulation"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "types",
+        "value": "ffl"
+      }
+    ]
+  },
+  {
+    "skill": "grn-network-patterns",
+    "label": "patterns: gene-ids subset FFL",
+    "question": "Find feed-forward loops involving TP53, MYC, and E2F1.",
+    "expected_tools": [
+      "grn_network_patterns"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_network_patterns"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "types",
+        "value": "ffl"
+      }
+    ]
+  },
+  {
+    "skill": "grn-centrality",
+    "label": "centrality: human out-degree top 10",
+    "question": "What are the top 10 human genes by out-degree centrality in the GRN? Which TFs regulate the most targets?",
+    "expected_tools": [
+      "grn_centrality"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_centrality"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "metric",
+        "value": "out_degree"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 10
+      }
+    ]
+  },
+  {
+    "skill": "grn-centrality",
+    "label": "centrality: human in-degree top 5",
+    "question": "What are the top 5 most regulated human genes by in-degree?",
+    "expected_tools": [
+      "grn_centrality"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_centrality"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "metric",
+        "value": "in_degree"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-centrality",
+    "label": "centrality: human total degree",
+    "question": "What are the top 5 human genes by total degree centrality?",
+    "expected_tools": [
+      "grn_centrality"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_centrality"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "metric",
+        "value": "degree"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-centrality",
+    "label": "centrality: arabidopsis out-degree",
+    "question": "What are the top 5 Arabidopsis TFs by out-degree centrality?",
+    "expected_tools": [
+      "grn_centrality"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_centrality"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "metric",
+        "value": "out_degree"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-centrality",
+    "label": "centrality: gene-ids filter",
+    "question": "Compare the out-degree centrality of TP53, MYC, and SP1 in the human GRN.",
+    "expected_tools": [
+      "grn_centrality"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_centrality"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "metric",
+        "value": "out_degree"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "MYC"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "SP1"
+      }
+    ]
+  },
+  {
+    "skill": "grn-centrality",
+    "label": "centrality: betweenness top 5",
+    "question": "What are the top 5 human genes by betweenness centrality in the GRN?",
+    "expected_tools": [
+      "grn_centrality"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_centrality"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "metric",
+        "value": "betweenness"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-centrality",
+    "label": "centrality: closeness top 5",
+    "question": "What are the top 5 human genes by closeness centrality?",
+    "expected_tools": [
+      "grn_centrality"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_centrality"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "metric",
+        "value": "closeness"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-centrality",
+    "label": "centrality: eigenvector top 5",
+    "question": "What are the top 5 human genes by eigenvector centrality?",
+    "expected_tools": [
+      "grn_centrality"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_centrality"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "metric",
+        "value": "eigenvector"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "skill": "grn-centrality",
+    "label": "centrality: betweenness with gene-ids filter",
+    "question": "What is the betweenness centrality of TP53 and MYC in the human GRN?",
+    "expected_tools": [
+      "grn_centrality"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_centrality"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "metric",
+        "value": "betweenness"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "MYC"
+      }
+    ]
+  },
+  {
+    "skill": "grn-motif",
+    "label": "motif: promoter hits for HY5",
+    "question": "What transcription factor binding motifs are found in the promoter of HY5 (AT5G11260) in Arabidopsis?",
+    "expected_tools": [
+      "grn_motif_query"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_motif_query"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "AT5G11260"
+      }
+    ]
+  },
+  {
+    "skill": "grn-motif",
+    "label": "motif: TF binding targets for ERF2",
+    "question": "Which Arabidopsis genes have ERF2 (AT5G47220) binding motifs in their promoters?",
+    "expected_tools": [
+      "grn_motif_query"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_motif_query"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "tf_gene_id",
+        "value": "AT5G47220"
+      }
+    ]
+  },
+  {
+    "skill": "grn-motif",
+    "label": "motif: edge support query",
+    "question": "Does HY5 have any motif hits from TFs that also have a known regulatory edge? Check with edge support enabled.",
+    "expected_tools": [
+      "grn_motif_query"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_motif_query"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "has_regulatory_edge"
+      }
+    ]
+  },
+  {
+    "skill": "grn-motif",
+    "label": "motif: strict pvalue filter",
+    "question": "Find highly significant motif hits (p-value < 1e-6) in the promoter of AT5G11260.",
+    "expected_tools": [
+      "grn_motif_query"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_motif_query"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-motif",
+    "label": "motif: human graceful degradation",
+    "question": "What TF binding motifs are in the promoter of TP53 in humans?",
+    "expected_tools": [
+      "grn_motif_query"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_motif_query"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "not available"
+      }
+    ]
+  },
+  {
+    "skill": "grn-motif",
+    "label": "motif: PIF4 binding targets",
+    "question": "Which genes have PIF4 (AT2G43010) binding motifs in their promoters in Arabidopsis?",
+    "expected_tools": [
+      "grn_motif_query"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_motif_query"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "tf_gene_id",
+        "value": "AT2G43010"
+      }
+    ]
+  },
+  {
+    "skill": "grn-motif",
+    "label": "motif: tomato gene promoter",
+    "question": "What TF motifs are found in the promoter of Solyc05g007180.2 in tomato?",
+    "expected_tools": [
+      "grn_motif_query"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_motif_query"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-motif",
+    "label": "motif: petunia promoter",
+    "question": "Scan the promoter of Peaxi162Scf00921g00011 in petunia for TF binding motifs.",
+    "expected_tools": [
+      "grn_motif_query"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_motif_query"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-motif",
+    "label": "motif: specific TF-gene pair",
+    "question": "Does TCP9 (AT2G45680) have a binding motif in the HY5 (AT5G11260) promoter?",
+    "expected_tools": [
+      "grn_motif_query"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_motif_query"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-motif",
+    "label": "motif: high score filter",
+    "question": "Find motif hits with score above 15 in the promoter of HY5 in Arabidopsis.",
+    "expected_tools": [
+      "grn_motif_query"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_motif_query"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-module",
+    "label": "module: arabidopsis communities",
+    "question": "What are the main regulatory modules in the Arabidopsis network?",
+    "expected_tools": [
+      "grn_modules"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_modules"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-module",
+    "label": "module: HY5 membership",
+    "question": "Which regulatory module does HY5 (AT5G11260) belong to in Arabidopsis?",
+    "expected_tools": [
+      "grn_modules"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_modules"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_id",
+        "value": "AT5G11260"
+      }
+    ]
+  },
+  {
+    "skill": "grn-module",
+    "label": "module: human network",
+    "question": "Detect regulatory communities in the human gene network.",
+    "expected_tools": [
+      "grn_modules"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_modules"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-module",
+    "label": "module: leiden algorithm",
+    "question": "Run Leiden community detection on the tomato regulatory network.",
+    "expected_tools": [
+      "grn_modules"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_modules"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "algorithm",
+        "value": "leiden"
+      }
+    ]
+  },
+  {
+    "skill": "grn-module",
+    "label": "module: infomap algorithm",
+    "question": "Use the infomap algorithm to find gene modules in Arabidopsis.",
+    "expected_tools": [
+      "grn_modules"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_modules"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "algorithm",
+        "value": "infomap"
+      }
+    ]
+  },
+  {
+    "skill": "grn-module",
+    "label": "module: PIF4 membership",
+    "question": "Which community does PIF4 (AT2G43010) belong to in the Arabidopsis regulatory network?",
+    "expected_tools": [
+      "grn_modules"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_modules"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_id",
+        "value": "AT2G43010"
+      }
+    ]
+  },
+  {
+    "skill": "grn-module",
+    "label": "module: petunia communities",
+    "question": "Find co-regulated gene modules in the petunia regulatory network.",
+    "expected_tools": [
+      "grn_modules"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_modules"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "petunia"
+      }
+    ]
+  },
+  {
+    "skill": "grn-module",
+    "label": "module: tomato communities",
+    "question": "What are the regulatory communities in the tomato gene network?",
+    "expected_tools": [
+      "grn_modules"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_modules"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-module",
+    "label": "module: high confidence",
+    "question": "Find regulatory modules in Arabidopsis using only high-confidence edges (>0.8).",
+    "expected_tools": [
+      "grn_modules"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_modules"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-module",
+    "label": "module: label propagation",
+    "question": "Detect gene communities in the human network using label propagation.",
+    "expected_tools": [
+      "grn_modules"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_modules"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "algorithm",
+        "value": "label_propagation"
+      }
+    ]
+  },
+  {
+    "skill": "grn-diff-regulation",
+    "label": "diff-reg: root vs inflorescence",
+    "question": "Which TFs are differentially active between root and inflorescence in Arabidopsis?",
+    "expected_tools": [
+      "grn_diff_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_diff_regulation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-diff-regulation",
+    "label": "diff-reg: specific TF HY5",
+    "question": "How does the regulatory activity of HY5 (AT5G11260) differ between root and inflorescence in Arabidopsis?",
+    "expected_tools": [
+      "grn_diff_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_diff_regulation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "tf_gene_id",
+        "value": "AT5G11260"
+      }
+    ]
+  },
+  {
+    "skill": "grn-diff-regulation",
+    "label": "diff-reg: petunia seedling vs flower",
+    "question": "Compare TF activity between seedling and flower tissues in petunia.",
+    "expected_tools": [
+      "grn_diff_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_diff_regulation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "petunia"
+      }
+    ]
+  },
+  {
+    "skill": "grn-diff-regulation",
+    "label": "diff-reg: tomato leaf vs fruit",
+    "question": "Which transcription factors change their regulatory activity between leaf and fruit development in tomato?",
+    "expected_tools": [
+      "grn_diff_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_diff_regulation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "species",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-diff-regulation",
+    "label": "diff-reg: human graceful degradation",
+    "question": "What TFs are differentially active between liver and brain in human?",
+    "expected_tools": [
+      "grn_diff_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_diff_regulation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "not available"
+      }
+    ]
+  },
+  {
+    "skill": "grn-diff-regulation",
+    "label": "diff-reg: high fold change",
+    "question": "Find TFs with at least 3-fold expression change between root and inflorescence in Arabidopsis.",
+    "expected_tools": [
+      "grn_diff_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_diff_regulation"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-diff-regulation",
+    "label": "diff-reg: shoot vs seedling",
+    "question": "Compare transcription factor activity between vegetative shoot and seedling in Arabidopsis.",
+    "expected_tools": [
+      "grn_diff_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_diff_regulation"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-diff-regulation",
+    "label": "diff-reg: invalid tissue",
+    "question": "Which TFs are differentially active between cortex and root in Arabidopsis?",
+    "expected_tools": [
+      "grn_diff_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_diff_regulation"
+        ]
+      },
+      {
+        "type": "data_contains_string",
+        "value": "available_tissues"
+      }
+    ]
+  },
+  {
+    "skill": "grn-diff-regulation",
+    "label": "diff-reg: tomato root vs apex",
+    "question": "Compare regulatory activity between root and shoot apex in tomato.",
+    "expected_tools": [
+      "grn_diff_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_diff_regulation"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-diff-regulation",
+    "label": "diff-reg: petunia corolla vs petal",
+    "question": "What TFs differ between corolla lobes and petal limb in petunia?",
+    "expected_tools": [
+      "grn_diff_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_diff_regulation"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-infer",
+    "label": "infer: arabidopsis top edges",
+    "question": "What are the top predicted regulatory edges for arabidopsis based on expression data?",
+    "expected_tools": [
+      "grn_inferred_edges"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_inferred_edges"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-infer",
+    "label": "infer: HY5 regulators",
+    "question": "What TFs are predicted by GRNBoost2 to regulate HY5 in arabidopsis?",
+    "expected_tools": [
+      "grn_inferred_edges"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_inferred_edges"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_id",
+        "value": "HY5"
+      }
+    ]
+  },
+  {
+    "skill": "grn-infer",
+    "label": "infer: tomato inferred targets",
+    "question": "What genes does GRNBoost2 predict are targets of Solyc09g065100.1 in tomato?",
+    "expected_tools": [
+      "grn_inferred_edges"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_inferred_edges"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-infer",
+    "label": "infer: compare curated",
+    "question": "Which inferred edges for MYB75 in arabidopsis also have curated support?",
+    "expected_tools": [
+      "grn_inferred_edges"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_inferred_edges"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_id",
+        "value": "MYB75"
+      }
+    ]
+  },
+  {
+    "skill": "grn-infer",
+    "label": "infer: GENIE3 method",
+    "question": "What does the GENIE3 algorithm predict as targets of PIL5 in arabidopsis?",
+    "expected_tools": [
+      "grn_inferred_edges"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_inferred_edges"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "method",
+        "value": "GENIE3"
+      }
+    ]
+  },
+  {
+    "skill": "grn-infer",
+    "label": "infer: petunia edges",
+    "question": "Show me predicted regulatory interactions in petunia from expression inference.",
+    "expected_tools": [
+      "grn_inferred_edges"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_inferred_edges"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      }
+    ]
+  },
+  {
+    "skill": "grn-infer",
+    "label": "infer: high importance threshold",
+    "question": "What are the strongest inferred regulatory edges in arabidopsis with importance above 0.1?",
+    "expected_tools": [
+      "grn_inferred_edges"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_inferred_edges"
+        ]
+      },
+      {
+        "type": "arg_gte",
+        "arg": "min_importance",
+        "value": 0.1
+      }
+    ]
+  },
+  {
+    "skill": "grn-infer",
+    "label": "infer: direction regulators",
+    "question": "What TFs are predicted to regulate AT1G01060 based on expression data in arabidopsis?",
+    "expected_tools": [
+      "grn_inferred_edges"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_inferred_edges"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_id",
+        "value": "AT1G01060"
+      }
+    ]
+  },
+  {
+    "skill": "grn-infer",
+    "label": "infer: expression-based network",
+    "question": "Can you infer the regulatory network around AN2 in petunia using expression data?",
+    "expected_tools": [
+      "grn_inferred_edges"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_inferred_edges"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_id",
+        "value": "AN2"
+      }
+    ]
+  },
+  {
+    "skill": "grn-infer",
+    "label": "infer: top 10 edges",
+    "question": "Show me the top 10 inferred edges for tomato.",
+    "expected_tools": [
+      "grn_inferred_edges"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_inferred_edges"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "tomato"
+      },
+      {
+        "type": "arg_eq",
+        "arg": "top",
+        "value": 10
+      }
+    ]
+  }
+]
