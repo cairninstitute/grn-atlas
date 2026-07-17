@@ -45,9 +45,17 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
 
     const timer = setTimeout(async () => {
       try {
-        const response = await fetch(`/api/v1/genes/search?q=${encodeURIComponent(searchInput)}&limit=10`);
+        let url = `/api/v1/genes/search?q=${encodeURIComponent(searchInput)}&limit=10`;
+        if (selectedSpecies.size === 1) {
+          url += `&species=${[...selectedSpecies][0]}`;
+        }
+        const response = await fetch(url);
         const data = await response.json();
-        setSuggestions(data.results || []);
+        let results = data.results || [];
+        if (selectedSpecies.size > 1) {
+          results = results.filter(g => selectedSpecies.has(g.species));
+        }
+        setSuggestions(results);
       } catch (err) {
         console.error('Search error:', err);
         setSuggestions([]);
@@ -55,7 +63,7 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, selectedSpecies]);
 
   // Handle search
   const handleSearch = (gene) => {
@@ -195,9 +203,10 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
                   <div className="suggestion-main">
                     <span className="suggestion-symbol">{gene.symbol}</span>
                     {gene.is_tf && <span className="tf-badge">TF</span>}
+                    <span className="species-badge">{gene.species}</span>
                   </div>
                   <div className="suggestion-secondary">
-                    {gene.name} • {gene.species}
+                    {gene.name}
                   </div>
                 </div>
               ))}
@@ -301,9 +310,9 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
       {/* Info */}
       <div className="sidebar-info">
         <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-          <div>📊 21 species</div>
-          <div>🧬 591K genes</div>
-          <div>🔗 6.7M interactions</div>
+          <div>2 species (human, arabidopsis)</div>
+          <div>19,776 genes</div>
+          <div>96,703 interactions</div>
         </div>
       </div>
     </div>

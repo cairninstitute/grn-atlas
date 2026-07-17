@@ -6,11 +6,12 @@ import '../styles/NetworkVisualization.css';
 // Register popper extension
 cytoscape.use(popper);
 
-export default function NetworkVisualization({ gene, data, filters, expandedNodes, onNodeExpand }) {
+export default function NetworkVisualization({ gene, data, filters, expandedNodes, onNodeExpand, onCyInit, onNodeAction }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
   const [selectedNode, setSelectedNode] = useState(null);
   const [tooltip, setTooltip] = useState(null);
+  const [contextMenu, setContextMenu] = useState(null);
   const tooltipRef = useRef(null);
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function NetworkVisualization({ gene, data, filters, expandedNode
     });
 
     cyRef.current = cy;
+    onCyInit?.(cy);
 
     // Node hover - show tooltip with confidence and sources
     cy.on('mouseover', 'node', (evt) => {
@@ -63,10 +65,21 @@ export default function NetworkVisualization({ gene, data, filters, expandedNode
       setTooltip(null);
     });
 
-    // Node click - select for detail panel
+    // Node click - show context menu
     cy.on('tap', 'node', (evt) => {
       const node = evt.target;
       setSelectedNode(node.id());
+      const pos = evt.renderedPosition || evt.position;
+      setContextMenu({
+        x: pos.x,
+        y: pos.y,
+        nodeId: node.id(),
+        nodeLabel: node.data('label')
+      });
+    });
+
+    cy.on('tap', (evt) => {
+      if (evt.target === cy) setContextMenu(null);
     });
 
     // Fit to view on load
@@ -80,6 +93,7 @@ export default function NetworkVisualization({ gene, data, filters, expandedNode
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      onCyInit?.(null);
       cy.destroy();
     };
   }, [data, gene, filters]);
@@ -116,6 +130,24 @@ export default function NetworkVisualization({ gene, data, filters, expandedNode
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {contextMenu && (
+        <div className="node-context-menu" style={{ left: contextMenu.x + 10, top: contextMenu.y + 10 }}>
+          <div className="context-menu-header">{contextMenu.nodeLabel}</div>
+          <button className="context-menu-action" onClick={() => {
+            onNodeAction?.(contextMenu.nodeId, contextMenu.nodeLabel, 'view-neighborhood');
+            setContextMenu(null);
+          }}>View neighborhood</button>
+          <button className="context-menu-action" onClick={() => {
+            onNodeAction?.(contextMenu.nodeId, contextMenu.nodeLabel, 'path-from');
+            setContextMenu(null);
+          }}>Find paths from here</button>
+          <button className="context-menu-action" onClick={() => {
+            onNodeAction?.(contextMenu.nodeId, contextMenu.nodeLabel, 'path-to');
+            setContextMenu(null);
+          }}>Find paths to here</button>
         </div>
       )}
 

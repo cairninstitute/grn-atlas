@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Sidebar from './components/Sidebar';
 import Toolbar from './components/Toolbar';
 import ViewTabs from './components/ViewTabs';
@@ -24,6 +24,13 @@ export default function GeneNetworkExplorer() {
   const [error, setError] = useState(null);
   const [networkData, setNetworkData] = useState(null);
   const [expandedNodes, setExpandedNodes] = useState(new Set());
+  const cyInstanceRef = useRef(null);
+  const [pathwaySource, setPathwaySource] = useState(null);
+  const [pathwayTarget, setPathwayTarget] = useState(null);
+
+  const handleCyInit = useCallback((cy) => {
+    cyInstanceRef.current = cy;
+  }, []);
 
   // Search for a gene
   const handleGeneSearch = useCallback(async (symbol) => {
@@ -58,6 +65,20 @@ export default function GeneNetworkExplorer() {
     }
   }, [filters]);
 
+  const handleNodeAction = useCallback((geneId, geneSymbol, action) => {
+    if (action === 'view-neighborhood') {
+      handleGeneSearch(geneSymbol);
+    } else if (action === 'path-from') {
+      setPathwaySource(geneSymbol);
+      setPathwayTarget(null);
+      setViewMode('pathways');
+    } else if (action === 'path-to') {
+      setPathwaySource(null);
+      setPathwayTarget(geneSymbol);
+      setViewMode('pathways');
+    }
+  }, [handleGeneSearch]);
+
   // Update filters
   const handleFilterChange = useCallback((newFilters) => {
     setFilters(newFilters);
@@ -86,7 +107,7 @@ export default function GeneNetworkExplorer() {
       <div className="main-content">
         {selectedGene && (
           <>
-            <Toolbar gene={selectedGene} stats={networkData?.stats} />
+            <Toolbar gene={selectedGene} stats={networkData?.stats} cyRef={cyInstanceRef} />
             <ViewTabs viewMode={viewMode} onViewChange={setViewMode} />
           </>
         )}
@@ -112,12 +133,14 @@ export default function GeneNetworkExplorer() {
             <>
               {viewMode === 'network' && (
                 <>
-                  <NetworkVisualization 
+                  <NetworkVisualization
                     gene={selectedGene}
                     data={networkData}
                     filters={filters}
                     expandedNodes={expandedNodes}
                     onNodeExpand={handleNodeExpand}
+                    onCyInit={handleCyInit}
+                    onNodeAction={handleNodeAction}
                   />
                   <GeneDetailPanel 
                     gene={selectedGene}
@@ -130,6 +153,10 @@ export default function GeneNetworkExplorer() {
                 <PathwayView
                   gene={selectedGene}
                   filters={filters}
+                  onCyInit={handleCyInit}
+                  onNodeAction={handleNodeAction}
+                  initialSource={pathwaySource}
+                  initialTarget={pathwayTarget}
                 />
               )}
 

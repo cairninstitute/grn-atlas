@@ -170,6 +170,14 @@ class GeneDatabase:
         row = self.conn.execute("SELECT * FROM genes WHERE id = ?", (gene_id,)).fetchone()
         return self._row_to_gene(row) if row else None
 
+    def find_gene_by_symbol_species(self, symbol: str, species: str) -> Optional[Gene]:
+        """Find a gene by symbol in a specific species"""
+        row = self.conn.execute(
+            "SELECT * FROM genes WHERE symbol = ? COLLATE NOCASE AND species = ?",
+            (symbol, species)
+        ).fetchone()
+        return self._row_to_gene(row) if row else None
+
     def get_regulators(self, gene_id: str, min_confidence: float = 0.0) -> List[GeneInteraction]:
         """Get regulators of a gene"""
         rows = self.conn.execute(
@@ -410,11 +418,21 @@ async def get_orthology(
     
     result = {}
     for sp in target_species:
-        regulators = db.get_regulators(gene_id, min_confidence=0.5)
-        targets = db.get_targets(gene_id, min_confidence=0.5)
-        
+        if sp == gene.species:
+            match = gene
+        else:
+            match = db.find_gene_by_symbol_species(gene.symbol, sp)
+
+        if not match:
+            result[sp] = {"found": False, "ortholog_symbol": gene.symbol, "regulators": [], "targets": []}
+            continue
+
+        regulators = db.get_regulators(match.id, min_confidence=0.5)
+        targets = db.get_targets(match.id, min_confidence=0.5)
+
         result[sp] = {
-            "ortholog_symbol": gene.symbol,  # In production, lookup actual ortholog
+            "found": True,
+            "ortholog_symbol": match.symbol,
             "regulators": [
                 {
                     "id": r.id,
@@ -436,7 +454,7 @@ async def get_orthology(
                 for t in targets
             ]
         }
-    
+
     return result
 
 # ============= Statistics Endpoints =============

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PathwayGraph from './PathwayGraph';
 import '../styles/PathwayView.css';
 
-export default function PathwayView({ gene, filters }) {
+export default function PathwayView({ gene, filters, onCyInit, onNodeAction, initialSource, initialTarget }) {
   const [sourceGene, setSourceGene] = useState('');
   const [sourceSuggestions, setSourceSuggestions] = useState([]);
   const [resolvedSource, setResolvedSource] = useState(null);
@@ -25,31 +25,47 @@ export default function PathwayView({ gene, filters }) {
     }
   }, [gene]);
 
+  // Handle initialSource/initialTarget from node actions
+  useEffect(() => {
+    if (initialSource) {
+      setSourceGene(initialSource);
+      setResolvedSource(null);
+    }
+  }, [initialSource]);
+
+  useEffect(() => {
+    if (initialTarget) {
+      setTargetGene(initialTarget);
+    }
+  }, [initialTarget]);
+
+  const speciesParam = filters.species?.length === 1 ? `&species=${filters.species[0]}` : '';
+
   // Source gene suggestions
   useEffect(() => {
     if (sourceGene.length < 2) { setSourceSuggestions([]); return; }
     const timer = setTimeout(async () => {
       try {
-        const resp = await fetch(`/api/v1/genes/search?q=${encodeURIComponent(sourceGene)}&limit=5`);
+        const resp = await fetch(`/api/v1/genes/search?q=${encodeURIComponent(sourceGene)}&limit=5${speciesParam}`);
         const data = await resp.json();
         setSourceSuggestions(data.results || []);
       } catch (err) { console.error(err); }
     }, 300);
     return () => clearTimeout(timer);
-  }, [sourceGene]);
+  }, [sourceGene, speciesParam]);
 
   // Target gene suggestions
   useEffect(() => {
     if (targetGene.length < 2) { setTargetSuggestions([]); return; }
     const timer = setTimeout(async () => {
       try {
-        const resp = await fetch(`/api/v1/genes/search?q=${encodeURIComponent(targetGene)}&limit=5`);
+        const resp = await fetch(`/api/v1/genes/search?q=${encodeURIComponent(targetGene)}&limit=5${speciesParam}`);
         const data = await resp.json();
         setTargetSuggestions(data.results || []);
       } catch (err) { console.error(err); }
     }, 300);
     return () => clearTimeout(timer);
-  }, [targetGene]);
+  }, [targetGene, speciesParam]);
 
   const handleSelectSource = (sug) => {
     setSourceGene(sug.symbol);
@@ -138,11 +154,11 @@ export default function PathwayView({ gene, filters }) {
   const visibleSearches = searches.filter(s => s.visible);
   const allVisiblePaths = visibleSearches.flatMap(s => s.paths);
 
-  // Determine which paths to show on graph based on selection
-  let graphPaths = allVisiblePaths;
+  // Always show all visible paths; pass selected path for highlighting
+  let highlightPath = null;
   if (selectedPath !== null) {
     const search = searches[selectedPath.searchIdx];
-    if (search) graphPaths = [search.paths[selectedPath.pathIdx]];
+    if (search) highlightPath = search.paths[selectedPath.pathIdx];
   }
 
   // Collect all unique source/target symbols for legend
@@ -177,6 +193,7 @@ export default function PathwayView({ gene, filters }) {
                     {sourceSuggestions.map((sug) => (
                       <div key={sug.id} className="suggestion" onClick={() => handleSelectSource(sug)}>
                         <span className="sug-symbol">{sug.symbol}</span>
+                        <span className="species-badge">{sug.species}</span>
                         <span className="sug-name">{sug.name}</span>
                       </div>
                     ))}
@@ -185,7 +202,13 @@ export default function PathwayView({ gene, filters }) {
               </div>
             </div>
 
-            <div className="search-arrow">→</div>
+            <button className="swap-button" onClick={() => {
+              const tmpGene = sourceGene;
+              const tmpResolved = resolvedSource;
+              setSourceGene(targetGene);
+              setTargetGene(tmpGene);
+              setResolvedSource(null);
+            }} title="Swap source and target">⇄</button>
 
             <div className="search-field flex-grow">
               <label>To</label>
@@ -203,6 +226,7 @@ export default function PathwayView({ gene, filters }) {
                     {targetSuggestions.map((sug) => (
                       <div key={sug.id} className="suggestion" onClick={() => handleSelectTarget(sug.symbol)}>
                         <span className="sug-symbol">{sug.symbol}</span>
+                        <span className="species-badge">{sug.species}</span>
                         <span className="sug-name">{sug.name}</span>
                       </div>
                     ))}
@@ -280,11 +304,14 @@ export default function PathwayView({ gene, filters }) {
           </div>
 
           <PathwayGraph
-            paths={graphPaths}
+            paths={allVisiblePaths}
+            highlightPath={highlightPath}
             sourceGene={null}
             targetSymbol={null}
             sourceIds={visibleSearches.map(s => s.sourceGene?.id).filter(Boolean)}
             targetSymbols={targetSymbols}
+            onCyInit={onCyInit}
+            onNodeAction={onNodeAction}
           />
 
           {/* Path cards grouped by search */}

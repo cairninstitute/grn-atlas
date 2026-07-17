@@ -2,15 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import cytoscape from 'cytoscape';
 import '../styles/NetworkVisualization.css';
 
-export default function PathwayGraph({ paths, sourceGene, targetSymbol, sourceIds, targetSymbols }) {
+export default function PathwayGraph({ paths, highlightPath, sourceGene, targetSymbol, sourceIds, targetSymbols, onCyInit, onNodeAction }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
   const [tooltip, setTooltip] = useState(null);
+  const [contextMenu, setContextMenu] = useState(null);
 
-  // Collect all source/target IDs for node coloring
   const allSourceIds = new Set(sourceIds || (sourceGene ? [sourceGene.id] : []));
   const allTargetSyms = new Set(targetSymbols || (targetSymbol ? [targetSymbol] : []));
 
+  // Build/rebuild graph when paths change
   useEffect(() => {
     if (!containerRef.current || !paths || paths.length === 0) return;
 
@@ -37,9 +38,20 @@ export default function PathwayGraph({ paths, sourceGene, targetSymbol, sourceId
     });
 
     cyRef.current = cy;
+    onCyInit?.(cy);
 
     cy.on('mouseover', 'node', (evt) => evt.target.addClass('hover'));
     cy.on('mouseout', 'node', (evt) => evt.target.removeClass('hover'));
+
+    cy.on('tap', 'node', (evt) => {
+      const node = evt.target;
+      const pos = evt.renderedPosition || evt.position;
+      setContextMenu({ x: pos.x, y: pos.y, nodeId: node.id(), nodeLabel: node.data('label') });
+    });
+
+    cy.on('tap', (evt) => {
+      if (evt.target === cy) setContextMenu(null);
+    });
 
     cy.on('mouseover', 'edge', (evt) => {
       const edge = evt.target;
@@ -65,9 +77,36 @@ export default function PathwayGraph({ paths, sourceGene, targetSymbol, sourceId
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      onCyInit?.(null);
       cy.destroy();
     };
   }, [paths, sourceIds, targetSymbols, sourceGene, targetSymbol]);
+
+  // Highlight effect — runs when selection changes without rebuilding the graph
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+
+    cy.elements().removeClass('dimmed highlighted');
+
+    if (!highlightPath) return;
+
+    const genes = highlightPath.genes || [];
+    const highlightNodeIds = new Set(genes.map(g => g.id));
+    const highlightEdgeIds = new Set();
+    for (let i = 0; i < genes.length - 1; i++) {
+      highlightEdgeIds.add(`${genes[i].id}->${genes[i + 1].id}`);
+    }
+
+    cy.elements().forEach(el => {
+      const id = el.id();
+      if (el.isNode()) {
+        el.addClass(highlightNodeIds.has(id) ? 'highlighted' : 'dimmed');
+      } else {
+        el.addClass(highlightEdgeIds.has(id) ? 'highlighted' : 'dimmed');
+      }
+    });
+  }, [highlightPath]);
 
   return (
     <div className="network-visualization pathway-graph">
@@ -77,7 +116,7 @@ export default function PathwayGraph({ paths, sourceGene, targetSymbol, sourceId
         <div className="network-tooltip">
           <div className="tooltip-header">
             <span className="tooltip-source">{tooltip.source}</span>
-            <span className="tooltip-arrow">→</span>
+            <span className="tooltip-arrow">&rarr;</span>
             <span className="tooltip-target">{tooltip.target}</span>
           </div>
           <div className="tooltip-row">
@@ -98,6 +137,24 @@ export default function PathwayGraph({ paths, sourceGene, targetSymbol, sourceId
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {contextMenu && (
+        <div className="node-context-menu" style={{ left: contextMenu.x + 10, top: contextMenu.y + 10 }}>
+          <div className="context-menu-header">{contextMenu.nodeLabel}</div>
+          <button className="context-menu-action" onClick={() => {
+            onNodeAction?.(contextMenu.nodeId, contextMenu.nodeLabel, 'view-neighborhood');
+            setContextMenu(null);
+          }}>View neighborhood</button>
+          <button className="context-menu-action" onClick={() => {
+            onNodeAction?.(contextMenu.nodeId, contextMenu.nodeLabel, 'path-from');
+            setContextMenu(null);
+          }}>Find paths from here</button>
+          <button className="context-menu-action" onClick={() => {
+            onNodeAction?.(contextMenu.nodeId, contextMenu.nodeLabel, 'path-to');
+            setContextMenu(null);
+          }}>Find paths to here</button>
         </div>
       )}
 
@@ -151,7 +208,6 @@ function buildPathElements(paths, sourceIds, targetSyms) {
         else if (i === genes.length - 1 && targetSyms.has(g.symbol)) type = 'target';
         nodes.set(g.id, { id: g.id, label: g.symbol, name: g.name, type });
       } else {
-        // Promote to source/target if this path identifies it as one
         const existing = nodes.get(g.id);
         if (sourceIds.has(g.id) && existing.type !== 'source') {
           existing.type = 'source';
@@ -199,7 +255,9 @@ function getPathStyle() {
         'background-color': '#888780',
         'border-color': '#5F5E5A',
         'width': '45px',
-        'height': '45px'
+        'height': '45px',
+        'transition-property': 'opacity, border-width',
+        'transition-duration': '0.2s'
       }
     },
     {
@@ -225,7 +283,7 @@ function getPathStyle() {
     },
     {
       selector: 'node:hover',
-      style: { 'border-width': '3px', 'box-shadow': '0 0 0 2px rgba(0,0,0,0.1)' }
+      style: { 'border-width': '3px' }
     },
     {
       selector: 'edge',
@@ -236,7 +294,9 @@ function getPathStyle() {
         'target-arrow-shape': 'triangle',
         'target-arrow-color': 'data(edge_color)',
         'arrow-scale': '1.5',
-        'opacity': '0.8'
+        'opacity': '0.8',
+        'transition-property': 'opacity, width',
+        'transition-duration': '0.2s'
       }
     },
     {
@@ -258,6 +318,20 @@ function getPathStyle() {
     {
       selector: 'edge:hover',
       style: { 'opacity': '1', 'width': 'mapData(confidence, 0.3, 0.9, 2, 4)' }
+    },
+    // Dimmed elements (not on the selected path)
+    {
+      selector: '.dimmed',
+      style: { 'opacity': 0.15 }
+    },
+    // Highlighted elements (on the selected path)
+    {
+      selector: 'node.highlighted',
+      style: { 'opacity': 1, 'border-width': '3px', 'z-index': 20 }
+    },
+    {
+      selector: 'edge.highlighted',
+      style: { 'opacity': 1, 'width': 'mapData(confidence, 0.3, 0.9, 2, 5)', 'z-index': 20 }
     }
   ];
 }
