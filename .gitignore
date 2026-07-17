@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.bak
+*.bak[0-9]
+venv/
+.venv/
+*.egg-info/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Build output
+build/
+dist/
+
+# OS
+.DS_Store

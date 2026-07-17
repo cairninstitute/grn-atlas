@@ -99,6 +99,12 @@ class Intervention(BaseModel):
     direction: str  # 'up', 'down'
     magnitude: float
 
+class CascadeRequest(BaseModel):
+    target_gene_id: str
+    interventions: List[Intervention]
+    depth: int = 3
+    return_nodes: bool = True
+
 
 class PathFindingRequest(BaseModel):
     source_gene_id: str
@@ -108,6 +114,12 @@ class PathFindingRequest(BaseModel):
     min_confidence: float = 0.3
     regulation_type: List[str] = ["activation", "repression"]
 
+class NeighborhoodRequest(BaseModel):
+    max_depth: int = 1
+    direction: str = "both"
+    regulation_type: List[str] = ["activation", "repression"]
+    min_confidence: float = 0.3
+
 # ============= Mock Database Service =============
 # In production, replace this with actual database queries
 
@@ -115,46 +127,92 @@ class MockGeneDatabase:
     """Mock database service for demonstration"""
     
     def __init__(self):
+        # Real data: subset of TRRUST v2 human TF-target interactions
+        # (https://www.grnpedia.org/trrust/), centered on the TP53 regulatory
+        # neighborhood. Gene names are TRRUST symbols (no full names/Ensembl
+        # IDs in the source file). Confidence is a heuristic derived from
+        # distinct-PubMed-reference count per pair, not a TRRUST-provided score.
         self.genes = {
-            "ENSG00000141510": Gene(
-                id="ENSG00000141510",
-                symbol="TP53",
-                name="Tumor protein 53",
-                species="human",
-                ensembl_id="ENSG00000141510",
-                is_tf=True,
-                gene_type="protein_coding"
-            ),
-            "ENSG00000133056": Gene(
-                id="ENSG00000133056",
-                symbol="ATM",
-                name="ATM Serine/Threonine Kinase",
-                species="human",
-                ensembl_id="ENSG00000133056",
-                is_tf=True,
-                gene_type="protein_coding"
-            ),
-            "ENSG00000124575": Gene(
-                id="ENSG00000124575",
-                symbol="CDKN1A",
-                name="Cyclin Dependent Kinase Inhibitor 1A",
-                species="human",
-                is_tf=False,
-                gene_type="protein_coding"
-            )
+            "BAX": Gene(id="BAX", symbol="BAX", name="BAX", species="human", is_tf=False, gene_type="protein_coding"),
+            "BCL2": Gene(id="BCL2", symbol="BCL2", name="BCL2", species="human", is_tf=False, gene_type="protein_coding"),
+            "BCL2L1": Gene(id="BCL2L1", symbol="BCL2L1", name="BCL2L1", species="human", is_tf=False, gene_type="protein_coding"),
+            "BRCA2": Gene(id="BRCA2", symbol="BRCA2", name="BRCA2", species="human", is_tf=False, gene_type="protein_coding"),
+            "CDKN1A": Gene(id="CDKN1A", symbol="CDKN1A", name="CDKN1A", species="human", is_tf=False, gene_type="protein_coding"),
+            "DDB1": Gene(id="DDB1", symbol="DDB1", name="DDB1", species="human", is_tf=False, gene_type="protein_coding"),
+            "DNMT1": Gene(id="DNMT1", symbol="DNMT1", name="DNMT1", species="human", is_tf=True, gene_type="protein_coding"),
+            "DUSP1": Gene(id="DUSP1", symbol="DUSP1", name="DUSP1", species="human", is_tf=False, gene_type="protein_coding"),
+            "E2F1": Gene(id="E2F1", symbol="E2F1", name="E2F1", species="human", is_tf=True, gene_type="protein_coding"),
+            "EZH2": Gene(id="EZH2", symbol="EZH2", name="EZH2", species="human", is_tf=True, gene_type="protein_coding"),
+            "GADD45A": Gene(id="GADD45A", symbol="GADD45A", name="GADD45A", species="human", is_tf=False, gene_type="protein_coding"),
+            "ING1": Gene(id="ING1", symbol="ING1", name="ING1", species="human", is_tf=True, gene_type="protein_coding"),
+            "KLF4": Gene(id="KLF4", symbol="KLF4", name="KLF4", species="human", is_tf=True, gene_type="protein_coding"),
+            "MDM2": Gene(id="MDM2", symbol="MDM2", name="MDM2", species="human", is_tf=True, gene_type="protein_coding"),
+            "MMP2": Gene(id="MMP2", symbol="MMP2", name="MMP2", species="human", is_tf=False, gene_type="protein_coding"),
+            "MYCN": Gene(id="MYCN", symbol="MYCN", name="MYCN", species="human", is_tf=True, gene_type="protein_coding"),
+            "NF1": Gene(id="NF1", symbol="NF1", name="NF1", species="human", is_tf=True, gene_type="protein_coding"),
+            "PAX5": Gene(id="PAX5", symbol="PAX5", name="PAX5", species="human", is_tf=True, gene_type="protein_coding"),
+            "PPARG": Gene(id="PPARG", symbol="PPARG", name="PPARG", species="human", is_tf=True, gene_type="protein_coding"),
+            "SIRT1": Gene(id="SIRT1", symbol="SIRT1", name="SIRT1", species="human", is_tf=True, gene_type="protein_coding"),
+            "TNFRSF10B": Gene(id="TNFRSF10B", symbol="TNFRSF10B", name="TNFRSF10B", species="human", is_tf=False, gene_type="protein_coding"),
+            "TP53": Gene(id="TP53", symbol="TP53", name="TP53", species="human", is_tf=True, gene_type="protein_coding"),
+            "YY1": Gene(id="YY1", symbol="YY1", name="YY1", species="human", is_tf=True, gene_type="protein_coding"),
         }
-        
+
         self.interactions = {
-            ("ENSG00000133056", "ENSG00000141510"): {
-                "regulation_type": "activation",
-                "confidence": 0.95,
-                "sources": ["TRRUST", "DoRothEA"]
-            },
-            ("ENSG00000141510", "ENSG00000124575"): {
-                "regulation_type": "activation",
-                "confidence": 0.92,
-                "sources": ["TRRUST"]
-            }
+            ("TP53", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.95, "sources": ["TRRUST"]},
+            ("TP53", "BAX"): {"regulation_type": "activation", "confidence": 0.95, "sources": ["TRRUST"]},
+            ("TP53", "MDM2"): {"regulation_type": "activation", "confidence": 0.95, "sources": ["TRRUST"]},
+            ("TP53", "BCL2"): {"regulation_type": "repression", "confidence": 0.95, "sources": ["TRRUST"]},
+            ("SIRT1", "TP53"): {"regulation_type": "repression", "confidence": 0.8, "sources": ["TRRUST"]},
+            ("TP53", "GADD45A"): {"regulation_type": "repression", "confidence": 0.8, "sources": ["TRRUST"]},
+            ("TP53", "MMP2"): {"regulation_type": "activation", "confidence": 0.8, "sources": ["TRRUST"]},
+            ("TP53", "TNFRSF10B"): {"regulation_type": "activation", "confidence": 0.8, "sources": ["TRRUST"]},
+            ("YY1", "TP53"): {"regulation_type": "activation", "confidence": 0.8, "sources": ["TRRUST"]},
+            ("E2F1", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("ING1", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("KLF4", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("MYCN", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("NF1", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("PAX5", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("PPARG", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("TP53", "BCL2L1"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("TP53", "BRCA2"): {"regulation_type": "repression", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("TP53", "DDB1"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("TP53", "DNMT1"): {"regulation_type": "repression", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("TP53", "DUSP1"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("TP53", "EZH2"): {"regulation_type": "repression", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("KLF4", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.95, "sources": ["TRRUST"]},
+            ("SIRT1", "CDKN1A"): {"regulation_type": "repression", "confidence": 0.8, "sources": ["TRRUST"]},
+            ("YY1", "TNFRSF10B"): {"regulation_type": "repression", "confidence": 0.8, "sources": ["TRRUST"]},
+            ("E2F1", "BCL2"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("ING1", "BAX"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("ING1", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("PPARG", "BCL2"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
+            ("DNMT1", "TNFRSF10B"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("E2F1", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("E2F1", "DNMT1"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("E2F1", "DUSP1"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("E2F1", "MDM2"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("E2F1", "MYCN"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("E2F1", "PPARG"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("EZH2", "CDKN1A"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("EZH2", "MMP2"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("EZH2", "TP53"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("KLF4", "MMP2"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("MYCN", "BAX"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("MYCN", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("PAX5", "BAX"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("PAX5", "BCL2"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("PAX5", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("PAX5", "MYCN"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("PPARG", "BCL2L1"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("PPARG", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("SIRT1", "EZH2"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("SIRT1", "PPARG"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("SIRT1", "TNFRSF10B"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("TP53", "E2F1"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("TP53", "PAX5"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
+            ("YY1", "NF1"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
         }
     
     def search_genes(self, query: str, limit: int = 10, species: Optional[str] = None) -> List[Gene]:
@@ -278,16 +336,10 @@ async def get_gene_by_symbol(symbol: str):
 # ============= Pathway Endpoints =============
 
 @app.post("/api/v1/pathways/neighborhood/{gene_id}", response_model=NetworkData)
-async def get_neighborhood(
-    gene_id: str,
-    max_depth: int = 1,
-    direction: str = "both",
-    regulation_type: List[str] = ["activation", "repression"],
-    min_confidence: float = 0.3
-):
+async def get_neighborhood(gene_id: str, request: NeighborhoodRequest = NeighborhoodRequest()):
     """
     Get regulatory neighborhood around a gene
-    
+
     - **gene_id**: Target gene Ensembl ID
     - **max_depth**: Maximum network hops (1-5)
     - **direction**: 'both', 'regulators', or 'targets'
@@ -297,14 +349,14 @@ async def get_neighborhood(
     gene = db.get_gene(gene_id)
     if not gene:
         raise HTTPException(status_code=404, detail="Gene not found")
-    
+
     # Get regulators and targets
-    regulators = db.get_regulators(gene_id, min_confidence) if direction in ["both", "regulators"] else []
-    targets = db.get_targets(gene_id, min_confidence) if direction in ["both", "targets"] else []
-    
+    regulators = db.get_regulators(gene_id, request.min_confidence) if request.direction in ["both", "regulators"] else []
+    targets = db.get_targets(gene_id, request.min_confidence) if request.direction in ["both", "targets"] else []
+
     # Filter by regulation type
-    regulators = [r for r in regulators if r.regulation_type in regulation_type]
-    targets = [t for t in targets if t.regulation_type in regulation_type]
+    regulators = [r for r in regulators if r.regulation_type in request.regulation_type]
+    targets = [t for t in targets if t.regulation_type in request.regulation_type]
     
     return NetworkData(
         gene=gene,
@@ -366,32 +418,27 @@ async def find_paths(request: PathFindingRequest):
     return {"paths": paths}
 
 @app.post("/api/v1/pathway/predict-cascade", response_model=CascadeResult)
-async def predict_cascade(
-    target_gene_id: str,
-    interventions: List[Intervention],
-    depth: int = 3,
-    return_nodes: bool = True
-):
+async def predict_cascade(request: CascadeRequest):
     """
     Predict cascade effects of regulatory interventions
-    
+
     Simulates regulatory cascade using simple propagation model
     """
-    if not interventions:
+    if not request.interventions:
         raise HTTPException(status_code=400, detail="At least one intervention required")
-    
-    gene = db.get_gene(target_gene_id)
+
+    gene = db.get_gene(request.target_gene_id)
     if not gene:
         raise HTTPException(status_code=404, detail="Gene not found")
-    
+
     cascade_effects = []
-    
+
     # Simple cascade simulation - in production, use ODE/boolean network model
-    targets = db.get_targets(target_gene_id, min_confidence=0.5)
+    targets = db.get_targets(request.target_gene_id, min_confidence=0.5)
     for i, target in enumerate(targets[:5]):  # Limit to first 5 targets
         # Calculate cascade magnitude based on interventions
         magnitude = 1.0
-        for intervention in interventions:
+        for intervention in request.interventions:
             if intervention.direction == "up":
                 magnitude *= intervention.magnitude
             else:

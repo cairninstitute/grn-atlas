@@ -213,6 +213,12 @@
   overflow: hidden;
 }
 
+.pathway-graph {
+  height: 360px;
+  flex-shrink: 0;
+  border-bottom: 0.5px solid var(--border);
+}
+
 .results-header {
   background-color: var(--surface-1);
   border-bottom: 0.5px solid var(--border);

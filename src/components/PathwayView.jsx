@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PathwayGraph from './PathwayGraph';
 import '../styles/PathwayView.css';
 
 export default function PathwayView({ gene, filters }) {
@@ -172,6 +173,8 @@ export default function PathwayView({ gene, filters }) {
             <h3>Found {paths.length} path{paths.length !== 1 ? 's' : ''}</h3>
             <p>Showing regulatory routes from {gene.symbol} to {targetGene}</p>
           </div>
+
+          <PathwayGraph paths={paths} sourceGene={gene} targetSymbol={targetGene} />
 
           <div className="paths-list">
             {paths.map((path, idx) => (

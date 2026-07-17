@@ -139,6 +139,19 @@
   background-color: #888780;
 }
 
+.node-source {
+  background-color: #3B8BD4;
+}
+
+.node-path-target {
+  background-color: #E8A33D;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.node-intermediate {
+  background-color: #888780;
+}
+
 .edge-activation {
   width: 20px;
   height: 3px;
