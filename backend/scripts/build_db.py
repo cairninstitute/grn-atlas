@@ -3,6 +3,7 @@ Builds backend/data/grn.sqlite3 from local data files committed to the repo.
 
 Human data: TRRUST v2 TSV + gene_names.json (from mygene.info)
 Arabidopsis data: PlantRegMap filtered TSV + gene_names_arabidopsis.json
+ATRM direction labels: atrm_regulations.tsv (activation/repression for 1,431 literature-curated pairs)
 
 No network access needed. Safe to re-run; always rebuilds from scratch.
 """
@@ -21,6 +22,9 @@ HUMAN_NAMES_JSON = DATA_DIR / "gene_names.json"
 # Arabidopsis (PlantRegMap, filtered to literature + ChIP-seq + FunTFBS)
 ARABIDOPSIS_TSV = DATA_DIR / "regulation_arabidopsis.tsv"
 ARABIDOPSIS_NAMES_JSON = DATA_DIR / "gene_names_arabidopsis.json"
+
+# ATRM direction labels (literature-curated activation/repression)
+ATRM_TSV = DATA_DIR / "atrm_regulations.tsv"
 
 
 def load_human_edges():
@@ -46,10 +50,31 @@ def load_human_edges():
     return edges
 
 
+def load_atrm_directions():
+    """Load ATRM literature-curated direction labels (A/R/D)."""
+    directions = {}
+    with open(ATRM_TSV) as f:
+        next(f)  # skip header
+        for line in f:
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) < 5:
+                continue
+            tf, target, label = parts[0], parts[1], parts[4]
+            if label == "A":
+                directions[(tf, target)] = "activation"
+            elif label == "R":
+                directions[(tf, target)] = "repression"
+            elif label == "D":
+                directions[(tf, target)] = "activation"
+    return directions
+
+
 def load_arabidopsis_edges():
-    """Parse filtered PlantRegMap TSV."""
+    """Parse filtered PlantRegMap TSV, overlaying ATRM direction labels."""
+    atrm = load_atrm_directions()
     edges = []
     seen = set()
+    directed = 0
     with open(ARABIDOPSIS_TSV) as f:
         for line in f:
             parts = line.rstrip("\n").split("\t")
@@ -60,7 +85,12 @@ def load_arabidopsis_edges():
             if key in seen:
                 continue
             seen.add(key)
+            if key in atrm:
+                reg = atrm[key]
+                confidence = max(confidence, 0.90)
+                directed += 1
             edges.append((tf, target, reg, confidence, "PlantRegMap"))
+    print(f"  ATRM: set direction on {directed}/{len(atrm)} literature-curated pairs")
     return edges
 
 
