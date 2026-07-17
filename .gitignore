@@ -20,5 +20,8 @@ npm-debug.log*
 build/
 dist/
 
+# Generated data (rebuilt from backend/data/*.tsv,*.json at startup)
+backend/data/*.sqlite3
+
 # OS
 .DS_Store

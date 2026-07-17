@@ -8,7 +8,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from datetime import datetime
+from pathlib import Path as FilePath
+import json
 import logging
+import sqlite3
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -120,164 +123,93 @@ class NeighborhoodRequest(BaseModel):
     regulation_type: List[str] = ["activation", "repression"]
     min_confidence: float = 0.3
 
-# ============= Mock Database Service =============
-# In production, replace this with actual database queries
+# ============= Database Service =============
+# Backed by a local SQLite database built from the full TRRUST v2 human
+# TF-target corpus (https://www.grnpedia.org/trrust/), with gene names
+# enriched from mygene.info at build time. See backend/scripts/build_db.py
+# and backend/scripts/fetch_gene_names.py. No network access at runtime.
 
-class MockGeneDatabase:
-    """Mock database service for demonstration"""
-    
-    def __init__(self):
-        # Real data: subset of TRRUST v2 human TF-target interactions
-        # (https://www.grnpedia.org/trrust/), centered on the TP53 regulatory
-        # neighborhood. Gene names are TRRUST symbols (no full names/Ensembl
-        # IDs in the source file). Confidence is a heuristic derived from
-        # distinct-PubMed-reference count per pair, not a TRRUST-provided score.
-        self.genes = {
-            "BAX": Gene(id="BAX", symbol="BAX", name="BAX", species="human", is_tf=False, gene_type="protein_coding"),
-            "BCL2": Gene(id="BCL2", symbol="BCL2", name="BCL2", species="human", is_tf=False, gene_type="protein_coding"),
-            "BCL2L1": Gene(id="BCL2L1", symbol="BCL2L1", name="BCL2L1", species="human", is_tf=False, gene_type="protein_coding"),
-            "BRCA2": Gene(id="BRCA2", symbol="BRCA2", name="BRCA2", species="human", is_tf=False, gene_type="protein_coding"),
-            "CDKN1A": Gene(id="CDKN1A", symbol="CDKN1A", name="CDKN1A", species="human", is_tf=False, gene_type="protein_coding"),
-            "DDB1": Gene(id="DDB1", symbol="DDB1", name="DDB1", species="human", is_tf=False, gene_type="protein_coding"),
-            "DNMT1": Gene(id="DNMT1", symbol="DNMT1", name="DNMT1", species="human", is_tf=True, gene_type="protein_coding"),
-            "DUSP1": Gene(id="DUSP1", symbol="DUSP1", name="DUSP1", species="human", is_tf=False, gene_type="protein_coding"),
-            "E2F1": Gene(id="E2F1", symbol="E2F1", name="E2F1", species="human", is_tf=True, gene_type="protein_coding"),
-            "EZH2": Gene(id="EZH2", symbol="EZH2", name="EZH2", species="human", is_tf=True, gene_type="protein_coding"),
-            "GADD45A": Gene(id="GADD45A", symbol="GADD45A", name="GADD45A", species="human", is_tf=False, gene_type="protein_coding"),
-            "ING1": Gene(id="ING1", symbol="ING1", name="ING1", species="human", is_tf=True, gene_type="protein_coding"),
-            "KLF4": Gene(id="KLF4", symbol="KLF4", name="KLF4", species="human", is_tf=True, gene_type="protein_coding"),
-            "MDM2": Gene(id="MDM2", symbol="MDM2", name="MDM2", species="human", is_tf=True, gene_type="protein_coding"),
-            "MMP2": Gene(id="MMP2", symbol="MMP2", name="MMP2", species="human", is_tf=False, gene_type="protein_coding"),
-            "MYCN": Gene(id="MYCN", symbol="MYCN", name="MYCN", species="human", is_tf=True, gene_type="protein_coding"),
-            "NF1": Gene(id="NF1", symbol="NF1", name="NF1", species="human", is_tf=True, gene_type="protein_coding"),
-            "PAX5": Gene(id="PAX5", symbol="PAX5", name="PAX5", species="human", is_tf=True, gene_type="protein_coding"),
-            "PPARG": Gene(id="PPARG", symbol="PPARG", name="PPARG", species="human", is_tf=True, gene_type="protein_coding"),
-            "SIRT1": Gene(id="SIRT1", symbol="SIRT1", name="SIRT1", species="human", is_tf=True, gene_type="protein_coding"),
-            "TNFRSF10B": Gene(id="TNFRSF10B", symbol="TNFRSF10B", name="TNFRSF10B", species="human", is_tf=False, gene_type="protein_coding"),
-            "TP53": Gene(id="TP53", symbol="TP53", name="TP53", species="human", is_tf=True, gene_type="protein_coding"),
-            "YY1": Gene(id="YY1", symbol="YY1", name="YY1", species="human", is_tf=True, gene_type="protein_coding"),
-        }
+DB_PATH = FilePath(__file__).parent / "data" / "grn.sqlite3"
 
-        self.interactions = {
-            ("TP53", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.95, "sources": ["TRRUST"]},
-            ("TP53", "BAX"): {"regulation_type": "activation", "confidence": 0.95, "sources": ["TRRUST"]},
-            ("TP53", "MDM2"): {"regulation_type": "activation", "confidence": 0.95, "sources": ["TRRUST"]},
-            ("TP53", "BCL2"): {"regulation_type": "repression", "confidence": 0.95, "sources": ["TRRUST"]},
-            ("SIRT1", "TP53"): {"regulation_type": "repression", "confidence": 0.8, "sources": ["TRRUST"]},
-            ("TP53", "GADD45A"): {"regulation_type": "repression", "confidence": 0.8, "sources": ["TRRUST"]},
-            ("TP53", "MMP2"): {"regulation_type": "activation", "confidence": 0.8, "sources": ["TRRUST"]},
-            ("TP53", "TNFRSF10B"): {"regulation_type": "activation", "confidence": 0.8, "sources": ["TRRUST"]},
-            ("YY1", "TP53"): {"regulation_type": "activation", "confidence": 0.8, "sources": ["TRRUST"]},
-            ("E2F1", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("ING1", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("KLF4", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("MYCN", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("NF1", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("PAX5", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("PPARG", "TP53"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("TP53", "BCL2L1"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("TP53", "BRCA2"): {"regulation_type": "repression", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("TP53", "DDB1"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("TP53", "DNMT1"): {"regulation_type": "repression", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("TP53", "DUSP1"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("TP53", "EZH2"): {"regulation_type": "repression", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("KLF4", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.95, "sources": ["TRRUST"]},
-            ("SIRT1", "CDKN1A"): {"regulation_type": "repression", "confidence": 0.8, "sources": ["TRRUST"]},
-            ("YY1", "TNFRSF10B"): {"regulation_type": "repression", "confidence": 0.8, "sources": ["TRRUST"]},
-            ("E2F1", "BCL2"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("ING1", "BAX"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("ING1", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("PPARG", "BCL2"): {"regulation_type": "activation", "confidence": 0.7, "sources": ["TRRUST"]},
-            ("DNMT1", "TNFRSF10B"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("E2F1", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("E2F1", "DNMT1"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("E2F1", "DUSP1"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("E2F1", "MDM2"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("E2F1", "MYCN"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("E2F1", "PPARG"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("EZH2", "CDKN1A"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("EZH2", "MMP2"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("EZH2", "TP53"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("KLF4", "MMP2"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("MYCN", "BAX"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("MYCN", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("PAX5", "BAX"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("PAX5", "BCL2"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("PAX5", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("PAX5", "MYCN"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("PPARG", "BCL2L1"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("PPARG", "CDKN1A"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("SIRT1", "EZH2"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("SIRT1", "PPARG"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("SIRT1", "TNFRSF10B"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("TP53", "E2F1"): {"regulation_type": "repression", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("TP53", "PAX5"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-            ("YY1", "NF1"): {"regulation_type": "activation", "confidence": 0.6, "sources": ["TRRUST"]},
-        }
-    
+
+class GeneDatabase:
+    """SQLite-backed gene/interaction lookups"""
+
+    def __init__(self, db_path: FilePath):
+        if not db_path.exists():
+            logger.info("Database not found, building from local TRRUST data...")
+            from scripts.build_db import build
+            build()
+        self.conn = sqlite3.connect(db_path, check_same_thread=False)
+        self.conn.row_factory = sqlite3.Row
+
+    def _row_to_gene(self, row) -> Gene:
+        return Gene(
+            id=row["id"],
+            symbol=row["symbol"],
+            name=row["name"],
+            species=row["species"],
+            is_tf=bool(row["is_tf"]),
+            gene_type=row["gene_type"]
+        )
+
     def search_genes(self, query: str, limit: int = 10, species: Optional[str] = None) -> List[Gene]:
         """Search for genes by symbol or name"""
-        results = []
-        query_lower = query.lower()
-        
-        for gene in self.genes.values():
-            if (query_lower in gene.symbol.lower() or 
-                query_lower in gene.name.lower()):
-                if species is None or gene.species == species:
-                    results.append(gene)
-                    if len(results) >= limit:
-                        break
-        
-        return results
-    
+        sql = "SELECT * FROM genes WHERE (symbol LIKE ? OR name LIKE ?)"
+        params: List[Any] = [f"%{query}%", f"%{query}%"]
+        if species:
+            sql += " AND species = ?"
+            params.append(species)
+        sql += " ORDER BY (symbol = ? COLLATE NOCASE) DESC, LENGTH(symbol) ASC LIMIT ?"
+        params.extend([query, limit])
+        rows = self.conn.execute(sql, params).fetchall()
+        return [self._row_to_gene(r) for r in rows]
+
     def get_gene(self, gene_id: str) -> Optional[Gene]:
         """Get gene by ID"""
-        return self.genes.get(gene_id)
-    
+        row = self.conn.execute("SELECT * FROM genes WHERE id = ?", (gene_id,)).fetchone()
+        return self._row_to_gene(row) if row else None
+
     def get_regulators(self, gene_id: str, min_confidence: float = 0.0) -> List[GeneInteraction]:
         """Get regulators of a gene"""
-        regulators = []
-        
-        for (source_id, target_id), interaction in self.interactions.items():
-            if target_id == gene_id and interaction["confidence"] >= min_confidence:
-                source_gene = self.genes.get(source_id)
-                if source_gene:
-                    regulators.append(GeneInteraction(
-                        id=source_gene.id,
-                        symbol=source_gene.symbol,
-                        name=source_gene.name,
-                        species=source_gene.species,
-                        is_tf=source_gene.is_tf,
-                        confidence=interaction["confidence"],
-                        regulation_type=interaction["regulation_type"],
-                        source_databases=interaction["sources"]
-                    ))
-        
-        return regulators
-    
+        rows = self.conn.execute(
+            """
+            SELECT g.*, i.regulation_type, i.confidence, i.sources
+            FROM interactions i JOIN genes g ON g.id = i.source_id
+            WHERE i.target_id = ? AND i.confidence >= ?
+            """,
+            (gene_id, min_confidence)
+        ).fetchall()
+        return [
+            GeneInteraction(
+                id=r["id"], symbol=r["symbol"], name=r["name"], species=r["species"],
+                is_tf=bool(r["is_tf"]), confidence=r["confidence"],
+                regulation_type=r["regulation_type"], source_databases=json.loads(r["sources"])
+            )
+            for r in rows
+        ]
+
     def get_targets(self, gene_id: str, min_confidence: float = 0.0) -> List[GeneInteraction]:
         """Get targets of a gene"""
-        targets = []
-        
-        for (source_id, target_id), interaction in self.interactions.items():
-            if source_id == gene_id and interaction["confidence"] >= min_confidence:
-                target_gene = self.genes.get(target_id)
-                if target_gene:
-                    targets.append(GeneInteraction(
-                        id=target_gene.id,
-                        symbol=target_gene.symbol,
-                        name=target_gene.name,
-                        species=target_gene.species,
-                        is_tf=target_gene.is_tf,
-                        confidence=interaction["confidence"],
-                        regulation_type=interaction["regulation_type"],
-                        source_databases=interaction["sources"]
-                    ))
-        
-        return targets
+        rows = self.conn.execute(
+            """
+            SELECT g.*, i.regulation_type, i.confidence, i.sources
+            FROM interactions i JOIN genes g ON g.id = i.target_id
+            WHERE i.source_id = ? AND i.confidence >= ?
+            """,
+            (gene_id, min_confidence)
+        ).fetchall()
+        return [
+            GeneInteraction(
+                id=r["id"], symbol=r["symbol"], name=r["name"], species=r["species"],
+                is_tf=bool(r["is_tf"]), confidence=r["confidence"],
+                regulation_type=r["regulation_type"], source_databases=json.loads(r["sources"])
+            )
+            for r in rows
+        ]
 
 # Initialize database
-db = MockGeneDatabase()
+db = GeneDatabase(DB_PATH)
 
 # ============= Root Endpoint =============
 
