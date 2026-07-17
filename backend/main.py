@@ -26,7 +26,7 @@ app = FastAPI(
 # ============= CORS Configuration =============
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:8000"],
+    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -115,12 +115,12 @@ class PathFindingRequest(BaseModel):
     max_depth: int = 3
     limit: int = 20
     min_confidence: float = 0.3
-    regulation_type: List[str] = ["activation", "repression"]
+    regulation_type: List[str] = ["activation", "repression", "regulation"]
 
 class NeighborhoodRequest(BaseModel):
     max_depth: int = 1
     direction: str = "both"
-    regulation_type: List[str] = ["activation", "repression"]
+    regulation_type: List[str] = ["activation", "repression", "regulation"]
     min_confidence: float = 0.3
 
 # ============= Database Service =============
@@ -443,31 +443,39 @@ async def get_orthology(
 
 @app.get("/api/v1/stats")
 async def get_stats():
-    """Get overall database statistics"""
+    """Get overall database statistics from live data"""
+    cur = db.conn.execute
+    total_genes = cur("SELECT COUNT(*) FROM genes").fetchone()[0]
+    total_interactions = cur("SELECT COUNT(*) FROM interactions").fetchone()[0]
+    species_list = [r[0] for r in cur("SELECT DISTINCT species FROM genes ORDER BY species").fetchall()]
     return {
-        "species": 21,
-        "genes": 591000,
-        "interactions": 6700000,
-        "databases": ["TRRUST", "DoRothEA", "PlantRegMap", "JASPAR"],
-        "last_updated": "2024-01-15",
+        "species": len(species_list),
+        "species_list": species_list,
+        "genes": total_genes,
+        "interactions": total_interactions,
+        "databases": ["TRRUST", "PlantRegMap"],
         "version": "1.0.0"
     }
 
 @app.get("/api/v1/stats/species/{species}")
 async def get_species_stats(species: str):
-    """Get species-specific statistics"""
-    species_stats = {
-        "human": {"genes": 20000, "transcription_factors": 1500, "interactions": 250000},
-        "arabidopsis": {"genes": 27000, "transcription_factors": 1800, "interactions": 120000},
-        "rice": {"genes": 40000, "transcription_factors": 2000, "interactions": 180000},
-    }
-    
-    if species not in species_stats:
+    """Get species-specific statistics from live data"""
+    cur = db.conn.execute
+    genes = cur("SELECT COUNT(*) FROM genes WHERE species = ?", (species,)).fetchone()[0]
+    if genes == 0:
         raise HTTPException(status_code=404, detail="Species not found")
-    
+    tfs = cur("SELECT COUNT(*) FROM genes WHERE species = ? AND is_tf = 1", (species,)).fetchone()[0]
+    gene_ids = [r[0] for r in cur("SELECT id FROM genes WHERE species = ?", (species,)).fetchall()]
+    placeholders = ",".join("?" * len(gene_ids))
+    interactions = cur(
+        f"SELECT COUNT(*) FROM interactions WHERE source_id IN ({placeholders})",
+        gene_ids
+    ).fetchone()[0]
     return {
         "species": species,
-        **species_stats[species]
+        "genes": genes,
+        "transcription_factors": tfs,
+        "interactions": interactions
     }
 
 # ============= Error Handlers =============

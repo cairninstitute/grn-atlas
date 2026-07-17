@@ -166,6 +166,13 @@
   border-radius: 2px;
 }
 
+.edge-regulation {
+  width: 20px;
+  height: 3px;
+  background-color: #7E57C2;
+  border-radius: 2px;
+}
+
 .confidence-scale {
   margin-top: 6px;
 }

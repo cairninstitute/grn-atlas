@@ -99,7 +99,7 @@ export default function NetworkVisualization({ gene, data, filters, expandedNode
           <div className="tooltip-row">
             <span className="tooltip-label">Type:</span>
             <span className={`tooltip-value regulation-type-${tooltip.type}`}>
-              {tooltip.type === 'activation' ? '✓ Activation' : '✗ Repression'}
+              {tooltip.type === 'activation' ? '✓ Activation' : tooltip.type === 'repression' ? '✗ Repression' : '● Regulation'}
             </span>
           </div>
           
@@ -140,6 +140,11 @@ export default function NetworkVisualization({ gene, data, filters, expandedNode
         <div className="legend-item">
           <div className="legend-symbol edge-repression"></div>
           <span>Repression</span>
+        </div>
+
+        <div className="legend-item">
+          <div className="legend-symbol edge-regulation"></div>
+          <span>Regulation</span>
         </div>
 
         <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '0.5px solid var(--border)' }}>
@@ -353,6 +358,14 @@ function getCytoscapeStyle() {
         'target-arrow-color': '#F44336',
         'target-arrow-shape': 'tee',
         'edge_color': '#F44336'
+      }
+    },
+    {
+      selector: 'edge[regulation_type="regulation"]',
+      style: {
+        'line-color': '#7E57C2',
+        'target-arrow-color': '#7E57C2',
+        'edge_color': '#7E57C2'
       }
     },
     {

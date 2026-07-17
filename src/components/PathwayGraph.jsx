@@ -74,7 +74,7 @@ export default function PathwayGraph({ paths, sourceGene, targetSymbol }) {
           <div className="tooltip-row">
             <span className="tooltip-label">Type:</span>
             <span className={`tooltip-value regulation-type-${tooltip.type}`}>
-              {tooltip.type === 'activation' ? '✓ Activation' : tooltip.type === 'repression' ? '✗ Repression' : '? Unknown'}
+              {tooltip.type === 'activation' ? '✓ Activation' : tooltip.type === 'repression' ? '✗ Repression' : tooltip.type === 'regulation' ? '● Regulation' : '? Unknown'}
             </span>
           </div>
           <div className="tooltip-row">
@@ -113,6 +113,10 @@ export default function PathwayGraph({ paths, sourceGene, targetSymbol }) {
         <div className="legend-item">
           <div className="legend-symbol edge-repression"></div>
           <span>Repression</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-symbol edge-regulation"></div>
+          <span>Regulation</span>
         </div>
       </div>
 
@@ -225,6 +229,10 @@ function getPathStyle() {
     {
       selector: 'edge[regulation_type="repression"]',
       style: { 'line-color': '#F44336', 'target-arrow-color': '#F44336', 'target-arrow-shape': 'tee', 'edge_color': '#F44336' }
+    },
+    {
+      selector: 'edge[regulation_type="regulation"]',
+      style: { 'line-color': '#7E57C2', 'target-arrow-color': '#7E57C2', 'edge_color': '#7E57C2' }
     },
     {
       selector: 'edge[regulation_type="unknown"]',
