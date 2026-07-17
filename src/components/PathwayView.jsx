@@ -3,51 +3,92 @@ import PathwayGraph from './PathwayGraph';
 import '../styles/PathwayView.css';
 
 export default function PathwayView({ gene, filters }) {
+  const [sourceGene, setSourceGene] = useState('');
+  const [sourceSuggestions, setSourceSuggestions] = useState([]);
+  const [resolvedSource, setResolvedSource] = useState(null);
   const [targetGene, setTargetGene] = useState('');
   const [targetSuggestions, setTargetSuggestions] = useState([]);
-  const [paths, setPaths] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [maxDepth, setMaxDepth] = useState(3);
   const [pathLimit, setPathLimit] = useState(20);
-  const [selectedPath, setSelectedPath] = useState(null);
 
-  // Fetch target gene suggestions
+  // Accumulated searches: each entry is { id, sourceSymbol, targetSymbol, paths, visible }
+  const [searches, setSearches] = useState([]);
+  const [selectedPath, setSelectedPath] = useState(null); // { searchIdx, pathIdx } or null for all
+
+  // Seed source gene from the main selected gene
   useEffect(() => {
-    if (targetGene.length < 2) {
-      setTargetSuggestions([]);
-      return;
+    if (gene) {
+      setSourceGene(gene.symbol);
+      setResolvedSource(gene);
     }
+  }, [gene]);
 
+  // Source gene suggestions
+  useEffect(() => {
+    if (sourceGene.length < 2) { setSourceSuggestions([]); return; }
     const timer = setTimeout(async () => {
       try {
-        const response = await fetch(`/api/v1/genes/search?q=${encodeURIComponent(targetGene)}&limit=5`);
-        const data = await response.json();
-        setTargetSuggestions(data.results || []);
-      } catch (err) {
-        console.error('Search error:', err);
-      }
+        const resp = await fetch(`/api/v1/genes/search?q=${encodeURIComponent(sourceGene)}&limit=5`);
+        const data = await resp.json();
+        setSourceSuggestions(data.results || []);
+      } catch (err) { console.error(err); }
     }, 300);
+    return () => clearTimeout(timer);
+  }, [sourceGene]);
 
+  // Target gene suggestions
+  useEffect(() => {
+    if (targetGene.length < 2) { setTargetSuggestions([]); return; }
+    const timer = setTimeout(async () => {
+      try {
+        const resp = await fetch(`/api/v1/genes/search?q=${encodeURIComponent(targetGene)}&limit=5`);
+        const data = await resp.json();
+        setTargetSuggestions(data.results || []);
+      } catch (err) { console.error(err); }
+    }, 300);
     return () => clearTimeout(timer);
   }, [targetGene]);
 
-  // Find paths
+  const handleSelectSource = (sug) => {
+    setSourceGene(sug.symbol);
+    setResolvedSource(sug);
+    setSourceSuggestions([]);
+  };
+
+  const handleSelectTarget = (symbol) => {
+    setTargetGene(symbol);
+    setTargetSuggestions([]);
+  };
+
   const handleFindPaths = async () => {
-    if (!targetGene) {
-      setError('Please select a target gene');
-      return;
+    if (!targetGene) { setError('Please select a target gene'); return; }
+
+    // Resolve source if user typed but didn't pick from suggestions
+    let src = resolvedSource;
+    if (!src || src.symbol.toLowerCase() !== sourceGene.toLowerCase()) {
+      try {
+        const resp = await fetch(`/api/v1/genes/search?q=${encodeURIComponent(sourceGene)}&limit=1`);
+        const data = await resp.json();
+        if (data.results?.length > 0) {
+          src = data.results[0];
+          setResolvedSource(src);
+        } else {
+          setError(`Gene "${sourceGene}" not found`);
+          return;
+        }
+      } catch (err) { setError(err.message); return; }
     }
 
     setLoading(true);
     setError(null);
-    setSelectedPath(null);
     try {
       const response = await fetch('/api/v1/pathways/pathfinding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          source_gene_id: gene.id,
+          source_gene_id: src.id,
           target_symbol: targetGene,
           max_depth: maxDepth,
           limit: pathLimit,
@@ -56,9 +97,20 @@ export default function PathwayView({ gene, filters }) {
       });
 
       const data = await response.json();
-      setPaths(data.paths || []);
-      if (data.paths?.length === 0) {
-        setError(`No paths found from ${gene.symbol} to ${targetGene}`);
+      const newPaths = data.paths || [];
+      if (newPaths.length === 0) {
+        setError(`No paths found from ${src.symbol} to ${targetGene}`);
+      } else {
+        const newSearch = {
+          id: Date.now(),
+          sourceSymbol: src.symbol,
+          sourceGene: src,
+          targetSymbol: targetGene,
+          paths: newPaths,
+          visible: true
+        };
+        setSearches(prev => [...prev, newSearch]);
+        setSelectedPath(null);
       }
     } catch (err) {
       setError(err.message);
@@ -67,16 +119,41 @@ export default function PathwayView({ gene, filters }) {
     }
   };
 
-  const handleSelectTarget = (geneSymbol) => {
-    setTargetGene(geneSymbol);
-    setTargetSuggestions([]);
+  const toggleSearch = (idx) => {
+    setSearches(prev => prev.map((s, i) => i === idx ? { ...s, visible: !s.visible } : s));
+    setSelectedPath(null);
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleFindPaths();
-    }
+  const removeSearch = (idx) => {
+    setSearches(prev => prev.filter((_, i) => i !== idx));
+    setSelectedPath(null);
   };
+
+  const clearAll = () => {
+    setSearches([]);
+    setSelectedPath(null);
+  };
+
+  // Collect all visible paths for the graph
+  const visibleSearches = searches.filter(s => s.visible);
+  const allVisiblePaths = visibleSearches.flatMap(s => s.paths);
+
+  // Determine which paths to show on graph based on selection
+  let graphPaths = allVisiblePaths;
+  if (selectedPath !== null) {
+    const search = searches[selectedPath.searchIdx];
+    if (search) graphPaths = [search.paths[selectedPath.pathIdx]];
+  }
+
+  // Collect all unique source/target symbols for legend
+  const sourceSymbols = [...new Set(visibleSearches.map(s => s.sourceSymbol))];
+  const targetSymbols = [...new Set(visibleSearches.map(s => s.targetSymbol))];
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') handleFindPaths();
+  };
+
+  const totalPaths = searches.reduce((n, s) => n + s.paths.length, 0);
 
   return (
     <div className="pathway-view">
@@ -86,8 +163,25 @@ export default function PathwayView({ gene, filters }) {
           <div className="search-row">
             <div className="search-field">
               <label>From</label>
-              <div className="source-field">
-                <span className="source-gene">{gene.symbol}</span>
+              <div className="target-field">
+                <input
+                  type="text"
+                  className="target-input"
+                  placeholder="Source gene..."
+                  value={sourceGene}
+                  onChange={(e) => setSourceGene(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                />
+                {sourceSuggestions.length > 0 && (
+                  <div className="suggestions">
+                    {sourceSuggestions.map((sug) => (
+                      <div key={sug.id} className="suggestion" onClick={() => handleSelectSource(sug)}>
+                        <span className="sug-symbol">{sug.symbol}</span>
+                        <span className="sug-name">{sug.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -99,7 +193,7 @@ export default function PathwayView({ gene, filters }) {
                 <input
                   type="text"
                   className="target-input"
-                  placeholder="Search target gene..."
+                  placeholder="Target gene..."
                   value={targetGene}
                   onChange={(e) => setTargetGene(e.target.value)}
                   onKeyPress={handleKeyPress}
@@ -107,11 +201,7 @@ export default function PathwayView({ gene, filters }) {
                 {targetSuggestions.length > 0 && (
                   <div className="suggestions">
                     {targetSuggestions.map((sug) => (
-                      <div 
-                        key={sug.id}
-                        className="suggestion"
-                        onClick={() => handleSelectTarget(sug.symbol)}
-                      >
+                      <div key={sug.id} className="suggestion" onClick={() => handleSelectTarget(sug.symbol)}>
                         <span className="sug-symbol">{sug.symbol}</span>
                         <span className="sug-name">{sug.name}</span>
                       </div>
@@ -122,133 +212,128 @@ export default function PathwayView({ gene, filters }) {
             </div>
           </div>
 
-          {/* Options */}
           <div className="search-options">
             <div className="option">
               <label>Max depth</label>
-              <input
-                type="range"
-                min="1"
-                max="5"
-                value={maxDepth}
-                onChange={(e) => setMaxDepth(parseInt(e.target.value, 10))}
-                className="slider"
-              />
+              <input type="range" min="1" max="5" value={maxDepth}
+                onChange={(e) => setMaxDepth(parseInt(e.target.value, 10))} className="slider" />
               <span className="option-value">{maxDepth} hops</span>
             </div>
-
             <div className="option">
               <label>Max paths</label>
-              <input
-                type="range"
-                min="5"
-                max="100"
-                step="5"
-                value={pathLimit}
-                onChange={(e) => setPathLimit(parseInt(e.target.value, 10))}
-                className="slider"
-              />
+              <input type="range" min="5" max="100" step="5" value={pathLimit}
+                onChange={(e) => setPathLimit(parseInt(e.target.value, 10))} className="slider" />
               <span className="option-value">{pathLimit}</span>
             </div>
-
-            <button 
-              className="search-button"
-              onClick={handleFindPaths}
-              disabled={loading || !targetGene}
-            >
-              {loading ? '⟳ Searching...' : '🔍 Find paths'}
+            <button className="search-button" onClick={handleFindPaths} disabled={loading || !targetGene || !sourceGene}>
+              {loading ? '⟳ Searching...' : searches.length > 0 ? '+ Add paths' : 'Find paths'}
             </button>
           </div>
         </div>
       </div>
 
-      {error && (
-        <div className="error-banner">
-          <span>{error}</span>
-        </div>
-      )}
+      {error && <div className="error-banner"><span>{error}</span></div>}
 
       {/* Results */}
-      {paths && paths.length > 0 ? (
+      {searches.length > 0 ? (
         <div className="pathway-results">
-          <div className="results-header">
-            <h3>Found {paths.length} path{paths.length !== 1 ? 's' : ''}</h3>
-            <p>
-              {selectedPath === null
-                ? `Showing all routes from ${gene.symbol} to ${targetGene}`
-                : `Showing path #${selectedPath + 1} of ${paths.length}`}
-            </p>
+          {/* Search chips */}
+          <div className="searches-bar">
+            <div className="searches-list">
+              {searches.map((s, idx) => (
+                <div key={s.id} className={`search-chip ${s.visible ? 'search-chip-visible' : 'search-chip-hidden'}`}>
+                  <button className="chip-toggle" onClick={() => toggleSearch(idx)}
+                    title={s.visible ? 'Hide paths' : 'Show paths'}>
+                    {s.visible ? '◉' : '○'}
+                  </button>
+                  <span className="chip-label" onClick={() => toggleSearch(idx)}>
+                    {s.sourceSymbol} → {s.targetSymbol}
+                    <span className="chip-count">{s.paths.length}</span>
+                  </span>
+                  <button className="chip-remove" onClick={() => removeSearch(idx)} title="Remove">×</button>
+                </div>
+              ))}
+            </div>
+            <button className="clear-all-btn" onClick={clearAll}>Clear all</button>
           </div>
 
+          {/* Toggle bar for individual paths */}
           <div className="view-toggle">
-            <button
-              className={`toggle-btn ${selectedPath === null ? 'active' : ''}`}
-              onClick={() => setSelectedPath(null)}
-            >
-              All paths
+            <button className={`toggle-btn ${selectedPath === null ? 'active' : ''}`}
+              onClick={() => setSelectedPath(null)}>
+              All ({allVisiblePaths.length})
             </button>
-            {paths.map((_, idx) => (
-              <button
-                key={idx}
-                className={`toggle-btn ${selectedPath === idx ? 'active' : ''}`}
-                onClick={() => setSelectedPath(idx)}
-              >
-                #{idx + 1}
-              </button>
-            ))}
+            {visibleSearches.map((s, sIdx) => {
+              const realIdx = searches.indexOf(s);
+              return s.paths.map((_, pIdx) => (
+                <button key={`${realIdx}-${pIdx}`}
+                  className={`toggle-btn ${selectedPath?.searchIdx === realIdx && selectedPath?.pathIdx === pIdx ? 'active' : ''}`}
+                  onClick={() => setSelectedPath(
+                    selectedPath?.searchIdx === realIdx && selectedPath?.pathIdx === pIdx
+                      ? null
+                      : { searchIdx: realIdx, pathIdx: pIdx }
+                  )}>
+                  {s.sourceSymbol[0]}→{s.targetSymbol[0]} #{pIdx + 1}
+                </button>
+              ));
+            })}
           </div>
 
           <PathwayGraph
-            paths={selectedPath === null ? paths : [paths[selectedPath]]}
-            sourceGene={gene}
-            targetSymbol={targetGene}
+            paths={graphPaths}
+            sourceGene={null}
+            targetSymbol={null}
+            sourceIds={visibleSearches.map(s => s.sourceGene?.id).filter(Boolean)}
+            targetSymbols={targetSymbols}
           />
 
+          {/* Path cards grouped by search */}
           <div className="paths-list">
-            {paths.map((path, idx) => (
-              <PathCard
-                key={idx}
-                path={path}
-                index={idx + 1}
-                selected={selectedPath === idx}
-                onClick={() => setSelectedPath(selectedPath === idx ? null : idx)}
-              />
+            {searches.map((s, sIdx) => s.visible && (
+              <div key={s.id} className="search-group">
+                <div className="search-group-header">
+                  {s.sourceSymbol} → {s.targetSymbol}
+                  <span className="search-group-count">{s.paths.length} path{s.paths.length !== 1 ? 's' : ''}</span>
+                </div>
+                {s.paths.map((path, pIdx) => (
+                  <PathCard key={pIdx} path={path} index={pIdx + 1}
+                    selected={selectedPath?.searchIdx === sIdx && selectedPath?.pathIdx === pIdx}
+                    onClick={() => setSelectedPath(
+                      selectedPath?.searchIdx === sIdx && selectedPath?.pathIdx === pIdx
+                        ? null : { searchIdx: sIdx, pathIdx: pIdx }
+                    )}
+                  />
+                ))}
+              </div>
             ))}
           </div>
-        </div>
-      ) : paths !== null && paths.length === 0 ? (
-        <div className="no-results">
-          <div className="no-results-icon">🔍</div>
-          <p>No regulatory paths found</p>
-          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-            Try adjusting depth or confidence filters
-          </p>
         </div>
       ) : (
         <div className="empty-state-pathway">
           <div className="empty-icon">🛤️</div>
           <p>Search for paths between two genes</p>
+          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+            Add multiple searches to build up a connected network
+          </p>
         </div>
       )}
     </div>
   );
 }
 
-// Individual path card
 function PathCard({ path, index, selected, onClick }) {
   const [expanded, setExpanded] = useState(false);
 
   const genes = path.genes || [];
   const hops = genes.length - 1;
-  const minConfidence = Math.min(...(path.confidences || [1]));
-  const avgConfidence = path.confidences ? 
+  const avgConfidence = path.confidences ?
     path.confidences.reduce((a, b) => a + b, 0) / path.confidences.length : 0;
 
   return (
     <div className={`path-card ${selected ? 'path-card-selected' : ''}`}>
       <div className="path-header" onClick={() => setExpanded(!expanded)}>
         <div className="path-number" onClick={(e) => { e.stopPropagation(); onClick(); }}>#{index}</div>
-        
+
         <div className="path-summary">
           <div className="path-genes">
             {genes.slice(0, 5).map((gene, i) => (
@@ -285,7 +370,7 @@ function PathCard({ path, index, selected, onClick }) {
                   <span className="gene-symbol">{gene.symbol}</span>
                   <span className="gene-name">{gene.name}</span>
                 </div>
-                
+
                 {i < genes.length - 1 && (
                   <>
                     <div className="interaction-cell">

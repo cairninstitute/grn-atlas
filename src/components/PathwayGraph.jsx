@@ -2,23 +2,32 @@ import React, { useEffect, useRef, useState } from 'react';
 import cytoscape from 'cytoscape';
 import '../styles/NetworkVisualization.css';
 
-// Renders the union of all found paths as a single graph, source -> ... -> target
-export default function PathwayGraph({ paths, sourceGene, targetSymbol }) {
+export default function PathwayGraph({ paths, sourceGene, targetSymbol, sourceIds, targetSymbols }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
   const [tooltip, setTooltip] = useState(null);
 
+  // Collect all source/target IDs for node coloring
+  const allSourceIds = new Set(sourceIds || (sourceGene ? [sourceGene.id] : []));
+  const allTargetSyms = new Set(targetSymbols || (targetSymbol ? [targetSymbol] : []));
+
   useEffect(() => {
     if (!containerRef.current || !paths || paths.length === 0) return;
 
+    const elements = buildPathElements(paths, allSourceIds, allTargetSyms);
+
+    const roots = elements
+      .filter(el => el.data.type === 'source')
+      .map(el => el.data.id);
+
     const cy = cytoscape({
       container: containerRef.current,
-      elements: buildPathElements(paths, sourceGene),
+      elements,
       style: getPathStyle(),
       layout: {
-        name: 'breadthfirst',
+        name: roots.length > 0 ? 'breadthfirst' : 'cose',
         directed: true,
-        roots: sourceGene ? [sourceGene.id] : undefined,
+        roots: roots.length > 0 ? roots : undefined,
         spacingFactor: 1.3,
         animate: true,
         animationDuration: 400
@@ -58,7 +67,7 @@ export default function PathwayGraph({ paths, sourceGene, targetSymbol }) {
       window.removeEventListener('resize', handleResize);
       cy.destroy();
     };
-  }, [paths, sourceGene, targetSymbol]);
+  }, [paths, sourceIds, targetSymbols, sourceGene, targetSymbol]);
 
   return (
     <div className="network-visualization pathway-graph">
@@ -96,15 +105,15 @@ export default function PathwayGraph({ paths, sourceGene, targetSymbol }) {
         <div className="legend-title">Legend</div>
         <div className="legend-item">
           <div className="legend-symbol node-source"></div>
-          <span>{sourceGene?.symbol || 'Source'}</span>
+          <span>Source gene</span>
         </div>
         <div className="legend-item">
           <div className="legend-symbol node-path-target"></div>
-          <span>{targetSymbol || 'Target'}</span>
+          <span>Target gene</span>
         </div>
         <div className="legend-item">
           <div className="legend-symbol node-intermediate"></div>
-          <span>Intermediate gene</span>
+          <span>Intermediate</span>
         </div>
         <div className="legend-item">
           <div className="legend-symbol edge-activation"></div>
@@ -129,19 +138,27 @@ export default function PathwayGraph({ paths, sourceGene, targetSymbol }) {
   );
 }
 
-// Union all found paths into a single deduplicated node/edge set
-function buildPathElements(paths, sourceGene) {
+function buildPathElements(paths, sourceIds, targetSyms) {
   const nodes = new Map();
   const edges = new Map();
 
   paths.forEach((path) => {
     const genes = path.genes || [];
     genes.forEach((g, i) => {
-      if (nodes.has(g.id)) return;
-      let type = 'intermediate';
-      if (sourceGene && g.id === sourceGene.id) type = 'source';
-      else if (i === genes.length - 1) type = 'target';
-      nodes.set(g.id, { id: g.id, label: g.symbol, name: g.name, type });
+      if (!nodes.has(g.id)) {
+        let type = 'intermediate';
+        if (sourceIds.has(g.id)) type = 'source';
+        else if (i === genes.length - 1 && targetSyms.has(g.symbol)) type = 'target';
+        nodes.set(g.id, { id: g.id, label: g.symbol, name: g.name, type });
+      } else {
+        // Promote to source/target if this path identifies it as one
+        const existing = nodes.get(g.id);
+        if (sourceIds.has(g.id) && existing.type !== 'source') {
+          existing.type = 'source';
+        } else if (i === genes.length - 1 && targetSyms.has(g.symbol) && existing.type === 'intermediate') {
+          existing.type = 'target';
+        }
+      }
     });
 
     for (let i = 0; i < genes.length - 1; i++) {
