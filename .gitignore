@@ -23,5 +23,8 @@ dist/
 # Generated data (rebuilt from backend/data/*.tsv,*.json at startup)
 backend/data/*.sqlite3
 
+# Resumable fetch checkpoint (internal to fetch_genome_data.py)
+backend/data/.oma_cache.json
+
 # OS
 .DS_Store

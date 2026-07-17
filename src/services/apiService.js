@@ -103,6 +103,25 @@ export const pathwayAPI = {
   }
 };
 
+// Genome / synteny comparison
+export const genomeAPI = {
+  getSpecies: async () => {
+    const response = await fetch(`${API_BASE}/genome/species`);
+    return response.json();
+  },
+
+  getGenome: async (species) => {
+    const response = await fetch(`${API_BASE}/genome/${species}`);
+    return response.json();
+  },
+
+  getOrthologs: async (speciesA, speciesB) => {
+    const params = new URLSearchParams({ species_a: speciesA, species_b: speciesB });
+    const response = await fetch(`${API_BASE}/genome/orthologs?${params}`);
+    return response.json();
+  }
+};
+
 // Analytics / Stats
 export const analyticsAPI = {
   getStats: async () => {

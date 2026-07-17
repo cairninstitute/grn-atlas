@@ -5,6 +5,7 @@ import ViewTabs from './components/ViewTabs';
 import NetworkVisualization from './components/NetworkVisualization';
 import GeneDetailPanel from './components/GeneDetailPanel';
 import ComparisonView from './components/ComparisonView';
+import GenomeComparisonView from './components/GenomeComparisonView';
 import InterventionDesigner from './components/InterventionDesigner';
 import PathwayView from './components/PathwayView';
 import './styles/GeneNetworkExplorer.css';
@@ -106,11 +107,9 @@ export default function GeneNetworkExplorer() {
       
       <div className="main-content">
         {selectedGene && (
-          <>
-            <Toolbar gene={selectedGene} stats={networkData?.stats} cyRef={cyInstanceRef} />
-            <ViewTabs viewMode={viewMode} onViewChange={setViewMode} />
-          </>
+          <Toolbar gene={selectedGene} stats={networkData?.stats} cyRef={cyInstanceRef} />
         )}
+        <ViewTabs viewMode={viewMode} onViewChange={setViewMode} />
 
         <div className="content-area">
           {error && (
@@ -120,7 +119,9 @@ export default function GeneNetworkExplorer() {
             </div>
           )}
 
-          {!selectedGene ? (
+          {viewMode === 'genome' ? (
+            <GenomeComparisonView />
+          ) : !selectedGene ? (
             <div className="empty-state">
               <div className="empty-icon">🧬</div>
               <h2>Gene Regulatory Network Atlas</h2>

@@ -5,6 +5,7 @@ const TABS = [
   { id: 'network', label: 'Network', icon: '🔗' },
   { id: 'pathways', label: 'Pathways', icon: '🛤️' },
   { id: 'comparison', label: 'Comparison', icon: '⚖️' },
+  { id: 'genome', label: 'Genome', icon: '🧬' },
   { id: 'design', label: 'Design', icon: '✏️' }
 ];
 

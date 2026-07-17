@@ -457,6 +457,125 @@ async def get_orthology(
 
     return result
 
+# ============= Genome / Synteny Endpoints =============
+
+def _chromosome_sort_key(name: str):
+    """Order chromosomes numerically (1,2,...) then alphabetically (X, Y, ...)."""
+    return (0, int(name)) if name.isdigit() else (1, name)
+
+
+@app.get("/api/v1/genome/species")
+async def genome_species():
+    """List species that have genome coordinate data, with their chromosomes."""
+    cur = db.conn.execute
+    species_rows = cur(
+        "SELECT DISTINCT species FROM chromosomes ORDER BY species"
+    ).fetchall()
+    result = []
+    for (species,) in species_rows:
+        chroms = cur(
+            """
+            SELECT c.chromosome, c.length,
+                   (SELECT COUNT(*) FROM gene_locations g
+                    WHERE g.species = c.species AND g.chromosome = c.chromosome) AS gene_count
+            FROM chromosomes c WHERE c.species = ?
+            """,
+            (species,)
+        ).fetchall()
+        chroms = sorted(
+            [{"name": r["chromosome"], "length": r["length"], "gene_count": r["gene_count"]}
+             for r in chroms],
+            key=lambda c: _chromosome_sort_key(c["name"])
+        )
+        result.append({
+            "species": species,
+            "chromosomes": chroms,
+            "gene_count": sum(c["gene_count"] for c in chroms),
+        })
+    return {"species": result}
+
+
+@app.get("/api/v1/genome/orthologs")
+async def genome_orthologs(
+    species_a: str = Query(..., description="First species"),
+    species_b: str = Query(..., description="Second species"),
+):
+    """Ortholog pairs between two species, joined to both genes' loci."""
+    cur = db.conn.execute
+    # Orthologs may be stored in either direction; normalize to (a -> b).
+    rows = cur(
+        """
+        SELECT gene_a, gene_b, species_a, species_b, rel_type, score FROM orthologs
+        WHERE (species_a = ? AND species_b = ?) OR (species_a = ? AND species_b = ?)
+        """,
+        (species_a, species_b, species_b, species_a)
+    ).fetchall()
+
+    def locus(gene_id):
+        r = cur(
+            "SELECT l.chromosome, l.start, l.end, g.symbol, g.is_tf "
+            "FROM gene_locations l JOIN genes g ON g.id = l.gene_id WHERE l.gene_id = ?",
+            (gene_id,)
+        ).fetchone()
+        if not r:
+            return None
+        return {"gene_id": gene_id, "symbol": r["symbol"], "chromosome": r["chromosome"],
+                "start": r["start"], "end": r["end"], "is_tf": bool(r["is_tf"])}
+
+    pairs = []
+    for r in rows:
+        # Orient so 'a' matches the requested species_a.
+        if r["species_a"] == species_a:
+            ga, gb = r["gene_a"], r["gene_b"]
+        else:
+            ga, gb = r["gene_b"], r["gene_a"]
+        la, lb = locus(ga), locus(gb)
+        if not la or not lb:
+            continue
+        pairs.append({
+            "symbol": la["symbol"], "rel_type": r["rel_type"], "score": r["score"],
+            "a": la, "b": lb,
+        })
+    return {"species_a": species_a, "species_b": species_b, "pairs": pairs}
+
+
+@app.get("/api/v1/genome/{species}")
+async def genome_detail(species: str):
+    """Get all chromosomes for a species with their positioned genes."""
+    cur = db.conn.execute
+    chrom_rows = cur(
+        "SELECT chromosome, length FROM chromosomes WHERE species = ?", (species,)
+    ).fetchall()
+    if not chrom_rows:
+        raise HTTPException(status_code=404, detail="No genome data for species")
+
+    gene_rows = cur(
+        """
+        SELECT l.gene_id, l.chromosome, l.start, l.end, l.strand,
+               g.symbol, g.is_tf
+        FROM gene_locations l JOIN genes g ON g.id = l.gene_id
+        WHERE l.species = ?
+        """,
+        (species,)
+    ).fetchall()
+
+    by_chrom: Dict[str, list] = {r["chromosome"]: [] for r in chrom_rows}
+    for r in gene_rows:
+        by_chrom.setdefault(r["chromosome"], []).append({
+            "id": r["gene_id"], "symbol": r["symbol"],
+            "start": r["start"], "end": r["end"], "strand": r["strand"],
+            "is_tf": bool(r["is_tf"]),
+        })
+
+    chromosomes = sorted(
+        [{"name": r["chromosome"], "length": r["length"],
+          "genes": sorted(by_chrom.get(r["chromosome"], []), key=lambda g: g["start"])}
+         for r in chrom_rows],
+        key=lambda c: _chromosome_sort_key(c["name"])
+    )
+    return {"species": species, "chromosomes": chromosomes}
+
+
 # ============= Statistics Endpoints =============
 
 @app.get("/api/v1/stats")

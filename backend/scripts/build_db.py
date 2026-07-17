@@ -26,6 +26,27 @@ ARABIDOPSIS_NAMES_JSON = DATA_DIR / "gene_names_arabidopsis.json"
 # ATRM direction labels (literature-curated activation/repression)
 ATRM_TSV = DATA_DIR / "atrm_regulations.tsv"
 
+# Genome coordinates + cross-species orthologs (from OMA; see fetch_genome_data.py)
+POSITIONS_JSON = DATA_DIR / "genome_positions.json"
+ORTHOLOGS_JSON = DATA_DIR / "orthologs.json"
+
+# Authoritative assembly chromosome lengths (bp) for scaled ideograms.
+# Human: GRCh38; Arabidopsis: TAIR10. Falls back to max observed coordinate
+# for species/chromosomes not listed here.
+CHROMOSOME_LENGTHS = {
+    "human": {
+        "1": 248956422, "2": 242193529, "3": 198295559, "4": 190214555,
+        "5": 181538259, "6": 170805979, "7": 159345973, "8": 145138636,
+        "9": 138394717, "10": 133797422, "11": 135086622, "12": 133275309,
+        "13": 114364328, "14": 107043718, "15": 101991189, "16": 90338345,
+        "17": 83257441, "18": 80373285, "19": 58617616, "20": 64444167,
+        "21": 46709983, "22": 50818468, "X": 156040895, "Y": 57227415,
+    },
+    "arabidopsis": {
+        "1": 30427671, "2": 19698289, "3": 23459830, "4": 18585056, "5": 26975502,
+    },
+}
+
 
 def load_human_edges():
     """Parse TRRUST, merging duplicate (tf, target) pairs across papers."""
@@ -136,6 +157,36 @@ def build():
         );
         CREATE INDEX idx_interactions_source ON interactions(source_id);
         CREATE INDEX idx_interactions_target ON interactions(target_id);
+
+        CREATE TABLE gene_locations (
+            gene_id TEXT PRIMARY KEY,
+            species TEXT NOT NULL,
+            chromosome TEXT NOT NULL,
+            start INTEGER NOT NULL,
+            end INTEGER NOT NULL,
+            strand INTEGER NOT NULL
+        );
+        CREATE INDEX idx_loc_species ON gene_locations(species, chromosome);
+
+        CREATE TABLE orthologs (
+            gene_a TEXT NOT NULL,
+            gene_b TEXT NOT NULL,
+            species_a TEXT NOT NULL,
+            species_b TEXT NOT NULL,
+            rel_type TEXT,
+            score REAL,
+            PRIMARY KEY (gene_a, gene_b)
+        );
+        CREATE INDEX idx_orth_species ON orthologs(species_a, species_b);
+        CREATE INDEX idx_orth_a ON orthologs(gene_a);
+        CREATE INDEX idx_orth_b ON orthologs(gene_b);
+
+        CREATE TABLE chromosomes (
+            species TEXT NOT NULL,
+            chromosome TEXT NOT NULL,
+            length INTEGER NOT NULL,
+            PRIMARY KEY (species, chromosome)
+        );
     """)
 
     # Insert human genes
@@ -169,9 +220,48 @@ def build():
         "INSERT OR IGNORE INTO interactions (source_id, target_id, regulation_type, confidence, sources) VALUES (?, ?, ?, ?, ?)",
         [(tf, target, reg, conf, json.dumps([src])) for tf, target, reg, conf, src in all_edges],
     )
+    # Genome coordinates + orthologs (optional; only if fetched caches exist).
+    valid_ids = set(human_genes) | set(arab_all)
+    n_loc = n_orth = n_chrom = 0
+    if POSITIONS_JSON.exists():
+        positions = json.loads(POSITIONS_JSON.read_text())
+        rows = [
+            (gid, p["species"], str(p["chromosome"]), int(p["start"]), int(p["end"]), int(p.get("strand", 0)))
+            for gid, p in positions.items() if gid in valid_ids
+        ]
+        conn.executemany(
+            "INSERT OR IGNORE INTO gene_locations (gene_id, species, chromosome, start, end, strand) "
+            "VALUES (?, ?, ?, ?, ?, ?)", rows)
+        n_loc = len(rows)
+
+        # Chromosome lengths: authoritative where known, else max observed coord.
+        observed = defaultdict(int)
+        for _, species, chrom, _, end, _ in rows:
+            observed[(species, chrom)] = max(observed[(species, chrom)], end)
+        chrom_rows = []
+        for (species, chrom), obs_len in observed.items():
+            length = CHROMOSOME_LENGTHS.get(species, {}).get(chrom, obs_len)
+            chrom_rows.append((species, chrom, length))
+        conn.executemany(
+            "INSERT OR IGNORE INTO chromosomes (species, chromosome, length) VALUES (?, ?, ?)",
+            chrom_rows)
+        n_chrom = len(chrom_rows)
+
+    if ORTHOLOGS_JSON.exists():
+        orthologs = json.loads(ORTHOLOGS_JSON.read_text())
+        orth_rows = [
+            (o["gene_a"], o["gene_b"], o["species_a"], o["species_b"], o.get("rel_type"), o.get("score"))
+            for o in orthologs if o["gene_a"] in valid_ids and o["gene_b"] in valid_ids
+        ]
+        conn.executemany(
+            "INSERT OR IGNORE INTO orthologs (gene_a, gene_b, species_a, species_b, rel_type, score) "
+            "VALUES (?, ?, ?, ?, ?, ?)", orth_rows)
+        n_orth = len(orth_rows)
+
     conn.commit()
     conn.close()
 
+    print(f"  Genome: {n_loc} locations, {n_orth} ortholog pairs, {n_chrom} chromosomes")
     print(f"Built {DB_PATH}:")
     print(f"  Human: {len(human_genes)} genes, {len(human_edges)} interactions")
     print(f"  Arabidopsis: {len(arab_all)} genes, {len(arab_edges)} interactions")
