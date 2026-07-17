@@ -10,6 +10,7 @@ export default function PathwayView({ gene, filters }) {
   const [error, setError] = useState(null);
   const [maxDepth, setMaxDepth] = useState(3);
   const [pathLimit, setPathLimit] = useState(20);
+  const [selectedPath, setSelectedPath] = useState(null);
 
   // Fetch target gene suggestions
   useEffect(() => {
@@ -40,6 +41,7 @@ export default function PathwayView({ gene, filters }) {
 
     setLoading(true);
     setError(null);
+    setSelectedPath(null);
     try {
       const response = await fetch('/api/v1/pathways/pathfinding', {
         method: 'POST',
@@ -171,14 +173,46 @@ export default function PathwayView({ gene, filters }) {
         <div className="pathway-results">
           <div className="results-header">
             <h3>Found {paths.length} path{paths.length !== 1 ? 's' : ''}</h3>
-            <p>Showing regulatory routes from {gene.symbol} to {targetGene}</p>
+            <p>
+              {selectedPath === null
+                ? `Showing all routes from ${gene.symbol} to ${targetGene}`
+                : `Showing path #${selectedPath + 1} of ${paths.length}`}
+            </p>
           </div>
 
-          <PathwayGraph paths={paths} sourceGene={gene} targetSymbol={targetGene} />
+          <div className="view-toggle">
+            <button
+              className={`toggle-btn ${selectedPath === null ? 'active' : ''}`}
+              onClick={() => setSelectedPath(null)}
+            >
+              All paths
+            </button>
+            {paths.map((_, idx) => (
+              <button
+                key={idx}
+                className={`toggle-btn ${selectedPath === idx ? 'active' : ''}`}
+                onClick={() => setSelectedPath(idx)}
+              >
+                #{idx + 1}
+              </button>
+            ))}
+          </div>
+
+          <PathwayGraph
+            paths={selectedPath === null ? paths : [paths[selectedPath]]}
+            sourceGene={gene}
+            targetSymbol={targetGene}
+          />
 
           <div className="paths-list">
             {paths.map((path, idx) => (
-              <PathCard key={idx} path={path} index={idx + 1} />
+              <PathCard
+                key={idx}
+                path={path}
+                index={idx + 1}
+                selected={selectedPath === idx}
+                onClick={() => setSelectedPath(selectedPath === idx ? null : idx)}
+              />
             ))}
           </div>
         </div>
@@ -201,7 +235,7 @@ export default function PathwayView({ gene, filters }) {
 }
 
 // Individual path card
-function PathCard({ path, index }) {
+function PathCard({ path, index, selected, onClick }) {
   const [expanded, setExpanded] = useState(false);
 
   const genes = path.genes || [];
@@ -211,9 +245,9 @@ function PathCard({ path, index }) {
     path.confidences.reduce((a, b) => a + b, 0) / path.confidences.length : 0;
 
   return (
-    <div className="path-card">
+    <div className={`path-card ${selected ? 'path-card-selected' : ''}`}>
       <div className="path-header" onClick={() => setExpanded(!expanded)}>
-        <div className="path-number">#{index}</div>
+        <div className="path-number" onClick={(e) => { e.stopPropagation(); onClick(); }}>#{index}</div>
         
         <div className="path-summary">
           <div className="path-genes">
@@ -256,10 +290,12 @@ function PathCard({ path, index }) {
                   <>
                     <div className="interaction-cell">
                       <span className={`regulation-type ${path.regulation_types?.[i]}`}>
-                        {path.regulation_types?.[i] === 'activation' ? 
-                          '✓ Activates' : 
-                          path.regulation_types?.[i] === 'repression' ? 
-                          '✗ Represses' : 
+                        {path.regulation_types?.[i] === 'activation' ?
+                          '✓ Activates' :
+                          path.regulation_types?.[i] === 'repression' ?
+                          '✗ Represses' :
+                          path.regulation_types?.[i] === 'regulation' ?
+                          '● Regulates' :
                           '? Unknown'
                         }
                       </span>

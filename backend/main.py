@@ -313,40 +313,40 @@ async def find_paths(request: PathFindingRequest):
     
     target_gene = target_results[0]
     
-    # Simple BFS pathfinding (in production, use more sophisticated algorithm)
     paths = []
-    visited = set()
-    queue = [(request.source_gene_id, [source], [], [])]
-    
-    while queue and len(paths) < request.limit:
-        current_id, current_path, regulations, confidences = queue.pop(0)
-        
+    queue = [(request.source_gene_id, [source], [], [], {request.source_gene_id})]
+    max_queue = 50000
+
+    while queue and len(paths) < request.limit and len(queue) < max_queue:
+        current_id, current_path, regulations, confidences, path_visited = queue.pop(0)
+
         if current_id == target_gene.id:
             path_genes = [PathGene(id=g.id, symbol=g.symbol, name=g.name) for g in current_path]
-            sources = [["TRRUST"] for _ in regulations]
+            sources_list = [["TRRUST"] for _ in regulations]
             paths.append(Path(
                 genes=path_genes,
                 regulation_types=regulations,
                 confidences=confidences,
-                sources=sources,
+                sources=sources_list,
                 overall_confidence=sum(confidences) / len(confidences) if confidences else 0.0
             ))
             continue
-        
-        if len(current_path) < request.max_depth:
+
+        if len(current_path) <= request.max_depth:
             targets = db.get_targets(current_id, request.min_confidence)
             for target in targets:
-                if target.id not in visited and target.regulation_type in request.regulation_type:
-                    visited.add(target.id)
+                if target.id not in path_visited and target.regulation_type in request.regulation_type:
                     target_gene_obj = db.get_gene(target.id)
                     if target_gene_obj:
                         queue.append((
                             target.id,
                             current_path + [target_gene_obj],
                             regulations + [target.regulation_type],
-                            confidences + [target.confidence]
+                            confidences + [target.confidence],
+                            path_visited | {target.id}
                         ))
-    
+
+    paths.sort(key=lambda p: (-p.overall_confidence, len(p.genes)))
     return {"paths": paths}
 
 @app.post("/api/v1/pathway/predict-cascade", response_model=CascadeResult)
