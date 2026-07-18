@@ -59,6 +59,11 @@ CHROMOSOME_LENGTHS = {
         "13": 120883175, "14": 125139656, "15": 104073951, "16": 98008968,
         "17": 95294699, "18": 90720763, "19": 61420004, "X": 169476592, "Y": 91455967,
     },
+    "tomato": {  # SL2.50 (chromosome names normalized to bare numbers)
+        "0": 21805821, "1": 98543444, "2": 55340444, "3": 70787664,
+        "4": 66470942, "5": 65875088, "6": 49751636, "7": 68045021,
+        "8": 65866657, "9": 72482091, "10": 65527505, "11": 56302525, "12": 67145203,
+    },
 }
 
 
@@ -254,16 +259,23 @@ def build():
     valid_ids = set(human_genes) | set(arab_all) | set(extra_genes)
 
     # Coordinates: merge OMA (animal) + PLAZA (plant). PLAZA wins on overlap.
-    # Normalize chromosome names so the two sources agree (OMA calls Arabidopsis
-    # chr 1 "1"; PLAZA calls it "Chr1") -- strip a leading "Chr"/"chr" prefix.
-    def norm_chrom(name):
-        return re.sub(r"^chr", "", str(name), flags=re.IGNORECASE)
+    # Normalize chromosome names to a canonical short form so different sources
+    # and assemblies agree: OMA calls Arabidopsis chr 1 "1" but PLAZA calls it
+    # "Chr1"; tomato's SL2.50 GFF names it "SL2.50ch01". Reduce both to "1".
+    def norm_chrom(species, name):
+        name = str(name)
+        if species == "tomato":
+            m = re.search(r"ch0*(\d+)$", name)
+            if m:
+                return m.group(1)
+        return re.sub(r"^chr", "", name, flags=re.IGNORECASE)
 
     positions = {}
     positions.update(load_json(POSITIONS_JSON))
     positions.update(load_json(PLAZA_POSITIONS_JSON))
     loc_rows = [
-        (gid, p["species"], norm_chrom(p["chromosome"]), int(p["start"]), int(p["end"]), int(p.get("strand", 0)))
+        (gid, p["species"], norm_chrom(p["species"], p["chromosome"]),
+         int(p["start"]), int(p["end"]), int(p.get("strand", 0)))
         for gid, p in positions.items() if gid in valid_ids
     ]
     conn.executemany(

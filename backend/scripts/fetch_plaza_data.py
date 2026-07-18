@@ -10,9 +10,10 @@ per-species GFF annotations, and its Arabidopsis gene ids are AGI locus codes
 (e.g. AT1G01020), which match our existing Arabidopsis genes -- so Arabidopsis is
 the shared join point between the OMA (animal) and PLAZA (plant) data.
 
-Note: the PLAZA petunia assembly (P. axillaris v1.6.2) is scaffold-level, not
-chromosome-level, so petunia is capped to its largest scaffolds (by gene count)
-to keep the ideogram legible.
+The PLAZA petunia annotation (P. axillaris v1.6.2) is scaffold-level. We lift its
+gene coordinates onto 7 chromosomes using the DNA Zoo Hi-C .assembly file (same
+v1.6.2 annotation, so gene ids are identical and PLAZA orthology is preserved).
+If that file is unavailable, petunia falls back to its largest scaffolds.
 
 Outputs (under backend/data/):
   - plaza_positions.json     : { gene_id: {species, chromosome, start, end, strand} }
@@ -25,6 +26,7 @@ import gzip
 import json
 import sqlite3
 import urllib.request
+from bisect import bisect_right
 from pathlib import Path
 
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -48,8 +50,16 @@ PLAZA_SPECIES = {
     "pax": "petunia",
 }
 NEW_SPECIES = {"sly", "pax"}       # not already in our genes table
-SCAFFOLD_CAP = 25                  # max chromosomes/scaffolds to keep per species
+SCAFFOLD_CAP = 25                  # fallback: max scaffolds to keep per species
 UA = {"User-Agent": "grn-atlas-build/1.0 (genome data enrichment)"}
+
+# DNA Zoo Hi-C assembly of P. axillaris v1.6.2 (7 chromosomes). 3D-DNA .assembly
+# format: scaffolds split into fragments, ordered/oriented into super-scaffolds.
+PETUNIA_HIC_ASSEMBLY = (
+    "https://www.dropbox.com/s/81n270pmo0ssej2/"
+    "Petunia_axillaris_v1.6.2_genome_HiC.assembly?dl=1"
+)
+PETUNIA_N_CHROMS = 7
 
 
 def stream_lines(url):
@@ -132,6 +142,95 @@ def parse_gff(sp, wanted_ids):
     return out
 
 
+def build_petunia_lift():
+    """Parse the DNA Zoo Hi-C .assembly and return (lift, chrom_len):
+      lift(scaffold, pos) -> (chrom_name, chrom_pos) or None
+      chrom_len          -> {chrom_name: length}
+    Returns (None, None) if the assembly cannot be fetched/parsed."""
+    print("Downloading petunia Hi-C assembly (for scaffold->chromosome liftover)…")
+    try:
+        req = urllib.request.Request(PETUNIA_HIC_ASSEMBLY, headers=UA)
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            raw = resp.read().decode("utf-8", "replace")
+    except Exception as e:
+        print(f"  ! could not fetch Hi-C assembly ({e}); falling back to scaffolds")
+        return None, None
+
+    frags = {}          # cprops index -> (scaffold, length)
+    scaf_frags = {}     # scaffold -> [(index, length), …] in scaffold order
+    order_lines = []    # each = signed cprops indices forming a super-scaffold
+    for line in raw.splitlines():
+        if line.startswith(">"):
+            name, idx, length = line[1:].rsplit(" ", 2)
+            idx, length = int(idx), int(length)
+            scaf = name.split(":::")[0]
+            frags[idx] = (scaf, length)
+            scaf_frags.setdefault(scaf, []).append((idx, length))
+        elif line.strip():
+            order_lines.append([int(x) for x in line.split()])
+
+    # The 7 longest super-scaffolds are the chromosomes (ranked largest first).
+    ranked = sorted(
+        ((sum(frags[abs(x)][1] for x in ol), li) for li, ol in enumerate(order_lines)),
+        reverse=True)[:PETUNIA_N_CHROMS]
+    chrom_of_line = {li: str(rank + 1) for rank, (_, li) in enumerate(ranked)}
+    chrom_len = {str(rank + 1): L for rank, (L, _) in enumerate(ranked)}
+
+    # Placement of each fragment on its chromosome.
+    place = {}          # index -> (chrom_name, chrom_offset, sign, length)
+    for li, ol in enumerate(order_lines):
+        chrom = chrom_of_line.get(li)
+        if chrom is None:
+            continue
+        off = 0
+        for x in ol:
+            idx, length = abs(x), frags[abs(x)][1]
+            place[idx] = (chrom, off, 1 if x > 0 else -1, length)
+            off += length
+
+    # Per-scaffold fragment start offsets, for position lookup.
+    scaf_lookup = {}
+    for scaf, fl in scaf_frags.items():
+        starts, items, off = [], [], 0
+        for idx, length in fl:
+            starts.append(off); items.append((idx, length)); off += length
+        scaf_lookup[scaf] = (starts, items)
+
+    def lift(scaf, pos):
+        entry = scaf_lookup.get(scaf)
+        if not entry:
+            return None
+        starts, items = entry
+        j = bisect_right(starts, pos) - 1
+        if j < 0:
+            return None
+        idx, _ = items[j]
+        placed = place.get(idx)
+        if not placed:
+            return None
+        chrom, coff, sign, flen = placed
+        off_in = pos - starts[j]
+        return chrom, coff + off_in if sign > 0 else coff + (flen - off_in)
+
+    print(f"  lifted assembly: {PETUNIA_N_CHROMS} chromosomes, "
+          f"{sum(chrom_len.values()) / 1e9:.2f} Gb anchored")
+    return lift, chrom_len
+
+
+def lift_petunia(located, lift):
+    """Remap scaffold-based petunia genes to chromosome coordinates; drop genes
+    on unplaced scaffolds."""
+    out = {}
+    for gid, (chrom, start, end, strand, symbol) in located.items():
+        r = lift(chrom, (start + end) // 2)
+        if not r:
+            continue
+        new_chrom, pos = r
+        out[gid] = (new_chrom, pos, pos + (end - start), strand, symbol)
+    print(f"  petunia: {len(out)}/{len(located)} genes lifted onto chromosomes")
+    return out
+
+
 def cap_scaffolds(genes):
     """Keep only the SCAFFOLD_CAP most gene-dense chromosomes/scaffolds."""
     counts = {}
@@ -156,12 +255,16 @@ def main():
     for sp, gid in referenced:
         wanted[sp].add(gid)
 
+    petunia_lift, _ = build_petunia_lift()
+
     positions = {}
     genes = {}
     for sp, species in PLAZA_SPECIES.items():
         located = parse_gff(sp, wanted[sp])
-        if sp in NEW_SPECIES:
-            located, _ = cap_scaffolds(located)
+        if sp == "pax" and petunia_lift:
+            located = lift_petunia(located, petunia_lift)
+        elif sp in NEW_SPECIES:
+            located, _ = cap_scaffolds(located)  # fallback (e.g. Hi-C unavailable)
         for gid, (chrom, start, end, strand, symbol) in located.items():
             positions[gid] = {"species": species, "chromosome": chrom,
                               "start": start, "end": end, "strand": strand}
