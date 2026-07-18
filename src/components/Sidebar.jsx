@@ -15,6 +15,7 @@ const SPECIES = {
     { tax_id: 3702, symbol: 'arabidopsis', common: 'Arabidopsis', scientific: 'Arabidopsis thaliana' },
     { tax_id: 39947, symbol: 'rice', common: 'Rice', scientific: 'Oryza sativa' },
     { tax_id: 4081, symbol: 'tomato', common: 'Tomato', scientific: 'Solanum lycopersicum' },
+    { tax_id: 33119, symbol: 'petunia', common: 'Petunia', scientific: 'Petunia axillaris' },
     { tax_id: 4113, symbol: 'potato', common: 'Potato', scientific: 'Solanum tuberosum' },
     { tax_id: 3847, symbol: 'soybean', common: 'Soybean', scientific: 'Glycine max' },
     { tax_id: 29654, symbol: 'poplar', common: 'Poplar', scientific: 'Populus trichocarpa' },
