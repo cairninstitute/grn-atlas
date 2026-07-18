@@ -29,6 +29,7 @@ import json
 import sqlite3
 import urllib.request
 from bisect import bisect_right
+from collections import OrderedDict, defaultdict
 from pathlib import Path
 
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -36,12 +37,18 @@ DB_PATH = DATA_DIR / "grn.sqlite3"
 POSITIONS_JSON = DATA_DIR / "plaza_positions.json"
 ORTHOLOGS_JSON = DATA_DIR / "orthologs_plaza.json"
 GENES_JSON = DATA_DIR / "genome_genes_plaza.json"
+SYMBOLS_JSON = DATA_DIR / "gene_symbols_plaza.json"
+MAX_SYMBOLS_PER_GENE = 8
 
 BASE = "https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_04_5"
 # Anchor points = synteny-based colinear gene pairs. Chosen over the gene-family
 # ORTHO relation because synteny is the right (and far sparser, near-1:1) signal
 # for a chromosome-vs-chromosome comparison.
 ANCHOR_URL = f"{BASE}/IntegrativeOrthology/integrative_orthology.anchor_point.csv.gz"
+# BHIF (Best-Hits-and-Inparalogs Family) = broad homology, used only to attach
+# Arabidopsis gene symbols to tomato/petunia (the same principle as eggNOG's
+# Preferred_name: a gene's searchable symbol taken from its reference ortholog).
+BHIF_URL = f"{BASE}/IntegrativeOrthology/integrative_orthology.BHIF.csv.gz"
 GFF_URL = "{base}/GFF/{sp}/annotation.selected_transcript.all_features.{sp}.gff3.gz"
 DESC_URL = "{base}/Descriptions/gene_description.{sp}.csv.gz"
 
@@ -271,6 +278,66 @@ def cap_scaffolds(genes):
     return kept, keep
 
 
+def load_ath_symbols():
+    """AGI -> [gene symbol + aliases] from the Arabidopsis GFF (symbol=, Alias=).
+    These are the real, searchable short names (e.g. TT4, CHS) we can lend to
+    tomato/petunia via orthology."""
+    syms = {}
+    print("Reading Arabidopsis gene symbols from GFF…")
+    for line in stream_lines(GFF_URL.format(base=BASE, sp="ath")):
+        if not line or line.startswith("#"):
+            continue
+        cols = line.split("\t")
+        if len(cols) != 9 or cols[2] != "gene":
+            continue
+        attrs = dict(f.split("=", 1) for f in cols[8].split(";") if "=" in f)
+        agi = (attrs.get("gene_id") or attrs.get("ID") or "").upper()
+        if not agi:
+            continue
+        vals = []
+        if attrs.get("symbol"):
+            vals.append(attrs["symbol"])
+        if attrs.get("Alias"):
+            vals += attrs["Alias"].split(",")
+        clean = []
+        for v in vals:
+            v = v.strip()
+            if v and v.upper() != agi and v not in clean:
+                clean.append(v)
+        if clean:
+            syms[agi] = clean
+    print(f"  {len(syms)} Arabidopsis genes carry a symbol/alias")
+    return syms
+
+
+def infer_plant_symbols(ath_symbols, keep_ids):
+    """Stream BHIF orthology and map each tomato/petunia gene to the Arabidopsis
+    symbols of its ortholog(s). Restricted to genes we actually keep."""
+    mapping = defaultdict(OrderedDict)  # plant_gene -> ordered set of symbols
+    print("Streaming BHIF orthology for symbol transfer (large file)…")
+    for line in stream_lines(BHIF_URL):
+        if not line or line.startswith("#"):
+            continue
+        p = line.split("\t")
+        if len(p) < 4:
+            continue
+        qg, qs, og, os_ = p[0], p[1], p[2], p[3]
+        if qs == "ath" and os_ in NEW_SPECIES:
+            agi, plant = qg, og
+        elif os_ == "ath" and qs in NEW_SPECIES:
+            agi, plant = og, qg
+        else:
+            continue
+        if plant not in keep_ids:
+            continue
+        for s in ath_symbols.get(agi.upper(), []):
+            if len(mapping[plant]) < MAX_SYMBOLS_PER_GENE:
+                mapping[plant][s] = None
+    out = {gid: list(syms) for gid, syms in mapping.items() if syms}
+    print(f"  inferred symbols for {len(out)} tomato/petunia genes")
+    return out
+
+
 def main():
     arab_ids = load_arab_ids()
     print(f"Arabidopsis genes in DB: {len(arab_ids)}")
@@ -305,13 +372,19 @@ def main():
     located_ids = set(positions)
     pairs = [p for p in pairs if p["gene_a"] in located_ids and p["gene_b"] in located_ids]
 
+    # Inferred Arabidopsis symbols (e.g. CHS) for tomato/petunia, via BHIF.
+    ath_symbols = load_ath_symbols()
+    inferred_symbols = infer_plant_symbols(ath_symbols, set(genes))
+
     POSITIONS_JSON.write_text(json.dumps(positions, indent=1, sort_keys=True))
     ORTHOLOGS_JSON.write_text(json.dumps(
         sorted(pairs, key=lambda p: (p["gene_a"], p["gene_b"])), indent=1))
     GENES_JSON.write_text(json.dumps(genes, indent=1, sort_keys=True))
+    SYMBOLS_JSON.write_text(json.dumps(inferred_symbols, indent=1, sort_keys=True))
     print(f"Wrote {POSITIONS_JSON} ({len(positions)} positions)")
     print(f"Wrote {ORTHOLOGS_JSON} ({len(pairs)} ortholog pairs)")
     print(f"Wrote {GENES_JSON} ({len(genes)} tomato/petunia genes)")
+    print(f"Wrote {SYMBOLS_JSON} ({len(inferred_symbols)} genes with inferred symbols)")
 
 
 if __name__ == "__main__":

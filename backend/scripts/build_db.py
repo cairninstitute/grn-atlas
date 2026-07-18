@@ -36,6 +36,7 @@ GENES_JSON = DATA_DIR / "genome_genes.json"
 PLAZA_POSITIONS_JSON = DATA_DIR / "plaza_positions.json"
 PLAZA_ORTHOLOGS_JSON = DATA_DIR / "orthologs_plaza.json"
 PLAZA_GENES_JSON = DATA_DIR / "genome_genes_plaza.json"
+PLAZA_SYMBOLS_JSON = DATA_DIR / "gene_symbols_plaza.json"
 
 # Authoritative assembly chromosome lengths (bp) for scaled ideograms.
 # Human: GRCh38; Arabidopsis: TAIR10. Falls back to max observed coordinate
@@ -315,21 +316,33 @@ def build():
         "INSERT OR IGNORE INTO orthologs (gene_a, gene_b, species_a, species_b, rel_type, score) "
         "VALUES (?, ?, ?, ?, ?, ?)", orth_rows)
 
-    # Inferred synonyms: label tomato/petunia genes with their Arabidopsis
-    # synteny-ortholog symbol(s). Clearly approximate (many-to-many synteny), so
-    # kept in a separate field, not as the gene's own symbol.
-    inferred = defaultdict(set)
+    # Inferred synonyms: label tomato/petunia genes with the Arabidopsis symbol(s)
+    # of their ortholog(s) -- the same principle as eggNOG's Preferred_name. Clearly
+    # approximate, so kept in a separate field, never as the gene's own symbol.
+    # Primary source: BHIF ortholog -> Arabidopsis symbol/alias (broad; real short
+    # symbols like CHS). Supplemented by synteny-anchor orthologs to our DB.
+    inferred = defaultdict(list)
+    seen = defaultdict(set)
+
+    def add_syn(gid, sym):
+        if sym and sym not in seen[gid]:
+            seen[gid].add(sym)
+            inferred[gid].append(sym)
+
+    for gid, syms in load_json(PLAZA_SYMBOLS_JSON).items():
+        if gid in valid_ids:
+            for s in syms:
+                add_syn(gid, s)
     for o in orthologs:
-        pairs = ((o["gene_a"], o["species_a"], o["gene_b"], o["species_b"]),
-                 (o["gene_b"], o["species_b"], o["gene_a"], o["species_a"]))
-        for gene, species, other, other_sp in pairs:
+        for gene, species, other, other_sp in (
+            (o["gene_a"], o["species_a"], o["gene_b"], o["species_b"]),
+            (o["gene_b"], o["species_b"], o["gene_a"], o["species_a"]),
+        ):
             if species in ("tomato", "petunia") and other_sp == "arabidopsis":
-                sym = arab_real_symbol.get(other)
-                if sym:
-                    inferred[gene].add(sym)
+                add_syn(gene, arab_real_symbol.get(other))
     conn.executemany(
         "UPDATE genes SET synonyms = ? WHERE id = ?",
-        [("; ".join(sorted(syms)), gid) for gid, syms in inferred.items()],
+        [("; ".join(syms), gid) for gid, syms in inferred.items()],
     )
     n_syn = len(inferred)
 
