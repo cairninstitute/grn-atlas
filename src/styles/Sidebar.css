@@ -131,6 +131,17 @@
   white-space: nowrap;
 }
 
+.suggestion-synonyms {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.synonym-label {
+  font-style: italic;
+  color: var(--text-accent);
+}
+
 /* Filter Group */
 .filter-group {
   display: flex;

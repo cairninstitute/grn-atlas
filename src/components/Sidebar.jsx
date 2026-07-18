@@ -209,6 +209,12 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
                   <div className="suggestion-secondary">
                     {gene.name}
                   </div>
+                  {gene.synonyms && gene.synonyms.length > 0 && (
+                    <div className="suggestion-synonyms">
+                      <span className="synonym-label">≈ Arabidopsis ortholog (inferred):</span>{' '}
+                      {gene.synonyms.join(', ')}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

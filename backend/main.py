@@ -42,6 +42,9 @@ class Gene(BaseModel):
     ensembl_id: Optional[str] = None
     is_tf: bool = False
     gene_type: Optional[str] = None
+    # Inferred alternative names (e.g. Arabidopsis ortholog symbols for
+    # tomato/petunia). Approximate — surfaced separately from the real symbol.
+    synonyms: Optional[List[str]] = None
     
     class Config:
         json_schema_extra = {
@@ -144,19 +147,22 @@ class GeneDatabase:
         self.conn.row_factory = sqlite3.Row
 
     def _row_to_gene(self, row) -> Gene:
+        keys = row.keys()
+        raw_syn = row["synonyms"] if "synonyms" in keys else None
         return Gene(
             id=row["id"],
             symbol=row["symbol"],
             name=row["name"],
             species=row["species"],
             is_tf=bool(row["is_tf"]),
-            gene_type=row["gene_type"]
+            gene_type=row["gene_type"],
+            synonyms=[s for s in raw_syn.split("; ") if s] if raw_syn else None,
         )
 
     def search_genes(self, query: str, limit: int = 10, species: Optional[str] = None) -> List[Gene]:
         """Search for genes by symbol or name"""
-        sql = "SELECT * FROM genes WHERE (symbol LIKE ? OR name LIKE ?)"
-        params: List[Any] = [f"%{query}%", f"%{query}%"]
+        sql = "SELECT * FROM genes WHERE (symbol LIKE ? OR name LIKE ? OR synonyms LIKE ?)"
+        params: List[Any] = [f"%{query}%", f"%{query}%", f"%{query}%"]
         if species:
             sql += " AND species = ?"
             params.append(species)

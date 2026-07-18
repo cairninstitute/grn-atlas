@@ -160,10 +160,12 @@ def build():
             name TEXT NOT NULL,
             species TEXT NOT NULL,
             is_tf INTEGER NOT NULL,
-            gene_type TEXT
+            gene_type TEXT,
+            synonyms TEXT          -- inferred names (e.g. Arabidopsis ortholog symbols); '; '-joined
         );
         CREATE INDEX idx_genes_symbol ON genes(symbol COLLATE NOCASE);
         CREATE INDEX idx_genes_name ON genes(name COLLATE NOCASE);
+        CREATE INDEX idx_genes_synonyms ON genes(synonyms COLLATE NOCASE);
         CREATE INDEX idx_genes_species ON genes(species);
 
         CREATE TABLE interactions (
@@ -218,12 +220,16 @@ def build():
     )
 
     # Insert Arabidopsis genes (use resolved symbol if available, else locus ID)
+    def arab_symbol(locus):
+        entry = arab_names.get(locus)
+        return entry.get("symbol", locus) if isinstance(entry, dict) else locus
+
     conn.executemany(
         "INSERT INTO genes (id, symbol, name, species, is_tf, gene_type) VALUES (?, ?, ?, ?, ?, ?)",
         [
             (
                 locus,
-                arab_names.get(locus, {}).get("symbol", locus) if isinstance(arab_names.get(locus), dict) else locus,
+                arab_symbol(locus),
                 arab_names.get(locus, {}).get("name", locus) if isinstance(arab_names.get(locus), dict) else locus,
                 "arabidopsis",
                 1 if locus in arab_tfs else 0,
@@ -232,6 +238,11 @@ def build():
             for locus in arab_all
         ],
     )
+    # Real Arabidopsis symbols (excluding bare AGI ids), for inferring synonyms.
+    arab_real_symbol = {
+        locus: arab_symbol(locus) for locus in arab_all
+        if arab_symbol(locus).upper() != locus.upper()
+    }
 
     # Insert all interactions
     all_edges = human_edges + arab_edges
@@ -304,6 +315,24 @@ def build():
         "INSERT OR IGNORE INTO orthologs (gene_a, gene_b, species_a, species_b, rel_type, score) "
         "VALUES (?, ?, ?, ?, ?, ?)", orth_rows)
 
+    # Inferred synonyms: label tomato/petunia genes with their Arabidopsis
+    # synteny-ortholog symbol(s). Clearly approximate (many-to-many synteny), so
+    # kept in a separate field, not as the gene's own symbol.
+    inferred = defaultdict(set)
+    for o in orthologs:
+        pairs = ((o["gene_a"], o["species_a"], o["gene_b"], o["species_b"]),
+                 (o["gene_b"], o["species_b"], o["gene_a"], o["species_a"]))
+        for gene, species, other, other_sp in pairs:
+            if species in ("tomato", "petunia") and other_sp == "arabidopsis":
+                sym = arab_real_symbol.get(other)
+                if sym:
+                    inferred[gene].add(sym)
+    conn.executemany(
+        "UPDATE genes SET synonyms = ? WHERE id = ?",
+        [("; ".join(sorted(syms)), gid) for gid, syms in inferred.items()],
+    )
+    n_syn = len(inferred)
+
     conn.commit()
 
     loc_by_species = defaultdict(int)
@@ -311,6 +340,7 @@ def build():
         loc_by_species[species] += 1
     conn.close()
 
+    print(f"  Inferred Arabidopsis-symbol synonyms on {n_syn} tomato/petunia genes")
     print(f"  Genome: {len(loc_rows)} locations, {len(orth_rows)} ortholog pairs, "
           f"{len(chrom_rows)} chromosomes")
     print(f"    by species: {dict(loc_by_species)}")
