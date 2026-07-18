@@ -4,16 +4,20 @@ import '../styles/GenomeComparisonView.css';
 
 const SPECIES_LABELS = {
   human: 'Human',
+  mouse: 'Mouse',
   arabidopsis: 'Arabidopsis',
+  tomato: 'Tomato',
+  petunia: 'Petunia',
   rice: 'Rice',
 };
 
 const label = (s) => SPECIES_LABELS[s] || (s ? s[0].toUpperCase() + s.slice(1) : s);
 
-// Ribbon color by orthology relationship type.
+// Ribbon color by relationship type. OMA reports 1:1 / 1:n / n:m orthologs;
+// PLAZA plant pairs are synteny anchor points.
 const relColor = (rel) => {
+  if (rel === 'synteny') return 'var(--primary)';
   if (rel === '1:1') return 'var(--success)';
-  if (rel && rel.startsWith('1:')) return 'var(--primary)';
   return 'var(--accent)';
 };
 
@@ -26,6 +30,7 @@ const PAD_BOTTOM = 16;
 const X_LEFT = 150;
 const X_RIGHT = 610;
 const VIEW_W = 760;
+const MAX_RIBBONS = 3500;   // cap rendered ribbons to keep the SVG responsive
 
 // Build stacked chromosome layout for one genome side.
 function layoutGenome(chromosomes) {
@@ -101,24 +106,31 @@ export default function GenomeComparisonView() {
   const layoutB = useMemo(
     () => (genomeB ? layoutGenome(genomeB.chromosomes) : null), [genomeB]);
 
-  // Precompute ribbon endpoints for orthologs whose genes are placed.
-  const ribbons = useMemo(() => {
-    if (!layoutA || !layoutB) return [];
-    return orthologs.map((p, i) => {
+  // Precompute ribbon endpoints for orthologs whose genes are placed. Cap the
+  // rendered count (evenly sampled) so dense comparisons stay responsive.
+  const { ribbons, totalLinks, mappedA, mappedB } = useMemo(() => {
+    if (!layoutA || !layoutB) return { ribbons: [], totalLinks: 0, mappedA: new Set(), mappedB: new Set() };
+    const placed = [];
+    orthologs.forEach((p, i) => {
       const ca = layoutA.index[p.a.chromosome];
       const cb = layoutB.index[p.b.chromosome];
-      if (!ca || !cb) return null;
-      return {
-        i,
-        symbol: p.symbol,
-        rel: p.rel_type,
-        isTf: p.a.is_tf || p.b.is_tf,
-        y1: geneY(ca, p.a.start),
-        y2: geneY(cb, p.b.start),
-        a: p.a,
-        b: p.b,
-      };
-    }).filter(Boolean);
+      if (!ca || !cb) return;
+      placed.push({
+        i, symbol: p.symbol, rel: p.rel_type,
+        y1: geneY(ca, p.a.start), y2: geneY(cb, p.b.start),
+        a: p.a, b: p.b,
+      });
+    });
+    const total = placed.length;
+    let shown = placed;
+    if (total > MAX_RIBBONS) {
+      const stride = total / MAX_RIBBONS;
+      shown = [];
+      for (let k = 0; k < total; k += stride) shown.push(placed[Math.floor(k)]);
+    }
+    const mA = new Set(shown.map((r) => r.a.gene_id));
+    const mB = new Set(shown.map((r) => r.b.gene_id));
+    return { ribbons: shown, totalLinks: total, mappedA: mA, mappedB: mB };
   }, [orthologs, layoutA, layoutB]);
 
   const showTip = useCallback((evt, text, symbol) => {
@@ -131,7 +143,7 @@ export default function GenomeComparisonView() {
 
   const swap = () => { setSpeciesA(speciesB); setSpeciesB(speciesA); };
 
-  const geneTicks = (layout, x, side) => {
+  const geneTicks = (layout, x, side, mapped) => {
     if (!layout) return null;
     const anchor = side === 'left' ? 'end' : 'start';
     const tickX1 = side === 'left' ? x - 6 : x + BAR_W;
@@ -145,7 +157,7 @@ export default function GenomeComparisonView() {
           className="chrom-label" x={side === 'left' ? x - 12 : x + BAR_W + 12}
           y={c.y + c.h / 2} textAnchor={anchor} dominantBaseline="middle"
         >{c.name}</text>
-        {c.genes && c.genes.map((g) => {
+        {c.genes && c.genes.filter((g) => mapped.has(g.id)).map((g) => {
           const y = geneY(c, g.start);
           const active = selectedSymbol && g.symbol === selectedSymbol;
           return (
@@ -190,6 +202,7 @@ export default function GenomeComparisonView() {
           <span className="lg-item"><span className="sw sw-tf" /> TF</span>
           <span className="lg-item"><span className="sw sw-1to1" /> 1:1 ortholog</span>
           <span className="lg-item"><span className="sw sw-multi" /> 1:n / n:m</span>
+          <span className="lg-item"><span className="sw sw-synteny" /> synteny (plants)</span>
         </div>
       </div>
 
@@ -204,7 +217,10 @@ export default function GenomeComparisonView() {
           <div className="genome-summary">
             <strong>{label(speciesA)}</strong> ({genomeA.chromosomes.length} chromosomes) vs{' '}
             <strong>{label(speciesB)}</strong> ({genomeB.chromosomes.length} chromosomes) ·{' '}
-            {ribbons.length.toLocaleString()} ortholog link{ribbons.length === 1 ? '' : 's'}
+            {totalLinks > ribbons.length
+              ? `showing ${ribbons.length.toLocaleString()} of ${totalLinks.toLocaleString()} ortholog links`
+              : `${totalLinks.toLocaleString()} ortholog link${totalLinks === 1 ? '' : 's'}`}
+            {' '}(genes with an ortholog in the other genome)
             {selectedSymbol && (
               <button className="clear-sel" onClick={() => setSelectedSymbol(null)}>
                 clear “{selectedSymbol}”
@@ -247,8 +263,8 @@ export default function GenomeComparisonView() {
                 })}
               </g>
 
-              {geneTicks(layoutA, X_LEFT, 'left')}
-              {geneTicks(layoutB, X_RIGHT, 'right')}
+              {geneTicks(layoutA, X_LEFT, 'left', mappedA)}
+              {geneTicks(layoutB, X_RIGHT, 'right', mappedB)}
             </svg>
 
             {hovered && (

@@ -8,6 +8,7 @@ ATRM direction labels: atrm_regulations.tsv (activation/repression for 1,431 lit
 No network access needed. Safe to re-run; always rebuilds from scratch.
 """
 import json
+import re
 import sqlite3
 from collections import defaultdict
 from pathlib import Path
@@ -26,9 +27,15 @@ ARABIDOPSIS_NAMES_JSON = DATA_DIR / "gene_names_arabidopsis.json"
 # ATRM direction labels (literature-curated activation/repression)
 ATRM_TSV = DATA_DIR / "atrm_regulations.tsv"
 
-# Genome coordinates + cross-species orthologs (from OMA; see fetch_genome_data.py)
+# Genome coordinates + cross-species orthologs.
+# OMA (animal side + Arabidopsis bridge): fetch_genome_data.py
+# PLAZA (plant side: Arabidopsis/tomato/petunia): fetch_plaza_data.py
 POSITIONS_JSON = DATA_DIR / "genome_positions.json"
 ORTHOLOGS_JSON = DATA_DIR / "orthologs.json"
+GENES_JSON = DATA_DIR / "genome_genes.json"
+PLAZA_POSITIONS_JSON = DATA_DIR / "plaza_positions.json"
+PLAZA_ORTHOLOGS_JSON = DATA_DIR / "orthologs_plaza.json"
+PLAZA_GENES_JSON = DATA_DIR / "genome_genes_plaza.json"
 
 # Authoritative assembly chromosome lengths (bp) for scaled ideograms.
 # Human: GRCh38; Arabidopsis: TAIR10. Falls back to max observed coordinate
@@ -44,6 +51,13 @@ CHROMOSOME_LENGTHS = {
     },
     "arabidopsis": {
         "1": 30427671, "2": 19698289, "3": 23459830, "4": 18585056, "5": 26975502,
+    },
+    "mouse": {  # GRCm39
+        "1": 195154279, "2": 181755017, "3": 159745316, "4": 156860686,
+        "5": 151758149, "6": 149588044, "7": 144995196, "8": 130127694,
+        "9": 124359700, "10": 130530862, "11": 121973369, "12": 120092757,
+        "13": 120883175, "14": 125139656, "15": 104073951, "16": 98008968,
+        "17": 95294699, "18": 90720763, "19": 61420004, "X": 169476592, "Y": 91455967,
     },
 }
 
@@ -220,52 +234,79 @@ def build():
         "INSERT OR IGNORE INTO interactions (source_id, target_id, regulation_type, confidence, sources) VALUES (?, ?, ?, ?, ?)",
         [(tf, target, reg, conf, json.dumps([src])) for tf, target, reg, conf, src in all_edges],
     )
-    # Genome coordinates + orthologs (optional; only if fetched caches exist).
-    valid_ids = set(human_genes) | set(arab_all)
-    n_loc = n_orth = n_chrom = 0
-    if POSITIONS_JSON.exists():
-        positions = json.loads(POSITIONS_JSON.read_text())
-        rows = [
-            (gid, p["species"], str(p["chromosome"]), int(p["start"]), int(p["end"]), int(p.get("strand", 0)))
-            for gid, p in positions.items() if gid in valid_ids
-        ]
-        conn.executemany(
-            "INSERT OR IGNORE INTO gene_locations (gene_id, species, chromosome, start, end, strand) "
-            "VALUES (?, ?, ?, ?, ?, ?)", rows)
-        n_loc = len(rows)
+    # ---- Genome layer (optional; only populated where fetched caches exist) ----
+    def load_json(path):
+        return json.loads(path.read_text()) if path.exists() else {}
 
-        # Chromosome lengths: authoritative where known, else max observed coord.
-        observed = defaultdict(int)
-        for _, species, chrom, _, end, _ in rows:
-            observed[(species, chrom)] = max(observed[(species, chrom)], end)
-        chrom_rows = []
-        for (species, chrom), obs_len in observed.items():
-            length = CHROMOSOME_LENGTHS.get(species, {}).get(chrom, obs_len)
-            chrom_rows.append((species, chrom, length))
-        conn.executemany(
-            "INSERT OR IGNORE INTO chromosomes (species, chromosome, length) VALUES (?, ?, ?)",
-            chrom_rows)
-        n_chrom = len(chrom_rows)
+    # Genes for species discovered purely via orthology (mouse from OMA;
+    # tomato/petunia from PLAZA). Arabidopsis/human are already inserted above.
+    extra_genes = {}
+    extra_genes.update(load_json(GENES_JSON))
+    extra_genes.update(load_json(PLAZA_GENES_JSON))
+    conn.executemany(
+        "INSERT OR IGNORE INTO genes (id, symbol, name, species, is_tf, gene_type) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        [(gid, g.get("symbol", gid), g.get("name", gid), g["species"],
+          1 if g.get("is_tf") else 0, "protein_coding")
+         for gid, g in extra_genes.items()],
+    )
 
-    if ORTHOLOGS_JSON.exists():
-        orthologs = json.loads(ORTHOLOGS_JSON.read_text())
-        orth_rows = [
-            (o["gene_a"], o["gene_b"], o["species_a"], o["species_b"], o.get("rel_type"), o.get("score"))
-            for o in orthologs if o["gene_a"] in valid_ids and o["gene_b"] in valid_ids
-        ]
-        conn.executemany(
-            "INSERT OR IGNORE INTO orthologs (gene_a, gene_b, species_a, species_b, rel_type, score) "
-            "VALUES (?, ?, ?, ?, ?, ?)", orth_rows)
-        n_orth = len(orth_rows)
+    valid_ids = set(human_genes) | set(arab_all) | set(extra_genes)
+
+    # Coordinates: merge OMA (animal) + PLAZA (plant). PLAZA wins on overlap.
+    # Normalize chromosome names so the two sources agree (OMA calls Arabidopsis
+    # chr 1 "1"; PLAZA calls it "Chr1") -- strip a leading "Chr"/"chr" prefix.
+    def norm_chrom(name):
+        return re.sub(r"^chr", "", str(name), flags=re.IGNORECASE)
+
+    positions = {}
+    positions.update(load_json(POSITIONS_JSON))
+    positions.update(load_json(PLAZA_POSITIONS_JSON))
+    loc_rows = [
+        (gid, p["species"], norm_chrom(p["chromosome"]), int(p["start"]), int(p["end"]), int(p.get("strand", 0)))
+        for gid, p in positions.items() if gid in valid_ids
+    ]
+    conn.executemany(
+        "INSERT OR IGNORE INTO gene_locations (gene_id, species, chromosome, start, end, strand) "
+        "VALUES (?, ?, ?, ?, ?, ?)", loc_rows)
+
+    # Chromosome lengths: authoritative where known, else max observed coord.
+    observed = defaultdict(int)
+    for _, species, chrom, _, end, _ in loc_rows:
+        observed[(species, chrom)] = max(observed[(species, chrom)], end)
+    chrom_rows = [
+        (species, chrom, CHROMOSOME_LENGTHS.get(species, {}).get(chrom, obs_len))
+        for (species, chrom), obs_len in observed.items()
+    ]
+    conn.executemany(
+        "INSERT OR IGNORE INTO chromosomes (species, chromosome, length) VALUES (?, ?, ?)",
+        chrom_rows)
+
+    # Orthologs: merge OMA + PLAZA.
+    orthologs = list(load_json(ORTHOLOGS_JSON) or []) + list(load_json(PLAZA_ORTHOLOGS_JSON) or [])
+    orth_rows = [
+        (o["gene_a"], o["gene_b"], o["species_a"], o["species_b"], o.get("rel_type"), o.get("score"))
+        for o in orthologs if o["gene_a"] in valid_ids and o["gene_b"] in valid_ids
+    ]
+    conn.executemany(
+        "INSERT OR IGNORE INTO orthologs (gene_a, gene_b, species_a, species_b, rel_type, score) "
+        "VALUES (?, ?, ?, ?, ?, ?)", orth_rows)
 
     conn.commit()
+
+    loc_by_species = defaultdict(int)
+    for _, species, *_ in loc_rows:
+        loc_by_species[species] += 1
     conn.close()
 
-    print(f"  Genome: {n_loc} locations, {n_orth} ortholog pairs, {n_chrom} chromosomes")
+    print(f"  Genome: {len(loc_rows)} locations, {len(orth_rows)} ortholog pairs, "
+          f"{len(chrom_rows)} chromosomes")
+    print(f"    by species: {dict(loc_by_species)}")
     print(f"Built {DB_PATH}:")
     print(f"  Human: {len(human_genes)} genes, {len(human_edges)} interactions")
     print(f"  Arabidopsis: {len(arab_all)} genes, {len(arab_edges)} interactions")
-    print(f"  Total: {len(human_genes) + len(arab_all)} genes, {len(all_edges)} interactions")
+    print(f"  Extra species genes: {len(extra_genes)}")
+    print(f"  Total: {len(human_genes) + len(arab_all) + len(extra_genes)} genes")
 
 
 if __name__ == "__main__":

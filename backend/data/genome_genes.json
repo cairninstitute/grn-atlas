@@ -1,0 +1,10604 @@
+{
+ "MOUSE00020": {
+  "is_tf": true,
+  "name": "YETS4_MOUSE",
+  "species": "mouse",
+  "symbol": "YEATS4"
+ },
+ "MOUSE00053": {
+  "is_tf": false,
+  "name": "CRY1_MOUSE",
+  "species": "mouse",
+  "symbol": "CRY1"
+ },
+ "MOUSE00073": {
+  "is_tf": true,
+  "name": "MDM2_MOUSE",
+  "species": "mouse",
+  "symbol": "MDM2"
+ },
+ "MOUSE00161": {
+  "is_tf": false,
+  "name": "TIMP3_MOUSE",
+  "species": "mouse",
+  "symbol": "TIMP3"
+ },
+ "MOUSE00188": {
+  "is_tf": false,
+  "name": "IFNG_MOUSE",
+  "species": "mouse",
+  "symbol": "IFNG"
+ },
+ "MOUSE00239": {
+  "is_tf": true,
+  "name": "HEY2_MOUSE",
+  "species": "mouse",
+  "symbol": "HEY2"
+ },
+ "MOUSE00240": {
+  "is_tf": true,
+  "name": "ASCL1_MOUSE",
+  "species": "mouse",
+  "symbol": "ASCL1"
+ },
+ "MOUSE00309": {
+  "is_tf": false,
+  "name": "DRAM1_MOUSE",
+  "species": "mouse",
+  "symbol": "DRAM1"
+ },
+ "MOUSE00338": {
+  "is_tf": false,
+  "name": "D3Z497",
+  "species": "mouse",
+  "symbol": "RNF7"
+ },
+ "MOUSE00370": {
+  "is_tf": false,
+  "name": "COAA1_MOUSE",
+  "species": "mouse",
+  "symbol": "COL10A1"
+ },
+ "MOUSE00379": {
+  "is_tf": true,
+  "name": "SPIC_MOUSE",
+  "species": "mouse",
+  "symbol": "SPIC"
+ },
+ "MOUSE00392": {
+  "is_tf": true,
+  "name": "A0A0R4J008",
+  "species": "mouse",
+  "symbol": "MAX"
+ },
+ "MOUSE00398": {
+  "is_tf": true,
+  "name": "EGR2_MOUSE",
+  "species": "mouse",
+  "symbol": "EGR2"
+ },
+ "MOUSE00412": {
+  "is_tf": false,
+  "name": "SC5A8_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC5A8"
+ },
+ "MOUSE00498": {
+  "is_tf": true,
+  "name": "HMGA2_MOUSE",
+  "species": "mouse",
+  "symbol": "HMGA2"
+ },
+ "MOUSE00504": {
+  "is_tf": false,
+  "name": "CDK1_MOUSE",
+  "species": "mouse",
+  "symbol": "CDK1"
+ },
+ "MOUSE00522": {
+  "is_tf": false,
+  "name": "WIF1_MOUSE",
+  "species": "mouse",
+  "symbol": "WIF1"
+ },
+ "MOUSE00677": {
+  "is_tf": false,
+  "name": "LAP2B_MOUSE",
+  "species": "mouse",
+  "symbol": "TMPO"
+ },
+ "MOUSE00710": {
+  "is_tf": false,
+  "name": "CP27B_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP27B1"
+ },
+ "MOUSE00728": {
+  "is_tf": true,
+  "name": "FOXO3_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXO3"
+ },
+ "MOUSE00733": {
+  "is_tf": false,
+  "name": "CDK4_MOUSE",
+  "species": "mouse",
+  "symbol": "CDK4"
+ },
+ "MOUSE00751": {
+  "is_tf": true,
+  "name": "ELK3_MOUSE",
+  "species": "mouse",
+  "symbol": "ELK3"
+ },
+ "MOUSE00759": {
+  "is_tf": false,
+  "name": "LKHA4_MOUSE",
+  "species": "mouse",
+  "symbol": "H19"
+ },
+ "MOUSE00797": {
+  "is_tf": false,
+  "name": "CD24_MOUSE",
+  "species": "mouse",
+  "symbol": "CD24"
+ },
+ "MOUSE00818": {
+  "is_tf": false,
+  "name": "MAP2_MOUSE",
+  "species": "mouse",
+  "symbol": "METAP2"
+ },
+ "MOUSE00831": {
+  "is_tf": true,
+  "name": "NP_031574.2",
+  "species": "mouse",
+  "symbol": "PRDM1"
+ },
+ "MOUSE00846": {
+  "is_tf": false,
+  "name": "NP_001026942.1",
+  "species": "mouse",
+  "symbol": "LIN28B"
+ },
+ "MOUSE00847": {
+  "is_tf": true,
+  "name": "DDIT3_MOUSE",
+  "species": "mouse",
+  "symbol": "DDIT3"
+ },
+ "MOUSE00877": {
+  "is_tf": true,
+  "name": "GLI1_MOUSE",
+  "species": "mouse",
+  "symbol": "GLI1"
+ },
+ "MOUSE00909": {
+  "is_tf": false,
+  "name": "SOCS2_MOUSE",
+  "species": "mouse",
+  "symbol": "SOCS2"
+ },
+ "MOUSE00944": {
+  "is_tf": false,
+  "name": "BTG1_MOUSE",
+  "species": "mouse",
+  "symbol": "BTG1"
+ },
+ "MOUSE00949": {
+  "is_tf": false,
+  "name": "PGS2_MOUSE",
+  "species": "mouse",
+  "symbol": "DCN"
+ },
+ "MOUSE01103": {
+  "is_tf": true,
+  "name": "NAB2_MOUSE",
+  "species": "mouse",
+  "symbol": "NAB2"
+ },
+ "MOUSE01136": {
+  "is_tf": false,
+  "name": "TKNK_MOUSE",
+  "species": "mouse",
+  "symbol": "TAC3"
+ },
+ "MOUSE01162": {
+  "is_tf": false,
+  "name": "H17B6_MOUSE",
+  "species": "mouse",
+  "symbol": "HSD17B6"
+ },
+ "MOUSE01170": {
+  "is_tf": false,
+  "name": "CXA1_MOUSE",
+  "species": "mouse",
+  "symbol": "GJA1"
+ },
+ "MOUSE01195": {
+  "is_tf": true,
+  "name": "NP_032323.3",
+  "species": "mouse",
+  "symbol": "HSF2"
+ },
+ "MOUSE01232": {
+  "is_tf": false,
+  "name": "FABP7_MOUSE",
+  "species": "mouse",
+  "symbol": "FABP7"
+ },
+ "MOUSE01327": {
+  "is_tf": true,
+  "name": "PAWR_MOUSE",
+  "species": "mouse",
+  "symbol": "PAWR"
+ },
+ "MOUSE01357": {
+  "is_tf": false,
+  "name": "DDIT4_MOUSE",
+  "species": "mouse",
+  "symbol": "DDIT4"
+ },
+ "MOUSE01366": {
+  "is_tf": true,
+  "name": "E2F7_MOUSE",
+  "species": "mouse",
+  "symbol": "E2F7"
+ },
+ "MOUSE01392": {
+  "is_tf": true,
+  "name": "ENSMUSP00000100872.4",
+  "species": "mouse",
+  "symbol": "STAT2"
+ },
+ "MOUSE01393": {
+  "is_tf": false,
+  "name": "IL23A_MOUSE",
+  "species": "mouse",
+  "symbol": "IL23A"
+ },
+ "MOUSE01401": {
+  "is_tf": false,
+  "name": "AKA12_MOUSE",
+  "species": "mouse",
+  "symbol": "AKAP12"
+ },
+ "MOUSE01406": {
+  "is_tf": true,
+  "name": "Q505G7",
+  "species": "mouse",
+  "symbol": "ZBTB2"
+ },
+ "MOUSE01427": {
+  "is_tf": true,
+  "name": "ESR1_MOUSE",
+  "species": "mouse",
+  "symbol": "ESR1"
+ },
+ "MOUSE01447": {
+  "is_tf": false,
+  "name": "PHLA1_MOUSE",
+  "species": "mouse",
+  "symbol": "PHLDA1"
+ },
+ "MOUSE01497": {
+  "is_tf": false,
+  "name": "TPH2_MOUSE",
+  "species": "mouse",
+  "symbol": "TPH2"
+ },
+ "MOUSE01542": {
+  "is_tf": true,
+  "name": "PA2G4_MOUSE",
+  "species": "mouse",
+  "symbol": "PA2G4"
+ },
+ "MOUSE01544": {
+  "is_tf": false,
+  "name": "ERBB3_MOUSE",
+  "species": "mouse",
+  "symbol": "ERBB3"
+ },
+ "MOUSE01581": {
+  "is_tf": false,
+  "name": "OPRM_MOUSE",
+  "species": "mouse",
+  "symbol": "OPRM1"
+ },
+ "MOUSE01597": {
+  "is_tf": false,
+  "name": "Q3U6X7",
+  "species": "mouse",
+  "symbol": "CDK2"
+ },
+ "MOUSE01872": {
+  "is_tf": false,
+  "name": "GRM1_MOUSE",
+  "species": "mouse",
+  "symbol": "PRC1"
+ },
+ "MOUSE01900": {
+  "is_tf": true,
+  "name": "PHS_MOUSE",
+  "species": "mouse",
+  "symbol": "PCBD1"
+ },
+ "MOUSE01908": {
+  "is_tf": false,
+  "name": "XP_006512770.1",
+  "species": "mouse",
+  "symbol": "UTRN"
+ },
+ "MOUSE01932": {
+  "is_tf": false,
+  "name": "PERF_MOUSE",
+  "species": "mouse",
+  "symbol": "PRF1"
+ },
+ "MOUSE01956": {
+  "is_tf": true,
+  "name": "Q9JLQ4",
+  "species": "mouse",
+  "symbol": "PLAGL1"
+ },
+ "MOUSE01993": {
+  "is_tf": true,
+  "name": "NGN3_MOUSE",
+  "species": "mouse",
+  "symbol": "NEUROG3"
+ },
+ "MOUSE02016": {
+  "is_tf": true,
+  "name": "CITE2_MOUSE",
+  "species": "mouse",
+  "symbol": "CITED2"
+ },
+ "MOUSE02021": {
+  "is_tf": false,
+  "name": "Q3V1N5",
+  "species": "mouse",
+  "symbol": "HECA"
+ },
+ "MOUSE02056": {
+  "is_tf": true,
+  "name": "TNAP3_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFAIP3"
+ },
+ "MOUSE02061": {
+  "is_tf": false,
+  "name": "INGR1_MOUSE",
+  "species": "mouse",
+  "symbol": "IFNGR1"
+ },
+ "MOUSE02069": {
+  "is_tf": false,
+  "name": "M3K5_MOUSE",
+  "species": "mouse",
+  "symbol": "MAP3K5"
+ },
+ "MOUSE02127": {
+  "is_tf": true,
+  "name": "TBPL1_MOUSE",
+  "species": "mouse",
+  "symbol": "TBPL1"
+ },
+ "MOUSE02163": {
+  "is_tf": false,
+  "name": "CCN2_MOUSE",
+  "species": "mouse",
+  "symbol": "CTGF"
+ },
+ "MOUSE02176": {
+  "is_tf": true,
+  "name": "E9QNV2",
+  "species": "mouse",
+  "symbol": "MED23"
+ },
+ "MOUSE02182": {
+  "is_tf": false,
+  "name": "ARGI1_MOUSE",
+  "species": "mouse",
+  "symbol": "ARG1"
+ },
+ "MOUSE02344": {
+  "is_tf": false,
+  "name": "MMP11_MOUSE",
+  "species": "mouse",
+  "symbol": "MMP11"
+ },
+ "MOUSE02364": {
+  "is_tf": false,
+  "name": "S100B_MOUSE",
+  "species": "mouse",
+  "symbol": "S100B"
+ },
+ "MOUSE02377": {
+  "is_tf": false,
+  "name": "GANP_MOUSE",
+  "species": "mouse",
+  "symbol": "MCM3"
+ },
+ "MOUSE02423": {
+  "is_tf": false,
+  "name": "PTTG_MOUSE",
+  "species": "mouse",
+  "symbol": "PTTG1IP"
+ },
+ "MOUSE02431": {
+  "is_tf": false,
+  "name": "G3UZA7",
+  "species": "mouse",
+  "symbol": "SUMO2"
+ },
+ "MOUSE02436": {
+  "is_tf": false,
+  "name": "G3UZ60",
+  "species": "mouse",
+  "symbol": "SUMO2"
+ },
+ "MOUSE02479": {
+  "is_tf": false,
+  "name": "AIRE_MOUSE",
+  "species": "mouse",
+  "symbol": "AIRE"
+ },
+ "MOUSE02601": {
+  "is_tf": false,
+  "name": "UB2R1_MOUSE",
+  "species": "mouse",
+  "symbol": "CDC34"
+ },
+ "MOUSE02611": {
+  "is_tf": false,
+  "name": "BASI_MOUSE",
+  "species": "mouse",
+  "symbol": "BSG"
+ },
+ "MOUSE02614": {
+  "is_tf": false,
+  "name": "HCN2_MOUSE",
+  "species": "mouse",
+  "symbol": "HCN2"
+ },
+ "MOUSE02639": {
+  "is_tf": false,
+  "name": "PTBP1_MOUSE",
+  "species": "mouse",
+  "symbol": "PTBP1"
+ },
+ "MOUSE02656": {
+  "is_tf": false,
+  "name": "ELNE_MOUSE",
+  "species": "mouse",
+  "symbol": "ELANE"
+ },
+ "MOUSE02658": {
+  "is_tf": false,
+  "name": "CFAD_MOUSE",
+  "species": "mouse",
+  "symbol": "DST"
+ },
+ "MOUSE02671": {
+  "is_tf": false,
+  "name": "KISSR_MOUSE",
+  "species": "mouse",
+  "symbol": "KISS1R"
+ },
+ "MOUSE02673": {
+  "is_tf": true,
+  "name": "ARI3A_MOUSE",
+  "species": "mouse",
+  "symbol": "ARID3A"
+ },
+ "MOUSE02701": {
+  "is_tf": false,
+  "name": "STK11_MOUSE",
+  "species": "mouse",
+  "symbol": "STK11"
+ },
+ "MOUSE02787": {
+  "is_tf": true,
+  "name": "KLF16_MOUSE",
+  "species": "mouse",
+  "symbol": "KLF16"
+ },
+ "MOUSE02835": {
+  "is_tf": false,
+  "name": "A0A8Q0P8A2",
+  "species": "mouse",
+  "symbol": "MIF"
+ },
+ "MOUSE02889": {
+  "is_tf": true,
+  "name": "ZBT7A_MOUSE",
+  "species": "mouse",
+  "symbol": "ZBTB7A"
+ },
+ "MOUSE02894": {
+  "is_tf": true,
+  "name": "PIAS4_MOUSE",
+  "species": "mouse",
+  "symbol": "PIAS4"
+ },
+ "MOUSE02927": {
+  "is_tf": false,
+  "name": "PI51C_MOUSE",
+  "species": "mouse",
+  "symbol": "PIP5K1C"
+ },
+ "MOUSE02936": {
+  "is_tf": false,
+  "name": "TA2R_MOUSE",
+  "species": "mouse",
+  "symbol": "TBXA2R"
+ },
+ "MOUSE02965": {
+  "is_tf": true,
+  "name": "NFIC_MOUSE",
+  "species": "mouse",
+  "symbol": "NFIC"
+ },
+ "MOUSE03000": {
+  "is_tf": false,
+  "name": "SIR6_MOUSE",
+  "species": "mouse",
+  "symbol": "SIRT6"
+ },
+ "MOUSE03047": {
+  "is_tf": false,
+  "name": "TDG_MOUSE",
+  "species": "mouse",
+  "symbol": "TDG"
+ },
+ "MOUSE03060": {
+  "is_tf": true,
+  "name": "NFYB_MOUSE",
+  "species": "mouse",
+  "symbol": "NFYB"
+ },
+ "MOUSE03135": {
+  "is_tf": false,
+  "name": "XPO1_MOUSE",
+  "species": "mouse",
+  "symbol": "XPO1"
+ },
+ "MOUSE03143": {
+  "is_tf": true,
+  "name": "PCGF2_MOUSE",
+  "species": "mouse",
+  "symbol": "PCGF2"
+ },
+ "MOUSE03173": {
+  "is_tf": false,
+  "name": "PEDF_MOUSE",
+  "species": "mouse",
+  "symbol": "SERPINF1"
+ },
+ "MOUSE03195": {
+  "is_tf": false,
+  "name": "H2A3_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE03271": {
+  "is_tf": false,
+  "name": "SREC_MOUSE",
+  "species": "mouse",
+  "symbol": "SCARF1"
+ },
+ "MOUSE03339": {
+  "is_tf": true,
+  "name": "NP_038662.2",
+  "species": "mouse",
+  "symbol": "MED1"
+ },
+ "MOUSE03357": {
+  "is_tf": true,
+  "name": "BC11A_MOUSE",
+  "species": "mouse",
+  "symbol": "BCL11A"
+ },
+ "MOUSE03384": {
+  "is_tf": false,
+  "name": "WNT3A_MOUSE",
+  "species": "mouse",
+  "symbol": "WNT3A"
+ },
+ "MOUSE03433": {
+  "is_tf": false,
+  "name": "ERBB2_MOUSE",
+  "species": "mouse",
+  "symbol": "ERBB2"
+ },
+ "MOUSE03519": {
+  "is_tf": true,
+  "name": "NR1D1_MOUSE",
+  "species": "mouse",
+  "symbol": "NR1D1"
+ },
+ "MOUSE03564": {
+  "is_tf": false,
+  "name": "A0A0R4J145",
+  "species": "mouse",
+  "symbol": "CDC6"
+ },
+ "MOUSE03566": {
+  "is_tf": false,
+  "name": "TLC3A_MOUSE",
+  "species": "mouse",
+  "symbol": "FAM57A"
+ },
+ "MOUSE03584": {
+  "is_tf": true,
+  "name": "RARA_MOUSE",
+  "species": "mouse",
+  "symbol": "RARA"
+ },
+ "MOUSE03590": {
+  "is_tf": false,
+  "name": "TOP2A_MOUSE",
+  "species": "mouse",
+  "symbol": "TOP2A"
+ },
+ "MOUSE03606": {
+  "is_tf": false,
+  "name": "CCR7_MOUSE",
+  "species": "mouse",
+  "symbol": "CCR7"
+ },
+ "MOUSE03631": {
+  "is_tf": false,
+  "name": "A2A513",
+  "species": "mouse",
+  "symbol": "KRT10"
+ },
+ "MOUSE03651": {
+  "is_tf": false,
+  "name": "A2A590",
+  "species": "mouse",
+  "symbol": "TAP1"
+ },
+ "MOUSE03653": {
+  "is_tf": false,
+  "name": "A2A588",
+  "species": "mouse",
+  "symbol": "TAP1"
+ },
+ "MOUSE03656": {
+  "is_tf": false,
+  "name": "KRA93_MOUSE",
+  "species": "mouse",
+  "symbol": "TAP1"
+ },
+ "MOUSE03691": {
+  "is_tf": true,
+  "name": "SRBP1_MOUSE",
+  "species": "mouse",
+  "symbol": "SREBF1"
+ },
+ "MOUSE03727": {
+  "is_tf": false,
+  "name": "BLMH_MOUSE",
+  "species": "mouse",
+  "symbol": "BLMH"
+ },
+ "MOUSE03737": {
+  "is_tf": false,
+  "name": "K1C13_MOUSE",
+  "species": "mouse",
+  "symbol": "KRT13"
+ },
+ "MOUSE03739": {
+  "is_tf": false,
+  "name": "K1C19_MOUSE",
+  "species": "mouse",
+  "symbol": "KRT19"
+ },
+ "MOUSE03740": {
+  "is_tf": false,
+  "name": "SC6A4_MOUSE",
+  "species": "mouse",
+  "symbol": "HTT"
+ },
+ "MOUSE03750": {
+  "is_tf": false,
+  "name": "K1C14_MOUSE",
+  "species": "mouse",
+  "symbol": "KRT14"
+ },
+ "MOUSE03757": {
+  "is_tf": false,
+  "name": "K1C16_MOUSE",
+  "species": "mouse",
+  "symbol": "KRT16"
+ },
+ "MOUSE03762": {
+  "is_tf": false,
+  "name": "K1C17_MOUSE",
+  "species": "mouse",
+  "symbol": "KRT17"
+ },
+ "MOUSE03772": {
+  "is_tf": false,
+  "name": "GAST_MOUSE",
+  "species": "mouse",
+  "symbol": "GAST"
+ },
+ "MOUSE03865": {
+  "is_tf": false,
+  "name": "Q9QWJ3",
+  "species": "mouse",
+  "symbol": "HBA2"
+ },
+ "MOUSE03867": {
+  "is_tf": false,
+  "name": "Q91VB8",
+  "species": "mouse",
+  "symbol": "HBA2"
+ },
+ "MOUSE03889": {
+  "is_tf": false,
+  "name": "Q3V117",
+  "species": "mouse",
+  "symbol": "ACLY"
+ },
+ "MOUSE03923": {
+  "is_tf": false,
+  "name": "ENSMUSP00000131010.2",
+  "species": "mouse",
+  "symbol": "SPHK1"
+ },
+ "MOUSE03978": {
+  "is_tf": true,
+  "name": "FOXI1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXI1"
+ },
+ "MOUSE03990": {
+  "is_tf": false,
+  "name": "A0A0R4J0S4",
+  "species": "mouse",
+  "symbol": "DLG4"
+ },
+ "MOUSE04027": {
+  "is_tf": true,
+  "name": "STA5B_MOUSE",
+  "species": "mouse",
+  "symbol": "STAT5B"
+ },
+ "MOUSE04041": {
+  "is_tf": false,
+  "name": "TOP3A_MOUSE",
+  "species": "mouse",
+  "symbol": "TOP3A"
+ },
+ "MOUSE04048": {
+  "is_tf": true,
+  "name": "STA5A_MOUSE",
+  "species": "mouse",
+  "symbol": "STAT5"
+ },
+ "MOUSE04053": {
+  "is_tf": false,
+  "name": "MAT2B_MOUSE",
+  "species": "mouse",
+  "symbol": "MAT2B"
+ },
+ "MOUSE04171": {
+  "is_tf": false,
+  "name": "FABP6_MOUSE",
+  "species": "mouse",
+  "symbol": "FABP6"
+ },
+ "MOUSE04181": {
+  "is_tf": false,
+  "name": "SOCS3_MOUSE",
+  "species": "mouse",
+  "symbol": "SOCS3"
+ },
+ "MOUSE04187": {
+  "is_tf": false,
+  "name": "IL12B_MOUSE",
+  "species": "mouse",
+  "symbol": "IL12B"
+ },
+ "MOUSE04194": {
+  "is_tf": false,
+  "name": "MK07_MOUSE",
+  "species": "mouse",
+  "symbol": "MAPK7"
+ },
+ "MOUSE04210": {
+  "is_tf": false,
+  "name": "DHB1_MOUSE",
+  "species": "mouse",
+  "symbol": "HSD17B1"
+ },
+ "MOUSE04220": {
+  "is_tf": false,
+  "name": "THG1_MOUSE",
+  "species": "mouse",
+  "symbol": "OTC"
+ },
+ "MOUSE04261": {
+  "is_tf": false,
+  "name": "Q6PI17",
+  "species": "mouse",
+  "symbol": "TIMP2"
+ },
+ "MOUSE04270": {
+  "is_tf": false,
+  "name": "CYFP2_MOUSE",
+  "species": "mouse",
+  "symbol": "CYFIP2"
+ },
+ "MOUSE04380": {
+  "is_tf": true,
+  "name": "CBX8_MOUSE",
+  "species": "mouse",
+  "symbol": "CBX8"
+ },
+ "MOUSE04408": {
+  "is_tf": false,
+  "name": "BECN1_MOUSE",
+  "species": "mouse",
+  "symbol": "BECN1"
+ },
+ "MOUSE04584": {
+  "is_tf": false,
+  "name": "VGFR3_MOUSE",
+  "species": "mouse",
+  "symbol": "FLT4"
+ },
+ "MOUSE04626": {
+  "is_tf": true,
+  "name": "Q5RIM6",
+  "species": "mouse",
+  "symbol": "NCOR1"
+ },
+ "MOUSE04721": {
+  "is_tf": true,
+  "name": "Q5SVT2",
+  "species": "mouse",
+  "symbol": "TRIM16"
+ },
+ "MOUSE04735": {
+  "is_tf": false,
+  "name": "SQSTM_MOUSE",
+  "species": "mouse",
+  "symbol": "SQSTM1"
+ },
+ "MOUSE04750": {
+  "is_tf": true,
+  "name": "FOXN1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXN1"
+ },
+ "MOUSE04754": {
+  "is_tf": false,
+  "name": "LTC4S_MOUSE",
+  "species": "mouse",
+  "symbol": "LTC4S"
+ },
+ "MOUSE04758": {
+  "is_tf": true,
+  "name": "A2A5C3",
+  "species": "mouse",
+  "symbol": "ETV4"
+ },
+ "MOUSE04760": {
+  "is_tf": false,
+  "name": "PCFT_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC46A1"
+ },
+ "MOUSE04763": {
+  "is_tf": true,
+  "name": "MAML1_MOUSE",
+  "species": "mouse",
+  "symbol": "MAML1"
+ },
+ "MOUSE04769": {
+  "is_tf": false,
+  "name": "SOST_MOUSE",
+  "species": "mouse",
+  "symbol": "SOST"
+ },
+ "MOUSE04911": {
+  "is_tf": false,
+  "name": "MP2K4_MOUSE",
+  "species": "mouse",
+  "symbol": "MAP2K4"
+ },
+ "MOUSE05024": {
+  "is_tf": true,
+  "name": "NF1_MOUSE",
+  "species": "mouse",
+  "symbol": "NF1"
+ },
+ "MOUSE05026": {
+  "is_tf": false,
+  "name": "GLR_MOUSE",
+  "species": "mouse",
+  "symbol": "GCGR"
+ },
+ "MOUSE05050": {
+  "is_tf": false,
+  "name": "GDIR1_MOUSE",
+  "species": "mouse",
+  "symbol": "FST"
+ },
+ "MOUSE05064": {
+  "is_tf": true,
+  "name": "SUZ12_MOUSE",
+  "species": "mouse",
+  "symbol": "SUZ12"
+ },
+ "MOUSE05116": {
+  "is_tf": false,
+  "name": "PP2AA_MOUSE",
+  "species": "mouse",
+  "symbol": "PPP2CA"
+ },
+ "MOUSE05122": {
+  "is_tf": false,
+  "name": "NOTUM_MOUSE",
+  "species": "mouse",
+  "symbol": "NOTUM"
+ },
+ "MOUSE05161": {
+  "is_tf": false,
+  "name": "Q3U2G2",
+  "species": "mouse",
+  "symbol": "HSPA4"
+ },
+ "MOUSE05242": {
+  "is_tf": true,
+  "name": "HMGA1_MOUSE",
+  "species": "mouse",
+  "symbol": "HMGA1"
+ },
+ "MOUSE05258": {
+  "is_tf": false,
+  "name": "IL4_MOUSE",
+  "species": "mouse",
+  "symbol": "IL4"
+ },
+ "MOUSE05259": {
+  "is_tf": false,
+  "name": "IL13_MOUSE",
+  "species": "mouse",
+  "symbol": "IL13"
+ },
+ "MOUSE05294": {
+  "is_tf": false,
+  "name": "IL5_MOUSE",
+  "species": "mouse",
+  "symbol": "IL5"
+ },
+ "MOUSE05311": {
+  "is_tf": false,
+  "name": "CD5R1_MOUSE",
+  "species": "mouse",
+  "symbol": "CDK5R1"
+ },
+ "MOUSE05335": {
+  "is_tf": true,
+  "name": "IRF1_MOUSE",
+  "species": "mouse",
+  "symbol": "IRF1"
+ },
+ "MOUSE05366": {
+  "is_tf": false,
+  "name": "CCL11_MOUSE",
+  "species": "mouse",
+  "symbol": "CCL11"
+ },
+ "MOUSE05368": {
+  "is_tf": false,
+  "name": "CCL12_MOUSE",
+  "species": "mouse",
+  "symbol": "CCL2"
+ },
+ "MOUSE05378": {
+  "is_tf": true,
+  "name": "ITA2B_MOUSE",
+  "species": "mouse",
+  "symbol": "VDR"
+ },
+ "MOUSE05379": {
+  "is_tf": false,
+  "name": "FAS_MOUSE",
+  "species": "mouse",
+  "symbol": "FASN"
+ },
+ "MOUSE05409": {
+  "is_tf": false,
+  "name": "VAMP2_MOUSE",
+  "species": "mouse",
+  "symbol": "VAMP2"
+ },
+ "MOUSE05421": {
+  "is_tf": false,
+  "name": "CSF2_MOUSE",
+  "species": "mouse",
+  "symbol": "CSF2"
+ },
+ "MOUSE05457": {
+  "is_tf": true,
+  "name": "PER1_MOUSE",
+  "species": "mouse",
+  "symbol": "PER1"
+ },
+ "MOUSE05493": {
+  "is_tf": false,
+  "name": "GFAP_MOUSE",
+  "species": "mouse",
+  "symbol": "GFAP"
+ },
+ "MOUSE05551": {
+  "is_tf": true,
+  "name": "HEXI1_MOUSE",
+  "species": "mouse",
+  "symbol": "HEXIM1"
+ },
+ "MOUSE05629": {
+  "is_tf": false,
+  "name": "EFNB3_MOUSE",
+  "species": "mouse",
+  "symbol": "EFNB3"
+ },
+ "MOUSE05660": {
+  "is_tf": true,
+  "name": "P53_MOUSE",
+  "species": "mouse",
+  "symbol": "TP53"
+ },
+ "MOUSE05663": {
+  "is_tf": false,
+  "name": "SHBG_MOUSE",
+  "species": "mouse",
+  "symbol": "SHBG"
+ },
+ "MOUSE05673": {
+  "is_tf": false,
+  "name": "Q6P5B5",
+  "species": "mouse",
+  "symbol": "FXR2"
+ },
+ "MOUSE05704": {
+  "is_tf": false,
+  "name": "CD68_MOUSE",
+  "species": "mouse",
+  "symbol": "CD68"
+ },
+ "MOUSE05721": {
+  "is_tf": false,
+  "name": "Q8CGV8",
+  "species": "mouse",
+  "symbol": "MMP28"
+ },
+ "MOUSE05769": {
+  "is_tf": true,
+  "name": "HNF1B_MOUSE",
+  "species": "mouse",
+  "symbol": "HNF1B"
+ },
+ "MOUSE05791": {
+  "is_tf": false,
+  "name": "ITB3_MOUSE",
+  "species": "mouse",
+  "symbol": "ITGB3"
+ },
+ "MOUSE05861": {
+  "is_tf": true,
+  "name": "AATF_MOUSE",
+  "species": "mouse",
+  "symbol": "AATF"
+ },
+ "MOUSE05866": {
+  "is_tf": false,
+  "name": "SPRC_MOUSE",
+  "species": "mouse",
+  "symbol": "SPARC"
+ },
+ "MOUSE05886": {
+  "is_tf": false,
+  "name": "GLRA1_MOUSE",
+  "species": "mouse",
+  "symbol": "GLRA1"
+ },
+ "MOUSE06034": {
+  "is_tf": false,
+  "name": "CLD7_MOUSE",
+  "species": "mouse",
+  "symbol": "CLDN7"
+ },
+ "MOUSE06081": {
+  "is_tf": false,
+  "name": "PRS8_MOUSE",
+  "species": "mouse",
+  "symbol": "PSMC5"
+ },
+ "MOUSE06116": {
+  "is_tf": false,
+  "name": "SOMA_MOUSE",
+  "species": "mouse",
+  "symbol": "GH1"
+ },
+ "MOUSE06148": {
+  "is_tf": true,
+  "name": "TBX2_MOUSE",
+  "species": "mouse",
+  "symbol": "TBX2"
+ },
+ "MOUSE06167": {
+  "is_tf": true,
+  "name": "FANCJ_MOUSE",
+  "species": "mouse",
+  "symbol": "BACH1"
+ },
+ "MOUSE06205": {
+  "is_tf": false,
+  "name": "VMP1_MOUSE",
+  "species": "mouse",
+  "symbol": "VMP1"
+ },
+ "MOUSE06252": {
+  "is_tf": true,
+  "name": "SMUF2_MOUSE",
+  "species": "mouse",
+  "symbol": "SMURF2"
+ },
+ "MOUSE06265": {
+  "is_tf": false,
+  "name": "IMA1_MOUSE",
+  "species": "mouse",
+  "symbol": "KPNA2"
+ },
+ "MOUSE06398": {
+  "is_tf": false,
+  "name": "Q4VA93",
+  "species": "mouse",
+  "symbol": "PRKCA"
+ },
+ "MOUSE06430": {
+  "is_tf": false,
+  "name": "LOX12_MOUSE",
+  "species": "mouse",
+  "symbol": "ALOX12"
+ },
+ "MOUSE06437": {
+  "is_tf": false,
+  "name": "LOX15_MOUSE",
+  "species": "mouse",
+  "symbol": "ALOX15"
+ },
+ "MOUSE06460": {
+  "is_tf": false,
+  "name": "AXIN2_MOUSE",
+  "species": "mouse",
+  "symbol": "AXIN2"
+ },
+ "MOUSE06520": {
+  "is_tf": false,
+  "name": "PERE_MOUSE",
+  "species": "mouse",
+  "symbol": "EPO"
+ },
+ "MOUSE06555": {
+  "is_tf": true,
+  "name": "Q5SXC4",
+  "species": "mouse",
+  "symbol": "VEZF1"
+ },
+ "MOUSE06653": {
+  "is_tf": false,
+  "name": "ACHE_MOUSE",
+  "species": "mouse",
+  "symbol": "CHRNE"
+ },
+ "MOUSE06663": {
+  "is_tf": false,
+  "name": "GP1BA_MOUSE",
+  "species": "mouse",
+  "symbol": "GP1BA"
+ },
+ "MOUSE06675": {
+  "is_tf": true,
+  "name": "HLF_MOUSE",
+  "species": "mouse",
+  "symbol": "HLF"
+ },
+ "MOUSE06750": {
+  "is_tf": false,
+  "name": "SSR2_MOUSE",
+  "species": "mouse",
+  "symbol": "SSTR2"
+ },
+ "MOUSE06775": {
+  "is_tf": false,
+  "name": "NDKA_MOUSE",
+  "species": "mouse",
+  "symbol": "NME1"
+ },
+ "MOUSE06909": {
+  "is_tf": true,
+  "name": "TOB1_MOUSE",
+  "species": "mouse",
+  "symbol": "TOB1"
+ },
+ "MOUSE07002": {
+  "is_tf": false,
+  "name": "SUMO2_MOUSE",
+  "species": "mouse",
+  "symbol": "SUMO2"
+ },
+ "MOUSE07064": {
+  "is_tf": false,
+  "name": "IBP1_MOUSE",
+  "species": "mouse",
+  "symbol": "IGFBP1"
+ },
+ "MOUSE07120": {
+  "is_tf": true,
+  "name": "G5E8H3",
+  "species": "mouse",
+  "symbol": "IKZF1"
+ },
+ "MOUSE07133": {
+  "is_tf": false,
+  "name": "AT2A3_MOUSE",
+  "species": "mouse",
+  "symbol": "ATP2A3"
+ },
+ "MOUSE07210": {
+  "is_tf": false,
+  "name": "CO1A1_MOUSE",
+  "species": "mouse",
+  "symbol": "COL1A1"
+ },
+ "MOUSE07267": {
+  "is_tf": false,
+  "name": "PDK2_MOUSE",
+  "species": "mouse",
+  "symbol": "PDK2"
+ },
+ "MOUSE07343": {
+  "is_tf": true,
+  "name": "DLX3_MOUSE",
+  "species": "mouse",
+  "symbol": "DLX3"
+ },
+ "MOUSE07344": {
+  "is_tf": true,
+  "name": "DLX4_MOUSE",
+  "species": "mouse",
+  "symbol": "DLX4"
+ },
+ "MOUSE07351": {
+  "is_tf": true,
+  "name": "NP_034919.1",
+  "species": "mouse",
+  "symbol": "MEIS1"
+ },
+ "MOUSE07372": {
+  "is_tf": false,
+  "name": "SATT_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC1A4"
+ },
+ "MOUSE07414": {
+  "is_tf": false,
+  "name": "TNR16_MOUSE",
+  "species": "mouse",
+  "symbol": "NGFR"
+ },
+ "MOUSE07415": {
+  "is_tf": false,
+  "name": "PHB1_MOUSE",
+  "species": "mouse",
+  "symbol": "PHB"
+ },
+ "MOUSE07417": {
+  "is_tf": false,
+  "name": "ZN652_MOUSE",
+  "species": "mouse",
+  "symbol": "ZNF652"
+ },
+ "MOUSE07446": {
+  "is_tf": false,
+  "name": "IF2B1_MOUSE",
+  "species": "mouse",
+  "symbol": "IGF2BP1"
+ },
+ "MOUSE07465": {
+  "is_tf": true,
+  "name": "OTX1_MOUSE",
+  "species": "mouse",
+  "symbol": "OTX1"
+ },
+ "MOUSE07479": {
+  "is_tf": true,
+  "name": "HXB13_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXB13"
+ },
+ "MOUSE07483": {
+  "is_tf": false,
+  "name": "HXB8_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXB8"
+ },
+ "MOUSE07489": {
+  "is_tf": true,
+  "name": "HXB7_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXB7"
+ },
+ "MOUSE07494": {
+  "is_tf": false,
+  "name": "HXB4_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXB4"
+ },
+ "MOUSE07504": {
+  "is_tf": true,
+  "name": "HXB1_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXB1"
+ },
+ "MOUSE07531": {
+  "is_tf": true,
+  "name": "NF2L1_MOUSE",
+  "species": "mouse",
+  "symbol": "NFE2L1"
+ },
+ "MOUSE07557": {
+  "is_tf": true,
+  "name": "Q8C5J0",
+  "species": "mouse",
+  "symbol": "SP2"
+ },
+ "MOUSE07560": {
+  "is_tf": true,
+  "name": "SP6_MOUSE",
+  "species": "mouse",
+  "symbol": "KLF14"
+ },
+ "MOUSE07569": {
+  "is_tf": true,
+  "name": "TBX21_MOUSE",
+  "species": "mouse",
+  "symbol": "TBX21"
+ },
+ "MOUSE07576": {
+  "is_tf": false,
+  "name": "IMB1_MOUSE",
+  "species": "mouse",
+  "symbol": "KPNB1"
+ },
+ "MOUSE07610": {
+  "is_tf": true,
+  "name": "NPM_MOUSE",
+  "species": "mouse",
+  "symbol": "NPM1"
+ },
+ "MOUSE07619": {
+  "is_tf": false,
+  "name": "CCL3_MOUSE",
+  "species": "mouse",
+  "symbol": "CCL3"
+ },
+ "MOUSE07620": {
+  "is_tf": false,
+  "name": "CCL4_MOUSE",
+  "species": "mouse",
+  "symbol": "CCL4"
+ },
+ "MOUSE07623": {
+  "is_tf": false,
+  "name": "VSX2_MOUSE",
+  "species": "mouse",
+  "symbol": "VSX2"
+ },
+ "MOUSE07625": {
+  "is_tf": false,
+  "name": "TRIB2_MOUSE",
+  "species": "mouse",
+  "symbol": "TRIB2"
+ },
+ "MOUSE07673": {
+  "is_tf": true,
+  "name": "EAPP_MOUSE",
+  "species": "mouse",
+  "symbol": "EAPP"
+ },
+ "MOUSE07711": {
+  "is_tf": false,
+  "name": "HS90A_MOUSE",
+  "species": "mouse",
+  "symbol": "HSP90AA1"
+ },
+ "MOUSE07766": {
+  "is_tf": false,
+  "name": "GREB1_MOUSE",
+  "species": "mouse",
+  "symbol": "GREB1"
+ },
+ "MOUSE07808": {
+  "is_tf": true,
+  "name": "IKBA_MOUSE",
+  "species": "mouse",
+  "symbol": "NFKBIA"
+ },
+ "MOUSE07837": {
+  "is_tf": true,
+  "name": "FOS_MOUSE",
+  "species": "mouse",
+  "symbol": "FOS"
+ },
+ "MOUSE07838": {
+  "is_tf": true,
+  "name": "JDP2_MOUSE",
+  "species": "mouse",
+  "symbol": "JDP2"
+ },
+ "MOUSE07844": {
+  "is_tf": false,
+  "name": "NP_082235.2",
+  "species": "mouse",
+  "symbol": "PDIA6"
+ },
+ "MOUSE07879": {
+  "is_tf": false,
+  "name": "DCOR_MOUSE",
+  "species": "mouse",
+  "symbol": "ODC1"
+ },
+ "MOUSE07953": {
+  "is_tf": false,
+  "name": "TGFB3_MOUSE",
+  "species": "mouse",
+  "symbol": "TGFB3"
+ },
+ "MOUSE07976": {
+  "is_tf": true,
+  "name": "FOXA1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXA1"
+ },
+ "MOUSE07982": {
+  "is_tf": false,
+  "name": "SSR1_MOUSE",
+  "species": "mouse",
+  "symbol": "SSTR1"
+ },
+ "MOUSE08018": {
+  "is_tf": false,
+  "name": "ASPP1_MOUSE",
+  "species": "mouse",
+  "symbol": "PPP1R13B"
+ },
+ "MOUSE08090": {
+  "is_tf": false,
+  "name": "GRHL1_MOUSE",
+  "species": "mouse",
+  "symbol": "GRHL1"
+ },
+ "MOUSE08092": {
+  "is_tf": true,
+  "name": "KLF11_MOUSE",
+  "species": "mouse",
+  "symbol": "KLF11"
+ },
+ "MOUSE08110": {
+  "is_tf": false,
+  "name": "RIR2_MOUSE",
+  "species": "mouse",
+  "symbol": "RRM2"
+ },
+ "MOUSE08182": {
+  "is_tf": true,
+  "name": "ID2_MOUSE",
+  "species": "mouse",
+  "symbol": "ID2"
+ },
+ "MOUSE08195": {
+  "is_tf": false,
+  "name": "R144A_MOUSE",
+  "species": "mouse",
+  "symbol": "RNF144A"
+ },
+ "MOUSE08215": {
+  "is_tf": true,
+  "name": "SOX11_MOUSE",
+  "species": "mouse",
+  "symbol": "SOX11"
+ },
+ "MOUSE08256": {
+  "is_tf": false,
+  "name": "F6TQW2",
+  "species": "mouse",
+  "symbol": "HDC"
+ },
+ "MOUSE08258": {
+  "is_tf": false,
+  "name": "A0A0A6YVP0",
+  "species": "mouse",
+  "symbol": "HDC"
+ },
+ "MOUSE08265": {
+  "is_tf": false,
+  "name": "A0A0A6YWR2",
+  "species": "mouse",
+  "symbol": "HDC"
+ },
+ "MOUSE08270": {
+  "is_tf": false,
+  "name": "A0A1Y7VJN6",
+  "species": "mouse",
+  "symbol": "HDC"
+ },
+ "MOUSE08293": {
+  "is_tf": false,
+  "name": "TSHR_MOUSE",
+  "species": "mouse",
+  "symbol": "TSHR"
+ },
+ "MOUSE08383": {
+  "is_tf": false,
+  "name": "ARF6_MOUSE",
+  "species": "mouse",
+  "symbol": "ARF6"
+ },
+ "MOUSE08522": {
+  "is_tf": false,
+  "name": "LAMB1_MOUSE",
+  "species": "mouse",
+  "symbol": "LAMB1"
+ },
+ "MOUSE08562": {
+  "is_tf": false,
+  "name": "S26A3_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC26A3"
+ },
+ "MOUSE08592": {
+  "is_tf": false,
+  "name": "S26A4_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC26A4"
+ },
+ "MOUSE08635": {
+  "is_tf": true,
+  "name": "HBP1_MOUSE",
+  "species": "mouse",
+  "symbol": "HBP1"
+ },
+ "MOUSE08662": {
+  "is_tf": true,
+  "name": "PK3CG_MOUSE",
+  "species": "mouse",
+  "symbol": "APC"
+ },
+ "MOUSE08675": {
+  "is_tf": false,
+  "name": "NAMPT_MOUSE",
+  "species": "mouse",
+  "symbol": "NAMPT"
+ },
+ "MOUSE08687": {
+  "is_tf": true,
+  "name": "CDA7L_MOUSE",
+  "species": "mouse",
+  "symbol": "CDCA7L"
+ },
+ "MOUSE08725": {
+  "is_tf": true,
+  "name": "TWST1_MOUSE",
+  "species": "mouse",
+  "symbol": "TWIST1"
+ },
+ "MOUSE08727": {
+  "is_tf": true,
+  "name": "A0A1Y7VJR5",
+  "species": "mouse",
+  "symbol": "SP4"
+ },
+ "MOUSE08736": {
+  "is_tf": false,
+  "name": "E9PXX8",
+  "species": "mouse",
+  "symbol": "MACC1"
+ },
+ "MOUSE08805": {
+  "is_tf": false,
+  "name": "AGR2_MOUSE",
+  "species": "mouse",
+  "symbol": "AGR2"
+ },
+ "MOUSE08846": {
+  "is_tf": false,
+  "name": "D3Z5V0",
+  "species": "mouse",
+  "symbol": "DACT1"
+ },
+ "MOUSE08864": {
+  "is_tf": false,
+  "name": "MEOX2_MOUSE",
+  "species": "mouse",
+  "symbol": "MEOX2"
+ },
+ "MOUSE08902": {
+  "is_tf": false,
+  "name": "CMGA_MOUSE",
+  "species": "mouse",
+  "symbol": "CHGA"
+ },
+ "MOUSE08959": {
+  "is_tf": true,
+  "name": "SIX1_MOUSE",
+  "species": "mouse",
+  "symbol": "SIX1"
+ },
+ "MOUSE08968": {
+  "is_tf": false,
+  "name": "MAT1_MOUSE",
+  "species": "mouse",
+  "symbol": "MNAT1"
+ },
+ "MOUSE08972": {
+  "is_tf": false,
+  "name": "S38A6_MOUSE",
+  "species": "mouse",
+  "symbol": "NAT1"
+ },
+ "MOUSE09011": {
+  "is_tf": true,
+  "name": "HIF1A_MOUSE",
+  "species": "mouse",
+  "symbol": "HIF1A"
+ },
+ "MOUSE09039": {
+  "is_tf": false,
+  "name": "LRRN3_MOUSE",
+  "species": "mouse",
+  "symbol": "LRRN3"
+ },
+ "MOUSE09103": {
+  "is_tf": false,
+  "name": "SPA3C_MOUSE",
+  "species": "mouse",
+  "symbol": "SERPINA3"
+ },
+ "MOUSE09105": {
+  "is_tf": false,
+  "name": "NRCAM_MOUSE",
+  "species": "mouse",
+  "symbol": "NRCAM"
+ },
+ "MOUSE09122": {
+  "is_tf": true,
+  "name": "FOXG1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXG1"
+ },
+ "MOUSE09126": {
+  "is_tf": false,
+  "name": "Q3UDB3",
+  "species": "mouse",
+  "symbol": "SERPINA3"
+ },
+ "MOUSE09144": {
+  "is_tf": false,
+  "name": "D3Z450",
+  "species": "mouse",
+  "symbol": "SERPINA3"
+ },
+ "MOUSE09146": {
+  "is_tf": false,
+  "name": "A0A0R4J0I1",
+  "species": "mouse",
+  "symbol": "SERPINA3"
+ },
+ "MOUSE09147": {
+  "is_tf": false,
+  "name": "SPA3M_MOUSE",
+  "species": "mouse",
+  "symbol": "SERPINA3"
+ },
+ "MOUSE09149": {
+  "is_tf": false,
+  "name": "G3X8T9",
+  "species": "mouse",
+  "symbol": "SERPINA3"
+ },
+ "MOUSE09157": {
+  "is_tf": true,
+  "name": "A0A1W2P736",
+  "species": "mouse",
+  "symbol": "ESR2"
+ },
+ "MOUSE09159": {
+  "is_tf": false,
+  "name": "NP_683750.2",
+  "species": "mouse",
+  "symbol": "DICER1"
+ },
+ "MOUSE09220": {
+  "is_tf": false,
+  "name": "BKRB2_MOUSE",
+  "species": "mouse",
+  "symbol": "BDKRB2"
+ },
+ "MOUSE09274": {
+  "is_tf": false,
+  "name": "ARGI2_MOUSE",
+  "species": "mouse",
+  "symbol": "ARG2"
+ },
+ "MOUSE09297": {
+  "is_tf": true,
+  "name": "TISB_MOUSE",
+  "species": "mouse",
+  "symbol": "ZFP36L1"
+ },
+ "MOUSE09374": {
+  "is_tf": true,
+  "name": "TYY1_MOUSE",
+  "species": "mouse",
+  "symbol": "YY1"
+ },
+ "MOUSE09419": {
+  "is_tf": false,
+  "name": "B4YB45",
+  "species": "mouse",
+  "symbol": "DLK1"
+ },
+ "MOUSE09502": {
+  "is_tf": false,
+  "name": "PSN1_MOUSE",
+  "species": "mouse",
+  "symbol": "PSEN1"
+ },
+ "MOUSE09533": {
+  "is_tf": true,
+  "name": "NP_714965.1",
+  "species": "mouse",
+  "symbol": "DNMT3A"
+ },
+ "MOUSE09594": {
+  "is_tf": true,
+  "name": "NCOA1_MOUSE",
+  "species": "mouse",
+  "symbol": "NCOA1"
+ },
+ "MOUSE09659": {
+  "is_tf": false,
+  "name": "APOB_MOUSE",
+  "species": "mouse",
+  "symbol": "APOB"
+ },
+ "MOUSE09680": {
+  "is_tf": false,
+  "name": "RHOB_MOUSE",
+  "species": "mouse",
+  "symbol": "RHOB"
+ },
+ "MOUSE09754": {
+  "is_tf": true,
+  "name": "MYCN_MOUSE",
+  "species": "mouse",
+  "symbol": "MYCN"
+ },
+ "MOUSE09764": {
+  "is_tf": false,
+  "name": "SIVA_MOUSE",
+  "species": "mouse",
+  "symbol": "SIVA1"
+ },
+ "MOUSE09766": {
+  "is_tf": false,
+  "name": "AKT1_MOUSE",
+  "species": "mouse",
+  "symbol": "AKT1"
+ },
+ "MOUSE09814": {
+  "is_tf": true,
+  "name": "MTA1_MOUSE",
+  "species": "mouse",
+  "symbol": "MTA1"
+ },
+ "MOUSE09900": {
+  "is_tf": true,
+  "name": "A0A0R4J1E6",
+  "species": "mouse",
+  "symbol": "TFAP2A"
+ },
+ "MOUSE09972": {
+  "is_tf": true,
+  "name": "A0A0R4J021",
+  "species": "mouse",
+  "symbol": "GCM2"
+ },
+ "MOUSE10082": {
+  "is_tf": false,
+  "name": "H2A1O_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10089": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE10090": {
+  "is_tf": false,
+  "name": "EDN1_MOUSE",
+  "species": "mouse",
+  "symbol": "EDN1"
+ },
+ "MOUSE10091": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE10100": {
+  "is_tf": false,
+  "name": "H2A1C_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10108": {
+  "is_tf": false,
+  "name": "H2A1D_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10109": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE10110": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE10111": {
+  "is_tf": false,
+  "name": "H2A1B_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10141": {
+  "is_tf": false,
+  "name": "H2A1H_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10144": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE10145": {
+  "is_tf": false,
+  "name": "H2A1P_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10244": {
+  "is_tf": true,
+  "name": "Q3UJR8",
+  "species": "mouse",
+  "symbol": "BTF3"
+ },
+ "MOUSE10335": {
+  "is_tf": false,
+  "name": "UTP16_MOUSE",
+  "species": "mouse",
+  "symbol": "NOL7"
+ },
+ "MOUSE10370": {
+  "is_tf": false,
+  "name": "CD83_MOUSE",
+  "species": "mouse",
+  "symbol": "CD83"
+ },
+ "MOUSE10375": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE10376": {
+  "is_tf": false,
+  "name": "H2A1F_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10383": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE10386": {
+  "is_tf": false,
+  "name": "H2A1N_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10389": {
+  "is_tf": false,
+  "name": "H2A1I_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10391": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE10395": {
+  "is_tf": false,
+  "name": "H2A1G_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10398": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE10406": {
+  "is_tf": false,
+  "name": "H2A1E_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10408": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE10409": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE10435": {
+  "is_tf": false,
+  "name": "Q3UYI4",
+  "species": "mouse",
+  "symbol": "CARTPT"
+ },
+ "MOUSE10479": {
+  "is_tf": false,
+  "name": "Q8CGP4",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE10501": {
+  "is_tf": false,
+  "name": "SMN_MOUSE",
+  "species": "mouse",
+  "symbol": "SMN1"
+ },
+ "MOUSE10561": {
+  "is_tf": false,
+  "name": "TERT_MOUSE",
+  "species": "mouse",
+  "symbol": "TERT"
+ },
+ "MOUSE10585": {
+  "is_tf": false,
+  "name": "OCLN_MOUSE",
+  "species": "mouse",
+  "symbol": "OCLN"
+ },
+ "MOUSE10590": {
+  "is_tf": true,
+  "name": "DEK_MOUSE",
+  "species": "mouse",
+  "symbol": "DEK"
+ },
+ "MOUSE10600": {
+  "is_tf": true,
+  "name": "ID4_MOUSE",
+  "species": "mouse",
+  "symbol": "ID4"
+ },
+ "MOUSE10642": {
+  "is_tf": false,
+  "name": "CENPH_MOUSE",
+  "species": "mouse",
+  "symbol": "CENPH"
+ },
+ "MOUSE10653": {
+  "is_tf": false,
+  "name": "CCNB1_MOUSE",
+  "species": "mouse",
+  "symbol": "CCNB1"
+ },
+ "MOUSE10693": {
+  "is_tf": false,
+  "name": "R4GML1",
+  "species": "mouse",
+  "symbol": "DCDC2"
+ },
+ "MOUSE10748": {
+  "is_tf": false,
+  "name": "SL9A3_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC9A3"
+ },
+ "MOUSE10764": {
+  "is_tf": false,
+  "name": "A0A0R4J020",
+  "species": "mouse",
+  "symbol": "AHRR"
+ },
+ "MOUSE10833": {
+  "is_tf": true,
+  "name": "SOX4_MOUSE",
+  "species": "mouse",
+  "symbol": "SOX4"
+ },
+ "MOUSE10853": {
+  "is_tf": true,
+  "name": "A0A1Y7VML1",
+  "species": "mouse",
+  "symbol": "E2F3"
+ },
+ "MOUSE10864": {
+  "is_tf": false,
+  "name": "AGTRA_MOUSE",
+  "species": "mouse",
+  "symbol": "AGTR1"
+ },
+ "MOUSE10882": {
+  "is_tf": true,
+  "name": "IRF4_MOUSE",
+  "species": "mouse",
+  "symbol": "IRF4"
+ },
+ "MOUSE10901": {
+  "is_tf": false,
+  "name": "CKS2_MOUSE",
+  "species": "mouse",
+  "symbol": "CKS2"
+ },
+ "MOUSE10904": {
+  "is_tf": true,
+  "name": "FOXQ1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXQ1"
+ },
+ "MOUSE10908": {
+  "is_tf": true,
+  "name": "FOXF2_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXF2"
+ },
+ "MOUSE10909": {
+  "is_tf": true,
+  "name": "FOXC1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXC1"
+ },
+ "MOUSE10926": {
+  "is_tf": false,
+  "name": "ILEUA_MOUSE",
+  "species": "mouse",
+  "symbol": "SERPINB1"
+ },
+ "MOUSE10977": {
+  "is_tf": true,
+  "name": "NFIL3_MOUSE",
+  "species": "mouse",
+  "symbol": "NFIL3"
+ },
+ "MOUSE10990": {
+  "is_tf": false,
+  "name": "NEC1_MOUSE",
+  "species": "mouse",
+  "symbol": "PCSK1"
+ },
+ "MOUSE10993": {
+  "is_tf": true,
+  "name": "MSX2_MOUSE",
+  "species": "mouse",
+  "symbol": "MSX2"
+ },
+ "MOUSE11057": {
+  "is_tf": false,
+  "name": "5HT1A_MOUSE",
+  "species": "mouse",
+  "symbol": "HTR1A"
+ },
+ "MOUSE11166": {
+  "is_tf": true,
+  "name": "Q32NY6",
+  "species": "mouse",
+  "symbol": "NR2F1"
+ },
+ "MOUSE11316": {
+  "is_tf": true,
+  "name": "Q8BPQ2",
+  "species": "mouse",
+  "symbol": "KLF6"
+ },
+ "MOUSE11376": {
+  "is_tf": false,
+  "name": "A0A0R4IZY3",
+  "species": "mouse",
+  "symbol": "FGFR4"
+ },
+ "MOUSE11407": {
+  "is_tf": false,
+  "name": "PFKAP_MOUSE",
+  "species": "mouse",
+  "symbol": "PLAT"
+ },
+ "MOUSE11427": {
+  "is_tf": false,
+  "name": "RED2_MOUSE",
+  "species": "mouse",
+  "symbol": "ADARB2"
+ },
+ "MOUSE11430": {
+  "is_tf": false,
+  "name": "FA12_MOUSE",
+  "species": "mouse",
+  "symbol": "F12"
+ },
+ "MOUSE11480": {
+  "is_tf": true,
+  "name": "A0A0H2UH28",
+  "species": "mouse",
+  "symbol": "MEF2C"
+ },
+ "MOUSE11544": {
+  "is_tf": false,
+  "name": "LAR4B_MOUSE",
+  "species": "mouse",
+  "symbol": "PTH"
+ },
+ "MOUSE11553": {
+  "is_tf": false,
+  "name": "COX7C_MOUSE",
+  "species": "mouse",
+  "symbol": "COX7C"
+ },
+ "MOUSE11584": {
+  "is_tf": false,
+  "name": "PDLI7_MOUSE",
+  "species": "mouse",
+  "symbol": "PDLIM7"
+ },
+ "MOUSE11620": {
+  "is_tf": false,
+  "name": "E9PYH0",
+  "species": "mouse",
+  "symbol": "VCAN"
+ },
+ "MOUSE11667": {
+  "is_tf": true,
+  "name": "PITX1_MOUSE",
+  "species": "mouse",
+  "symbol": "PITX1"
+ },
+ "MOUSE11682": {
+  "is_tf": true,
+  "name": "ISL1_MOUSE",
+  "species": "mouse",
+  "symbol": "ISL1"
+ },
+ "MOUSE11686": {
+  "is_tf": true,
+  "name": "ZMY11_MOUSE",
+  "species": "mouse",
+  "symbol": "ZMYND11"
+ },
+ "MOUSE11719": {
+  "is_tf": false,
+  "name": "DYR_MOUSE",
+  "species": "mouse",
+  "symbol": "DHFR"
+ },
+ "MOUSE11831": {
+  "is_tf": false,
+  "name": "BHMT1_MOUSE",
+  "species": "mouse",
+  "symbol": "BHMT"
+ },
+ "MOUSE11938": {
+  "is_tf": false,
+  "name": "AGGF1_MOUSE",
+  "species": "mouse",
+  "symbol": "AGGF1"
+ },
+ "MOUSE11947": {
+  "is_tf": false,
+  "name": "CRHBP_MOUSE",
+  "species": "mouse",
+  "symbol": "CRHBP"
+ },
+ "MOUSE12021": {
+  "is_tf": false,
+  "name": "POLK_MOUSE",
+  "species": "mouse",
+  "symbol": "POLK"
+ },
+ "MOUSE12044": {
+  "is_tf": true,
+  "name": "GLI3_MOUSE",
+  "species": "mouse",
+  "symbol": "GLI3"
+ },
+ "MOUSE12055": {
+  "is_tf": false,
+  "name": "HMDH_MOUSE",
+  "species": "mouse",
+  "symbol": "HMGCR"
+ },
+ "MOUSE12285": {
+  "is_tf": false,
+  "name": "CDK20_MOUSE",
+  "species": "mouse",
+  "symbol": "CDK20"
+ },
+ "MOUSE12318": {
+  "is_tf": false,
+  "name": "CXL14_MOUSE",
+  "species": "mouse",
+  "symbol": "CXCL14"
+ },
+ "MOUSE12331": {
+  "is_tf": true,
+  "name": "DACH1_MOUSE",
+  "species": "mouse",
+  "symbol": "DACH1"
+ },
+ "MOUSE12366": {
+  "is_tf": false,
+  "name": "NP_034835.1",
+  "species": "mouse",
+  "symbol": "LGALS3"
+ },
+ "MOUSE12380": {
+  "is_tf": true,
+  "name": "KLF5_MOUSE",
+  "species": "mouse",
+  "symbol": "KLF5"
+ },
+ "MOUSE12382": {
+  "is_tf": true,
+  "name": "KLF12_MOUSE",
+  "species": "mouse",
+  "symbol": "KLF12"
+ },
+ "MOUSE12391": {
+  "is_tf": false,
+  "name": "G3UXG3",
+  "species": "mouse",
+  "symbol": "LATS2"
+ },
+ "MOUSE12392": {
+  "is_tf": false,
+  "name": "LATS2_MOUSE",
+  "species": "mouse",
+  "symbol": "LATS2"
+ },
+ "MOUSE12500": {
+  "is_tf": false,
+  "name": "NP_997098.2",
+  "species": "mouse",
+  "symbol": "MYCBP"
+ },
+ "MOUSE12538": {
+  "is_tf": false,
+  "name": "EDNRB_MOUSE",
+  "species": "mouse",
+  "symbol": "EDNRB"
+ },
+ "MOUSE12541": {
+  "is_tf": true,
+  "name": "PO4F1_MOUSE",
+  "species": "mouse",
+  "symbol": "POU4F1"
+ },
+ "MOUSE12636": {
+  "is_tf": false,
+  "name": "WNT5A_MOUSE",
+  "species": "mouse",
+  "symbol": "WNT5A"
+ },
+ "MOUSE12645": {
+  "is_tf": false,
+  "name": "CATB_MOUSE",
+  "species": "mouse",
+  "symbol": "CTSB"
+ },
+ "MOUSE12676": {
+  "is_tf": false,
+  "name": "BLK_MOUSE",
+  "species": "mouse",
+  "symbol": "BLK"
+ },
+ "MOUSE12678": {
+  "is_tf": false,
+  "name": "MRP4_MOUSE",
+  "species": "mouse",
+  "symbol": "ABCC4"
+ },
+ "MOUSE12697": {
+  "is_tf": false,
+  "name": "SOX7_MOUSE",
+  "species": "mouse",
+  "symbol": "SOX7"
+ },
+ "MOUSE12719": {
+  "is_tf": false,
+  "name": "DNJC3_MOUSE",
+  "species": "mouse",
+  "symbol": "DNAJC3"
+ },
+ "MOUSE12761": {
+  "is_tf": false,
+  "name": "S15A1_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC15A1"
+ },
+ "MOUSE12853": {
+  "is_tf": true,
+  "name": "F8VPV3",
+  "species": "mouse",
+  "symbol": "ZIC2"
+ },
+ "MOUSE12882": {
+  "is_tf": false,
+  "name": "GON1_MOUSE",
+  "species": "mouse",
+  "symbol": "GNRH1"
+ },
+ "MOUSE12892": {
+  "is_tf": false,
+  "name": "NFL_MOUSE",
+  "species": "mouse",
+  "symbol": "NEFL"
+ },
+ "MOUSE12901": {
+  "is_tf": false,
+  "name": "ADEC1_MOUSE",
+  "species": "mouse",
+  "symbol": "DEC1"
+ },
+ "MOUSE12917": {
+  "is_tf": true,
+  "name": "NKX31_MOUSE",
+  "species": "mouse",
+  "symbol": "NKX3-1"
+ },
+ "MOUSE12948": {
+  "is_tf": false,
+  "name": "TR10B_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFRSF10B"
+ },
+ "MOUSE12952": {
+  "is_tf": true,
+  "name": "EGR3_MOUSE",
+  "species": "mouse",
+  "symbol": "EGR3"
+ },
+ "MOUSE13000": {
+  "is_tf": false,
+  "name": "FHIT_MOUSE",
+  "species": "mouse",
+  "symbol": "FHIT"
+ },
+ "MOUSE13007": {
+  "is_tf": false,
+  "name": "Q6P8P8",
+  "species": "mouse",
+  "symbol": "SFTPC"
+ },
+ "MOUSE13257": {
+  "is_tf": false,
+  "name": "APEX1_MOUSE",
+  "species": "mouse",
+  "symbol": "HAP1"
+ },
+ "MOUSE13322": {
+  "is_tf": false,
+  "name": "RNS2B_MOUSE",
+  "species": "mouse",
+  "symbol": "RNASE2"
+ },
+ "MOUSE13325": {
+  "is_tf": false,
+  "name": "Q5GAN2",
+  "species": "mouse",
+  "symbol": "RNASE2"
+ },
+ "MOUSE13327": {
+  "is_tf": false,
+  "name": "Q8K196",
+  "species": "mouse",
+  "symbol": "RNASE2"
+ },
+ "MOUSE13328": {
+  "is_tf": true,
+  "name": "RB_MOUSE",
+  "species": "mouse",
+  "symbol": "RB1"
+ },
+ "MOUSE13373": {
+  "is_tf": true,
+  "name": "ECD_MOUSE",
+  "species": "mouse",
+  "symbol": "ECD"
+ },
+ "MOUSE13377": {
+  "is_tf": false,
+  "name": "ENSMUSP00000127152.2",
+  "species": "mouse",
+  "symbol": "RNASE2"
+ },
+ "MOUSE13440": {
+  "is_tf": false,
+  "name": "NDRG2_MOUSE",
+  "species": "mouse",
+  "symbol": "NDRG2"
+ },
+ "MOUSE13473": {
+  "is_tf": false,
+  "name": "TCTP_MOUSE",
+  "species": "mouse",
+  "symbol": "TPT1"
+ },
+ "MOUSE13499": {
+  "is_tf": true,
+  "name": "E9QLZ1",
+  "species": "mouse",
+  "symbol": "TSC22D1"
+ },
+ "MOUSE13532": {
+  "is_tf": false,
+  "name": "XP_006519062.1",
+  "species": "mouse",
+  "symbol": "NOX1"
+ },
+ "MOUSE13552": {
+  "is_tf": false,
+  "name": "TNF11_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFSF11"
+ },
+ "MOUSE13617": {
+  "is_tf": true,
+  "name": "EAF1_MOUSE",
+  "species": "mouse",
+  "symbol": "EAF1"
+ },
+ "MOUSE13636": {
+  "is_tf": true,
+  "name": "ELF1_MOUSE",
+  "species": "mouse",
+  "symbol": "ELF1"
+ },
+ "MOUSE13665": {
+  "is_tf": false,
+  "name": "CNMD_MOUSE",
+  "species": "mouse",
+  "symbol": "CNMD"
+ },
+ "MOUSE13732": {
+  "is_tf": true,
+  "name": "CHD8_MOUSE",
+  "species": "mouse",
+  "symbol": "CHD8"
+ },
+ "MOUSE13788": {
+  "is_tf": false,
+  "name": "SALL2_MOUSE",
+  "species": "mouse",
+  "symbol": "SALL2"
+ },
+ "MOUSE13809": {
+  "is_tf": false,
+  "name": "G3X8U8",
+  "species": "mouse",
+  "symbol": "PARG"
+ },
+ "MOUSE14138": {
+  "is_tf": false,
+  "name": "A0A0R4J0H3",
+  "species": "mouse",
+  "symbol": "RBP3"
+ },
+ "MOUSE14160": {
+  "is_tf": false,
+  "name": "ANXA8_MOUSE",
+  "species": "mouse",
+  "symbol": "ANXA8"
+ },
+ "MOUSE14169": {
+  "is_tf": false,
+  "name": "MMP14_MOUSE",
+  "species": "mouse",
+  "symbol": "MMP14"
+ },
+ "MOUSE14207": {
+  "is_tf": false,
+  "name": "PSB5_MOUSE",
+  "species": "mouse",
+  "symbol": "PSMB5"
+ },
+ "MOUSE14251": {
+  "is_tf": true,
+  "name": "CEBPE_MOUSE",
+  "species": "mouse",
+  "symbol": "CEBPE"
+ },
+ "MOUSE14337": {
+  "is_tf": false,
+  "name": "MYH6_MOUSE",
+  "species": "mouse",
+  "symbol": "MYH6"
+ },
+ "MOUSE14344": {
+  "is_tf": false,
+  "name": "SFTPD_MOUSE",
+  "species": "mouse",
+  "symbol": "SFTPD"
+ },
+ "MOUSE14422": {
+  "is_tf": false,
+  "name": "NP_031920.1",
+  "species": "mouse",
+  "symbol": "RNASE2"
+ },
+ "MOUSE14431": {
+  "is_tf": false,
+  "name": "NP_444342.1",
+  "species": "mouse",
+  "symbol": "RNASE2"
+ },
+ "MOUSE14438": {
+  "is_tf": false,
+  "name": "ECP2_MOUSE",
+  "species": "mouse",
+  "symbol": "RNASE2"
+ },
+ "MOUSE14473": {
+  "is_tf": false,
+  "name": "PE2R2_MOUSE",
+  "species": "mouse",
+  "symbol": "PTGER2"
+ },
+ "MOUSE14500": {
+  "is_tf": true,
+  "name": "NRL_MOUSE",
+  "species": "mouse",
+  "symbol": "NRL"
+ },
+ "MOUSE14505": {
+  "is_tf": false,
+  "name": "ERO1A_MOUSE",
+  "species": "mouse",
+  "symbol": "ERO1A"
+ },
+ "MOUSE14511": {
+  "is_tf": false,
+  "name": "PCKGM_MOUSE",
+  "species": "mouse",
+  "symbol": "PCK2"
+ },
+ "MOUSE14568": {
+  "is_tf": false,
+  "name": "BMP4_MOUSE",
+  "species": "mouse",
+  "symbol": "BMP4"
+ },
+ "MOUSE14589": {
+  "is_tf": true,
+  "name": "E9PZJ2",
+  "species": "mouse",
+  "symbol": "IRF9"
+ },
+ "MOUSE14633": {
+  "is_tf": false,
+  "name": "SMAG1_MOUSE",
+  "species": "mouse",
+  "symbol": "SAMD4A"
+ },
+ "MOUSE14756": {
+  "is_tf": true,
+  "name": "NP_033406.1",
+  "species": "mouse",
+  "symbol": "THRB"
+ },
+ "MOUSE14765": {
+  "is_tf": true,
+  "name": "Q6DFX0",
+  "species": "mouse",
+  "symbol": "RARB"
+ },
+ "MOUSE14768": {
+  "is_tf": true,
+  "name": "TOP2B_MOUSE",
+  "species": "mouse",
+  "symbol": "TOP2B"
+ },
+ "MOUSE15003": {
+  "is_tf": false,
+  "name": "SMUG1_MOUSE",
+  "species": "mouse",
+  "symbol": "SMUG1"
+ },
+ "MOUSE15022": {
+  "is_tf": true,
+  "name": "SRBP2_MOUSE",
+  "species": "mouse",
+  "symbol": "SREBF2"
+ },
+ "MOUSE15039": {
+  "is_tf": false,
+  "name": "TR13C_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFRSF13C"
+ },
+ "MOUSE15043": {
+  "is_tf": false,
+  "name": "HYAS2_MOUSE",
+  "species": "mouse",
+  "symbol": "HAS2"
+ },
+ "MOUSE15044": {
+  "is_tf": false,
+  "name": "NP_001034218.1",
+  "species": "mouse",
+  "symbol": "HNRNPA1"
+ },
+ "MOUSE15054": {
+  "is_tf": false,
+  "name": "A0A0R4J0Y5",
+  "species": "mouse",
+  "symbol": "NFE2"
+ },
+ "MOUSE15068": {
+  "is_tf": true,
+  "name": "ZHX2_MOUSE",
+  "species": "mouse",
+  "symbol": "ZHX2"
+ },
+ "MOUSE15083": {
+  "is_tf": false,
+  "name": "ITA5_MOUSE",
+  "species": "mouse",
+  "symbol": "ITGA5"
+ },
+ "MOUSE15121": {
+  "is_tf": false,
+  "name": "Q9JKY7",
+  "species": "mouse",
+  "symbol": "CYP2D6"
+ },
+ "MOUSE15140": {
+  "is_tf": false,
+  "name": "A0A0R4J104",
+  "species": "mouse",
+  "symbol": "DAB2"
+ },
+ "MOUSE15195": {
+  "is_tf": false,
+  "name": "Q6P8N9",
+  "species": "mouse",
+  "symbol": "CYP2D6"
+ },
+ "MOUSE15300": {
+  "is_tf": false,
+  "name": "FABD_MOUSE",
+  "species": "mouse",
+  "symbol": "MCAT"
+ },
+ "MOUSE15402": {
+  "is_tf": false,
+  "name": "WNT7B_MOUSE",
+  "species": "mouse",
+  "symbol": "WNT7B"
+ },
+ "MOUSE15407": {
+  "is_tf": true,
+  "name": "PPARA_MOUSE",
+  "species": "mouse",
+  "symbol": "PPARA"
+ },
+ "MOUSE15477": {
+  "is_tf": false,
+  "name": "KCNQ3_MOUSE",
+  "species": "mouse",
+  "symbol": "KCNQ3"
+ },
+ "MOUSE15560": {
+  "is_tf": false,
+  "name": "RNC_MOUSE",
+  "species": "mouse",
+  "symbol": "DROSHA"
+ },
+ "MOUSE15562": {
+  "is_tf": false,
+  "name": "CADH6_MOUSE",
+  "species": "mouse",
+  "symbol": "CDH6"
+ },
+ "MOUSE15563": {
+  "is_tf": true,
+  "name": "HDA10_MOUSE",
+  "species": "mouse",
+  "symbol": "HDAC10"
+ },
+ "MOUSE15565": {
+  "is_tf": false,
+  "name": "NDRG1_MOUSE",
+  "species": "mouse",
+  "symbol": "NDRG1"
+ },
+ "MOUSE15580": {
+  "is_tf": false,
+  "name": "SIA4A_MOUSE",
+  "species": "mouse",
+  "symbol": "ST3GAL1"
+ },
+ "MOUSE15646": {
+  "is_tf": false,
+  "name": "CHRC1_MOUSE",
+  "species": "mouse",
+  "symbol": "RAC1"
+ },
+ "MOUSE15691": {
+  "is_tf": false,
+  "name": "CPT1B_MOUSE",
+  "species": "mouse",
+  "symbol": "CPT1B"
+ },
+ "MOUSE15829": {
+  "is_tf": false,
+  "name": "E9PX31",
+  "species": "mouse",
+  "symbol": "GML"
+ },
+ "MOUSE15832": {
+  "is_tf": false,
+  "name": "G5E8L7",
+  "species": "mouse",
+  "symbol": "GML"
+ },
+ "MOUSE15834": {
+  "is_tf": false,
+  "name": "Q3TG86",
+  "species": "mouse",
+  "symbol": "CYP11B2"
+ },
+ "MOUSE15836": {
+  "is_tf": false,
+  "name": "ENSMUSP00000131503.2",
+  "species": "mouse",
+  "symbol": "CYP11B2"
+ },
+ "MOUSE15981": {
+  "is_tf": false,
+  "name": "GRHL2_MOUSE",
+  "species": "mouse",
+  "symbol": "GRHL2"
+ },
+ "MOUSE16028": {
+  "is_tf": true,
+  "name": "KLF10_MOUSE",
+  "species": "mouse",
+  "symbol": "KLF10"
+ },
+ "MOUSE16050": {
+  "is_tf": false,
+  "name": "S38A1_MOUSE",
+  "species": "mouse",
+  "symbol": "SAT1"
+ },
+ "MOUSE16120": {
+  "is_tf": false,
+  "name": "ANGP1_MOUSE",
+  "species": "mouse",
+  "symbol": "ANGPT1"
+ },
+ "MOUSE16121": {
+  "is_tf": false,
+  "name": "RSPO2_MOUSE",
+  "species": "mouse",
+  "symbol": "RSPO2"
+ },
+ "MOUSE16176": {
+  "is_tf": false,
+  "name": "CO2A1_MOUSE",
+  "species": "mouse",
+  "symbol": "COL2A1"
+ },
+ "MOUSE16251": {
+  "is_tf": false,
+  "name": "TR11B_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFRSF11B"
+ },
+ "MOUSE16427": {
+  "is_tf": true,
+  "name": "HSF1_MOUSE",
+  "species": "mouse",
+  "symbol": "HSF1"
+ },
+ "MOUSE16441": {
+  "is_tf": true,
+  "name": "ATF1_MOUSE",
+  "species": "mouse",
+  "symbol": "ATF1"
+ },
+ "MOUSE16505": {
+  "is_tf": true,
+  "name": "TFCP2_MOUSE",
+  "species": "mouse",
+  "symbol": "TFCP2"
+ },
+ "MOUSE16510": {
+  "is_tf": true,
+  "name": "FOXH1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXH1"
+ },
+ "MOUSE16534": {
+  "is_tf": false,
+  "name": "A0A0R4J0J3",
+  "species": "mouse",
+  "symbol": "RECQL4"
+ },
+ "MOUSE16682": {
+  "is_tf": true,
+  "name": "NR4A1_MOUSE",
+  "species": "mouse",
+  "symbol": "NR4A1"
+ },
+ "MOUSE16705": {
+  "is_tf": false,
+  "name": "K2C7_MOUSE",
+  "species": "mouse",
+  "symbol": "KRT7"
+ },
+ "MOUSE16730": {
+  "is_tf": false,
+  "name": "K2C5_MOUSE",
+  "species": "mouse",
+  "symbol": "KRT5"
+ },
+ "MOUSE16749": {
+  "is_tf": false,
+  "name": "K2C4_MOUSE",
+  "species": "mouse",
+  "symbol": "KRT4"
+ },
+ "MOUSE16770": {
+  "is_tf": false,
+  "name": "IL2RB_MOUSE",
+  "species": "mouse",
+  "symbol": "IL2RB"
+ },
+ "MOUSE16798": {
+  "is_tf": false,
+  "name": "SOAT2_MOUSE",
+  "species": "mouse",
+  "symbol": "ACAT2"
+ },
+ "MOUSE16814": {
+  "is_tf": false,
+  "name": "LEG1_MOUSE",
+  "species": "mouse",
+  "symbol": "LGALS1"
+ },
+ "MOUSE16846": {
+  "is_tf": false,
+  "name": "ITB7_MOUSE",
+  "species": "mouse",
+  "symbol": "ITGB7"
+ },
+ "MOUSE16849": {
+  "is_tf": true,
+  "name": "RARG_MOUSE",
+  "species": "mouse",
+  "symbol": "RARG"
+ },
+ "MOUSE16912": {
+  "is_tf": true,
+  "name": "SP7_MOUSE",
+  "species": "mouse",
+  "symbol": "SP7"
+ },
+ "MOUSE16919": {
+  "is_tf": true,
+  "name": "G3X8Q0",
+  "species": "mouse",
+  "symbol": "SP1"
+ },
+ "MOUSE16923": {
+  "is_tf": true,
+  "name": "SOX10_MOUSE",
+  "species": "mouse",
+  "symbol": "SOX10"
+ },
+ "MOUSE16926": {
+  "is_tf": false,
+  "name": "AMHR2_MOUSE",
+  "species": "mouse",
+  "symbol": "AMHR2"
+ },
+ "MOUSE17080": {
+  "is_tf": true,
+  "name": "HXC13_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXC13"
+ },
+ "MOUSE17083": {
+  "is_tf": true,
+  "name": "HXC10_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXC10"
+ },
+ "MOUSE17086": {
+  "is_tf": true,
+  "name": "HXC9_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXC9"
+ },
+ "MOUSE17088": {
+  "is_tf": true,
+  "name": "HXC6_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXC6"
+ },
+ "MOUSE17106": {
+  "is_tf": true,
+  "name": "F8WHN2",
+  "species": "mouse",
+  "symbol": "CBX7"
+ },
+ "MOUSE17112": {
+  "is_tf": false,
+  "name": "A0A0R4IZW4",
+  "species": "mouse",
+  "symbol": "PDGFB"
+ },
+ "MOUSE17133": {
+  "is_tf": true,
+  "name": "AROS_MOUSE",
+  "species": "mouse",
+  "symbol": "SIRT1"
+ },
+ "MOUSE17210": {
+  "is_tf": true,
+  "name": "NP_705617.2",
+  "species": "mouse",
+  "symbol": "TEF"
+ },
+ "MOUSE17247": {
+  "is_tf": false,
+  "name": "NP_001273299.1",
+  "species": "mouse",
+  "symbol": "GHR"
+ },
+ "MOUSE17273": {
+  "is_tf": false,
+  "name": "SKP2_MOUSE",
+  "species": "mouse",
+  "symbol": "SKP2"
+ },
+ "MOUSE17279": {
+  "is_tf": true,
+  "name": "LMBD2_MOUSE",
+  "species": "mouse",
+  "symbol": "MBD2"
+ },
+ "MOUSE17435": {
+  "is_tf": false,
+  "name": "FBX32_MOUSE",
+  "species": "mouse",
+  "symbol": "FBXO32"
+ },
+ "MOUSE17442": {
+  "is_tf": false,
+  "name": "BAALC_MOUSE",
+  "species": "mouse",
+  "symbol": "BAALC"
+ },
+ "MOUSE17473": {
+  "is_tf": false,
+  "name": "G3X9Z2",
+  "species": "mouse",
+  "symbol": "IFITM3"
+ },
+ "MOUSE17512": {
+  "is_tf": false,
+  "name": "SODC_MOUSE",
+  "species": "mouse",
+  "symbol": "SOD1"
+ },
+ "MOUSE17517": {
+  "is_tf": false,
+  "name": "CD80_MOUSE",
+  "species": "mouse",
+  "symbol": "CD80"
+ },
+ "MOUSE17585": {
+  "is_tf": true,
+  "name": "SNAI2_MOUSE",
+  "species": "mouse",
+  "symbol": "SNAI2"
+ },
+ "MOUSE17635": {
+  "is_tf": true,
+  "name": "CEBPD_MOUSE",
+  "species": "mouse",
+  "symbol": "CEBPD"
+ },
+ "MOUSE17665": {
+  "is_tf": false,
+  "name": "INAR1_MOUSE",
+  "species": "mouse",
+  "symbol": "IFNAR1"
+ },
+ "MOUSE17825": {
+  "is_tf": false,
+  "name": "NP_032125.3",
+  "species": "mouse",
+  "symbol": "GCSAM"
+ },
+ "MOUSE17896": {
+  "is_tf": false,
+  "name": "A0A0R4J042",
+  "species": "mouse",
+  "symbol": "RETNLB"
+ },
+ "MOUSE17902": {
+  "is_tf": false,
+  "name": "RETNG_MOUSE",
+  "species": "mouse",
+  "symbol": "RETNLB"
+ },
+ "MOUSE17928": {
+  "is_tf": false,
+  "name": "ATPO_MOUSE",
+  "species": "mouse",
+  "symbol": "TPO"
+ },
+ "MOUSE17946": {
+  "is_tf": false,
+  "name": "CIP2A_MOUSE",
+  "species": "mouse",
+  "symbol": "CIP2A"
+ },
+ "MOUSE18040": {
+  "is_tf": true,
+  "name": "SIM2_MOUSE",
+  "species": "mouse",
+  "symbol": "SIM2"
+ },
+ "MOUSE18160": {
+  "is_tf": false,
+  "name": "PROD_MOUSE",
+  "species": "mouse",
+  "symbol": "PRODH"
+ },
+ "MOUSE18192": {
+  "is_tf": false,
+  "name": "TOM70_MOUSE",
+  "species": "mouse",
+  "symbol": "TOMM70"
+ },
+ "MOUSE18238": {
+  "is_tf": false,
+  "name": "DCBD2_MOUSE",
+  "species": "mouse",
+  "symbol": "DCBLD2"
+ },
+ "MOUSE18363": {
+  "is_tf": false,
+  "name": "B2RR03",
+  "species": "mouse",
+  "symbol": "GP1BB"
+ },
+ "MOUSE18395": {
+  "is_tf": true,
+  "name": "ETS2_MOUSE",
+  "species": "mouse",
+  "symbol": "ETS2"
+ },
+ "MOUSE18421": {
+  "is_tf": true,
+  "name": "HIRA_MOUSE",
+  "species": "mouse",
+  "symbol": "HIRA"
+ },
+ "MOUSE18479": {
+  "is_tf": true,
+  "name": "PIT1_MOUSE",
+  "species": "mouse",
+  "symbol": "POU1F1"
+ },
+ "MOUSE18609": {
+  "is_tf": true,
+  "name": "NRIP1_MOUSE",
+  "species": "mouse",
+  "symbol": "NRIP1"
+ },
+ "MOUSE18615": {
+  "is_tf": false,
+  "name": "MX2_MOUSE",
+  "species": "mouse",
+  "symbol": "MX1"
+ },
+ "MOUSE18616": {
+  "is_tf": false,
+  "name": "TMPS2_MOUSE",
+  "species": "mouse",
+  "symbol": "TMPRSS2"
+ },
+ "MOUSE18651": {
+  "is_tf": false,
+  "name": "CXAR_MOUSE",
+  "species": "mouse",
+  "symbol": "CXADR"
+ },
+ "MOUSE18715": {
+  "is_tf": true,
+  "name": "GABPA_MOUSE",
+  "species": "mouse",
+  "symbol": "GABPA"
+ },
+ "MOUSE18734": {
+  "is_tf": false,
+  "name": "ATS1_MOUSE",
+  "species": "mouse",
+  "symbol": "ADAMTS1"
+ },
+ "MOUSE18736": {
+  "is_tf": false,
+  "name": "ATS5_MOUSE",
+  "species": "mouse",
+  "symbol": "ADAMTS5"
+ },
+ "MOUSE18800": {
+  "is_tf": false,
+  "name": "MEFV_MOUSE",
+  "species": "mouse",
+  "symbol": "MEFV"
+ },
+ "MOUSE18845": {
+  "is_tf": false,
+  "name": "DNAS1_MOUSE",
+  "species": "mouse",
+  "symbol": "DNASE1"
+ },
+ "MOUSE18877": {
+  "is_tf": false,
+  "name": "F8VPR5",
+  "species": "mouse",
+  "symbol": "MME"
+ },
+ "MOUSE18897": {
+  "is_tf": true,
+  "name": "Q9JIZ5",
+  "species": "mouse",
+  "symbol": "TFAP4"
+ },
+ "MOUSE18988": {
+  "is_tf": false,
+  "name": "G5E898",
+  "species": "mouse",
+  "symbol": "PPL"
+ },
+ "MOUSE19032": {
+  "is_tf": true,
+  "name": "ETV5_MOUSE",
+  "species": "mouse",
+  "symbol": "ETV5"
+ },
+ "MOUSE19042": {
+  "is_tf": false,
+  "name": "DGKG_MOUSE",
+  "species": "mouse",
+  "symbol": "DGKG"
+ },
+ "MOUSE19127": {
+  "is_tf": false,
+  "name": "ADIPO_MOUSE",
+  "species": "mouse",
+  "symbol": "ADIPOQ"
+ },
+ "MOUSE19145": {
+  "is_tf": true,
+  "name": "BCL6_MOUSE",
+  "species": "mouse",
+  "symbol": "BCL6"
+ },
+ "MOUSE19166": {
+  "is_tf": false,
+  "name": "HSP1_MOUSE",
+  "species": "mouse",
+  "symbol": "PRM1"
+ },
+ "MOUSE19194": {
+  "is_tf": true,
+  "name": "P63_MOUSE",
+  "species": "mouse",
+  "symbol": "TP63"
+ },
+ "MOUSE19204": {
+  "is_tf": false,
+  "name": "TNR17_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFRSF17"
+ },
+ "MOUSE19227": {
+  "is_tf": false,
+  "name": "XPF_MOUSE",
+  "species": "mouse",
+  "symbol": "ERCC4"
+ },
+ "MOUSE19292": {
+  "is_tf": true,
+  "name": "HES1_MOUSE",
+  "species": "mouse",
+  "symbol": "HES1"
+ },
+ "MOUSE19315": {
+  "is_tf": false,
+  "name": "APOD_MOUSE",
+  "species": "mouse",
+  "symbol": "APOD"
+ },
+ "MOUSE19381": {
+  "is_tf": false,
+  "name": "PCY1A_MOUSE",
+  "species": "mouse",
+  "symbol": "PCYT1A"
+ },
+ "MOUSE19409": {
+  "is_tf": true,
+  "name": "ZN148_MOUSE",
+  "species": "mouse",
+  "symbol": "ZNF148"
+ },
+ "MOUSE19497": {
+  "is_tf": false,
+  "name": "CASR_MOUSE",
+  "species": "mouse",
+  "symbol": "CASR"
+ },
+ "MOUSE19499": {
+  "is_tf": false,
+  "name": "CD86_MOUSE",
+  "species": "mouse",
+  "symbol": "CD86"
+ },
+ "MOUSE19509": {
+  "is_tf": false,
+  "name": "EAF2_MOUSE",
+  "species": "mouse",
+  "symbol": "EAF2"
+ },
+ "MOUSE19576": {
+  "is_tf": false,
+  "name": "TFR1_MOUSE",
+  "species": "mouse",
+  "symbol": "TFRC"
+ },
+ "MOUSE19598": {
+  "is_tf": false,
+  "name": "A0A7N9VSW1",
+  "species": "mouse",
+  "symbol": "MUC4"
+ },
+ "MOUSE19624": {
+  "is_tf": true,
+  "name": "Q5XW54",
+  "species": "mouse",
+  "symbol": "DAXX"
+ },
+ "MOUSE19644": {
+  "is_tf": false,
+  "name": "KPCE_MOUSE",
+  "species": "mouse",
+  "symbol": "PRKCE"
+ },
+ "MOUSE19661": {
+  "is_tf": true,
+  "name": "EPAS1_MOUSE",
+  "species": "mouse",
+  "symbol": "EPAS1"
+ },
+ "MOUSE19774": {
+  "is_tf": false,
+  "name": "EPCAM_MOUSE",
+  "species": "mouse",
+  "symbol": "EPCAM"
+ },
+ "MOUSE19790": {
+  "is_tf": false,
+  "name": "MSH2_MOUSE",
+  "species": "mouse",
+  "symbol": "MSH2"
+ },
+ "MOUSE19823": {
+  "is_tf": false,
+  "name": "TNR12_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFRSF12A"
+ },
+ "MOUSE19846": {
+  "is_tf": true,
+  "name": "Q3UP82",
+  "species": "mouse",
+  "symbol": "NFYA"
+ },
+ "MOUSE19875": {
+  "is_tf": false,
+  "name": "LSHR_MOUSE",
+  "species": "mouse",
+  "symbol": "LHCGR"
+ },
+ "MOUSE19877": {
+  "is_tf": false,
+  "name": "FSHR_MOUSE",
+  "species": "mouse",
+  "symbol": "FSHR"
+ },
+ "MOUSE19878": {
+  "is_tf": false,
+  "name": "IMA1_MOUSE",
+  "species": "mouse",
+  "symbol": "KPNA2"
+ },
+ "MOUSE19977": {
+  "is_tf": true,
+  "name": "SATB1_MOUSE",
+  "species": "mouse",
+  "symbol": "SATB1"
+ },
+ "MOUSE19987": {
+  "is_tf": true,
+  "name": "F6TUN6",
+  "species": "mouse",
+  "symbol": "ELK1"
+ },
+ "MOUSE20003": {
+  "is_tf": true,
+  "name": "KAT2B_MOUSE",
+  "species": "mouse",
+  "symbol": "KAT2B"
+ },
+ "MOUSE20032": {
+  "is_tf": false,
+  "name": "IL27B_MOUSE",
+  "species": "mouse",
+  "symbol": "EBI3"
+ },
+ "MOUSE20060": {
+  "is_tf": false,
+  "name": "COBA2_MOUSE",
+  "species": "mouse",
+  "symbol": "COL11A2"
+ },
+ "MOUSE20075": {
+  "is_tf": false,
+  "name": "Q9QWV1",
+  "species": "mouse",
+  "symbol": "HLA-DOA"
+ },
+ "MOUSE20082": {
+  "is_tf": false,
+  "name": "BRD2_MOUSE",
+  "species": "mouse",
+  "symbol": "BRD2"
+ },
+ "MOUSE20093": {
+  "is_tf": false,
+  "name": "XP_017172749.1",
+  "species": "mouse",
+  "symbol": "HLA-DMA"
+ },
+ "MOUSE20096": {
+  "is_tf": false,
+  "name": "ABCA3_MOUSE",
+  "species": "mouse",
+  "symbol": "ABCA3"
+ },
+ "MOUSE20103": {
+  "is_tf": false,
+  "name": "Q31099",
+  "species": "mouse",
+  "symbol": "HLA-DMB"
+ },
+ "MOUSE20108": {
+  "is_tf": false,
+  "name": "Q31094",
+  "species": "mouse",
+  "symbol": "HLA-DMB"
+ },
+ "MOUSE20116": {
+  "is_tf": false,
+  "name": "A0A0R4J256",
+  "species": "mouse",
+  "symbol": "PSMB9"
+ },
+ "MOUSE20130": {
+  "is_tf": false,
+  "name": "TCAM1_MOUSE",
+  "species": "mouse",
+  "symbol": "TICAM1"
+ },
+ "MOUSE20144": {
+  "is_tf": true,
+  "name": "NP_031919.2",
+  "species": "mouse",
+  "symbol": "E4F1"
+ },
+ "MOUSE20150": {
+  "is_tf": false,
+  "name": "O35424",
+  "species": "mouse",
+  "symbol": "HLA-DOB"
+ },
+ "MOUSE20156": {
+  "is_tf": true,
+  "name": "UHRF1_MOUSE",
+  "species": "mouse",
+  "symbol": "UHRF1"
+ },
+ "MOUSE20178": {
+  "is_tf": false,
+  "name": "ENSMUSP00000158275.2",
+  "species": "mouse",
+  "symbol": "HLA-DRA"
+ },
+ "MOUSE20182": {
+  "is_tf": true,
+  "name": "KDM4B_MOUSE",
+  "species": "mouse",
+  "symbol": "KDM4B"
+ },
+ "MOUSE20208": {
+  "is_tf": true,
+  "name": "PBX2_MOUSE",
+  "species": "mouse",
+  "symbol": "PBX2"
+ },
+ "MOUSE20236": {
+  "is_tf": false,
+  "name": "RAGE_MOUSE",
+  "species": "mouse",
+  "symbol": "AGER"
+ },
+ "MOUSE20347": {
+  "is_tf": false,
+  "name": "TNF14_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFSF14"
+ },
+ "MOUSE20378": {
+  "is_tf": false,
+  "name": "Q7TT21",
+  "species": "mouse",
+  "symbol": "TSC2"
+ },
+ "MOUSE20400": {
+  "is_tf": false,
+  "name": "ALR_MOUSE",
+  "species": "mouse",
+  "symbol": "GFER"
+ },
+ "MOUSE20543": {
+  "is_tf": false,
+  "name": "HS71B_MOUSE",
+  "species": "mouse",
+  "symbol": "HSPA1A"
+ },
+ "MOUSE20544": {
+  "is_tf": false,
+  "name": "HS71A_MOUSE",
+  "species": "mouse",
+  "symbol": "HSPA1A"
+ },
+ "MOUSE20584": {
+  "is_tf": false,
+  "name": "NDUV2_MOUSE",
+  "species": "mouse",
+  "symbol": "NDUFV2"
+ },
+ "MOUSE20649": {
+  "is_tf": false,
+  "name": "LAMA1_MOUSE",
+  "species": "mouse",
+  "symbol": "LAMA1"
+ },
+ "MOUSE20698": {
+  "is_tf": false,
+  "name": "TNFA_MOUSE",
+  "species": "mouse",
+  "symbol": "TNF"
+ },
+ "MOUSE20710": {
+  "is_tf": false,
+  "name": "HA11_MOUSE",
+  "species": "mouse",
+  "symbol": "HLA-B"
+ },
+ "MOUSE20731": {
+  "is_tf": false,
+  "name": "NDK3_MOUSE",
+  "species": "mouse",
+  "symbol": "NME3"
+ },
+ "MOUSE20738": {
+  "is_tf": false,
+  "name": "E41L3_MOUSE",
+  "species": "mouse",
+  "symbol": "EPB41L3"
+ },
+ "MOUSE20751": {
+  "is_tf": true,
+  "name": "ZBT14_MOUSE",
+  "species": "mouse",
+  "symbol": "ZBTB14"
+ },
+ "MOUSE20763": {
+  "is_tf": false,
+  "name": "HA17_MOUSE",
+  "species": "mouse",
+  "symbol": "HLA-B"
+ },
+ "MOUSE20767": {
+  "is_tf": false,
+  "name": "HA10_MOUSE",
+  "species": "mouse",
+  "symbol": "HLA-B"
+ },
+ "MOUSE20769": {
+  "is_tf": true,
+  "name": "PO5F1_MOUSE",
+  "species": "mouse",
+  "symbol": "POU5F1"
+ },
+ "MOUSE20775": {
+  "is_tf": true,
+  "name": "G3XA31",
+  "species": "mouse",
+  "symbol": "TCF19"
+ },
+ "MOUSE20887": {
+  "is_tf": false,
+  "name": "EZRI_MOUSE",
+  "species": "mouse",
+  "symbol": "EZR"
+ },
+ "MOUSE20971": {
+  "is_tf": false,
+  "name": "NDC80_MOUSE",
+  "species": "mouse",
+  "symbol": "NDC80"
+ },
+ "MOUSE21234": {
+  "is_tf": false,
+  "name": "HA15_MOUSE",
+  "species": "mouse",
+  "symbol": "HLA-E"
+ },
+ "MOUSE21235": {
+  "is_tf": false,
+  "name": "PLMN_MOUSE",
+  "species": "mouse",
+  "symbol": "PLG"
+ },
+ "MOUSE21256": {
+  "is_tf": false,
+  "name": "S22A2_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC22A2"
+ },
+ "MOUSE21274": {
+  "is_tf": false,
+  "name": "MPRI_MOUSE",
+  "species": "mouse",
+  "symbol": "IGF2R"
+ },
+ "MOUSE21276": {
+  "is_tf": false,
+  "name": "SPAST_MOUSE",
+  "species": "mouse",
+  "symbol": "SPAST"
+ },
+ "MOUSE21329": {
+  "is_tf": false,
+  "name": "A7VMS6",
+  "species": "mouse",
+  "symbol": "HLA-B"
+ },
+ "MOUSE21331": {
+  "is_tf": false,
+  "name": "NLRC4_MOUSE",
+  "species": "mouse",
+  "symbol": "NLRC4"
+ },
+ "MOUSE21405": {
+  "is_tf": false,
+  "name": "SODM_MOUSE",
+  "species": "mouse",
+  "symbol": "SOD2"
+ },
+ "MOUSE21457": {
+  "is_tf": false,
+  "name": "PDIA2_MOUSE",
+  "species": "mouse",
+  "symbol": "PDIA2"
+ },
+ "MOUSE21497": {
+  "is_tf": false,
+  "name": "DACT2_MOUSE",
+  "species": "mouse",
+  "symbol": "DACT2"
+ },
+ "MOUSE21546": {
+  "is_tf": false,
+  "name": "DUS1_MOUSE",
+  "species": "mouse",
+  "symbol": "DUSP1"
+ },
+ "MOUSE21634": {
+  "is_tf": false,
+  "name": "VA0E1_MOUSE",
+  "species": "mouse",
+  "symbol": "ATP6V0E1"
+ },
+ "MOUSE21682": {
+  "is_tf": true,
+  "name": "NKX25_MOUSE",
+  "species": "mouse",
+  "symbol": "NKX2-5"
+ },
+ "MOUSE21706": {
+  "is_tf": false,
+  "name": "A0A3Q4EGK3",
+  "species": "mouse",
+  "symbol": "LTBP1"
+ },
+ "MOUSE21736": {
+  "is_tf": true,
+  "name": "TBP_MOUSE",
+  "species": "mouse",
+  "symbol": "TBP"
+ },
+ "MOUSE21747": {
+  "is_tf": false,
+  "name": "A0A0R4J0N5",
+  "species": "mouse",
+  "symbol": "PDCD2"
+ },
+ "MOUSE21806": {
+  "is_tf": false,
+  "name": "CD2AP_MOUSE",
+  "species": "mouse",
+  "symbol": "CD2AP"
+ },
+ "MOUSE21808": {
+  "is_tf": false,
+  "name": "TNR21_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFRSF21"
+ },
+ "MOUSE21812": {
+  "is_tf": false,
+  "name": "LCAP_MOUSE",
+  "species": "mouse",
+  "symbol": "LNPEP"
+ },
+ "MOUSE21866": {
+  "is_tf": false,
+  "name": "BAK_MOUSE",
+  "species": "mouse",
+  "symbol": "BAK1"
+ },
+ "MOUSE21873": {
+  "is_tf": false,
+  "name": "A0A0R4J043",
+  "species": "mouse",
+  "symbol": "MEP1A"
+ },
+ "MOUSE21878": {
+  "is_tf": false,
+  "name": "E2AK2_MOUSE",
+  "species": "mouse",
+  "symbol": "EIF2AK2"
+ },
+ "MOUSE21907": {
+  "is_tf": true,
+  "name": "A0A0R4J046",
+  "species": "mouse",
+  "symbol": "CEBPZ"
+ },
+ "MOUSE21920": {
+  "is_tf": false,
+  "name": "UCP4_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC25A27"
+ },
+ "MOUSE22049": {
+  "is_tf": false,
+  "name": "CP1B1_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP1B1"
+ },
+ "MOUSE22052": {
+  "is_tf": true,
+  "name": "E9Q459",
+  "species": "mouse",
+  "symbol": "ZNF160"
+ },
+ "MOUSE22079": {
+  "is_tf": true,
+  "name": "NP_001139510.1",
+  "species": "mouse",
+  "symbol": "RUNX2"
+ },
+ "MOUSE22099": {
+  "is_tf": true,
+  "name": "Q8BVY4",
+  "species": "mouse",
+  "symbol": "SUPT3H"
+ },
+ "MOUSE22108": {
+  "is_tf": true,
+  "name": "HMGA1_MOUSE",
+  "species": "mouse",
+  "symbol": "HMGA1"
+ },
+ "MOUSE22197": {
+  "is_tf": true,
+  "name": "SPDEF_MOUSE",
+  "species": "mouse",
+  "symbol": "SPDEF"
+ },
+ "MOUSE22217": {
+  "is_tf": false,
+  "name": "B2KF50",
+  "species": "mouse",
+  "symbol": "UHRF1BP1"
+ },
+ "MOUSE22262": {
+  "is_tf": false,
+  "name": "S29A1_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC29A1"
+ },
+ "MOUSE22298": {
+  "is_tf": true,
+  "name": "MTA3_MOUSE",
+  "species": "mouse",
+  "symbol": "MTA3"
+ },
+ "MOUSE22314": {
+  "is_tf": true,
+  "name": "ZNF76_MOUSE",
+  "species": "mouse",
+  "symbol": "ZNF76"
+ },
+ "MOUSE22343": {
+  "is_tf": true,
+  "name": "PPARD_MOUSE",
+  "species": "mouse",
+  "symbol": "PPARD"
+ },
+ "MOUSE22347": {
+  "is_tf": false,
+  "name": "ABCG5_MOUSE",
+  "species": "mouse",
+  "symbol": "ABCG5"
+ },
+ "MOUSE22367": {
+  "is_tf": false,
+  "name": "ABCG8_MOUSE",
+  "species": "mouse",
+  "symbol": "ABCG8"
+ },
+ "MOUSE22401": {
+  "is_tf": false,
+  "name": "SLC31_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC3A1"
+ },
+ "MOUSE22443": {
+  "is_tf": false,
+  "name": "SIX3_MOUSE",
+  "species": "mouse",
+  "symbol": "SIX3"
+ },
+ "MOUSE22493": {
+  "is_tf": false,
+  "name": "MK14_MOUSE",
+  "species": "mouse",
+  "symbol": "MAPK14"
+ },
+ "MOUSE22653": {
+  "is_tf": false,
+  "name": "PIM1_MOUSE",
+  "species": "mouse",
+  "symbol": "PIM1"
+ },
+ "MOUSE22748": {
+  "is_tf": false,
+  "name": "ABCG1_MOUSE",
+  "species": "mouse",
+  "symbol": "ABCG1"
+ },
+ "MOUSE22752": {
+  "is_tf": false,
+  "name": "Q9QX97",
+  "species": "mouse",
+  "symbol": "TFF2"
+ },
+ "MOUSE22753": {
+  "is_tf": false,
+  "name": "TFF1_MOUSE",
+  "species": "mouse",
+  "symbol": "TFF1"
+ },
+ "MOUSE22808": {
+  "is_tf": true,
+  "name": "PKNX1_MOUSE",
+  "species": "mouse",
+  "symbol": "PKNOX1"
+ },
+ "MOUSE22846": {
+  "is_tf": true,
+  "name": "NOTC3_MOUSE",
+  "species": "mouse",
+  "symbol": "NOTCH3"
+ },
+ "MOUSE23012": {
+  "is_tf": false,
+  "name": "ANGL4_MOUSE",
+  "species": "mouse",
+  "symbol": "ANGPTL4"
+ },
+ "MOUSE23053": {
+  "is_tf": false,
+  "name": "CCND3_MOUSE",
+  "species": "mouse",
+  "symbol": "CCND3"
+ },
+ "MOUSE23105": {
+  "is_tf": true,
+  "name": "RPA12_MOUSE",
+  "species": "mouse",
+  "symbol": "ZNRD1"
+ },
+ "MOUSE23172": {
+  "is_tf": false,
+  "name": "CADH2_MOUSE",
+  "species": "mouse",
+  "symbol": "CDH2"
+ },
+ "MOUSE23203": {
+  "is_tf": false,
+  "name": "DSG4_MOUSE",
+  "species": "mouse",
+  "symbol": "DSG4"
+ },
+ "MOUSE23329": {
+  "is_tf": true,
+  "name": "ZNF24_MOUSE",
+  "species": "mouse",
+  "symbol": "ZNF24"
+ },
+ "MOUSE23361": {
+  "is_tf": true,
+  "name": "CDX1_MOUSE",
+  "species": "mouse",
+  "symbol": "CDX1"
+ },
+ "MOUSE23365": {
+  "is_tf": false,
+  "name": "NP_001139740.1",
+  "species": "mouse",
+  "symbol": "PDGFRB"
+ },
+ "MOUSE23401": {
+  "is_tf": true,
+  "name": "NP_001139764.1",
+  "species": "mouse",
+  "symbol": "ELF4"
+ },
+ "MOUSE23445": {
+  "is_tf": false,
+  "name": "ADRB2_MOUSE",
+  "species": "mouse",
+  "symbol": "ADRB2"
+ },
+ "MOUSE23517": {
+  "is_tf": false,
+  "name": "Q80SX0",
+  "species": "mouse",
+  "symbol": "STARD4"
+ },
+ "MOUSE23543": {
+  "is_tf": false,
+  "name": "G3X8R0",
+  "species": "mouse",
+  "symbol": "REEP5"
+ },
+ "MOUSE23572": {
+  "is_tf": true,
+  "name": "ONEC2_MOUSE",
+  "species": "mouse",
+  "symbol": "ONECUT2"
+ },
+ "MOUSE23595": {
+  "is_tf": false,
+  "name": "MPIP3_MOUSE",
+  "species": "mouse",
+  "symbol": "CDC25C"
+ },
+ "MOUSE23619": {
+  "is_tf": true,
+  "name": "EGR1_MOUSE",
+  "species": "mouse",
+  "symbol": "EGR1"
+ },
+ "MOUSE23621": {
+  "is_tf": false,
+  "name": "ERF1_MOUSE",
+  "species": "mouse",
+  "symbol": "ETF1"
+ },
+ "MOUSE23703": {
+  "is_tf": false,
+  "name": "CXXC5_MOUSE",
+  "species": "mouse",
+  "symbol": "CXXC5"
+ },
+ "MOUSE23718": {
+  "is_tf": true,
+  "name": "PURA_MOUSE",
+  "species": "mouse",
+  "symbol": "PURA"
+ },
+ "MOUSE23735": {
+  "is_tf": false,
+  "name": "HBEGF_MOUSE",
+  "species": "mouse",
+  "symbol": "HBEGF"
+ },
+ "MOUSE23773": {
+  "is_tf": false,
+  "name": "A0A494BAG2",
+  "species": "mouse",
+  "symbol": "NEDD4L"
+ },
+ "MOUSE23899": {
+  "is_tf": false,
+  "name": "TAF7_MOUSE",
+  "species": "mouse",
+  "symbol": "TAF7"
+ },
+ "MOUSE23973": {
+  "is_tf": true,
+  "name": "HDAC3_MOUSE",
+  "species": "mouse",
+  "symbol": "HDAC3"
+ },
+ "MOUSE24007": {
+  "is_tf": false,
+  "name": "ACTHR_MOUSE",
+  "species": "mouse",
+  "symbol": "MC2R"
+ },
+ "MOUSE24052": {
+  "is_tf": false,
+  "name": "FGF1_MOUSE",
+  "species": "mouse",
+  "symbol": "FGF1"
+ },
+ "MOUSE24183": {
+  "is_tf": false,
+  "name": "CDO1_MOUSE",
+  "species": "mouse",
+  "symbol": "CDO1"
+ },
+ "MOUSE24213": {
+  "is_tf": true,
+  "name": "ENOA_MOUSE",
+  "species": "mouse",
+  "symbol": "ENO1"
+ },
+ "MOUSE24242": {
+  "is_tf": false,
+  "name": "LYOX_MOUSE",
+  "species": "mouse",
+  "symbol": "LOX"
+ },
+ "MOUSE24341": {
+  "is_tf": false,
+  "name": "MBD2_MOUSE",
+  "species": "mouse",
+  "symbol": "CNP"
+ },
+ "MOUSE24344": {
+  "is_tf": false,
+  "name": "DCC_MOUSE",
+  "species": "mouse",
+  "symbol": "DCC"
+ },
+ "MOUSE24347": {
+  "is_tf": true,
+  "name": "SMAD4_MOUSE",
+  "species": "mouse",
+  "symbol": "SMAD4"
+ },
+ "MOUSE24385": {
+  "is_tf": true,
+  "name": "SMAD7_MOUSE",
+  "species": "mouse",
+  "symbol": "SMAD7"
+ },
+ "MOUSE24418": {
+  "is_tf": true,
+  "name": "PIAS2_MOUSE",
+  "species": "mouse",
+  "symbol": "PIAS2"
+ },
+ "MOUSE24440": {
+  "is_tf": true,
+  "name": "SETBP_MOUSE",
+  "species": "mouse",
+  "symbol": "SETBP1"
+ },
+ "MOUSE24480": {
+  "is_tf": true,
+  "name": "B5B2N2",
+  "species": "mouse",
+  "symbol": "NFATC1"
+ },
+ "MOUSE24492": {
+  "is_tf": true,
+  "name": "A0A5F8MPC9",
+  "species": "mouse",
+  "symbol": "SALL3"
+ },
+ "MOUSE24555": {
+  "is_tf": false,
+  "name": "BHMT1_MOUSE",
+  "species": "mouse",
+  "symbol": "BHMT"
+ },
+ "MOUSE24582": {
+  "is_tf": false,
+  "name": "CTIP_MOUSE",
+  "species": "mouse",
+  "symbol": "RBBP8"
+ },
+ "MOUSE24696": {
+  "is_tf": false,
+  "name": "ATPA_MOUSE",
+  "species": "mouse",
+  "symbol": "ATP5F1A"
+ },
+ "MOUSE24703": {
+  "is_tf": true,
+  "name": "CREM_MOUSE",
+  "species": "mouse",
+  "symbol": "CREM"
+ },
+ "MOUSE24742": {
+  "is_tf": false,
+  "name": "BAMBI_MOUSE",
+  "species": "mouse",
+  "symbol": "BAMBI"
+ },
+ "MOUSE24847": {
+  "is_tf": true,
+  "name": "GATA6_MOUSE",
+  "species": "mouse",
+  "symbol": "GATA6"
+ },
+ "MOUSE24849": {
+  "is_tf": true,
+  "name": "Q8CEC4",
+  "species": "mouse",
+  "symbol": "KLF9"
+ },
+ "MOUSE24937": {
+  "is_tf": false,
+  "name": "CASP7_MOUSE",
+  "species": "mouse",
+  "symbol": "CASP7"
+ },
+ "MOUSE24998": {
+  "is_tf": false,
+  "name": "TDRD1_MOUSE",
+  "species": "mouse",
+  "symbol": "TDRD1"
+ },
+ "MOUSE25018": {
+  "is_tf": true,
+  "name": "FOSL1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOSL1"
+ },
+ "MOUSE25115": {
+  "is_tf": false,
+  "name": "VLDLR_MOUSE",
+  "species": "mouse",
+  "symbol": "VLDLR"
+ },
+ "MOUSE25124": {
+  "is_tf": true,
+  "name": "RFX3_MOUSE",
+  "species": "mouse",
+  "symbol": "RFX3"
+ },
+ "MOUSE25223": {
+  "is_tf": false,
+  "name": "JAK2_MOUSE",
+  "species": "mouse",
+  "symbol": "JAK2"
+ },
+ "MOUSE25241": {
+  "is_tf": false,
+  "name": "EMX2_MOUSE",
+  "species": "mouse",
+  "symbol": "EMX2"
+ },
+ "MOUSE25274": {
+  "is_tf": false,
+  "name": "NANO1_MOUSE",
+  "species": "mouse",
+  "symbol": "NOS1"
+ },
+ "MOUSE25298": {
+  "is_tf": false,
+  "name": "PRDX3_MOUSE",
+  "species": "mouse",
+  "symbol": "PRDX3"
+ },
+ "MOUSE25332": {
+  "is_tf": false,
+  "name": "DKK1_MOUSE",
+  "species": "mouse",
+  "symbol": "DKK1"
+ },
+ "MOUSE25368": {
+  "is_tf": false,
+  "name": "PTEN_MOUSE",
+  "species": "mouse",
+  "symbol": "PTEN"
+ },
+ "MOUSE25390": {
+  "is_tf": false,
+  "name": "ACTA_MOUSE",
+  "species": "mouse",
+  "symbol": "ACTA2"
+ },
+ "MOUSE25392": {
+  "is_tf": false,
+  "name": "TNR6_MOUSE",
+  "species": "mouse",
+  "symbol": "FAS"
+ },
+ "MOUSE25401": {
+  "is_tf": false,
+  "name": "IFIT3_MOUSE",
+  "species": "mouse",
+  "symbol": "IFIT3"
+ },
+ "MOUSE25404": {
+  "is_tf": false,
+  "name": "E9PV48",
+  "species": "mouse",
+  "symbol": "IFIT3"
+ },
+ "MOUSE25436": {
+  "is_tf": true,
+  "name": "ANKR1_MOUSE",
+  "species": "mouse",
+  "symbol": "ANKRD1"
+ },
+ "MOUSE25466": {
+  "is_tf": false,
+  "name": "CPT1A_MOUSE",
+  "species": "mouse",
+  "symbol": "CPT1A"
+ },
+ "MOUSE25488": {
+  "is_tf": false,
+  "name": "M4K2_MOUSE",
+  "species": "mouse",
+  "symbol": "GCK"
+ },
+ "MOUSE25495": {
+  "is_tf": true,
+  "name": "E9QAE3",
+  "species": "mouse",
+  "symbol": "TAF1"
+ },
+ "MOUSE25502": {
+  "is_tf": false,
+  "name": "LRP5_MOUSE",
+  "species": "mouse",
+  "symbol": "LRP5"
+ },
+ "MOUSE25606": {
+  "is_tf": false,
+  "name": "Q148B1",
+  "species": "mouse",
+  "symbol": "CYP2C9"
+ },
+ "MOUSE25607": {
+  "is_tf": false,
+  "name": "Q5GLZ0",
+  "species": "mouse",
+  "symbol": "CYP2C9"
+ },
+ "MOUSE25620": {
+  "is_tf": false,
+  "name": "MACD1_MOUSE",
+  "species": "mouse",
+  "symbol": "MACROD1"
+ },
+ "MOUSE25624": {
+  "is_tf": false,
+  "name": "CP237_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP2C9"
+ },
+ "MOUSE25632": {
+  "is_tf": false,
+  "name": "CY250_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP2C9"
+ },
+ "MOUSE25760": {
+  "is_tf": false,
+  "name": "S22AJ_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC22A10"
+ },
+ "MOUSE25764": {
+  "is_tf": false,
+  "name": "Q91WJ2",
+  "species": "mouse",
+  "symbol": "SLC22A10"
+ },
+ "MOUSE25768": {
+  "is_tf": false,
+  "name": "S22AR_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC22A10"
+ },
+ "MOUSE25769": {
+  "is_tf": false,
+  "name": "B2RT89",
+  "species": "mouse",
+  "symbol": "SLC22A10"
+ },
+ "MOUSE25771": {
+  "is_tf": false,
+  "name": "Q8BWG6",
+  "species": "mouse",
+  "symbol": "SLC22A10"
+ },
+ "MOUSE25778": {
+  "is_tf": false,
+  "name": "Q96LX3",
+  "species": "mouse",
+  "symbol": "SLC22A10"
+ },
+ "MOUSE25915": {
+  "is_tf": true,
+  "name": "MTA2_MOUSE",
+  "species": "mouse",
+  "symbol": "MTA2"
+ },
+ "MOUSE25918": {
+  "is_tf": false,
+  "name": "E9Q600",
+  "species": "mouse",
+  "symbol": "LOXL4"
+ },
+ "MOUSE25938": {
+  "is_tf": false,
+  "name": "FRIH_MOUSE",
+  "species": "mouse",
+  "symbol": "FTH1"
+ },
+ "MOUSE25943": {
+  "is_tf": false,
+  "name": "BEST1_MOUSE",
+  "species": "mouse",
+  "symbol": "BEST1"
+ },
+ "MOUSE25951": {
+  "is_tf": false,
+  "name": "HPSE2_MOUSE",
+  "species": "mouse",
+  "symbol": "HPSE2"
+ },
+ "MOUSE25989": {
+  "is_tf": false,
+  "name": "MRP2_MOUSE",
+  "species": "mouse",
+  "symbol": "ABCC2"
+ },
+ "MOUSE26012": {
+  "is_tf": false,
+  "name": "E9QNL4",
+  "species": "mouse",
+  "symbol": "CHUK"
+ },
+ "MOUSE26033": {
+  "is_tf": false,
+  "name": "SCD3_MOUSE",
+  "species": "mouse",
+  "symbol": "SCD"
+ },
+ "MOUSE26039": {
+  "is_tf": false,
+  "name": "SCD2_MOUSE",
+  "species": "mouse",
+  "symbol": "SCD"
+ },
+ "MOUSE26079": {
+  "is_tf": true,
+  "name": "G3X8Q7",
+  "species": "mouse",
+  "symbol": "PAX2"
+ },
+ "MOUSE26106": {
+  "is_tf": false,
+  "name": "DDB1_MOUSE",
+  "species": "mouse",
+  "symbol": "DDB1"
+ },
+ "MOUSE26141": {
+  "is_tf": true,
+  "name": "Q9QX99",
+  "species": "mouse",
+  "symbol": "TLX1"
+ },
+ "MOUSE26157": {
+  "is_tf": false,
+  "name": "FBW1A_MOUSE",
+  "species": "mouse",
+  "symbol": "BTRC"
+ },
+ "MOUSE26178": {
+  "is_tf": false,
+  "name": "PD2R2_MOUSE",
+  "species": "mouse",
+  "symbol": "PTGDR2"
+ },
+ "MOUSE26187": {
+  "is_tf": false,
+  "name": "Q80ZL6",
+  "species": "mouse",
+  "symbol": "FGF8"
+ },
+ "MOUSE26233": {
+  "is_tf": false,
+  "name": "FCERB_MOUSE",
+  "species": "mouse",
+  "symbol": "MS4A2"
+ },
+ "MOUSE26305": {
+  "is_tf": true,
+  "name": "NP_001397895.1",
+  "species": "mouse",
+  "symbol": "LDB1"
+ },
+ "MOUSE26498": {
+  "is_tf": true,
+  "name": "NFKB2_MOUSE",
+  "species": "mouse",
+  "symbol": "NFKB2"
+ },
+ "MOUSE26570": {
+  "is_tf": false,
+  "name": "CP17A_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP17A1"
+ },
+ "MOUSE26628": {
+  "is_tf": false,
+  "name": "AL1A1_MOUSE",
+  "species": "mouse",
+  "symbol": "ALDH1A1"
+ },
+ "MOUSE26717": {
+  "is_tf": true,
+  "name": "MXI1_MOUSE",
+  "species": "mouse",
+  "symbol": "MXI1"
+ },
+ "MOUSE26800": {
+  "is_tf": true,
+  "name": "E9QQ91",
+  "species": "mouse",
+  "symbol": "TCF4"
+ },
+ "MOUSE26807": {
+  "is_tf": false,
+  "name": "NP_038518.2",
+  "species": "mouse",
+  "symbol": "F2R"
+ },
+ "MOUSE26845": {
+  "is_tf": false,
+  "name": "NDUV1_MOUSE",
+  "species": "mouse",
+  "symbol": "NDUFV1"
+ },
+ "MOUSE26852": {
+  "is_tf": false,
+  "name": "GSTP1_MOUSE",
+  "species": "mouse",
+  "symbol": "GSTP1"
+ },
+ "MOUSE26855": {
+  "is_tf": false,
+  "name": "GSTP2_MOUSE",
+  "species": "mouse",
+  "symbol": "GSTP1"
+ },
+ "MOUSE26874": {
+  "is_tf": true,
+  "name": "AIP_MOUSE",
+  "species": "mouse",
+  "symbol": "AIP"
+ },
+ "MOUSE26913": {
+  "is_tf": false,
+  "name": "RAD9A_MOUSE",
+  "species": "mouse",
+  "symbol": "RAD9A"
+ },
+ "MOUSE26937": {
+  "is_tf": false,
+  "name": "ARBK1_MOUSE",
+  "species": "mouse",
+  "symbol": "GRK2"
+ },
+ "MOUSE26942": {
+  "is_tf": true,
+  "name": "NP_001001984.2",
+  "species": "mouse",
+  "symbol": "KDM2A"
+ },
+ "MOUSE27032": {
+  "is_tf": false,
+  "name": "PRDX5_MOUSE",
+  "species": "mouse",
+  "symbol": "PRDX5"
+ },
+ "MOUSE27040": {
+  "is_tf": true,
+  "name": "ERR1_MOUSE",
+  "species": "mouse",
+  "symbol": "ESRRA"
+ },
+ "MOUSE27084": {
+  "is_tf": false,
+  "name": "NP_001172093.1",
+  "species": "mouse",
+  "symbol": "VEGFB"
+ },
+ "MOUSE27117": {
+  "is_tf": true,
+  "name": "HHEX_MOUSE",
+  "species": "mouse",
+  "symbol": "HHEX"
+ },
+ "MOUSE27152": {
+  "is_tf": false,
+  "name": "EXO1_MOUSE",
+  "species": "mouse",
+  "symbol": "EXO1"
+ },
+ "MOUSE27208": {
+  "is_tf": false,
+  "name": "MK67I_MOUSE",
+  "species": "mouse",
+  "symbol": "MKI67"
+ },
+ "MOUSE27326": {
+  "is_tf": false,
+  "name": "E9QM61",
+  "species": "mouse",
+  "symbol": "ERCC5"
+ },
+ "MOUSE27360": {
+  "is_tf": false,
+  "name": "NCF2_MOUSE",
+  "species": "mouse",
+  "symbol": "NCF2"
+ },
+ "MOUSE27437": {
+  "is_tf": true,
+  "name": "CSN5_MOUSE",
+  "species": "mouse",
+  "symbol": "COPS5"
+ },
+ "MOUSE27496": {
+  "is_tf": false,
+  "name": "RN5A_MOUSE",
+  "species": "mouse",
+  "symbol": "RNASEL"
+ },
+ "MOUSE27546": {
+  "is_tf": false,
+  "name": "CO4A4_MOUSE",
+  "species": "mouse",
+  "symbol": "COL4A4"
+ },
+ "MOUSE27607": {
+  "is_tf": true,
+  "name": "LHX4_MOUSE",
+  "species": "mouse",
+  "symbol": "LHX4"
+ },
+ "MOUSE27609": {
+  "is_tf": true,
+  "name": "NP_035617.1",
+  "species": "mouse",
+  "symbol": "STAT4"
+ },
+ "MOUSE27658": {
+  "is_tf": true,
+  "name": "PRD14_MOUSE",
+  "species": "mouse",
+  "symbol": "PRDM14"
+ },
+ "MOUSE27662": {
+  "is_tf": false,
+  "name": "S19A3_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC19A3"
+ },
+ "MOUSE27669": {
+  "is_tf": false,
+  "name": "CCL20_MOUSE",
+  "species": "mouse",
+  "symbol": "CCL20"
+ },
+ "MOUSE27715": {
+  "is_tf": false,
+  "name": "PCLI1_MOUSE",
+  "species": "mouse",
+  "symbol": "MFN2"
+ },
+ "MOUSE27742": {
+  "is_tf": true,
+  "name": "NCOA2_MOUSE",
+  "species": "mouse",
+  "symbol": "NCOA2"
+ },
+ "MOUSE27754": {
+  "is_tf": true,
+  "name": "Q921K2",
+  "species": "mouse",
+  "symbol": "PARP1"
+ },
+ "MOUSE27781": {
+  "is_tf": false,
+  "name": "F8VQH0",
+  "species": "mouse",
+  "symbol": "ABL2"
+ },
+ "MOUSE27805": {
+  "is_tf": true,
+  "name": "A0A087WSP5",
+  "species": "mouse",
+  "symbol": "STAT1"
+ },
+ "MOUSE27835": {
+  "is_tf": false,
+  "name": "LFTY2_MOUSE",
+  "species": "mouse",
+  "symbol": "LEFTY1"
+ },
+ "MOUSE27848": {
+  "is_tf": true,
+  "name": "MUSC_MOUSE",
+  "species": "mouse",
+  "symbol": "MSC"
+ },
+ "MOUSE27850": {
+  "is_tf": false,
+  "name": "LFTY1_MOUSE",
+  "species": "mouse",
+  "symbol": "LEFTY1"
+ },
+ "MOUSE27883": {
+  "is_tf": false,
+  "name": "TERF1_MOUSE",
+  "species": "mouse",
+  "symbol": "TERF1"
+ },
+ "MOUSE27917": {
+  "is_tf": true,
+  "name": "HME1_MOUSE",
+  "species": "mouse",
+  "symbol": "EN1"
+ },
+ "MOUSE28081": {
+  "is_tf": false,
+  "name": "LY96_MOUSE",
+  "species": "mouse",
+  "symbol": "LY96"
+ },
+ "MOUSE28090": {
+  "is_tf": false,
+  "name": "GDAP1_MOUSE",
+  "species": "mouse",
+  "symbol": "GDAP1"
+ },
+ "MOUSE28150": {
+  "is_tf": true,
+  "name": "AP2B_MOUSE",
+  "species": "mouse",
+  "symbol": "TFAP2B"
+ },
+ "MOUSE28163": {
+  "is_tf": false,
+  "name": "ASPP2_MOUSE",
+  "species": "mouse",
+  "symbol": "TP53BP2"
+ },
+ "MOUSE28175": {
+  "is_tf": false,
+  "name": "IL17_MOUSE",
+  "species": "mouse",
+  "symbol": "IL17A"
+ },
+ "MOUSE28208": {
+  "is_tf": true,
+  "name": "PTMA_MOUSE",
+  "species": "mouse",
+  "symbol": "PTMA"
+ },
+ "MOUSE28238": {
+  "is_tf": false,
+  "name": "CH60_MOUSE",
+  "species": "mouse",
+  "symbol": "HSPD1"
+ },
+ "MOUSE28267": {
+  "is_tf": false,
+  "name": "PPBN_MOUSE",
+  "species": "mouse",
+  "symbol": "ALPI"
+ },
+ "MOUSE28269": {
+  "is_tf": false,
+  "name": "F8VPQ6",
+  "species": "mouse",
+  "symbol": "ALPI"
+ },
+ "MOUSE28275": {
+  "is_tf": false,
+  "name": "F8VQM0",
+  "species": "mouse",
+  "symbol": "ALPI"
+ },
+ "MOUSE28307": {
+  "is_tf": false,
+  "name": "MCM6_MOUSE",
+  "species": "mouse",
+  "symbol": "MCM6"
+ },
+ "MOUSE28310": {
+  "is_tf": true,
+  "name": "SATB2_MOUSE",
+  "species": "mouse",
+  "symbol": "SATB2"
+ },
+ "MOUSE28321": {
+  "is_tf": false,
+  "name": "A0A0R4J0N8",
+  "species": "mouse",
+  "symbol": "CXCR4"
+ },
+ "MOUSE28341": {
+  "is_tf": false,
+  "name": "HLX_MOUSE",
+  "species": "mouse",
+  "symbol": "HLX"
+ },
+ "MOUSE28400": {
+  "is_tf": true,
+  "name": "COP1_MOUSE",
+  "species": "mouse",
+  "symbol": "RFWD2"
+ },
+ "MOUSE28444": {
+  "is_tf": false,
+  "name": "PIGR_MOUSE",
+  "species": "mouse",
+  "symbol": "PIGR"
+ },
+ "MOUSE28471": {
+  "is_tf": false,
+  "name": "IL10_MOUSE",
+  "species": "mouse",
+  "symbol": "ILK"
+ },
+ "MOUSE28518": {
+  "is_tf": false,
+  "name": "TGFB2_MOUSE",
+  "species": "mouse",
+  "symbol": "TGFB2"
+ },
+ "MOUSE28559": {
+  "is_tf": false,
+  "name": "ANT3_MOUSE",
+  "species": "mouse",
+  "symbol": "SERPINC1"
+ },
+ "MOUSE28615": {
+  "is_tf": false,
+  "name": "IKKE_MOUSE",
+  "species": "mouse",
+  "symbol": "IKBKE"
+ },
+ "MOUSE28619": {
+  "is_tf": false,
+  "name": "CFLAR_MOUSE",
+  "species": "mouse",
+  "symbol": "CFLAR"
+ },
+ "MOUSE28762": {
+  "is_tf": false,
+  "name": "TNFL4_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFSF4"
+ },
+ "MOUSE28763": {
+  "is_tf": true,
+  "name": "ELK4_MOUSE",
+  "species": "mouse",
+  "symbol": "ELK4"
+ },
+ "MOUSE28773": {
+  "is_tf": false,
+  "name": "TNFL6_MOUSE",
+  "species": "mouse",
+  "symbol": "FASLG"
+ },
+ "MOUSE28835": {
+  "is_tf": false,
+  "name": "NP_766234.1",
+  "species": "mouse",
+  "symbol": "DNM3"
+ },
+ "MOUSE28846": {
+  "is_tf": true,
+  "name": "ATF3_MOUSE",
+  "species": "mouse",
+  "symbol": "ATF3"
+ },
+ "MOUSE28919": {
+  "is_tf": false,
+  "name": "E9PXN7",
+  "species": "mouse",
+  "symbol": "UGT1A9"
+ },
+ "MOUSE28928": {
+  "is_tf": false,
+  "name": "UD19_MOUSE",
+  "species": "mouse",
+  "symbol": "UGT1A9"
+ },
+ "MOUSE28929": {
+  "is_tf": false,
+  "name": "D3Z748",
+  "species": "mouse",
+  "symbol": "UGT1A9"
+ },
+ "MOUSE28941": {
+  "is_tf": false,
+  "name": "UD17_MOUSE",
+  "species": "mouse",
+  "symbol": "UGT1A9"
+ },
+ "MOUSE28949": {
+  "is_tf": false,
+  "name": "B2RT14",
+  "species": "mouse",
+  "symbol": "UGT1A4"
+ },
+ "MOUSE28955": {
+  "is_tf": false,
+  "name": "UD12_MOUSE",
+  "species": "mouse",
+  "symbol": "UGT1A4"
+ },
+ "MOUSE28957": {
+  "is_tf": false,
+  "name": "UD11_MOUSE",
+  "species": "mouse",
+  "symbol": "UGT1A1"
+ },
+ "MOUSE28980": {
+  "is_tf": false,
+  "name": "FMO4_MOUSE",
+  "species": "mouse",
+  "symbol": "FMO4"
+ },
+ "MOUSE29060": {
+  "is_tf": true,
+  "name": "GBX2_MOUSE",
+  "species": "mouse",
+  "symbol": "GBX2"
+ },
+ "MOUSE29066": {
+  "is_tf": false,
+  "name": "NTM1B_MOUSE",
+  "species": "mouse",
+  "symbol": "KDR"
+ },
+ "MOUSE29101": {
+  "is_tf": false,
+  "name": "ACKR3_MOUSE",
+  "species": "mouse",
+  "symbol": "ACKR3"
+ },
+ "MOUSE29130": {
+  "is_tf": false,
+  "name": "Q6GTR6",
+  "species": "mouse",
+  "symbol": "CTLA4"
+ },
+ "MOUSE29193": {
+  "is_tf": false,
+  "name": "Q5IK08",
+  "species": "mouse",
+  "symbol": "KISS1"
+ },
+ "MOUSE29200": {
+  "is_tf": false,
+  "name": "NP_001399553.1",
+  "species": "mouse",
+  "symbol": "KISS1"
+ },
+ "MOUSE29214": {
+  "is_tf": false,
+  "name": "LYAM2_MOUSE",
+  "species": "mouse",
+  "symbol": "SELE"
+ },
+ "MOUSE29229": {
+  "is_tf": false,
+  "name": "G0S2_MOUSE",
+  "species": "mouse",
+  "symbol": "G0S2"
+ },
+ "MOUSE29234": {
+  "is_tf": false,
+  "name": "LYAM3_MOUSE",
+  "species": "mouse",
+  "symbol": "SELP"
+ },
+ "MOUSE29275": {
+  "is_tf": true,
+  "name": "LRRF1_MOUSE",
+  "species": "mouse",
+  "symbol": "LRRFIP1"
+ },
+ "MOUSE29280": {
+  "is_tf": false,
+  "name": "CD34_MOUSE",
+  "species": "mouse",
+  "symbol": "CD34"
+ },
+ "MOUSE29294": {
+  "is_tf": false,
+  "name": "AT1B1_MOUSE",
+  "species": "mouse",
+  "symbol": "ATP1B1"
+ },
+ "MOUSE29304": {
+  "is_tf": false,
+  "name": "NP_001342691.1",
+  "species": "mouse",
+  "symbol": "FN1"
+ },
+ "MOUSE29388": {
+  "is_tf": true,
+  "name": "BTG2_MOUSE",
+  "species": "mouse",
+  "symbol": "BTG2"
+ },
+ "MOUSE29397": {
+  "is_tf": true,
+  "name": "HES6_MOUSE",
+  "species": "mouse",
+  "symbol": "HES6"
+ },
+ "MOUSE29408": {
+  "is_tf": true,
+  "name": "A0A0R4J0U3",
+  "species": "mouse",
+  "symbol": "PER2"
+ },
+ "MOUSE29432": {
+  "is_tf": false,
+  "name": "CH3L1_MOUSE",
+  "species": "mouse",
+  "symbol": "CHI3L1"
+ },
+ "MOUSE29442": {
+  "is_tf": true,
+  "name": "A5D6P6",
+  "species": "mouse",
+  "symbol": "TWIST2"
+ },
+ "MOUSE29457": {
+  "is_tf": false,
+  "name": "AA1R_MOUSE",
+  "species": "mouse",
+  "symbol": "ADORA1"
+ },
+ "MOUSE29463": {
+  "is_tf": true,
+  "name": "MYOG_MOUSE",
+  "species": "mouse",
+  "symbol": "MYOG"
+ },
+ "MOUSE29488": {
+  "is_tf": true,
+  "name": "CREG1_MOUSE",
+  "species": "mouse",
+  "symbol": "CREG1"
+ },
+ "MOUSE29537": {
+  "is_tf": false,
+  "name": "PAQR1_MOUSE",
+  "species": "mouse",
+  "symbol": "ADIPOR1"
+ },
+ "MOUSE29548": {
+  "is_tf": false,
+  "name": "CD3Z_MOUSE",
+  "species": "mouse",
+  "symbol": "CD247"
+ },
+ "MOUSE29570": {
+  "is_tf": false,
+  "name": "ADA23_MOUSE",
+  "species": "mouse",
+  "symbol": "ADAM23"
+ },
+ "MOUSE29576": {
+  "is_tf": false,
+  "name": "CAN10_MOUSE",
+  "species": "mouse",
+  "symbol": "CAPN10"
+ },
+ "MOUSE29628": {
+  "is_tf": true,
+  "name": "CREB1_MOUSE",
+  "species": "mouse",
+  "symbol": "CREB1"
+ },
+ "MOUSE29672": {
+  "is_tf": false,
+  "name": "A0A0R4J209",
+  "species": "mouse",
+  "symbol": "GPA33"
+ },
+ "MOUSE29768": {
+  "is_tf": false,
+  "name": "CSRP1_MOUSE",
+  "species": "mouse",
+  "symbol": "CSRP1"
+ },
+ "MOUSE29836": {
+  "is_tf": false,
+  "name": "PBX1_MOUSE",
+  "species": "mouse",
+  "symbol": "PRL"
+ },
+ "MOUSE29866": {
+  "is_tf": false,
+  "name": "Q5D078",
+  "species": "mouse",
+  "symbol": "RGS4"
+ },
+ "MOUSE29892": {
+  "is_tf": false,
+  "name": "DDR2_MOUSE",
+  "species": "mouse",
+  "symbol": "DDR2"
+ },
+ "MOUSE29994": {
+  "is_tf": true,
+  "name": "ATF6A_MOUSE",
+  "species": "mouse",
+  "symbol": "ATF6"
+ },
+ "MOUSE30055": {
+  "is_tf": false,
+  "name": "ERBB4_MOUSE",
+  "species": "mouse",
+  "symbol": "ERBB4"
+ },
+ "MOUSE30115": {
+  "is_tf": true,
+  "name": "BARD1_MOUSE",
+  "species": "mouse",
+  "symbol": "BARD1"
+ },
+ "MOUSE30203": {
+  "is_tf": true,
+  "name": "A0A0A6YY04",
+  "species": "mouse",
+  "symbol": "NR5A2"
+ },
+ "MOUSE30230": {
+  "is_tf": false,
+  "name": "IL1R1_MOUSE",
+  "species": "mouse",
+  "symbol": "IL1R1"
+ },
+ "MOUSE30234": {
+  "is_tf": true,
+  "name": "A0A0A6YXS3",
+  "species": "mouse",
+  "symbol": "SOX17"
+ },
+ "MOUSE30248": {
+  "is_tf": false,
+  "name": "BCL2_MOUSE",
+  "species": "mouse",
+  "symbol": "BCL2"
+ },
+ "MOUSE30262": {
+  "is_tf": false,
+  "name": "SPB5_MOUSE",
+  "species": "mouse",
+  "symbol": "SERPINB5"
+ },
+ "MOUSE30368": {
+  "is_tf": true,
+  "name": "XRCC5_MOUSE",
+  "species": "mouse",
+  "symbol": "XRCC5"
+ },
+ "MOUSE30391": {
+  "is_tf": true,
+  "name": "FHL2_MOUSE",
+  "species": "mouse",
+  "symbol": "FHL2"
+ },
+ "MOUSE30418": {
+  "is_tf": true,
+  "name": "RBCC1_MOUSE",
+  "species": "mouse",
+  "symbol": "RB1CC1"
+ },
+ "MOUSE30436": {
+  "is_tf": false,
+  "name": "IBP5_MOUSE",
+  "species": "mouse",
+  "symbol": "IGFBP5"
+ },
+ "MOUSE30445": {
+  "is_tf": false,
+  "name": "ASPM_MOUSE",
+  "species": "mouse",
+  "symbol": "ASPM"
+ },
+ "MOUSE30453": {
+  "is_tf": false,
+  "name": "E9Q8B5",
+  "species": "mouse",
+  "symbol": "CFH"
+ },
+ "MOUSE30483": {
+  "is_tf": false,
+  "name": "E9Q8I0",
+  "species": "mouse",
+  "symbol": "CFH"
+ },
+ "MOUSE30490": {
+  "is_tf": false,
+  "name": "PEA15_MOUSE",
+  "species": "mouse",
+  "symbol": "PEA15"
+ },
+ "MOUSE30495": {
+  "is_tf": false,
+  "name": "CXCR2_MOUSE",
+  "species": "mouse",
+  "symbol": "CXCR2"
+ },
+ "MOUSE30499": {
+  "is_tf": false,
+  "name": "CXCR1_MOUSE",
+  "species": "mouse",
+  "symbol": "CXCR1"
+ },
+ "MOUSE30518": {
+  "is_tf": false,
+  "name": "CDC73_MOUSE",
+  "species": "mouse",
+  "symbol": "PERP"
+ },
+ "MOUSE30610": {
+  "is_tf": false,
+  "name": "SAMP_MOUSE",
+  "species": "mouse",
+  "symbol": "APCS"
+ },
+ "MOUSE30627": {
+  "is_tf": false,
+  "name": "FCERA_MOUSE",
+  "species": "mouse",
+  "symbol": "FCER1A"
+ },
+ "MOUSE30634": {
+  "is_tf": false,
+  "name": "PGH2_MOUSE",
+  "species": "mouse",
+  "symbol": "PTGS2"
+ },
+ "MOUSE30781": {
+  "is_tf": false,
+  "name": "CP27A_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP27A1"
+ },
+ "MOUSE30928": {
+  "is_tf": true,
+  "name": "USF1_MOUSE",
+  "species": "mouse",
+  "symbol": "USF1"
+ },
+ "MOUSE30985": {
+  "is_tf": false,
+  "name": "TAF1A_MOUSE",
+  "species": "mouse",
+  "symbol": "TAF1A"
+ },
+ "MOUSE31042": {
+  "is_tf": false,
+  "name": "SURF2_MOUSE",
+  "species": "mouse",
+  "symbol": "SURF2"
+ },
+ "MOUSE31287": {
+  "is_tf": true,
+  "name": "TRIB3_MOUSE",
+  "species": "mouse",
+  "symbol": "TRIB3"
+ },
+ "MOUSE31398": {
+  "is_tf": false,
+  "name": "DOPO_MOUSE",
+  "species": "mouse",
+  "symbol": "DBH"
+ },
+ "MOUSE31514": {
+  "is_tf": false,
+  "name": "A0A1B0GRB6",
+  "species": "mouse",
+  "symbol": "BRD3"
+ },
+ "MOUSE31536": {
+  "is_tf": true,
+  "name": "Q6GTZ3",
+  "species": "mouse",
+  "symbol": "ID1"
+ },
+ "MOUSE31550": {
+  "is_tf": false,
+  "name": "B2CL1_MOUSE",
+  "species": "mouse",
+  "symbol": "BCL2L1"
+ },
+ "MOUSE31624": {
+  "is_tf": true,
+  "name": "E9QAP7",
+  "species": "mouse",
+  "symbol": "TAF4"
+ },
+ "MOUSE31641": {
+  "is_tf": true,
+  "name": "RXRA_MOUSE",
+  "species": "mouse",
+  "symbol": "RXRA"
+ },
+ "MOUSE31747": {
+  "is_tf": false,
+  "name": "GATA5_MOUSE",
+  "species": "mouse",
+  "symbol": "GATA5"
+ },
+ "MOUSE31760": {
+  "is_tf": true,
+  "name": "Q9QZJ1",
+  "species": "mouse",
+  "symbol": "PLAGL2"
+ },
+ "MOUSE31781": {
+  "is_tf": false,
+  "name": "ASXL1_MOUSE",
+  "species": "mouse",
+  "symbol": "ASXL1"
+ },
+ "MOUSE31783": {
+  "is_tf": false,
+  "name": "OPTN_MOUSE",
+  "species": "mouse",
+  "symbol": "OPTN"
+ },
+ "MOUSE31806": {
+  "is_tf": true,
+  "name": "Q32NY8",
+  "species": "mouse",
+  "symbol": "TCFL5"
+ },
+ "MOUSE31850": {
+  "is_tf": false,
+  "name": "DIDO1_MOUSE",
+  "species": "mouse",
+  "symbol": "IDO1"
+ },
+ "MOUSE31914": {
+  "is_tf": false,
+  "name": "STK39_MOUSE",
+  "species": "mouse",
+  "symbol": "STK39"
+ },
+ "MOUSE31968": {
+  "is_tf": false,
+  "name": "DNM3B_MOUSE",
+  "species": "mouse",
+  "symbol": "DNMT3B"
+ },
+ "MOUSE31987": {
+  "is_tf": true,
+  "name": "SPI1_MOUSE",
+  "species": "mouse",
+  "symbol": "SPI1"
+ },
+ "MOUSE32148": {
+  "is_tf": true,
+  "name": "E2F1_MOUSE",
+  "species": "mouse",
+  "symbol": "E2F1"
+ },
+ "MOUSE32199": {
+  "is_tf": false,
+  "name": "DCE1_MOUSE",
+  "species": "mouse",
+  "symbol": "GAD1"
+ },
+ "MOUSE32211": {
+  "is_tf": false,
+  "name": "MLP3A_MOUSE",
+  "species": "mouse",
+  "symbol": "MAP1LC3A"
+ },
+ "MOUSE32228": {
+  "is_tf": true,
+  "name": "NP_062799.2",
+  "species": "mouse",
+  "symbol": "NCOA6"
+ },
+ "MOUSE32263": {
+  "is_tf": false,
+  "name": "IL2RA_MOUSE",
+  "species": "mouse",
+  "symbol": "IL2RA"
+ },
+ "MOUSE32312": {
+  "is_tf": false,
+  "name": "B7ZBV9",
+  "species": "mouse",
+  "symbol": "KCNQ2"
+ },
+ "MOUSE32437": {
+  "is_tf": false,
+  "name": "A2ARP8",
+  "species": "mouse",
+  "symbol": "MAP1A"
+ },
+ "MOUSE32623": {
+  "is_tf": true,
+  "name": "NR1H3_MOUSE",
+  "species": "mouse",
+  "symbol": "NR1H3"
+ },
+ "MOUSE32670": {
+  "is_tf": true,
+  "name": "DDB2_MOUSE",
+  "species": "mouse",
+  "symbol": "DDB2"
+ },
+ "MOUSE32697": {
+  "is_tf": true,
+  "name": "SP3_MOUSE",
+  "species": "mouse",
+  "symbol": "SP3"
+ },
+ "MOUSE32729": {
+  "is_tf": true,
+  "name": "BMI1_MOUSE",
+  "species": "mouse",
+  "symbol": "BMI1"
+ },
+ "MOUSE32763": {
+  "is_tf": true,
+  "name": "CIR1_MOUSE",
+  "species": "mouse",
+  "symbol": "RBPJ"
+ },
+ "MOUSE32795": {
+  "is_tf": false,
+  "name": "OTUD1_MOUSE",
+  "species": "mouse",
+  "symbol": "UBA7"
+ },
+ "MOUSE32825": {
+  "is_tf": false,
+  "name": "SOX18_MOUSE",
+  "species": "mouse",
+  "symbol": "SOX18"
+ },
+ "MOUSE32941": {
+  "is_tf": false,
+  "name": "TGIF2_MOUSE",
+  "species": "mouse",
+  "symbol": "TGIF2"
+ },
+ "MOUSE32964": {
+  "is_tf": false,
+  "name": "THRB_MOUSE",
+  "species": "mouse",
+  "symbol": "SHH"
+ },
+ "MOUSE33063": {
+  "is_tf": true,
+  "name": "RBL1_MOUSE",
+  "species": "mouse",
+  "symbol": "RBL1"
+ },
+ "MOUSE33067": {
+  "is_tf": true,
+  "name": "ATF2_MOUSE",
+  "species": "mouse",
+  "symbol": "ATF2"
+ },
+ "MOUSE33124": {
+  "is_tf": true,
+  "name": "HXD9_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXD9"
+ },
+ "MOUSE33187": {
+  "is_tf": true,
+  "name": "NF2L2_MOUSE",
+  "species": "mouse",
+  "symbol": "NFE2L2"
+ },
+ "MOUSE33214": {
+  "is_tf": false,
+  "name": "PTGES_MOUSE",
+  "species": "mouse",
+  "symbol": "PTGES"
+ },
+ "MOUSE33253": {
+  "is_tf": false,
+  "name": "MYEF2_MOUSE",
+  "species": "mouse",
+  "symbol": "MYEF2"
+ },
+ "MOUSE33263": {
+  "is_tf": false,
+  "name": "LBP_MOUSE",
+  "species": "mouse",
+  "symbol": "LBP"
+ },
+ "MOUSE33265": {
+  "is_tf": true,
+  "name": "A0A0R4J082",
+  "species": "mouse",
+  "symbol": "CREB3L1"
+ },
+ "MOUSE33407": {
+  "is_tf": false,
+  "name": "Q542W1",
+  "species": "mouse",
+  "symbol": "IL1RN"
+ },
+ "MOUSE33441": {
+  "is_tf": true,
+  "name": "PAX8_MOUSE",
+  "species": "mouse",
+  "symbol": "PAX8"
+ },
+ "MOUSE33462": {
+  "is_tf": false,
+  "name": "CRY2_MOUSE",
+  "species": "mouse",
+  "symbol": "CRY2"
+ },
+ "MOUSE33496": {
+  "is_tf": false,
+  "name": "ASSY_MOUSE",
+  "species": "mouse",
+  "symbol": "ASS1"
+ },
+ "MOUSE33540": {
+  "is_tf": true,
+  "name": "MYBB_MOUSE",
+  "species": "mouse",
+  "symbol": "MYBL2"
+ },
+ "MOUSE33566": {
+  "is_tf": false,
+  "name": "CD82_MOUSE",
+  "species": "mouse",
+  "symbol": "CD82"
+ },
+ "MOUSE33586": {
+  "is_tf": true,
+  "name": "Q3SYK5",
+  "species": "mouse",
+  "symbol": "ABL1"
+ },
+ "MOUSE33760": {
+  "is_tf": false,
+  "name": "CIAO1_MOUSE",
+  "species": "mouse",
+  "symbol": "CIAO1"
+ },
+ "MOUSE33779": {
+  "is_tf": false,
+  "name": "STAR7_MOUSE",
+  "species": "mouse",
+  "symbol": "STARD7"
+ },
+ "MOUSE33807": {
+  "is_tf": true,
+  "name": "TRAF6_MOUSE",
+  "species": "mouse",
+  "symbol": "TRAF6"
+ },
+ "MOUSE33820": {
+  "is_tf": false,
+  "name": "ADA2B_MOUSE",
+  "species": "mouse",
+  "symbol": "ADRA2B"
+ },
+ "MOUSE33854": {
+  "is_tf": false,
+  "name": "UBE2C_MOUSE",
+  "species": "mouse",
+  "symbol": "UBE2C"
+ },
+ "MOUSE33988": {
+  "is_tf": false,
+  "name": "MMP9_MOUSE",
+  "species": "mouse",
+  "symbol": "MMP9"
+ },
+ "MOUSE33992": {
+  "is_tf": false,
+  "name": "B2L11_MOUSE",
+  "species": "mouse",
+  "symbol": "BCL2L11"
+ },
+ "MOUSE34001": {
+  "is_tf": false,
+  "name": "ITAV_MOUSE",
+  "species": "mouse",
+  "symbol": "ITGAV"
+ },
+ "MOUSE34040": {
+  "is_tf": false,
+  "name": "TNR5_MOUSE",
+  "species": "mouse",
+  "symbol": "CD40"
+ },
+ "MOUSE34059": {
+  "is_tf": false,
+  "name": "A2APM2",
+  "species": "mouse",
+  "symbol": "CD44"
+ },
+ "MOUSE34069": {
+  "is_tf": false,
+  "name": "S20A1_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC20A1"
+ },
+ "MOUSE34072": {
+  "is_tf": true,
+  "name": "ODPX_MOUSE",
+  "species": "mouse",
+  "symbol": "PDX1"
+ },
+ "MOUSE34077": {
+  "is_tf": false,
+  "name": "IL1A_MOUSE",
+  "species": "mouse",
+  "symbol": "IL1A"
+ },
+ "MOUSE34168": {
+  "is_tf": true,
+  "name": "NELFB_MOUSE",
+  "species": "mouse",
+  "symbol": "NELFB"
+ },
+ "MOUSE34232": {
+  "is_tf": false,
+  "name": "NGAL_MOUSE",
+  "species": "mouse",
+  "symbol": "LCN2"
+ },
+ "MOUSE34318": {
+  "is_tf": false,
+  "name": "PTPRA_MOUSE",
+  "species": "mouse",
+  "symbol": "PTPA"
+ },
+ "MOUSE34346": {
+  "is_tf": true,
+  "name": "Q05BA5",
+  "species": "mouse",
+  "symbol": "NCOA3"
+ },
+ "MOUSE34373": {
+  "is_tf": false,
+  "name": "EGLN_MOUSE",
+  "species": "mouse",
+  "symbol": "ENG"
+ },
+ "MOUSE34376": {
+  "is_tf": false,
+  "name": "EIF3M_MOUSE",
+  "species": "mouse",
+  "symbol": "EIF3M"
+ },
+ "MOUSE34395": {
+  "is_tf": false,
+  "name": "A2AI16",
+  "species": "mouse",
+  "symbol": "GRIN1"
+ },
+ "MOUSE34509": {
+  "is_tf": false,
+  "name": "B4GT5_MOUSE",
+  "species": "mouse",
+  "symbol": "B4GALT5"
+ },
+ "MOUSE34540": {
+  "is_tf": false,
+  "name": "PTGDS_MOUSE",
+  "species": "mouse",
+  "symbol": "PTGDS"
+ },
+ "MOUSE34561": {
+  "is_tf": false,
+  "name": "MPIP2_MOUSE",
+  "species": "mouse",
+  "symbol": "CDC25B"
+ },
+ "MOUSE34568": {
+  "is_tf": true,
+  "name": "SNAI1_MOUSE",
+  "species": "mouse",
+  "symbol": "SNAI1"
+ },
+ "MOUSE34580": {
+  "is_tf": false,
+  "name": "FSHB_MOUSE",
+  "species": "mouse",
+  "symbol": "FSHB"
+ },
+ "MOUSE34590": {
+  "is_tf": true,
+  "name": "CEBPB_MOUSE",
+  "species": "mouse",
+  "symbol": "CEBPB"
+ },
+ "MOUSE34601": {
+  "is_tf": false,
+  "name": "NP_031566.4",
+  "species": "mouse",
+  "symbol": "BDNF"
+ },
+ "MOUSE34678": {
+  "is_tf": true,
+  "name": "A0A6I8MWW7",
+  "species": "mouse",
+  "symbol": "LMX1B"
+ },
+ "MOUSE34688": {
+  "is_tf": true,
+  "name": "NFAC2_MOUSE",
+  "species": "mouse",
+  "symbol": "NFATC2"
+ },
+ "MOUSE34775": {
+  "is_tf": false,
+  "name": "PRIO_MOUSE",
+  "species": "mouse",
+  "symbol": "PRNP"
+ },
+ "MOUSE34894": {
+  "is_tf": false,
+  "name": "PCNA_MOUSE",
+  "species": "mouse",
+  "symbol": "PCNA"
+ },
+ "MOUSE34932": {
+  "is_tf": false,
+  "name": "PRG2_MOUSE",
+  "species": "mouse",
+  "symbol": "PRG2"
+ },
+ "MOUSE34934": {
+  "is_tf": true,
+  "name": "SALL4_MOUSE",
+  "species": "mouse",
+  "symbol": "SALL4"
+ },
+ "MOUSE34972": {
+  "is_tf": false,
+  "name": "BIP_MOUSE",
+  "species": "mouse",
+  "symbol": "HSPA5"
+ },
+ "MOUSE34982": {
+  "is_tf": false,
+  "name": "CP24A_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP24A1"
+ },
+ "MOUSE34993": {
+  "is_tf": false,
+  "name": "Q3UWL8",
+  "species": "mouse",
+  "symbol": "PFDN4"
+ },
+ "MOUSE35007": {
+  "is_tf": false,
+  "name": "APJ_MOUSE",
+  "species": "mouse",
+  "symbol": "APLNR"
+ },
+ "MOUSE35028": {
+  "is_tf": false,
+  "name": "NP_035627.1",
+  "species": "mouse",
+  "symbol": "AURKA"
+ },
+ "MOUSE35114": {
+  "is_tf": false,
+  "name": "TRAF1_MOUSE",
+  "species": "mouse",
+  "symbol": "TRAF1"
+ },
+ "MOUSE35126": {
+  "is_tf": false,
+  "name": "NP_079952.2",
+  "species": "mouse",
+  "symbol": "MCM8"
+ },
+ "MOUSE35137": {
+  "is_tf": true,
+  "name": "AP2C_MOUSE",
+  "species": "mouse",
+  "symbol": "TFAP2C"
+ },
+ "MOUSE35148": {
+  "is_tf": false,
+  "name": "BMP7_MOUSE",
+  "species": "mouse",
+  "symbol": "BMP7"
+ },
+ "MOUSE35213": {
+  "is_tf": false,
+  "name": "BMP2_MOUSE",
+  "species": "mouse",
+  "symbol": "BMP2"
+ },
+ "MOUSE35252": {
+  "is_tf": false,
+  "name": "RBM38_MOUSE",
+  "species": "mouse",
+  "symbol": "RBM38"
+ },
+ "MOUSE35283": {
+  "is_tf": false,
+  "name": "PCKGC_MOUSE",
+  "species": "mouse",
+  "symbol": "PCK1"
+ },
+ "MOUSE35522": {
+  "is_tf": false,
+  "name": "JAG1_MOUSE",
+  "species": "mouse",
+  "symbol": "JAG1"
+ },
+ "MOUSE35536": {
+  "is_tf": false,
+  "name": "CXD2_MOUSE",
+  "species": "mouse",
+  "symbol": "GJD2"
+ },
+ "MOUSE35547": {
+  "is_tf": false,
+  "name": "ACTC_MOUSE",
+  "species": "mouse",
+  "symbol": "ACTC1"
+ },
+ "MOUSE35600": {
+  "is_tf": false,
+  "name": "NEC2_MOUSE",
+  "species": "mouse",
+  "symbol": "PCSK2"
+ },
+ "MOUSE35614": {
+  "is_tf": false,
+  "name": "NOTC1_MOUSE",
+  "species": "mouse",
+  "symbol": "NOTCH1"
+ },
+ "MOUSE35689": {
+  "is_tf": false,
+  "name": "GRP1_MOUSE",
+  "species": "mouse",
+  "symbol": "RASGRP1"
+ },
+ "MOUSE35698": {
+  "is_tf": false,
+  "name": "Q80YQ1",
+  "species": "mouse",
+  "symbol": "THBS1"
+ },
+ "MOUSE35726": {
+  "is_tf": false,
+  "name": "PGH1_MOUSE",
+  "species": "mouse",
+  "symbol": "PTGS1"
+ },
+ "MOUSE35843": {
+  "is_tf": false,
+  "name": "INSM1_MOUSE",
+  "species": "mouse",
+  "symbol": "INSM1"
+ },
+ "MOUSE35857": {
+  "is_tf": false,
+  "name": "SURF1_MOUSE",
+  "species": "mouse",
+  "symbol": "SURF1"
+ },
+ "MOUSE35880": {
+  "is_tf": false,
+  "name": "BUB1B_MOUSE",
+  "species": "mouse",
+  "symbol": "BUB1B"
+ },
+ "MOUSE35888": {
+  "is_tf": true,
+  "name": "Q8BRS9",
+  "species": "mouse",
+  "symbol": "NKX2-2"
+ },
+ "MOUSE35899": {
+  "is_tf": false,
+  "name": "TRBM_MOUSE",
+  "species": "mouse",
+  "symbol": "THBD"
+ },
+ "MOUSE35909": {
+  "is_tf": true,
+  "name": "GZF1_MOUSE",
+  "species": "mouse",
+  "symbol": "GZF1"
+ },
+ "MOUSE35941": {
+  "is_tf": false,
+  "name": "CSTD_MOUSE",
+  "species": "mouse",
+  "symbol": "CST5"
+ },
+ "MOUSE36000": {
+  "is_tf": true,
+  "name": "LHX2_MOUSE",
+  "species": "mouse",
+  "symbol": "LHX2"
+ },
+ "MOUSE36033": {
+  "is_tf": true,
+  "name": "STF1_MOUSE",
+  "species": "mouse",
+  "symbol": "NR5A1"
+ },
+ "MOUSE36058": {
+  "is_tf": false,
+  "name": "DLL4_MOUSE",
+  "species": "mouse",
+  "symbol": "DLL4"
+ },
+ "MOUSE36059": {
+  "is_tf": false,
+  "name": "CHAC1_MOUSE",
+  "species": "mouse",
+  "symbol": "CHAC1"
+ },
+ "MOUSE36138": {
+  "is_tf": true,
+  "name": "ZEB2_MOUSE",
+  "species": "mouse",
+  "symbol": "ZEB2"
+ },
+ "MOUSE36183": {
+  "is_tf": false,
+  "name": "RND3_MOUSE",
+  "species": "mouse",
+  "symbol": "RND3"
+ },
+ "MOUSE36194": {
+  "is_tf": false,
+  "name": "TSG6_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFAIP6"
+ },
+ "MOUSE36233": {
+  "is_tf": false,
+  "name": "RPRM_MOUSE",
+  "species": "mouse",
+  "symbol": "RPRM"
+ },
+ "MOUSE36242": {
+  "is_tf": true,
+  "name": "NR4A2_MOUSE",
+  "species": "mouse",
+  "symbol": "NR4A2"
+ },
+ "MOUSE36313": {
+  "is_tf": false,
+  "name": "TANK_MOUSE",
+  "species": "mouse",
+  "symbol": "TRAF2"
+ },
+ "MOUSE36352": {
+  "is_tf": false,
+  "name": "MAVS_MOUSE",
+  "species": "mouse",
+  "symbol": "MAVS"
+ },
+ "MOUSE36391": {
+  "is_tf": false,
+  "name": "S1PR1_MOUSE",
+  "species": "mouse",
+  "symbol": "S1PR1"
+ },
+ "MOUSE36424": {
+  "is_tf": false,
+  "name": "PF2R_MOUSE",
+  "species": "mouse",
+  "symbol": "PTGFR"
+ },
+ "MOUSE36442": {
+  "is_tf": false,
+  "name": "DNJB4_MOUSE",
+  "species": "mouse",
+  "symbol": "DNAJB4"
+ },
+ "MOUSE36452": {
+  "is_tf": false,
+  "name": "Q3UPN1",
+  "species": "mouse",
+  "symbol": "VCAM1"
+ },
+ "MOUSE36482": {
+  "is_tf": true,
+  "name": "CELF3_MOUSE",
+  "species": "mouse",
+  "symbol": "ELF3"
+ },
+ "MOUSE36668": {
+  "is_tf": true,
+  "name": "RFX5_MOUSE",
+  "species": "mouse",
+  "symbol": "RFX5"
+ },
+ "MOUSE36697": {
+  "is_tf": true,
+  "name": "Q60I23",
+  "species": "mouse",
+  "symbol": "SOX2"
+ },
+ "MOUSE36781": {
+  "is_tf": false,
+  "name": "PDGFC_MOUSE",
+  "species": "mouse",
+  "symbol": "PDGFC"
+ },
+ "MOUSE36846": {
+  "is_tf": false,
+  "name": "CCNA2_MOUSE",
+  "species": "mouse",
+  "symbol": "CCNA2"
+ },
+ "MOUSE36869": {
+  "is_tf": false,
+  "name": "FIBG_MOUSE",
+  "species": "mouse",
+  "symbol": "FGG"
+ },
+ "MOUSE36879": {
+  "is_tf": false,
+  "name": "FIBB_MOUSE",
+  "species": "mouse",
+  "symbol": "FGB"
+ },
+ "MOUSE36900": {
+  "is_tf": false,
+  "name": "G3X8Y8",
+  "species": "mouse",
+  "symbol": "TLR2"
+ },
+ "MOUSE36902": {
+  "is_tf": false,
+  "name": "A0A0G2JF67",
+  "species": "mouse",
+  "symbol": "PDE5A"
+ },
+ "MOUSE36903": {
+  "is_tf": false,
+  "name": "FABPI_MOUSE",
+  "species": "mouse",
+  "symbol": "FABP2"
+ },
+ "MOUSE36999": {
+  "is_tf": false,
+  "name": "CERS2_MOUSE",
+  "species": "mouse",
+  "symbol": "CERS2"
+ },
+ "MOUSE37060": {
+  "is_tf": false,
+  "name": "D3YYC3",
+  "species": "mouse",
+  "symbol": "SETDB1"
+ },
+ "MOUSE37066": {
+  "is_tf": false,
+  "name": "IL2_MOUSE",
+  "species": "mouse",
+  "symbol": "IL2"
+ },
+ "MOUSE37071": {
+  "is_tf": false,
+  "name": "IL21_MOUSE",
+  "species": "mouse",
+  "symbol": "IL21"
+ },
+ "MOUSE37120": {
+  "is_tf": true,
+  "name": "ARNT_MOUSE",
+  "species": "mouse",
+  "symbol": "ARNT"
+ },
+ "MOUSE37126": {
+  "is_tf": false,
+  "name": "CATK_MOUSE",
+  "species": "mouse",
+  "symbol": "CTSK"
+ },
+ "MOUSE37136": {
+  "is_tf": false,
+  "name": "CATS_MOUSE",
+  "species": "mouse",
+  "symbol": "CTSS"
+ },
+ "MOUSE37172": {
+  "is_tf": false,
+  "name": "MCL1_MOUSE",
+  "species": "mouse",
+  "symbol": "MCL1"
+ },
+ "MOUSE37181": {
+  "is_tf": false,
+  "name": "ECM1_MOUSE",
+  "species": "mouse",
+  "symbol": "ECM1"
+ },
+ "MOUSE37300": {
+  "is_tf": false,
+  "name": "APH1A_MOUSE",
+  "species": "mouse",
+  "symbol": "APH1A"
+ },
+ "MOUSE37316": {
+  "is_tf": false,
+  "name": "ENSMUSP00000039583.5",
+  "species": "mouse",
+  "symbol": "CD1D"
+ },
+ "MOUSE37318": {
+  "is_tf": false,
+  "name": "A0A0R4J090",
+  "species": "mouse",
+  "symbol": "CD1D"
+ },
+ "MOUSE37408": {
+  "is_tf": false,
+  "name": "H2A2B_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE37409": {
+  "is_tf": false,
+  "name": "H2A2C_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE37412": {
+  "is_tf": false,
+  "name": "H2A2A_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE37413": {
+  "is_tf": false,
+  "name": "H2A2A_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE37434": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE37435": {
+  "is_tf": true,
+  "name": "ETV3_MOUSE",
+  "species": "mouse",
+  "symbol": "ETV3"
+ },
+ "MOUSE37462": {
+  "is_tf": false,
+  "name": "TXNIP_MOUSE",
+  "species": "mouse",
+  "symbol": "TXNIP"
+ },
+ "MOUSE37543": {
+  "is_tf": true,
+  "name": "PIAS3_MOUSE",
+  "species": "mouse",
+  "symbol": "STAT3"
+ },
+ "MOUSE37590": {
+  "is_tf": true,
+  "name": "FOXO1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXO1"
+ },
+ "MOUSE37591": {
+  "is_tf": false,
+  "name": "NTRK1_MOUSE",
+  "species": "mouse",
+  "symbol": "NTRK1"
+ },
+ "MOUSE37607": {
+  "is_tf": true,
+  "name": "HDGF_MOUSE",
+  "species": "mouse",
+  "symbol": "HDGF"
+ },
+ "MOUSE37626": {
+  "is_tf": false,
+  "name": "CXA5_MOUSE",
+  "species": "mouse",
+  "symbol": "GJA5"
+ },
+ "MOUSE37633": {
+  "is_tf": true,
+  "name": "LEF1_MOUSE",
+  "species": "mouse",
+  "symbol": "LEF1"
+ },
+ "MOUSE37647": {
+  "is_tf": true,
+  "name": "RABP2_MOUSE",
+  "species": "mouse",
+  "symbol": "CRABP2"
+ },
+ "MOUSE37707": {
+  "is_tf": true,
+  "name": "E9QKT0",
+  "species": "mouse",
+  "symbol": "MEF2D"
+ },
+ "MOUSE37733": {
+  "is_tf": false,
+  "name": "REG4_MOUSE",
+  "species": "mouse",
+  "symbol": "REG4"
+ },
+ "MOUSE37736": {
+  "is_tf": false,
+  "name": "NP_056599.1",
+  "species": "mouse",
+  "symbol": "POSTN"
+ },
+ "MOUSE37749": {
+  "is_tf": false,
+  "name": "SERA_MOUSE",
+  "species": "mouse",
+  "symbol": "PHGDH"
+ },
+ "MOUSE37775": {
+  "is_tf": false,
+  "name": "3BHS2_MOUSE",
+  "species": "mouse",
+  "symbol": "HSD3B2"
+ },
+ "MOUSE37782": {
+  "is_tf": false,
+  "name": "3BHS3_MOUSE",
+  "species": "mouse",
+  "symbol": "HSD3B2"
+ },
+ "MOUSE37786": {
+  "is_tf": false,
+  "name": "3BHS6_MOUSE",
+  "species": "mouse",
+  "symbol": "HSD3B2"
+ },
+ "MOUSE37788": {
+  "is_tf": false,
+  "name": "3BHS1_MOUSE",
+  "species": "mouse",
+  "symbol": "HSD3B2"
+ },
+ "MOUSE37799": {
+  "is_tf": false,
+  "name": "OSTR_MOUSE",
+  "species": "mouse",
+  "symbol": "BGLAP"
+ },
+ "MOUSE37802": {
+  "is_tf": false,
+  "name": "OSTC2_MOUSE",
+  "species": "mouse",
+  "symbol": "BGLAP"
+ },
+ "MOUSE37803": {
+  "is_tf": false,
+  "name": "OSTCN_MOUSE",
+  "species": "mouse",
+  "symbol": "BGLAP"
+ },
+ "MOUSE37852": {
+  "is_tf": false,
+  "name": "CCNA1_MOUSE",
+  "species": "mouse",
+  "symbol": "CCNA1"
+ },
+ "MOUSE37906": {
+  "is_tf": false,
+  "name": "IL7_MOUSE",
+  "species": "mouse",
+  "symbol": "IL7"
+ },
+ "MOUSE37911": {
+  "is_tf": true,
+  "name": "TTF2_MOUSE",
+  "species": "mouse",
+  "symbol": "TTF2"
+ },
+ "MOUSE37958": {
+  "is_tf": true,
+  "name": "HEN2_MOUSE",
+  "species": "mouse",
+  "symbol": "NHLH2"
+ },
+ "MOUSE37998": {
+  "is_tf": false,
+  "name": "NGF_MOUSE",
+  "species": "mouse",
+  "symbol": "NGF"
+ },
+ "MOUSE38007": {
+  "is_tf": false,
+  "name": "FABP5_MOUSE",
+  "species": "mouse",
+  "symbol": "FABP5"
+ },
+ "MOUSE38008": {
+  "is_tf": false,
+  "name": "ENSMUSP00000058811.8",
+  "species": "mouse",
+  "symbol": "MYEF2"
+ },
+ "MOUSE38014": {
+  "is_tf": false,
+  "name": "FABP4_MOUSE",
+  "species": "mouse",
+  "symbol": "FABP4"
+ },
+ "MOUSE38019": {
+  "is_tf": false,
+  "name": "S39A8_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC39A8"
+ },
+ "MOUSE38023": {
+  "is_tf": false,
+  "name": "XP_006501368.1",
+  "species": "mouse",
+  "symbol": "TSHB"
+ },
+ "MOUSE38100": {
+  "is_tf": false,
+  "name": "T4S1_MOUSE",
+  "species": "mouse",
+  "symbol": "TM4SF1"
+ },
+ "MOUSE38108": {
+  "is_tf": true,
+  "name": "WWTR1_MOUSE",
+  "species": "mouse",
+  "symbol": "WWTR1"
+ },
+ "MOUSE38120": {
+  "is_tf": false,
+  "name": "MTP_MOUSE",
+  "species": "mouse",
+  "symbol": "MTTP"
+ },
+ "MOUSE38148": {
+  "is_tf": false,
+  "name": "ADH1_MOUSE",
+  "species": "mouse",
+  "symbol": "ADH1A"
+ },
+ "MOUSE38164": {
+  "is_tf": false,
+  "name": "NP_035067.2",
+  "species": "mouse",
+  "symbol": "NRAS"
+ },
+ "MOUSE38258": {
+  "is_tf": false,
+  "name": "A0A0R4J056",
+  "species": "mouse",
+  "symbol": "BHLHE22"
+ },
+ "MOUSE38259": {
+  "is_tf": false,
+  "name": "CP7B1_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP7B1"
+ },
+ "MOUSE38379": {
+  "is_tf": false,
+  "name": "CRF_MOUSE",
+  "species": "mouse",
+  "symbol": "CRH"
+ },
+ "MOUSE38469": {
+  "is_tf": true,
+  "name": "HLTF_MOUSE",
+  "species": "mouse",
+  "symbol": "HLTF"
+ },
+ "MOUSE38497": {
+  "is_tf": false,
+  "name": "AGTRB_MOUSE",
+  "species": "mouse",
+  "symbol": "AGTR1"
+ },
+ "MOUSE38533": {
+  "is_tf": false,
+  "name": "TF2B_MOUSE",
+  "species": "mouse",
+  "symbol": "GTF2B"
+ },
+ "MOUSE38540": {
+  "is_tf": false,
+  "name": "RHOC_MOUSE",
+  "species": "mouse",
+  "symbol": "RHOC"
+ },
+ "MOUSE38610": {
+  "is_tf": true,
+  "name": "LMO4_MOUSE",
+  "species": "mouse",
+  "symbol": "LMO4"
+ },
+ "MOUSE38628": {
+  "is_tf": false,
+  "name": "GUAA_MOUSE",
+  "species": "mouse",
+  "symbol": "GMPS"
+ },
+ "MOUSE38712": {
+  "is_tf": false,
+  "name": "TNF10_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFSF10"
+ },
+ "MOUSE38716": {
+  "is_tf": false,
+  "name": "RAP1A_MOUSE",
+  "species": "mouse",
+  "symbol": "RAP1A"
+ },
+ "MOUSE38845": {
+  "is_tf": false,
+  "name": "LXN_MOUSE",
+  "species": "mouse",
+  "symbol": "LXN"
+ },
+ "MOUSE38846": {
+  "is_tf": false,
+  "name": "F6ZIS7",
+  "species": "mouse",
+  "symbol": "RARRES1"
+ },
+ "MOUSE38854": {
+  "is_tf": false,
+  "name": "CCN1_MOUSE",
+  "species": "mouse",
+  "symbol": "CYR61"
+ },
+ "MOUSE38904": {
+  "is_tf": false,
+  "name": "LTOR5_MOUSE",
+  "species": "mouse",
+  "symbol": "LAMTOR5"
+ },
+ "MOUSE38962": {
+  "is_tf": false,
+  "name": "CSF1_MOUSE",
+  "species": "mouse",
+  "symbol": "CSF1"
+ },
+ "MOUSE38986": {
+  "is_tf": false,
+  "name": "DNS2B_MOUSE",
+  "species": "mouse",
+  "symbol": "DNASE2B"
+ },
+ "MOUSE39025": {
+  "is_tf": false,
+  "name": "GSTM2_MOUSE",
+  "species": "mouse",
+  "symbol": "GSTM1"
+ },
+ "MOUSE39036": {
+  "is_tf": true,
+  "name": "HAX1_MOUSE",
+  "species": "mouse",
+  "symbol": "HAX1"
+ },
+ "MOUSE39251": {
+  "is_tf": true,
+  "name": "SKIL_MOUSE",
+  "species": "mouse",
+  "symbol": "SKIL"
+ },
+ "MOUSE39259": {
+  "is_tf": false,
+  "name": "S7A14_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC7A1"
+ },
+ "MOUSE39306": {
+  "is_tf": true,
+  "name": "ILF2_MOUSE",
+  "species": "mouse",
+  "symbol": "ILF2"
+ },
+ "MOUSE39369": {
+  "is_tf": false,
+  "name": "S10A4_MOUSE",
+  "species": "mouse",
+  "symbol": "S100A4"
+ },
+ "MOUSE39373": {
+  "is_tf": false,
+  "name": "S10A6_MOUSE",
+  "species": "mouse",
+  "symbol": "S100A6"
+ },
+ "MOUSE39378": {
+  "is_tf": false,
+  "name": "S10A9_MOUSE",
+  "species": "mouse",
+  "symbol": "S100A9"
+ },
+ "MOUSE39388": {
+  "is_tf": false,
+  "name": "SP2A3_MOUSE",
+  "species": "mouse",
+  "symbol": "SPRR2A"
+ },
+ "MOUSE39389": {
+  "is_tf": false,
+  "name": "SP2A1_MOUSE",
+  "species": "mouse",
+  "symbol": "SPRR2A"
+ },
+ "MOUSE39391": {
+  "is_tf": false,
+  "name": "ENSMUSP00000142110.2",
+  "species": "mouse",
+  "symbol": "SPRR2A"
+ },
+ "MOUSE39393": {
+  "is_tf": false,
+  "name": "A9JTY7",
+  "species": "mouse",
+  "symbol": "SPRR2A"
+ },
+ "MOUSE39394": {
+  "is_tf": false,
+  "name": "SPR2D_MOUSE",
+  "species": "mouse",
+  "symbol": "SPRR2A"
+ },
+ "MOUSE39395": {
+  "is_tf": false,
+  "name": "SPR2E_MOUSE",
+  "species": "mouse",
+  "symbol": "SPRR2A"
+ },
+ "MOUSE39396": {
+  "is_tf": false,
+  "name": "SPR2F_MOUSE",
+  "species": "mouse",
+  "symbol": "SPRR2A"
+ },
+ "MOUSE39398": {
+  "is_tf": false,
+  "name": "SPR2G_MOUSE",
+  "species": "mouse",
+  "symbol": "SPRR2A"
+ },
+ "MOUSE39399": {
+  "is_tf": false,
+  "name": "SPR2H_MOUSE",
+  "species": "mouse",
+  "symbol": "SPRR2A"
+ },
+ "MOUSE39401": {
+  "is_tf": false,
+  "name": "SPR2I_MOUSE",
+  "species": "mouse",
+  "symbol": "SPRR2A"
+ },
+ "MOUSE39405": {
+  "is_tf": false,
+  "name": "G5E8D1",
+  "species": "mouse",
+  "symbol": "SPRR2A"
+ },
+ "MOUSE39408": {
+  "is_tf": false,
+  "name": "SPR1A_MOUSE",
+  "species": "mouse",
+  "symbol": "SPRR1B"
+ },
+ "MOUSE39415": {
+  "is_tf": false,
+  "name": "G3X9D9",
+  "species": "mouse",
+  "symbol": "IVL"
+ },
+ "MOUSE39475": {
+  "is_tf": false,
+  "name": "S10AB_MOUSE",
+  "species": "mouse",
+  "symbol": "S100A11"
+ },
+ "MOUSE39476": {
+  "is_tf": false,
+  "name": "S10AA_MOUSE",
+  "species": "mouse",
+  "symbol": "S100A10"
+ },
+ "MOUSE39533": {
+  "is_tf": false,
+  "name": "PCSK9_MOUSE",
+  "species": "mouse",
+  "symbol": "PCSK9"
+ },
+ "MOUSE39570": {
+  "is_tf": false,
+  "name": "BSDC1_MOUSE",
+  "species": "mouse",
+  "symbol": "SDC1"
+ },
+ "MOUSE39578": {
+  "is_tf": false,
+  "name": "ANFB_MOUSE",
+  "species": "mouse",
+  "symbol": "NPPB"
+ },
+ "MOUSE39584": {
+  "is_tf": true,
+  "name": "HDAC1_MOUSE",
+  "species": "mouse",
+  "symbol": "HDAC1"
+ },
+ "MOUSE39612": {
+  "is_tf": false,
+  "name": "MTHR_MOUSE",
+  "species": "mouse",
+  "symbol": "MTHFR"
+ },
+ "MOUSE39669": {
+  "is_tf": true,
+  "name": "KHDR1_MOUSE",
+  "species": "mouse",
+  "symbol": "KHDRBS1"
+ },
+ "MOUSE39884": {
+  "is_tf": false,
+  "name": "LRP8_MOUSE",
+  "species": "mouse",
+  "symbol": "LRP8"
+ },
+ "MOUSE39968": {
+  "is_tf": false,
+  "name": "CNBP1_MOUSE",
+  "species": "mouse",
+  "symbol": "CTNNBIP1"
+ },
+ "MOUSE40003": {
+  "is_tf": false,
+  "name": "MATN1_MOUSE",
+  "species": "mouse",
+  "symbol": "MATN1"
+ },
+ "MOUSE40098": {
+  "is_tf": true,
+  "name": "ENOA_MOUSE",
+  "species": "mouse",
+  "symbol": "ENO1"
+ },
+ "MOUSE40139": {
+  "is_tf": false,
+  "name": "TENA_MOUSE",
+  "species": "mouse",
+  "symbol": "TNC"
+ },
+ "MOUSE40157": {
+  "is_tf": false,
+  "name": "TLR4_MOUSE",
+  "species": "mouse",
+  "symbol": "TLR4"
+ },
+ "MOUSE40206": {
+  "is_tf": false,
+  "name": "TAF12_MOUSE",
+  "species": "mouse",
+  "symbol": "TAF12"
+ },
+ "MOUSE40300": {
+  "is_tf": true,
+  "name": "KDM4C_MOUSE",
+  "species": "mouse",
+  "symbol": "KDM4C"
+ },
+ "MOUSE40313": {
+  "is_tf": false,
+  "name": "PTAFR_MOUSE",
+  "species": "mouse",
+  "symbol": "PTAFR"
+ },
+ "MOUSE40325": {
+  "is_tf": false,
+  "name": "CDN2C_MOUSE",
+  "species": "mouse",
+  "symbol": "CDKN2C"
+ },
+ "MOUSE40327": {
+  "is_tf": false,
+  "name": "FAF1_MOUSE",
+  "species": "mouse",
+  "symbol": "FAF1"
+ },
+ "MOUSE40329": {
+  "is_tf": false,
+  "name": "Q6P4T3",
+  "species": "mouse",
+  "symbol": "EYA3"
+ },
+ "MOUSE40404": {
+  "is_tf": false,
+  "name": "WASF2_MOUSE",
+  "species": "mouse",
+  "symbol": "WASF2"
+ },
+ "MOUSE40452": {
+  "is_tf": false,
+  "name": "TYRP1_MOUSE",
+  "species": "mouse",
+  "symbol": "TYRP1"
+ },
+ "MOUSE40478": {
+  "is_tf": true,
+  "name": "NR0B2_MOUSE",
+  "species": "mouse",
+  "symbol": "NR0B2"
+ },
+ "MOUSE40525": {
+  "is_tf": true,
+  "name": "ARI1A_MOUSE",
+  "species": "mouse",
+  "symbol": "ARID1A"
+ },
+ "MOUSE40551": {
+  "is_tf": true,
+  "name": "TAL1_MOUSE",
+  "species": "mouse",
+  "symbol": "TAL1"
+ },
+ "MOUSE40584": {
+  "is_tf": true,
+  "name": "Z4YK94",
+  "species": "mouse",
+  "symbol": "TP73"
+ },
+ "MOUSE40628": {
+  "is_tf": false,
+  "name": "B2RQR2",
+  "species": "mouse",
+  "symbol": "UPP1"
+ },
+ "MOUSE40650": {
+  "is_tf": false,
+  "name": "LN28A_MOUSE",
+  "species": "mouse",
+  "symbol": "LIN28A"
+ },
+ "MOUSE40758": {
+  "is_tf": false,
+  "name": "STMN1_MOUSE",
+  "species": "mouse",
+  "symbol": "STMN1"
+ },
+ "MOUSE40777": {
+  "is_tf": false,
+  "name": "PMGT1_MOUSE",
+  "species": "mouse",
+  "symbol": "POMGNT1"
+ },
+ "MOUSE40816": {
+  "is_tf": true,
+  "name": "Q3U1Q3",
+  "species": "mouse",
+  "symbol": "RUNX3"
+ },
+ "MOUSE40878": {
+  "is_tf": true,
+  "name": "B1AUF1",
+  "species": "mouse",
+  "symbol": "SKI"
+ },
+ "MOUSE40924": {
+  "is_tf": false,
+  "name": "PLIN2_MOUSE",
+  "species": "mouse",
+  "symbol": "PLIN2"
+ },
+ "MOUSE40976": {
+  "is_tf": false,
+  "name": "PNRC2_MOUSE",
+  "species": "mouse",
+  "symbol": "PNRC2"
+ },
+ "MOUSE41026": {
+  "is_tf": true,
+  "name": "ID3_MOUSE",
+  "species": "mouse",
+  "symbol": "ID3"
+ },
+ "MOUSE41027": {
+  "is_tf": false,
+  "name": "E2F2_MOUSE",
+  "species": "mouse",
+  "symbol": "E2F2"
+ },
+ "MOUSE41031": {
+  "is_tf": false,
+  "name": "IFNB_MOUSE",
+  "species": "mouse",
+  "symbol": "IFNB1"
+ },
+ "MOUSE41032": {
+  "is_tf": false,
+  "name": "Q61718",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41035": {
+  "is_tf": false,
+  "name": "Q810G3",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41036": {
+  "is_tf": false,
+  "name": "IFNA9_MOUSE",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41037": {
+  "is_tf": false,
+  "name": "IFNAC_MOUSE",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41048": {
+  "is_tf": false,
+  "name": "IFNAD_MOUSE",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41049": {
+  "is_tf": false,
+  "name": "Q810G1",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41050": {
+  "is_tf": false,
+  "name": "B1AYH7",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41051": {
+  "is_tf": false,
+  "name": "L7MTU6",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41078": {
+  "is_tf": false,
+  "name": "Q810G6",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41079": {
+  "is_tf": false,
+  "name": "IFNAB_MOUSE",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41080": {
+  "is_tf": false,
+  "name": "Q810G5",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41081": {
+  "is_tf": false,
+  "name": "Q810G2",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41082": {
+  "is_tf": false,
+  "name": "IFNA4_MOUSE",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41083": {
+  "is_tf": false,
+  "name": "IFNA1_MOUSE",
+  "species": "mouse",
+  "symbol": "IFNA13"
+ },
+ "MOUSE41095": {
+  "is_tf": false,
+  "name": "CDN2B_MOUSE",
+  "species": "mouse",
+  "symbol": "CDKN2B"
+ },
+ "MOUSE41147": {
+  "is_tf": false,
+  "name": "KIF2C_MOUSE",
+  "species": "mouse",
+  "symbol": "KIF2C"
+ },
+ "MOUSE41216": {
+  "is_tf": false,
+  "name": "WNT4_MOUSE",
+  "species": "mouse",
+  "symbol": "WNT4"
+ },
+ "MOUSE41229": {
+  "is_tf": true,
+  "name": "JUN_MOUSE",
+  "species": "mouse",
+  "symbol": "JUN"
+ },
+ "MOUSE41316": {
+  "is_tf": false,
+  "name": "SIAT6_MOUSE",
+  "species": "mouse",
+  "symbol": "ST3GAL3"
+ },
+ "MOUSE41351": {
+  "is_tf": false,
+  "name": "PPBT_MOUSE",
+  "species": "mouse",
+  "symbol": "ALPL"
+ },
+ "MOUSE41358": {
+  "is_tf": false,
+  "name": "A0A183ZRM3",
+  "species": "mouse",
+  "symbol": "ECE1"
+ },
+ "MOUSE41373": {
+  "is_tf": true,
+  "name": "NP_035035.1",
+  "species": "mouse",
+  "symbol": "NFIA"
+ },
+ "MOUSE41396": {
+  "is_tf": false,
+  "name": "CDC20_MOUSE",
+  "species": "mouse",
+  "symbol": "CDC20"
+ },
+ "MOUSE41424": {
+  "is_tf": false,
+  "name": "EBP2_MOUSE",
+  "species": "mouse",
+  "symbol": "EBNA1BP2"
+ },
+ "MOUSE41470": {
+  "is_tf": false,
+  "name": "GTR1_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC2A1"
+ },
+ "MOUSE41610": {
+  "is_tf": true,
+  "name": "A2BDY3",
+  "species": "mouse",
+  "symbol": "FOXD3"
+ },
+ "MOUSE41673": {
+  "is_tf": false,
+  "name": "GUC2B_MOUSE",
+  "species": "mouse",
+  "symbol": "GUCA2B"
+ },
+ "MOUSE41693": {
+  "is_tf": false,
+  "name": "PYRG1_MOUSE",
+  "species": "mouse",
+  "symbol": "CTPS1"
+ },
+ "MOUSE41814": {
+  "is_tf": true,
+  "name": "HEYL_MOUSE",
+  "species": "mouse",
+  "symbol": "HEYL"
+ },
+ "MOUSE41815": {
+  "is_tf": false,
+  "name": "PADI1_MOUSE",
+  "species": "mouse",
+  "symbol": "PADI1"
+ },
+ "MOUSE41817": {
+  "is_tf": false,
+  "name": "SDHB_MOUSE",
+  "species": "mouse",
+  "symbol": "SDHB"
+ },
+ "MOUSE41895": {
+  "is_tf": false,
+  "name": "EPHA2_MOUSE",
+  "species": "mouse",
+  "symbol": "EPHA2"
+ },
+ "MOUSE41905": {
+  "is_tf": true,
+  "name": "ZBT17_MOUSE",
+  "species": "mouse",
+  "symbol": "ZBTB17"
+ },
+ "MOUSE41907": {
+  "is_tf": true,
+  "name": "A2ADB0",
+  "species": "mouse",
+  "symbol": "SPEN"
+ },
+ "MOUSE41928": {
+  "is_tf": false,
+  "name": "A2A7B5",
+  "species": "mouse",
+  "symbol": "PRDM2"
+ },
+ "MOUSE41937": {
+  "is_tf": false,
+  "name": "A2AGW8",
+  "species": "mouse",
+  "symbol": "PRAME"
+ },
+ "MOUSE41947": {
+  "is_tf": false,
+  "name": "NP_001078883.2",
+  "species": "mouse",
+  "symbol": "PRAME"
+ },
+ "MOUSE41957": {
+  "is_tf": false,
+  "name": "ENSMUSP00000095408.3",
+  "species": "mouse",
+  "symbol": "PRAME"
+ },
+ "MOUSE41992": {
+  "is_tf": false,
+  "name": "TNR1B_MOUSE",
+  "species": "mouse",
+  "symbol": "TNFRSF1B"
+ },
+ "MOUSE42073": {
+  "is_tf": true,
+  "name": "MTF1_MOUSE",
+  "species": "mouse",
+  "symbol": "MTF1"
+ },
+ "MOUSE42103": {
+  "is_tf": false,
+  "name": "CSF3R_MOUSE",
+  "species": "mouse",
+  "symbol": "CSF3R"
+ },
+ "MOUSE42170": {
+  "is_tf": true,
+  "name": "SFPQ_MOUSE",
+  "species": "mouse",
+  "symbol": "SFPQ"
+ },
+ "MOUSE42284": {
+  "is_tf": true,
+  "name": "PO3F2_MOUSE",
+  "species": "mouse",
+  "symbol": "POU3F2"
+ },
+ "MOUSE42317": {
+  "is_tf": false,
+  "name": "FHL5_MOUSE",
+  "species": "mouse",
+  "symbol": "FHL5"
+ },
+ "MOUSE42339": {
+  "is_tf": false,
+  "name": "THIO_MOUSE",
+  "species": "mouse",
+  "symbol": "TXN"
+ },
+ "MOUSE42371": {
+  "is_tf": true,
+  "name": "BACH2_MOUSE",
+  "species": "mouse",
+  "symbol": "BACH2"
+ },
+ "MOUSE42401": {
+  "is_tf": false,
+  "name": "CEGT_MOUSE",
+  "species": "mouse",
+  "symbol": "UGCG"
+ },
+ "MOUSE42420": {
+  "is_tf": true,
+  "name": "PLAG1_MOUSE",
+  "species": "mouse",
+  "symbol": "PLAG1"
+ },
+ "MOUSE42463": {
+  "is_tf": false,
+  "name": "PENK_MOUSE",
+  "species": "mouse",
+  "symbol": "PENK"
+ },
+ "MOUSE42472": {
+  "is_tf": false,
+  "name": "CNR1_MOUSE",
+  "species": "mouse",
+  "symbol": "CNR1"
+ },
+ "MOUSE42482": {
+  "is_tf": false,
+  "name": "CP7A1_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP7A1"
+ },
+ "MOUSE42537": {
+  "is_tf": false,
+  "name": "GLHA_MOUSE",
+  "species": "mouse",
+  "symbol": "CGA"
+ },
+ "MOUSE42552": {
+  "is_tf": false,
+  "name": "RIGI_MOUSE",
+  "species": "mouse",
+  "symbol": "DDX58"
+ },
+ "MOUSE42592": {
+  "is_tf": false,
+  "name": "T53I1_MOUSE",
+  "species": "mouse",
+  "symbol": "TP53INP1"
+ },
+ "MOUSE42595": {
+  "is_tf": false,
+  "name": "ISK4_MOUSE",
+  "species": "mouse",
+  "symbol": "SPINK4"
+ },
+ "MOUSE42597": {
+  "is_tf": false,
+  "name": "CCNE2_MOUSE",
+  "species": "mouse",
+  "symbol": "CCNE2"
+ },
+ "MOUSE42599": {
+  "is_tf": false,
+  "name": "ENSMUSP00000030125.5",
+  "species": "mouse",
+  "symbol": "BAG1"
+ },
+ "MOUSE42643": {
+  "is_tf": false,
+  "name": "CAD17_MOUSE",
+  "species": "mouse",
+  "symbol": "CDH17"
+ },
+ "MOUSE42698": {
+  "is_tf": false,
+  "name": "CALB1_MOUSE",
+  "species": "mouse",
+  "symbol": "CALB1"
+ },
+ "MOUSE42710": {
+  "is_tf": false,
+  "name": "RIPK2_MOUSE",
+  "species": "mouse",
+  "symbol": "RIPK2"
+ },
+ "MOUSE42712": {
+  "is_tf": false,
+  "name": "SGMR1_MOUSE",
+  "species": "mouse",
+  "symbol": "SIGMAR1"
+ },
+ "MOUSE42714": {
+  "is_tf": false,
+  "name": "A2AMS3",
+  "species": "mouse",
+  "symbol": "GALT"
+ },
+ "MOUSE42737": {
+  "is_tf": false,
+  "name": "CC21C_MOUSE",
+  "species": "mouse",
+  "symbol": "CCL21"
+ },
+ "MOUSE42738": {
+  "is_tf": true,
+  "name": "WWP1_MOUSE",
+  "species": "mouse",
+  "symbol": "WWP1"
+ },
+ "MOUSE42746": {
+  "is_tf": false,
+  "name": "NP_035465.2",
+  "species": "mouse",
+  "symbol": "CCL21"
+ },
+ "MOUSE42759": {
+  "is_tf": false,
+  "name": "NP_001180597.1",
+  "species": "mouse",
+  "symbol": "CCL21"
+ },
+ "MOUSE42768": {
+  "is_tf": false,
+  "name": "CC21B_MOUSE",
+  "species": "mouse",
+  "symbol": "CCL21"
+ },
+ "MOUSE42774": {
+  "is_tf": false,
+  "name": "CCL19_MOUSE",
+  "species": "mouse",
+  "symbol": "CCL19"
+ },
+ "MOUSE42777": {
+  "is_tf": false,
+  "name": "CCNC_MOUSE",
+  "species": "mouse",
+  "symbol": "CCNC"
+ },
+ "MOUSE42780": {
+  "is_tf": false,
+  "name": "CC21A_MOUSE",
+  "species": "mouse",
+  "symbol": "CCL21"
+ },
+ "MOUSE42861": {
+  "is_tf": false,
+  "name": "CAH9_MOUSE",
+  "species": "mouse",
+  "symbol": "CA9"
+ },
+ "MOUSE42871": {
+  "is_tf": true,
+  "name": "Q3UNH6",
+  "species": "mouse",
+  "symbol": "CREB3"
+ },
+ "MOUSE42939": {
+  "is_tf": true,
+  "name": "PAX5_MOUSE",
+  "species": "mouse",
+  "symbol": "PAX5"
+ },
+ "MOUSE42961": {
+  "is_tf": false,
+  "name": "GRHPR_MOUSE",
+  "species": "mouse",
+  "symbol": "GCG"
+ },
+ "MOUSE42965": {
+  "is_tf": true,
+  "name": "ZBTB5_MOUSE",
+  "species": "mouse",
+  "symbol": "ZBTB5"
+ },
+ "MOUSE43019": {
+  "is_tf": false,
+  "name": "XPA_MOUSE",
+  "species": "mouse",
+  "symbol": "XPA"
+ },
+ "MOUSE43021": {
+  "is_tf": true,
+  "name": "FOXE1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXE1"
+ },
+ "MOUSE43025": {
+  "is_tf": false,
+  "name": "HEMGN_MOUSE",
+  "species": "mouse",
+  "symbol": "HEMGN"
+ },
+ "MOUSE43050": {
+  "is_tf": false,
+  "name": "TGFR1_MOUSE",
+  "species": "mouse",
+  "symbol": "TGFBR1"
+ },
+ "MOUSE43059": {
+  "is_tf": true,
+  "name": "NR4A3_MOUSE",
+  "species": "mouse",
+  "symbol": "NR4A3"
+ },
+ "MOUSE43065": {
+  "is_tf": false,
+  "name": "ERP44_MOUSE",
+  "species": "mouse",
+  "symbol": "ERP44"
+ },
+ "MOUSE43091": {
+  "is_tf": false,
+  "name": "ALDOB_MOUSE",
+  "species": "mouse",
+  "symbol": "ALDOB"
+ },
+ "MOUSE43095": {
+  "is_tf": false,
+  "name": "BRE1A_MOUSE",
+  "species": "mouse",
+  "symbol": "TRB"
+ },
+ "MOUSE43128": {
+  "is_tf": false,
+  "name": "ABCA1_MOUSE",
+  "species": "mouse",
+  "symbol": "ABCA1"
+ },
+ "MOUSE43158": {
+  "is_tf": false,
+  "name": "CASP9_MOUSE",
+  "species": "mouse",
+  "symbol": "CASP9"
+ },
+ "MOUSE43186": {
+  "is_tf": false,
+  "name": "CDK6_MOUSE",
+  "species": "mouse",
+  "symbol": "CDK6"
+ },
+ "MOUSE43305": {
+  "is_tf": false,
+  "name": "AT2A2_MOUSE",
+  "species": "mouse",
+  "symbol": "ATP2A2"
+ },
+ "MOUSE43315": {
+  "is_tf": false,
+  "name": "E2AK1_MOUSE",
+  "species": "mouse",
+  "symbol": "EIF2AK1"
+ },
+ "MOUSE43366": {
+  "is_tf": false,
+  "name": "Q9QXI6",
+  "species": "mouse",
+  "symbol": "SLC5A1"
+ },
+ "MOUSE43368": {
+  "is_tf": false,
+  "name": "FZD1_MOUSE",
+  "species": "mouse",
+  "symbol": "FZD1"
+ },
+ "MOUSE43421": {
+  "is_tf": false,
+  "name": "G5E8B1",
+  "species": "mouse",
+  "symbol": "PTPN13"
+ },
+ "MOUSE43429": {
+  "is_tf": false,
+  "name": "LMTK2_MOUSE",
+  "species": "mouse",
+  "symbol": "LMTK2"
+ },
+ "MOUSE43535": {
+  "is_tf": false,
+  "name": "DHB11_MOUSE",
+  "species": "mouse",
+  "symbol": "HSD17B11"
+ },
+ "MOUSE43564": {
+  "is_tf": false,
+  "name": "SIAL_MOUSE",
+  "species": "mouse",
+  "symbol": "IBSP"
+ },
+ "MOUSE43572": {
+  "is_tf": false,
+  "name": "F8WIP8",
+  "species": "mouse",
+  "symbol": "SPP1"
+ },
+ "MOUSE43687": {
+  "is_tf": false,
+  "name": "E9QNJ9",
+  "species": "mouse",
+  "symbol": "FGFR3"
+ },
+ "MOUSE43743": {
+  "is_tf": false,
+  "name": "A0A0R4J097",
+  "species": "mouse",
+  "symbol": "TGFBR3"
+ },
+ "MOUSE43917": {
+  "is_tf": false,
+  "name": "WASF3_MOUSE",
+  "species": "mouse",
+  "symbol": "WASF3"
+ },
+ "MOUSE43920": {
+  "is_tf": true,
+  "name": "A0A0R4J292",
+  "species": "mouse",
+  "symbol": "GFI1"
+ },
+ "MOUSE43982": {
+  "is_tf": false,
+  "name": "DBF4A_MOUSE",
+  "species": "mouse",
+  "symbol": "DBF4"
+ },
+ "MOUSE44014": {
+  "is_tf": false,
+  "name": "MDR1A_MOUSE",
+  "species": "mouse",
+  "symbol": "ABCB1"
+ },
+ "MOUSE44040": {
+  "is_tf": false,
+  "name": "MDR3_MOUSE",
+  "species": "mouse",
+  "symbol": "ABCB4"
+ },
+ "MOUSE44057": {
+  "is_tf": false,
+  "name": "MTF2_MOUSE",
+  "species": "mouse",
+  "symbol": "MTF2"
+ },
+ "MOUSE44070": {
+  "is_tf": true,
+  "name": "NC2B_MOUSE",
+  "species": "mouse",
+  "symbol": "DR1"
+ },
+ "MOUSE44099": {
+  "is_tf": true,
+  "name": "TF3A_MOUSE",
+  "species": "mouse",
+  "symbol": "GTF3A"
+ },
+ "MOUSE44102": {
+  "is_tf": false,
+  "name": "PGFRA_MOUSE",
+  "species": "mouse",
+  "symbol": "PDGFRA"
+ },
+ "MOUSE44144": {
+  "is_tf": true,
+  "name": "CDX2_MOUSE",
+  "species": "mouse",
+  "symbol": "CDX2"
+ },
+ "MOUSE44149": {
+  "is_tf": false,
+  "name": "Q3UEW6",
+  "species": "mouse",
+  "symbol": "IL3"
+ },
+ "MOUSE44160": {
+  "is_tf": false,
+  "name": "KIT_MOUSE",
+  "species": "mouse",
+  "symbol": "KIT"
+ },
+ "MOUSE44218": {
+  "is_tf": true,
+  "name": "CLOCK_MOUSE",
+  "species": "mouse",
+  "symbol": "CLOCK"
+ },
+ "MOUSE44223": {
+  "is_tf": false,
+  "name": "NMU_MOUSE",
+  "species": "mouse",
+  "symbol": "NMU"
+ },
+ "MOUSE44224": {
+  "is_tf": false,
+  "name": "A0A0R4J0A4",
+  "species": "mouse",
+  "symbol": "FLT1"
+ },
+ "MOUSE44584": {
+  "is_tf": false,
+  "name": "HS105_MOUSE",
+  "species": "mouse",
+  "symbol": "HSPH1"
+ },
+ "MOUSE44611": {
+  "is_tf": false,
+  "name": "RXFP2_MOUSE",
+  "species": "mouse",
+  "symbol": "RXFP2"
+ },
+ "MOUSE44675": {
+  "is_tf": false,
+  "name": "VPP2_MOUSE",
+  "species": "mouse",
+  "symbol": "ATP6V0A2"
+ },
+ "MOUSE44680": {
+  "is_tf": false,
+  "name": "A0A0R4J0B3",
+  "species": "mouse",
+  "symbol": "ULK1"
+ },
+ "MOUSE44700": {
+  "is_tf": false,
+  "name": "CHK2_MOUSE",
+  "species": "mouse",
+  "symbol": "CHEK2"
+ },
+ "MOUSE44721": {
+  "is_tf": false,
+  "name": "HGF_MOUSE",
+  "species": "mouse",
+  "symbol": "HGF"
+ },
+ "MOUSE44764": {
+  "is_tf": false,
+  "name": "RFC3_MOUSE",
+  "species": "mouse",
+  "symbol": "RFC3"
+ },
+ "MOUSE44806": {
+  "is_tf": false,
+  "name": "CD36_MOUSE",
+  "species": "mouse",
+  "symbol": "CD36"
+ },
+ "MOUSE44827": {
+  "is_tf": true,
+  "name": "MSX1_MOUSE",
+  "species": "mouse",
+  "symbol": "MSX1"
+ },
+ "MOUSE44840": {
+  "is_tf": true,
+  "name": "E9PY55",
+  "species": "mouse",
+  "symbol": "NCOR2"
+ },
+ "MOUSE45033": {
+  "is_tf": false,
+  "name": "COR1C_MOUSE",
+  "species": "mouse",
+  "symbol": "CORO1C"
+ },
+ "MOUSE45063": {
+  "is_tf": false,
+  "name": "Q8R084",
+  "species": "mouse",
+  "symbol": "UGT2B7"
+ },
+ "MOUSE45125": {
+  "is_tf": false,
+  "name": "Q9D566",
+  "species": "mouse",
+  "symbol": "SULT1E1"
+ },
+ "MOUSE45126": {
+  "is_tf": false,
+  "name": "RELN_MOUSE",
+  "species": "mouse",
+  "symbol": "RELN"
+ },
+ "MOUSE45202": {
+  "is_tf": false,
+  "name": "CD38_MOUSE",
+  "species": "mouse",
+  "symbol": "CD38"
+ },
+ "MOUSE45205": {
+  "is_tf": false,
+  "name": "FGFP1_MOUSE",
+  "species": "mouse",
+  "symbol": "FGFBP1"
+ },
+ "MOUSE45378": {
+  "is_tf": false,
+  "name": "A0A0R4J101",
+  "species": "mouse",
+  "symbol": "SLC4A2"
+ },
+ "MOUSE45553": {
+  "is_tf": false,
+  "name": "CXCL5_MOUSE",
+  "species": "mouse",
+  "symbol": "CXCL5"
+ },
+ "MOUSE45561": {
+  "is_tf": false,
+  "name": "PLF4_MOUSE",
+  "species": "mouse",
+  "symbol": "PF4"
+ },
+ "MOUSE45569": {
+  "is_tf": false,
+  "name": "GROA_MOUSE",
+  "species": "mouse",
+  "symbol": "CXCL1"
+ },
+ "MOUSE45571": {
+  "is_tf": false,
+  "name": "CXCL2_MOUSE",
+  "species": "mouse",
+  "symbol": "CXCL1"
+ },
+ "MOUSE45582": {
+  "is_tf": false,
+  "name": "EREG_MOUSE",
+  "species": "mouse",
+  "symbol": "EREG"
+ },
+ "MOUSE45585": {
+  "is_tf": false,
+  "name": "AREG_MOUSE",
+  "species": "mouse",
+  "symbol": "AREG"
+ },
+ "MOUSE45614": {
+  "is_tf": true,
+  "name": "PRGC1_MOUSE",
+  "species": "mouse",
+  "symbol": "PPARGC1A"
+ },
+ "MOUSE45718": {
+  "is_tf": false,
+  "name": "NPT2B_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC34A2"
+ },
+ "MOUSE45745": {
+  "is_tf": false,
+  "name": "PEBP1_MOUSE",
+  "species": "mouse",
+  "symbol": "PEBP1"
+ },
+ "MOUSE45769": {
+  "is_tf": false,
+  "name": "CXL10_MOUSE",
+  "species": "mouse",
+  "symbol": "CXCL10"
+ },
+ "MOUSE45794": {
+  "is_tf": false,
+  "name": "IL6_MOUSE",
+  "species": "mouse",
+  "symbol": "IL6"
+ },
+ "MOUSE45879": {
+  "is_tf": false,
+  "name": "HRK_MOUSE",
+  "species": "mouse",
+  "symbol": "HRK"
+ },
+ "MOUSE45903": {
+  "is_tf": false,
+  "name": "CCNG2_MOUSE",
+  "species": "mouse",
+  "symbol": "CCNG2"
+ },
+ "MOUSE45961": {
+  "is_tf": true,
+  "name": "TBX3_MOUSE",
+  "species": "mouse",
+  "symbol": "TBX3"
+ },
+ "MOUSE45965": {
+  "is_tf": true,
+  "name": "KLF3_MOUSE",
+  "species": "mouse",
+  "symbol": "KLF3"
+ },
+ "MOUSE45980": {
+  "is_tf": true,
+  "name": "TBX5_MOUSE",
+  "species": "mouse",
+  "symbol": "TBX5"
+ },
+ "MOUSE46134": {
+  "is_tf": false,
+  "name": "UGDH_MOUSE",
+  "species": "mouse",
+  "symbol": "UGDH"
+ },
+ "MOUSE46140": {
+  "is_tf": false,
+  "name": "RGF1B_MOUSE",
+  "species": "mouse",
+  "symbol": "RASGEF1B"
+ },
+ "MOUSE46169": {
+  "is_tf": false,
+  "name": "Q8K469",
+  "species": "mouse",
+  "symbol": "OAS1"
+ },
+ "MOUSE46180": {
+  "is_tf": false,
+  "name": "OAS1A_MOUSE",
+  "species": "mouse",
+  "symbol": "OAS1"
+ },
+ "MOUSE46267": {
+  "is_tf": false,
+  "name": "ERP29_MOUSE",
+  "species": "mouse",
+  "symbol": "ERP29"
+ },
+ "MOUSE46313": {
+  "is_tf": false,
+  "name": "UCN1_MOUSE",
+  "species": "mouse",
+  "symbol": "UCN"
+ },
+ "MOUSE46361": {
+  "is_tf": true,
+  "name": "PHX2B_MOUSE",
+  "species": "mouse",
+  "symbol": "PHOX2B"
+ },
+ "MOUSE46389": {
+  "is_tf": false,
+  "name": "E9QM77",
+  "species": "mouse",
+  "symbol": "ATXN2"
+ },
+ "MOUSE46510": {
+  "is_tf": false,
+  "name": "BABA2_MOUSE",
+  "species": "mouse",
+  "symbol": "BABAM2"
+ },
+ "MOUSE46519": {
+  "is_tf": true,
+  "name": "FOSL2_MOUSE",
+  "species": "mouse",
+  "symbol": "FOSL2"
+ },
+ "MOUSE46532": {
+  "is_tf": false,
+  "name": "PLB1_MOUSE",
+  "species": "mouse",
+  "symbol": "PLB1"
+ },
+ "MOUSE46544": {
+  "is_tf": false,
+  "name": "YES_MOUSE",
+  "species": "mouse",
+  "symbol": "YES1"
+ },
+ "MOUSE46557": {
+  "is_tf": false,
+  "name": "CLD3_MOUSE",
+  "species": "mouse",
+  "symbol": "CLDN3"
+ },
+ "MOUSE46584": {
+  "is_tf": true,
+  "name": "MLXPL_MOUSE",
+  "species": "mouse",
+  "symbol": "MLXIPL"
+ },
+ "MOUSE46613": {
+  "is_tf": false,
+  "name": "F8VQM2",
+  "species": "mouse",
+  "symbol": "CCL26"
+ },
+ "MOUSE46764": {
+  "is_tf": false,
+  "name": "CP3AD_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP3A4"
+ },
+ "MOUSE46791": {
+  "is_tf": false,
+  "name": "MCM7_MOUSE",
+  "species": "mouse",
+  "symbol": "MCM2"
+ },
+ "MOUSE46851": {
+  "is_tf": false,
+  "name": "PDGFA_MOUSE",
+  "species": "mouse",
+  "symbol": "PDGFA"
+ },
+ "MOUSE46923": {
+  "is_tf": false,
+  "name": "MD1L1_MOUSE",
+  "species": "mouse",
+  "symbol": "MAD1L1"
+ },
+ "MOUSE47141": {
+  "is_tf": false,
+  "name": "HPSE_MOUSE",
+  "species": "mouse",
+  "symbol": "HPSE"
+ },
+ "MOUSE47168": {
+  "is_tf": false,
+  "name": "F8WH69",
+  "species": "mouse",
+  "symbol": "NCF1"
+ },
+ "MOUSE47171": {
+  "is_tf": true,
+  "name": "GTF2I_MOUSE",
+  "species": "mouse",
+  "symbol": "GTF2I"
+ },
+ "MOUSE47286": {
+  "is_tf": false,
+  "name": "G5E899",
+  "species": "mouse",
+  "symbol": "SERPINE1"
+ },
+ "MOUSE47370": {
+  "is_tf": false,
+  "name": "I12R2_MOUSE",
+  "species": "mouse",
+  "symbol": "IL12RB2"
+ },
+ "MOUSE47418": {
+  "is_tf": false,
+  "name": "GPIX_MOUSE",
+  "species": "mouse",
+  "symbol": "GP9"
+ },
+ "MOUSE47557": {
+  "is_tf": false,
+  "name": "IAPP_MOUSE",
+  "species": "mouse",
+  "symbol": "IAPP"
+ },
+ "MOUSE47590": {
+  "is_tf": false,
+  "name": "CASP2_MOUSE",
+  "species": "mouse",
+  "symbol": "CASP2"
+ },
+ "MOUSE47714": {
+  "is_tf": true,
+  "name": "NANOG_MOUSE",
+  "species": "mouse",
+  "symbol": "NANOG"
+ },
+ "MOUSE47715": {
+  "is_tf": true,
+  "name": "GATA2_MOUSE",
+  "species": "mouse",
+  "symbol": "GATA2"
+ },
+ "MOUSE47724": {
+  "is_tf": false,
+  "name": "GTR3_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC2A3"
+ },
+ "MOUSE47755": {
+  "is_tf": true,
+  "name": "RUVB1_MOUSE",
+  "species": "mouse",
+  "symbol": "RUVBL1"
+ },
+ "MOUSE47766": {
+  "is_tf": false,
+  "name": "Q9D8Q7",
+  "species": "mouse",
+  "symbol": "CLEC4C"
+ },
+ "MOUSE47797": {
+  "is_tf": false,
+  "name": "Q67DU8",
+  "species": "mouse",
+  "symbol": "CLEC4C"
+ },
+ "MOUSE47823": {
+  "is_tf": false,
+  "name": "SMYD1_MOUSE",
+  "species": "mouse",
+  "symbol": "SMYD1"
+ },
+ "MOUSE47878": {
+  "is_tf": false,
+  "name": "CD8A_MOUSE",
+  "species": "mouse",
+  "symbol": "CD8A"
+ },
+ "MOUSE47925": {
+  "is_tf": false,
+  "name": "E9QNF7",
+  "species": "mouse",
+  "symbol": "CNTNAP2"
+ },
+ "MOUSE47989": {
+  "is_tf": false,
+  "name": "CO1A2_MOUSE",
+  "species": "mouse",
+  "symbol": "COL1A2"
+ },
+ "MOUSE48139": {
+  "is_tf": true,
+  "name": "RPA1_MOUSE",
+  "species": "mouse",
+  "symbol": "POLR1A"
+ },
+ "MOUSE48148": {
+  "is_tf": false,
+  "name": "A0A0R4J1J3",
+  "species": "mouse",
+  "symbol": "ST3GAL5"
+ },
+ "MOUSE48182": {
+  "is_tf": true,
+  "name": "KLF15_MOUSE",
+  "species": "mouse",
+  "symbol": "KLF15"
+ },
+ "MOUSE48271": {
+  "is_tf": false,
+  "name": "CD4_MOUSE",
+  "species": "mouse",
+  "symbol": "CD4"
+ },
+ "MOUSE48315": {
+  "is_tf": true,
+  "name": "DLX5_MOUSE",
+  "species": "mouse",
+  "symbol": "DLX5"
+ },
+ "MOUSE48349": {
+  "is_tf": true,
+  "name": "HDA11_MOUSE",
+  "species": "mouse",
+  "symbol": "HDAC11"
+ },
+ "MOUSE48399": {
+  "is_tf": true,
+  "name": "BHE41_MOUSE",
+  "species": "mouse",
+  "symbol": "BHLHE41"
+ },
+ "MOUSE48411": {
+  "is_tf": false,
+  "name": "Q3TPB3",
+  "species": "mouse",
+  "symbol": "SSPN"
+ },
+ "MOUSE48436": {
+  "is_tf": true,
+  "name": "XPC_MOUSE",
+  "species": "mouse",
+  "symbol": "XPC"
+ },
+ "MOUSE48452": {
+  "is_tf": true,
+  "name": "ING4_MOUSE",
+  "species": "mouse",
+  "symbol": "ING4"
+ },
+ "MOUSE48468": {
+  "is_tf": false,
+  "name": "SC6A6_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC6A6"
+ },
+ "MOUSE48541": {
+  "is_tf": true,
+  "name": "CHD4_MOUSE",
+  "species": "mouse",
+  "symbol": "CHD4"
+ },
+ "MOUSE48638": {
+  "is_tf": true,
+  "name": "BMAL2_MOUSE",
+  "species": "mouse",
+  "symbol": "ARNTL2"
+ },
+ "MOUSE48685": {
+  "is_tf": false,
+  "name": "TNR3_MOUSE",
+  "species": "mouse",
+  "symbol": "LTBR"
+ },
+ "MOUSE48708": {
+  "is_tf": true,
+  "name": "FOXP2_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXP2"
+ },
+ "MOUSE48723": {
+  "is_tf": false,
+  "name": "SCNNA_MOUSE",
+  "species": "mouse",
+  "symbol": "SCNN1A"
+ },
+ "MOUSE48726": {
+  "is_tf": false,
+  "name": "NP_032996.2",
+  "species": "mouse",
+  "symbol": "PTHLH"
+ },
+ "MOUSE48781": {
+  "is_tf": false,
+  "name": "CAV1_MOUSE",
+  "species": "mouse",
+  "symbol": "CAV1"
+ },
+ "MOUSE48878": {
+  "is_tf": false,
+  "name": "PRAF3_MOUSE",
+  "species": "mouse",
+  "symbol": "ARL6IP5"
+ },
+ "MOUSE48891": {
+  "is_tf": false,
+  "name": "CCND2_MOUSE",
+  "species": "mouse",
+  "symbol": "CCND2"
+ },
+ "MOUSE48945": {
+  "is_tf": true,
+  "name": "A0A0N4SV71",
+  "species": "mouse",
+  "symbol": "CREB5"
+ },
+ "MOUSE48951": {
+  "is_tf": true,
+  "name": "TEAD4_MOUSE",
+  "species": "mouse",
+  "symbol": "TEAD4"
+ },
+ "MOUSE48982": {
+  "is_tf": true,
+  "name": "MITF_MOUSE",
+  "species": "mouse",
+  "symbol": "MITF"
+ },
+ "MOUSE48992": {
+  "is_tf": true,
+  "name": "Q6P1H7",
+  "species": "mouse",
+  "symbol": "FOXM1"
+ },
+ "MOUSE49024": {
+  "is_tf": false,
+  "name": "ACTH_MOUSE",
+  "species": "mouse",
+  "symbol": "ACTG2"
+ },
+ "MOUSE49135": {
+  "is_tf": false,
+  "name": "NOD1_MOUSE",
+  "species": "mouse",
+  "symbol": "NOD1"
+ },
+ "MOUSE49229": {
+  "is_tf": false,
+  "name": "OLR1_MOUSE",
+  "species": "mouse",
+  "symbol": "OLR1"
+ },
+ "MOUSE49257": {
+  "is_tf": true,
+  "name": "H3BJM1",
+  "species": "mouse",
+  "symbol": "FOXP1"
+ },
+ "MOUSE49284": {
+  "is_tf": false,
+  "name": "NKG2D_MOUSE",
+  "species": "mouse",
+  "symbol": "KLRK1"
+ },
+ "MOUSE49463": {
+  "is_tf": true,
+  "name": "ETV6_MOUSE",
+  "species": "mouse",
+  "symbol": "ETV6"
+ },
+ "MOUSE49595": {
+  "is_tf": false,
+  "name": "CDN1B_MOUSE",
+  "species": "mouse",
+  "symbol": "CDKN1B"
+ },
+ "MOUSE49605": {
+  "is_tf": false,
+  "name": "E9Q0X2",
+  "species": "mouse",
+  "symbol": "PLD1"
+ },
+ "MOUSE49634": {
+  "is_tf": false,
+  "name": "W8DLN2",
+  "species": "mouse",
+  "symbol": "ABCG2"
+ },
+ "MOUSE49698": {
+  "is_tf": false,
+  "name": "E9QLE5",
+  "species": "mouse",
+  "symbol": "PEBP1"
+ },
+ "MOUSE49727": {
+  "is_tf": false,
+  "name": "G3UVV6",
+  "species": "mouse",
+  "symbol": "MMRN1"
+ },
+ "MOUSE49734": {
+  "is_tf": false,
+  "name": "BHE40_MOUSE",
+  "species": "mouse",
+  "symbol": "BHLHE40"
+ },
+ "MOUSE49741": {
+  "is_tf": false,
+  "name": "G3X9V4",
+  "species": "mouse",
+  "symbol": "GRIN2B"
+ },
+ "MOUSE49770": {
+  "is_tf": true,
+  "name": "ATOH1_MOUSE",
+  "species": "mouse",
+  "symbol": "ATOH1"
+ },
+ "MOUSE49797": {
+  "is_tf": false,
+  "name": "OXYR_MOUSE",
+  "species": "mouse",
+  "symbol": "OXTR"
+ },
+ "MOUSE49815": {
+  "is_tf": false,
+  "name": "H4_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST2H4A"
+ },
+ "MOUSE49817": {
+  "is_tf": false,
+  "name": "H2AJ_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE49846": {
+  "is_tf": true,
+  "name": "SND1_MOUSE",
+  "species": "mouse",
+  "symbol": "SND1"
+ },
+ "MOUSE49889": {
+  "is_tf": false,
+  "name": "MD2L1_MOUSE",
+  "species": "mouse",
+  "symbol": "MAD2L1"
+ },
+ "MOUSE49969": {
+  "is_tf": false,
+  "name": "GA45A_MOUSE",
+  "species": "mouse",
+  "symbol": "GADD45A"
+ },
+ "MOUSE50005": {
+  "is_tf": false,
+  "name": "SERB1_MOUSE",
+  "species": "mouse",
+  "symbol": "SERBP1"
+ },
+ "MOUSE50062": {
+  "is_tf": false,
+  "name": "TGFA_MOUSE",
+  "species": "mouse",
+  "symbol": "TGFA"
+ },
+ "MOUSE50088": {
+  "is_tf": false,
+  "name": "OGG1_MOUSE",
+  "species": "mouse",
+  "symbol": "OGG1"
+ },
+ "MOUSE50201": {
+  "is_tf": true,
+  "name": "VHL_MOUSE",
+  "species": "mouse",
+  "symbol": "VHL"
+ },
+ "MOUSE50244": {
+  "is_tf": false,
+  "name": "GKN2_MOUSE",
+  "species": "mouse",
+  "symbol": "GKN2"
+ },
+ "MOUSE50269": {
+  "is_tf": true,
+  "name": "NRF1_MOUSE",
+  "species": "mouse",
+  "symbol": "NRF1"
+ },
+ "MOUSE50457": {
+  "is_tf": false,
+  "name": "LOX5_MOUSE",
+  "species": "mouse",
+  "symbol": "ALOX5"
+ },
+ "MOUSE50461": {
+  "is_tf": false,
+  "name": "ALDR_MOUSE",
+  "species": "mouse",
+  "symbol": "AGT"
+ },
+ "MOUSE50499": {
+  "is_tf": false,
+  "name": "SDF1_MOUSE",
+  "species": "mouse",
+  "symbol": "CXCL12"
+ },
+ "MOUSE50524": {
+  "is_tf": false,
+  "name": "E9QA15",
+  "species": "mouse",
+  "symbol": "CALD1"
+ },
+ "MOUSE50638": {
+  "is_tf": true,
+  "name": "HIPK2_MOUSE",
+  "species": "mouse",
+  "symbol": "HIPK2"
+ },
+ "MOUSE50758": {
+  "is_tf": false,
+  "name": "PAQR2_MOUSE",
+  "species": "mouse",
+  "symbol": "ADIPOR2"
+ },
+ "MOUSE50825": {
+  "is_tf": false,
+  "name": "B2L13_MOUSE",
+  "species": "mouse",
+  "symbol": "BCL2L13"
+ },
+ "MOUSE50826": {
+  "is_tf": false,
+  "name": "BID_MOUSE",
+  "species": "mouse",
+  "symbol": "BID"
+ },
+ "MOUSE50870": {
+  "is_tf": false,
+  "name": "HTRA2_MOUSE",
+  "species": "mouse",
+  "symbol": "HTRA2"
+ },
+ "MOUSE50883": {
+  "is_tf": false,
+  "name": "TLX2_MOUSE",
+  "species": "mouse",
+  "symbol": "TLX2"
+ },
+ "MOUSE50937": {
+  "is_tf": false,
+  "name": "A0A0R4J193",
+  "species": "mouse",
+  "symbol": "HOXA4"
+ },
+ "MOUSE50938": {
+  "is_tf": true,
+  "name": "HXA5_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXA5"
+ },
+ "MOUSE50941": {
+  "is_tf": true,
+  "name": "HXA7_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXA7"
+ },
+ "MOUSE50945": {
+  "is_tf": true,
+  "name": "HXA9_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXA9"
+ },
+ "MOUSE50947": {
+  "is_tf": true,
+  "name": "HXA10_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXA10"
+ },
+ "MOUSE50949": {
+  "is_tf": true,
+  "name": "HXA11_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXA11"
+ },
+ "MOUSE50951": {
+  "is_tf": false,
+  "name": "PSPB_MOUSE",
+  "species": "mouse",
+  "symbol": "SFTPB"
+ },
+ "MOUSE50980": {
+  "is_tf": false,
+  "name": "METK2_MOUSE",
+  "species": "mouse",
+  "symbol": "MAT2A"
+ },
+ "MOUSE50985": {
+  "is_tf": true,
+  "name": "HXA1_MOUSE",
+  "species": "mouse",
+  "symbol": "HOXA1"
+ },
+ "MOUSE50992": {
+  "is_tf": true,
+  "name": "EVX1_MOUSE",
+  "species": "mouse",
+  "symbol": "EVX1"
+ },
+ "MOUSE51048": {
+  "is_tf": false,
+  "name": "PON1_MOUSE",
+  "species": "mouse",
+  "symbol": "PON1"
+ },
+ "MOUSE51054": {
+  "is_tf": false,
+  "name": "PON2_MOUSE",
+  "species": "mouse",
+  "symbol": "PON2"
+ },
+ "MOUSE51057": {
+  "is_tf": false,
+  "name": "PDK4_MOUSE",
+  "species": "mouse",
+  "symbol": "PDK4"
+ },
+ "MOUSE51067": {
+  "is_tf": false,
+  "name": "TKN1_MOUSE",
+  "species": "mouse",
+  "symbol": "TAC1"
+ },
+ "MOUSE51071": {
+  "is_tf": false,
+  "name": "ASNS_MOUSE",
+  "species": "mouse",
+  "symbol": "ASNS"
+ },
+ "MOUSE51121": {
+  "is_tf": true,
+  "name": "Q8K1Z8",
+  "species": "mouse",
+  "symbol": "MXD1"
+ },
+ "MOUSE51140": {
+  "is_tf": false,
+  "name": "Q9CR49",
+  "species": "mouse",
+  "symbol": "HBE1"
+ },
+ "MOUSE51177": {
+  "is_tf": true,
+  "name": "Q7TPX5",
+  "species": "mouse",
+  "symbol": "ZFP36"
+ },
+ "MOUSE51430": {
+  "is_tf": true,
+  "name": "KLF13_MOUSE",
+  "species": "mouse",
+  "symbol": "KLF13"
+ },
+ "MOUSE51542": {
+  "is_tf": false,
+  "name": "UFO_MOUSE",
+  "species": "mouse",
+  "symbol": "AXL"
+ },
+ "MOUSE51565": {
+  "is_tf": false,
+  "name": "FGF4_MOUSE",
+  "species": "mouse",
+  "symbol": "FGF4"
+ },
+ "MOUSE51570": {
+  "is_tf": false,
+  "name": "FGF15_MOUSE",
+  "species": "mouse",
+  "symbol": "FGF19"
+ },
+ "MOUSE51573": {
+  "is_tf": false,
+  "name": "Q9WUD0",
+  "species": "mouse",
+  "symbol": "CYP2B6"
+ },
+ "MOUSE51588": {
+  "is_tf": false,
+  "name": "CCND1_MOUSE",
+  "species": "mouse",
+  "symbol": "CCND1"
+ },
+ "MOUSE51605": {
+  "is_tf": false,
+  "name": "ENSMUSP00000146225.2",
+  "species": "mouse",
+  "symbol": "CD33"
+ },
+ "MOUSE51611": {
+  "is_tf": false,
+  "name": "CP2A4_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP2A6"
+ },
+ "MOUSE51618": {
+  "is_tf": false,
+  "name": "Q3UEP5",
+  "species": "mouse",
+  "symbol": "SULT2A1"
+ },
+ "MOUSE51624": {
+  "is_tf": false,
+  "name": "ST2A1_MOUSE",
+  "species": "mouse",
+  "symbol": "SULT2A1"
+ },
+ "MOUSE51631": {
+  "is_tf": false,
+  "name": "L7N245",
+  "species": "mouse",
+  "symbol": "SULT2A1"
+ },
+ "MOUSE51637": {
+  "is_tf": false,
+  "name": "D3Z1W5",
+  "species": "mouse",
+  "symbol": "SULT2A1"
+ },
+ "MOUSE51642": {
+  "is_tf": false,
+  "name": "ST2A6_MOUSE",
+  "species": "mouse",
+  "symbol": "SULT2A1"
+ },
+ "MOUSE51719": {
+  "is_tf": false,
+  "name": "E9Q593",
+  "species": "mouse",
+  "symbol": "CYP2B6"
+ },
+ "MOUSE51736": {
+  "is_tf": false,
+  "name": "ASM_MOUSE",
+  "species": "mouse",
+  "symbol": "SMPD1"
+ },
+ "MOUSE51737": {
+  "is_tf": false,
+  "name": "CP2BJ_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP2B6"
+ },
+ "MOUSE51763": {
+  "is_tf": false,
+  "name": "Q91X75",
+  "species": "mouse",
+  "symbol": "CYP2A6"
+ },
+ "MOUSE51770": {
+  "is_tf": false,
+  "name": "KLK4_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK4"
+ },
+ "MOUSE51780": {
+  "is_tf": false,
+  "name": "K1KB8_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51782": {
+  "is_tf": false,
+  "name": "K1KB1_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51786": {
+  "is_tf": false,
+  "name": "K1KB9_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51790": {
+  "is_tf": false,
+  "name": "K1B11_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51793": {
+  "is_tf": false,
+  "name": "K1B26_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51796": {
+  "is_tf": false,
+  "name": "K1B27_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51802": {
+  "is_tf": false,
+  "name": "K1B21_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51803": {
+  "is_tf": false,
+  "name": "K1B22_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51814": {
+  "is_tf": false,
+  "name": "K1B16_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51815": {
+  "is_tf": false,
+  "name": "D6RFS9",
+  "species": "mouse",
+  "symbol": "MIA"
+ },
+ "MOUSE51816": {
+  "is_tf": false,
+  "name": "K1B24_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51817": {
+  "is_tf": false,
+  "name": "G5E8V2",
+  "species": "mouse",
+  "symbol": "MIA"
+ },
+ "MOUSE51819": {
+  "is_tf": false,
+  "name": "K1KB3_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51820": {
+  "is_tf": false,
+  "name": "K1KB4_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51821": {
+  "is_tf": false,
+  "name": "K1KB5_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51828": {
+  "is_tf": false,
+  "name": "KLK1_MOUSE",
+  "species": "mouse",
+  "symbol": "KLK3"
+ },
+ "MOUSE51858": {
+  "is_tf": false,
+  "name": "APOBR_MOUSE",
+  "species": "mouse",
+  "symbol": "APOBR"
+ },
+ "MOUSE51880": {
+  "is_tf": false,
+  "name": "IL27A_MOUSE",
+  "species": "mouse",
+  "symbol": "IL27"
+ },
+ "MOUSE51882": {
+  "is_tf": true,
+  "name": "NUPR1_MOUSE",
+  "species": "mouse",
+  "symbol": "NUPR1"
+ },
+ "MOUSE51990": {
+  "is_tf": false,
+  "name": "F6XJP7",
+  "species": "mouse",
+  "symbol": "PCSK6"
+ },
+ "MOUSE52008": {
+  "is_tf": false,
+  "name": "MK03_MOUSE",
+  "species": "mouse",
+  "symbol": "MAPK3"
+ },
+ "MOUSE52021": {
+  "is_tf": true,
+  "name": "A0A0R4J2C1",
+  "species": "mouse",
+  "symbol": "APBB1"
+ },
+ "MOUSE52319": {
+  "is_tf": true,
+  "name": "SPIB_MOUSE",
+  "species": "mouse",
+  "symbol": "SPIB"
+ },
+ "MOUSE52325": {
+  "is_tf": true,
+  "name": "SRTD1_MOUSE",
+  "species": "mouse",
+  "symbol": "SERTAD1"
+ },
+ "MOUSE52339": {
+  "is_tf": false,
+  "name": "NOX4_MOUSE",
+  "species": "mouse",
+  "symbol": "NOX4"
+ },
+ "MOUSE52404": {
+  "is_tf": true,
+  "name": "MEF2A_MOUSE",
+  "species": "mouse",
+  "symbol": "MEF2A"
+ },
+ "MOUSE52471": {
+  "is_tf": true,
+  "name": "NR1H2_MOUSE",
+  "species": "mouse",
+  "symbol": "NR1H2"
+ },
+ "MOUSE52561": {
+  "is_tf": false,
+  "name": "MVP_MOUSE",
+  "species": "mouse",
+  "symbol": "MVP"
+ },
+ "MOUSE52611": {
+  "is_tf": false,
+  "name": "DACT3_MOUSE",
+  "species": "mouse",
+  "symbol": "DACT3"
+ },
+ "MOUSE52615": {
+  "is_tf": false,
+  "name": "E9QNX9",
+  "species": "mouse",
+  "symbol": "IGF1R"
+ },
+ "MOUSE52641": {
+  "is_tf": false,
+  "name": "PI2R_MOUSE",
+  "species": "mouse",
+  "symbol": "PTGIR"
+ },
+ "MOUSE52710": {
+  "is_tf": true,
+  "name": "COT2_MOUSE",
+  "species": "mouse",
+  "symbol": "NR2F2"
+ },
+ "MOUSE52835": {
+  "is_tf": true,
+  "name": "EID2_MOUSE",
+  "species": "mouse",
+  "symbol": "EP300"
+ },
+ "MOUSE52900": {
+  "is_tf": true,
+  "name": "ATF5_MOUSE",
+  "species": "mouse",
+  "symbol": "ATF5"
+ },
+ "MOUSE52959": {
+  "is_tf": false,
+  "name": "NANO2_MOUSE",
+  "species": "mouse",
+  "symbol": "NOS2"
+ },
+ "MOUSE53007": {
+  "is_tf": false,
+  "name": "SYMPK_MOUSE",
+  "species": "mouse",
+  "symbol": "SYMPK"
+ },
+ "MOUSE53138": {
+  "is_tf": true,
+  "name": "A0A087WQ44",
+  "species": "mouse",
+  "symbol": "SRCAP"
+ },
+ "MOUSE53156": {
+  "is_tf": true,
+  "name": "A0A087WP63",
+  "species": "mouse",
+  "symbol": "SRCAP"
+ },
+ "MOUSE53202": {
+  "is_tf": true,
+  "name": "NP_076013.1",
+  "species": "mouse",
+  "symbol": "TFPT"
+ },
+ "MOUSE53256": {
+  "is_tf": true,
+  "name": "IKBB_MOUSE",
+  "species": "mouse",
+  "symbol": "NFKBIB"
+ },
+ "MOUSE53305": {
+  "is_tf": false,
+  "name": "IPO7_MOUSE",
+  "species": "mouse",
+  "symbol": "IPO7"
+ },
+ "MOUSE53307": {
+  "is_tf": true,
+  "name": "FOSB_MOUSE",
+  "species": "mouse",
+  "symbol": "FOSB"
+ },
+ "MOUSE53336": {
+  "is_tf": false,
+  "name": "ERCC1_MOUSE",
+  "species": "mouse",
+  "symbol": "ERCC1"
+ },
+ "MOUSE53354": {
+  "is_tf": true,
+  "name": "ZN143_MOUSE",
+  "species": "mouse",
+  "symbol": "ZNF143"
+ },
+ "MOUSE53362": {
+  "is_tf": true,
+  "name": "SIR2_MOUSE",
+  "species": "mouse",
+  "symbol": "SIRT2"
+ },
+ "MOUSE53439": {
+  "is_tf": true,
+  "name": "ERCC2_MOUSE",
+  "species": "mouse",
+  "symbol": "ERCC2"
+ },
+ "MOUSE53460": {
+  "is_tf": false,
+  "name": "LIRB3_MOUSE",
+  "species": "mouse",
+  "symbol": "LILRB2"
+ },
+ "MOUSE53481": {
+  "is_tf": false,
+  "name": "LEG4_MOUSE",
+  "species": "mouse",
+  "symbol": "LGALS4"
+ },
+ "MOUSE53506": {
+  "is_tf": false,
+  "name": "KCRM_MOUSE",
+  "species": "mouse",
+  "symbol": "CKM"
+ },
+ "MOUSE53726": {
+  "is_tf": false,
+  "name": "APOE_MOUSE",
+  "species": "mouse",
+  "symbol": "APOE"
+ },
+ "MOUSE53739": {
+  "is_tf": false,
+  "name": "E9Q604",
+  "species": "mouse",
+  "symbol": "ITGAM"
+ },
+ "MOUSE53747": {
+  "is_tf": false,
+  "name": "DKK3_MOUSE",
+  "species": "mouse",
+  "symbol": "DKK3"
+ },
+ "MOUSE53748": {
+  "is_tf": false,
+  "name": "Q3U1U4",
+  "species": "mouse",
+  "symbol": "ITGAM"
+ },
+ "MOUSE53762": {
+  "is_tf": false,
+  "name": "PLIN1_MOUSE",
+  "species": "mouse",
+  "symbol": "PLIN1"
+ },
+ "MOUSE53783": {
+  "is_tf": false,
+  "name": "ITAX_MOUSE",
+  "species": "mouse",
+  "symbol": "ITGAX"
+ },
+ "MOUSE53801": {
+  "is_tf": false,
+  "name": "AMPN_MOUSE",
+  "species": "mouse",
+  "symbol": "ANPEP"
+ },
+ "MOUSE53818": {
+  "is_tf": false,
+  "name": "Q6PKB0",
+  "species": "mouse",
+  "symbol": "FCGRT"
+ },
+ "MOUSE53830": {
+  "is_tf": false,
+  "name": "ITAD_MOUSE",
+  "species": "mouse",
+  "symbol": "ITGAD"
+ },
+ "MOUSE53843": {
+  "is_tf": true,
+  "name": "BCL3_MOUSE",
+  "species": "mouse",
+  "symbol": "BCL3"
+ },
+ "MOUSE53870": {
+  "is_tf": false,
+  "name": "Q8K094",
+  "species": "mouse",
+  "symbol": "PVR"
+ },
+ "MOUSE53999": {
+  "is_tf": false,
+  "name": "THRSP_MOUSE",
+  "species": "mouse",
+  "symbol": "THRSP"
+ },
+ "MOUSE54107": {
+  "is_tf": false,
+  "name": "E9PWW9",
+  "species": "mouse",
+  "symbol": "RSF1"
+ },
+ "MOUSE54134": {
+  "is_tf": true,
+  "name": "Q3USK5",
+  "species": "mouse",
+  "symbol": "TEAD1"
+ },
+ "MOUSE54182": {
+  "is_tf": false,
+  "name": "BAG3_MOUSE",
+  "species": "mouse",
+  "symbol": "BAG3"
+ },
+ "MOUSE54251": {
+  "is_tf": true,
+  "name": "NP_001398909.1",
+  "species": "mouse",
+  "symbol": "ARNTL"
+ },
+ "MOUSE54421": {
+  "is_tf": false,
+  "name": "RRAS2_MOUSE",
+  "species": "mouse",
+  "symbol": "RRAS2"
+ },
+ "MOUSE54447": {
+  "is_tf": false,
+  "name": "FURIN_MOUSE",
+  "species": "mouse",
+  "symbol": "FURIN"
+ },
+ "MOUSE54463": {
+  "is_tf": false,
+  "name": "KCNN4_MOUSE",
+  "species": "mouse",
+  "symbol": "KCNN4"
+ },
+ "MOUSE54484": {
+  "is_tf": false,
+  "name": "IL11_MOUSE",
+  "species": "mouse",
+  "symbol": "IL11"
+ },
+ "MOUSE54521": {
+  "is_tf": false,
+  "name": "UBE2S_MOUSE",
+  "species": "mouse",
+  "symbol": "UBE2S"
+ },
+ "MOUSE54527": {
+  "is_tf": false,
+  "name": "UPAR_MOUSE",
+  "species": "mouse",
+  "symbol": "PLAUR"
+ },
+ "MOUSE54575": {
+  "is_tf": false,
+  "name": "G3X9G6",
+  "species": "mouse",
+  "symbol": "LHB"
+ },
+ "MOUSE54590": {
+  "is_tf": false,
+  "name": "XRCC1_MOUSE",
+  "species": "mouse",
+  "symbol": "XRCC1"
+ },
+ "MOUSE54644": {
+  "is_tf": true,
+  "name": "A0A087WRR7",
+  "species": "mouse",
+  "symbol": "ZNF383"
+ },
+ "MOUSE54702": {
+  "is_tf": true,
+  "name": "BAX_MOUSE",
+  "species": "mouse",
+  "symbol": "SRY"
+ },
+ "MOUSE54733": {
+  "is_tf": true,
+  "name": "ZN382_MOUSE",
+  "species": "mouse",
+  "symbol": "ZNF382"
+ },
+ "MOUSE54759": {
+  "is_tf": false,
+  "name": "CD79A_MOUSE",
+  "species": "mouse",
+  "symbol": "CD79A"
+ },
+ "MOUSE54796": {
+  "is_tf": false,
+  "name": "CPNS1_MOUSE",
+  "species": "mouse",
+  "symbol": "CAPNS1"
+ },
+ "MOUSE54799": {
+  "is_tf": false,
+  "name": "Q4PLS0",
+  "species": "mouse",
+  "symbol": "NLRP2"
+ },
+ "MOUSE54867": {
+  "is_tf": true,
+  "name": "Q8CGH9",
+  "species": "mouse",
+  "symbol": "ZNF444"
+ },
+ "MOUSE54883": {
+  "is_tf": false,
+  "name": "WNT11_MOUSE",
+  "species": "mouse",
+  "symbol": "WNT11"
+ },
+ "MOUSE54892": {
+  "is_tf": false,
+  "name": "NUCB1_MOUSE",
+  "species": "mouse",
+  "symbol": "NUCB1"
+ },
+ "MOUSE55030": {
+  "is_tf": false,
+  "name": "FGF21_MOUSE",
+  "species": "mouse",
+  "symbol": "FGF21"
+ },
+ "MOUSE55044": {
+  "is_tf": false,
+  "name": "FUT2_MOUSE",
+  "species": "mouse",
+  "symbol": "FUT2"
+ },
+ "MOUSE55046": {
+  "is_tf": false,
+  "name": "Q8CDC9",
+  "species": "mouse",
+  "symbol": "FUT2"
+ },
+ "MOUSE55089": {
+  "is_tf": true,
+  "name": "DBP_MOUSE",
+  "species": "mouse",
+  "symbol": "DBP"
+ },
+ "MOUSE55433": {
+  "is_tf": false,
+  "name": "MRP6_MOUSE",
+  "species": "mouse",
+  "symbol": "ABCC6"
+ },
+ "MOUSE55518": {
+  "is_tf": false,
+  "name": "ETV2_MOUSE",
+  "species": "mouse",
+  "symbol": "ETV2"
+ },
+ "MOUSE55530": {
+  "is_tf": false,
+  "name": "UCP2_MOUSE",
+  "species": "mouse",
+  "symbol": "UCP2"
+ },
+ "MOUSE55735": {
+  "is_tf": true,
+  "name": "MYOD1_MOUSE",
+  "species": "mouse",
+  "symbol": "MYOD1"
+ },
+ "MOUSE55780": {
+  "is_tf": false,
+  "name": "TPH1_MOUSE",
+  "species": "mouse",
+  "symbol": "TPH1"
+ },
+ "MOUSE55876": {
+  "is_tf": false,
+  "name": "NP_034849.2",
+  "species": "mouse",
+  "symbol": "LIPE"
+ },
+ "MOUSE55896": {
+  "is_tf": false,
+  "name": "CD22_MOUSE",
+  "species": "mouse",
+  "symbol": "CD22"
+ },
+ "MOUSE55930": {
+  "is_tf": false,
+  "name": "BCCIP_MOUSE",
+  "species": "mouse",
+  "symbol": "CDKN1A"
+ },
+ "MOUSE55983": {
+  "is_tf": false,
+  "name": "ADA12_MOUSE",
+  "species": "mouse",
+  "symbol": "ADAM12"
+ },
+ "MOUSE55987": {
+  "is_tf": true,
+  "name": "USF2_MOUSE",
+  "species": "mouse",
+  "symbol": "USF2"
+ },
+ "MOUSE56002": {
+  "is_tf": false,
+  "name": "LDHA_MOUSE",
+  "species": "mouse",
+  "symbol": "LDHA"
+ },
+ "MOUSE56041": {
+  "is_tf": true,
+  "name": "TS101_MOUSE",
+  "species": "mouse",
+  "symbol": "TSG101"
+ },
+ "MOUSE56148": {
+  "is_tf": true,
+  "name": "E2F8_MOUSE",
+  "species": "mouse",
+  "symbol": "E2F8"
+ },
+ "MOUSE56174": {
+  "is_tf": false,
+  "name": "MGMT_MOUSE",
+  "species": "mouse",
+  "symbol": "MGMT"
+ },
+ "MOUSE56193": {
+  "is_tf": true,
+  "name": "HTAI2_MOUSE",
+  "species": "mouse",
+  "symbol": "HTATIP2"
+ },
+ "MOUSE56200": {
+  "is_tf": false,
+  "name": "MOSMO_MOUSE",
+  "species": "mouse",
+  "symbol": "TEK"
+ },
+ "MOUSE56249": {
+  "is_tf": false,
+  "name": "NELL1_MOUSE",
+  "species": "mouse",
+  "symbol": "NRP1"
+ },
+ "MOUSE56264": {
+  "is_tf": true,
+  "name": "PHX2A_MOUSE",
+  "species": "mouse",
+  "symbol": "PHOX2A"
+ },
+ "MOUSE56331": {
+  "is_tf": false,
+  "name": "NP_848821.2",
+  "species": "mouse",
+  "symbol": "CD33"
+ },
+ "MOUSE56506": {
+  "is_tf": true,
+  "name": "CEBPG_MOUSE",
+  "species": "mouse",
+  "symbol": "CEBPG"
+ },
+ "MOUSE56513": {
+  "is_tf": true,
+  "name": "CEBPA_MOUSE",
+  "species": "mouse",
+  "symbol": "CEBPA"
+ },
+ "MOUSE56520": {
+  "is_tf": false,
+  "name": "PLK1_MOUSE",
+  "species": "mouse",
+  "symbol": "PLK1"
+ },
+ "MOUSE56675": {
+  "is_tf": false,
+  "name": "STIM1_MOUSE",
+  "species": "mouse",
+  "symbol": "STIM1"
+ },
+ "MOUSE56690": {
+  "is_tf": false,
+  "name": "RIR1_MOUSE",
+  "species": "mouse",
+  "symbol": "RRM1"
+ },
+ "MOUSE56695": {
+  "is_tf": false,
+  "name": "CP2E1_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP2E1"
+ },
+ "MOUSE56825": {
+  "is_tf": false,
+  "name": "PDCD5_MOUSE",
+  "species": "mouse",
+  "symbol": "PDCD5"
+ },
+ "MOUSE56988": {
+  "is_tf": false,
+  "name": "NP_001188320.1",
+  "species": "mouse",
+  "symbol": "HBD"
+ },
+ "MOUSE56989": {
+  "is_tf": false,
+  "name": "IFM5_MOUSE",
+  "species": "mouse",
+  "symbol": "IFITM5"
+ },
+ "MOUSE56990": {
+  "is_tf": false,
+  "name": "A0A1B0GT68",
+  "species": "mouse",
+  "symbol": "IFITM5"
+ },
+ "MOUSE56992": {
+  "is_tf": false,
+  "name": "A8DUK4",
+  "species": "mouse",
+  "symbol": "HBD"
+ },
+ "MOUSE56994": {
+  "is_tf": false,
+  "name": "IFM1_MOUSE",
+  "species": "mouse",
+  "symbol": "IFITM3"
+ },
+ "MOUSE56997": {
+  "is_tf": false,
+  "name": "IFM3_MOUSE",
+  "species": "mouse",
+  "symbol": "IFITM3"
+ },
+ "MOUSE56998": {
+  "is_tf": true,
+  "name": "RMP_MOUSE",
+  "species": "mouse",
+  "symbol": "URI1"
+ },
+ "MOUSE57018": {
+  "is_tf": false,
+  "name": "PKP3_MOUSE",
+  "species": "mouse",
+  "symbol": "PKP3"
+ },
+ "MOUSE57022": {
+  "is_tf": false,
+  "name": "SIGIR_MOUSE",
+  "species": "mouse",
+  "symbol": "SIGIRR"
+ },
+ "MOUSE57051": {
+  "is_tf": false,
+  "name": "RASH_MOUSE",
+  "species": "mouse",
+  "symbol": "HRAS"
+ },
+ "MOUSE57091": {
+  "is_tf": true,
+  "name": "DEAF1_MOUSE",
+  "species": "mouse",
+  "symbol": "DEAF1"
+ },
+ "MOUSE57169": {
+  "is_tf": false,
+  "name": "CATD_MOUSE",
+  "species": "mouse",
+  "symbol": "CTSD"
+ },
+ "MOUSE57241": {
+  "is_tf": false,
+  "name": "ASCL2_MOUSE",
+  "species": "mouse",
+  "symbol": "ASCL2"
+ },
+ "MOUSE57373": {
+  "is_tf": false,
+  "name": "CD151_MOUSE",
+  "species": "mouse",
+  "symbol": "CD151"
+ },
+ "MOUSE57397": {
+  "is_tf": false,
+  "name": "CCNE1_MOUSE",
+  "species": "mouse",
+  "symbol": "CCNE1"
+ },
+ "MOUSE57510": {
+  "is_tf": true,
+  "name": "TIF1B_MOUSE",
+  "species": "mouse",
+  "symbol": "TRIM28"
+ },
+ "MOUSE57526": {
+  "is_tf": true,
+  "name": "A1L358",
+  "species": "mouse",
+  "symbol": "MZF1"
+ },
+ "MOUSE57546": {
+  "is_tf": false,
+  "name": "K7N6K9",
+  "species": "mouse",
+  "symbol": "SULT2A1"
+ },
+ "MOUSE57551": {
+  "is_tf": true,
+  "name": "CTCF_MOUSE",
+  "species": "mouse",
+  "symbol": "CTCF"
+ },
+ "MOUSE57553": {
+  "is_tf": true,
+  "name": "A3KN90",
+  "species": "mouse",
+  "symbol": "NR3C2"
+ },
+ "MOUSE57593": {
+  "is_tf": false,
+  "name": "E9QK22",
+  "species": "mouse",
+  "symbol": "ZFP42"
+ },
+ "MOUSE57618": {
+  "is_tf": true,
+  "name": "PO4F2_MOUSE",
+  "species": "mouse",
+  "symbol": "POU4F2"
+ },
+ "MOUSE57645": {
+  "is_tf": false,
+  "name": "SOX1_MOUSE",
+  "species": "mouse",
+  "symbol": "SOX1"
+ },
+ "MOUSE57694": {
+  "is_tf": false,
+  "name": "TLR3_MOUSE",
+  "species": "mouse",
+  "symbol": "TLR3"
+ },
+ "MOUSE57736": {
+  "is_tf": true,
+  "name": "Q3UZ64",
+  "species": "mouse",
+  "symbol": "NFATC3"
+ },
+ "MOUSE57768": {
+  "is_tf": false,
+  "name": "CADH3_MOUSE",
+  "species": "mouse",
+  "symbol": "CDH3"
+ },
+ "MOUSE57769": {
+  "is_tf": false,
+  "name": "IL15_MOUSE",
+  "species": "mouse",
+  "symbol": "IL15"
+ },
+ "MOUSE57791": {
+  "is_tf": false,
+  "name": "UCP1_MOUSE",
+  "species": "mouse",
+  "symbol": "UCP1"
+ },
+ "MOUSE57821": {
+  "is_tf": false,
+  "name": "D3YZ08",
+  "species": "mouse",
+  "symbol": "TERF2"
+ },
+ "MOUSE57897": {
+  "is_tf": false,
+  "name": "NQO1_MOUSE",
+  "species": "mouse",
+  "symbol": "NQO1"
+ },
+ "MOUSE57940": {
+  "is_tf": true,
+  "name": "E9QMD3",
+  "species": "mouse",
+  "symbol": "ZFHX3"
+ },
+ "MOUSE57964": {
+  "is_tf": false,
+  "name": "HPT_MOUSE",
+  "species": "mouse",
+  "symbol": "HPR"
+ },
+ "MOUSE57996": {
+  "is_tf": false,
+  "name": "E9QJS7",
+  "species": "mouse",
+  "symbol": "ADGRE5"
+ },
+ "MOUSE58008": {
+  "is_tf": true,
+  "name": "TFDP1_MOUSE",
+  "species": "mouse",
+  "symbol": "TFDP1"
+ },
+ "MOUSE58049": {
+  "is_tf": false,
+  "name": "ASF1B_MOUSE",
+  "species": "mouse",
+  "symbol": "ASF1B"
+ },
+ "MOUSE58067": {
+  "is_tf": false,
+  "name": "CASP3_MOUSE",
+  "species": "mouse",
+  "symbol": "CASP3"
+ },
+ "MOUSE58084": {
+  "is_tf": false,
+  "name": "CHAP1_MOUSE",
+  "species": "mouse",
+  "symbol": "HAMP"
+ },
+ "MOUSE58091": {
+  "is_tf": true,
+  "name": "IRF2_MOUSE",
+  "species": "mouse",
+  "symbol": "IRF2"
+ },
+ "MOUSE58105": {
+  "is_tf": true,
+  "name": "RFX1_MOUSE",
+  "species": "mouse",
+  "symbol": "RFX1"
+ },
+ "MOUSE58124": {
+  "is_tf": false,
+  "name": "A0A0R4J1C9",
+  "species": "mouse",
+  "symbol": "CHST4"
+ },
+ "MOUSE58161": {
+  "is_tf": true,
+  "name": "ING2_MOUSE",
+  "species": "mouse",
+  "symbol": "ING2"
+ },
+ "MOUSE58178": {
+  "is_tf": false,
+  "name": "MTNA_MOUSE",
+  "species": "mouse",
+  "symbol": "RHOA"
+ },
+ "MOUSE58228": {
+  "is_tf": false,
+  "name": "VEGFC_MOUSE",
+  "species": "mouse",
+  "symbol": "VEGFC"
+ },
+ "MOUSE58248": {
+  "is_tf": false,
+  "name": "MCPH1_MOUSE",
+  "species": "mouse",
+  "symbol": "MCPH1"
+ },
+ "MOUSE58301": {
+  "is_tf": false,
+  "name": "GLRA3_MOUSE",
+  "species": "mouse",
+  "symbol": "CFB"
+ },
+ "MOUSE58311": {
+  "is_tf": false,
+  "name": "PGDH_MOUSE",
+  "species": "mouse",
+  "symbol": "HPGD"
+ },
+ "MOUSE58354": {
+  "is_tf": true,
+  "name": "HAND2_MOUSE",
+  "species": "mouse",
+  "symbol": "HAND2"
+ },
+ "MOUSE58377": {
+  "is_tf": true,
+  "name": "HMGB2_MOUSE",
+  "species": "mouse",
+  "symbol": "HMGB2"
+ },
+ "MOUSE58388": {
+  "is_tf": false,
+  "name": "FA2H_MOUSE",
+  "species": "mouse",
+  "symbol": "FAAH"
+ },
+ "MOUSE58401": {
+  "is_tf": true,
+  "name": "E9PUH7",
+  "species": "mouse",
+  "symbol": "NFIX"
+ },
+ "MOUSE58410": {
+  "is_tf": true,
+  "name": "LYL1_MOUSE",
+  "species": "mouse",
+  "symbol": "LYL1"
+ },
+ "MOUSE58463": {
+  "is_tf": false,
+  "name": "A0A6I8MWY6",
+  "species": "mouse",
+  "symbol": "KLF1"
+ },
+ "MOUSE58480": {
+  "is_tf": false,
+  "name": "DNS2A_MOUSE",
+  "species": "mouse",
+  "symbol": "DNASE2"
+ },
+ "MOUSE58524": {
+  "is_tf": false,
+  "name": "DKK4_MOUSE",
+  "species": "mouse",
+  "symbol": "DKK4"
+ },
+ "MOUSE58538": {
+  "is_tf": false,
+  "name": "DPOLB_MOUSE",
+  "species": "mouse",
+  "symbol": "POLB"
+ },
+ "MOUSE58545": {
+  "is_tf": true,
+  "name": "JUNB_MOUSE",
+  "species": "mouse",
+  "symbol": "JUNB"
+ },
+ "MOUSE58559": {
+  "is_tf": true,
+  "name": "Q5D0E0",
+  "species": "mouse",
+  "symbol": "IKBKB"
+ },
+ "MOUSE58590": {
+  "is_tf": false,
+  "name": "WWOX_MOUSE",
+  "species": "mouse",
+  "symbol": "WWOX"
+ },
+ "MOUSE58662": {
+  "is_tf": false,
+  "name": "DHB2_MOUSE",
+  "species": "mouse",
+  "symbol": "HSD17B2"
+ },
+ "MOUSE58857": {
+  "is_tf": true,
+  "name": "IRF8_MOUSE",
+  "species": "mouse",
+  "symbol": "IRF8"
+ },
+ "MOUSE58866": {
+  "is_tf": true,
+  "name": "FOXF1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXF1"
+ },
+ "MOUSE58896": {
+  "is_tf": false,
+  "name": "FOXC2_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXC2"
+ },
+ "MOUSE58897": {
+  "is_tf": true,
+  "name": "FOXL1_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXL1"
+ },
+ "MOUSE58907": {
+  "is_tf": false,
+  "name": "MLP3B_MOUSE",
+  "species": "mouse",
+  "symbol": "MAP1LC3B"
+ },
+ "MOUSE58911": {
+  "is_tf": false,
+  "name": "LPAR2_MOUSE",
+  "species": "mouse",
+  "symbol": "LPAR2"
+ },
+ "MOUSE58929": {
+  "is_tf": true,
+  "name": "BRD7_MOUSE",
+  "species": "mouse",
+  "symbol": "BRD7"
+ },
+ "MOUSE58969": {
+  "is_tf": true,
+  "name": "SUGP1_MOUSE",
+  "species": "mouse",
+  "symbol": "SUGP1"
+ },
+ "MOUSE58999": {
+  "is_tf": false,
+  "name": "A0A0R4J0P4",
+  "species": "mouse",
+  "symbol": "IL17C"
+ },
+ "MOUSE59013": {
+  "is_tf": false,
+  "name": "SNAI3_MOUSE",
+  "species": "mouse",
+  "symbol": "SNAI3"
+ },
+ "MOUSE59049": {
+  "is_tf": false,
+  "name": "SFRP1_MOUSE",
+  "species": "mouse",
+  "symbol": "SFRP1"
+ },
+ "MOUSE59075": {
+  "is_tf": false,
+  "name": "INSR_MOUSE",
+  "species": "mouse",
+  "symbol": "INSR"
+ },
+ "MOUSE59097": {
+  "is_tf": true,
+  "name": "RBL2_MOUSE",
+  "species": "mouse",
+  "symbol": "RBL2"
+ },
+ "MOUSE59100": {
+  "is_tf": true,
+  "name": "B7ZP57",
+  "species": "mouse",
+  "symbol": "CBFA2T3"
+ },
+ "MOUSE59201": {
+  "is_tf": false,
+  "name": "MMP2_MOUSE",
+  "species": "mouse",
+  "symbol": "MMP2"
+ },
+ "MOUSE59294": {
+  "is_tf": false,
+  "name": "FANCA_MOUSE",
+  "species": "mouse",
+  "symbol": "FANCA"
+ },
+ "MOUSE59319": {
+  "is_tf": false,
+  "name": "RETN_MOUSE",
+  "species": "mouse",
+  "symbol": "RETN"
+ },
+ "MOUSE59333": {
+  "is_tf": false,
+  "name": "MT2_MOUSE",
+  "species": "mouse",
+  "symbol": "MT1G"
+ },
+ "MOUSE59346": {
+  "is_tf": false,
+  "name": "TBB3_MOUSE",
+  "species": "mouse",
+  "symbol": "TUBB3"
+ },
+ "MOUSE59353": {
+  "is_tf": false,
+  "name": "FCER2_MOUSE",
+  "species": "mouse",
+  "symbol": "FCER2"
+ },
+ "MOUSE59364": {
+  "is_tf": false,
+  "name": "CLC4G_MOUSE",
+  "species": "mouse",
+  "symbol": "CLEC4G"
+ },
+ "MOUSE59418": {
+  "is_tf": false,
+  "name": "ACTS_MOUSE",
+  "species": "mouse",
+  "symbol": "ACTA1"
+ },
+ "MOUSE59474": {
+  "is_tf": false,
+  "name": "CCL22_MOUSE",
+  "species": "mouse",
+  "symbol": "CCL22"
+ },
+ "MOUSE59480": {
+  "is_tf": false,
+  "name": "CCL17_MOUSE",
+  "species": "mouse",
+  "symbol": "CCL17"
+ },
+ "MOUSE59506": {
+  "is_tf": false,
+  "name": "NP_036074.2",
+  "species": "mouse",
+  "symbol": "B2M"
+ },
+ "MOUSE59518": {
+  "is_tf": false,
+  "name": "MP2K7_MOUSE",
+  "species": "mouse",
+  "symbol": "B2M"
+ },
+ "MOUSE59544": {
+  "is_tf": false,
+  "name": "EGLN1_MOUSE",
+  "species": "mouse",
+  "symbol": "EGLN1"
+ },
+ "MOUSE59547": {
+  "is_tf": false,
+  "name": "ELAV1_MOUSE",
+  "species": "mouse",
+  "symbol": "ELAVL1"
+ },
+ "MOUSE59604": {
+  "is_tf": false,
+  "name": "NTCP2_MOUSE",
+  "species": "mouse",
+  "symbol": "SLC10A2"
+ },
+ "MOUSE59719": {
+  "is_tf": false,
+  "name": "IRS2_MOUSE",
+  "species": "mouse",
+  "symbol": "IRS2"
+ },
+ "MOUSE59748": {
+  "is_tf": true,
+  "name": "KLF2_MOUSE",
+  "species": "mouse",
+  "symbol": "KLF2"
+ },
+ "MOUSE59886": {
+  "is_tf": false,
+  "name": "HMOX1_MOUSE",
+  "species": "mouse",
+  "symbol": "HMOX1"
+ },
+ "MOUSE59887": {
+  "is_tf": false,
+  "name": "MCM5_MOUSE",
+  "species": "mouse",
+  "symbol": "MCM5"
+ },
+ "MOUSE59943": {
+  "is_tf": false,
+  "name": "WRN_MOUSE",
+  "species": "mouse",
+  "symbol": "WRN"
+ },
+ "MOUSE59952": {
+  "is_tf": false,
+  "name": "CADH5_MOUSE",
+  "species": "mouse",
+  "symbol": "CDH5"
+ },
+ "MOUSE60000": {
+  "is_tf": false,
+  "name": "ITB1_MOUSE",
+  "species": "mouse",
+  "symbol": "ITGB1"
+ },
+ "MOUSE60069": {
+  "is_tf": false,
+  "name": "DUS4_MOUSE",
+  "species": "mouse",
+  "symbol": "DUSP4"
+ },
+ "MOUSE60131": {
+  "is_tf": false,
+  "name": "MSRE_MOUSE",
+  "species": "mouse",
+  "symbol": "MSR1"
+ },
+ "MOUSE60202": {
+  "is_tf": true,
+  "name": "HSF4_MOUSE",
+  "species": "mouse",
+  "symbol": "HSF4"
+ },
+ "MOUSE60215": {
+  "is_tf": true,
+  "name": "E2F4_MOUSE",
+  "species": "mouse",
+  "symbol": "E2F4"
+ },
+ "MOUSE60217": {
+  "is_tf": false,
+  "name": "ELMO3_MOUSE",
+  "species": "mouse",
+  "symbol": "ELMO3"
+ },
+ "MOUSE60250": {
+  "is_tf": false,
+  "name": "DHI2_MOUSE",
+  "species": "mouse",
+  "symbol": "HSD11B2"
+ },
+ "MOUSE60271": {
+  "is_tf": true,
+  "name": "CRTC1_MOUSE",
+  "species": "mouse",
+  "symbol": "CRTC1"
+ },
+ "MOUSE60278": {
+  "is_tf": false,
+  "name": "CRLF1_MOUSE",
+  "species": "mouse",
+  "symbol": "CRLF1"
+ },
+ "MOUSE60307": {
+  "is_tf": false,
+  "name": "INO1_MOUSE",
+  "species": "mouse",
+  "symbol": "ISYNA1"
+ },
+ "MOUSE60317": {
+  "is_tf": false,
+  "name": "GDF15_MOUSE",
+  "species": "mouse",
+  "symbol": "GDF15"
+ },
+ "MOUSE60367": {
+  "is_tf": false,
+  "name": "G3X8P5",
+  "species": "mouse",
+  "symbol": "SLC5A5"
+ },
+ "MOUSE60395": {
+  "is_tf": true,
+  "name": "NR2F6_MOUSE",
+  "species": "mouse",
+  "symbol": "NR2F6"
+ },
+ "MOUSE60418": {
+  "is_tf": false,
+  "name": "BST2_MOUSE",
+  "species": "mouse",
+  "symbol": "BST2"
+ },
+ "MOUSE60467": {
+  "is_tf": false,
+  "name": "SIA1A_MOUSE",
+  "species": "mouse",
+  "symbol": "SIAH1"
+ },
+ "MOUSE60512": {
+  "is_tf": true,
+  "name": "JUND_MOUSE",
+  "species": "mouse",
+  "symbol": "JUND"
+ },
+ "MOUSE60521": {
+  "is_tf": false,
+  "name": "STAR_MOUSE",
+  "species": "mouse",
+  "symbol": "STAR"
+ },
+ "MOUSE60533": {
+  "is_tf": false,
+  "name": "ORN_MOUSE",
+  "species": "mouse",
+  "symbol": "SFN"
+ },
+ "MOUSE60549": {
+  "is_tf": true,
+  "name": "A3KMN0",
+  "species": "mouse",
+  "symbol": "ZBTB16"
+ },
+ "MOUSE60630": {
+  "is_tf": false,
+  "name": "TLR9_MOUSE",
+  "species": "mouse",
+  "symbol": "TLR9"
+ },
+ "MOUSE60656": {
+  "is_tf": false,
+  "name": "GSH1_MOUSE",
+  "species": "mouse",
+  "symbol": "GCLC"
+ },
+ "MOUSE60668": {
+  "is_tf": false,
+  "name": "DUS7_MOUSE",
+  "species": "mouse",
+  "symbol": "USP7"
+ },
+ "MOUSE60674": {
+  "is_tf": true,
+  "name": "GCM1_MOUSE",
+  "species": "mouse",
+  "symbol": "GCM1"
+ },
+ "MOUSE60704": {
+  "is_tf": false,
+  "name": "IL18_MOUSE",
+  "species": "mouse",
+  "symbol": "IL18"
+ },
+ "MOUSE60725": {
+  "is_tf": true,
+  "name": "NFRKB_MOUSE",
+  "species": "mouse",
+  "symbol": "NFRKB"
+ },
+ "MOUSE60732": {
+  "is_tf": false,
+  "name": "GSTA1_MOUSE",
+  "species": "mouse",
+  "symbol": "GSTA1"
+ },
+ "MOUSE60736": {
+  "is_tf": false,
+  "name": "Q6P8Q0",
+  "species": "mouse",
+  "symbol": "GSTA1"
+ },
+ "MOUSE60743": {
+  "is_tf": false,
+  "name": "NP_001116132.1",
+  "species": "mouse",
+  "symbol": "GSTA1"
+ },
+ "MOUSE60766": {
+  "is_tf": false,
+  "name": "GSTA2_MOUSE",
+  "species": "mouse",
+  "symbol": "GSTA1"
+ },
+ "MOUSE60802": {
+  "is_tf": true,
+  "name": "FLI1_MOUSE",
+  "species": "mouse",
+  "symbol": "FLI1"
+ },
+ "MOUSE60837": {
+  "is_tf": false,
+  "name": "CRYAB_MOUSE",
+  "species": "mouse",
+  "symbol": "CRYAB"
+ },
+ "MOUSE60905": {
+  "is_tf": false,
+  "name": "SIA4C_MOUSE",
+  "species": "mouse",
+  "symbol": "ST3GAL4"
+ },
+ "MOUSE60981": {
+  "is_tf": true,
+  "name": "OBF1_MOUSE",
+  "species": "mouse",
+  "symbol": "POU2AF1"
+ },
+ "MOUSE60983": {
+  "is_tf": false,
+  "name": "MAPK3_MOUSE",
+  "species": "mouse",
+  "symbol": "MAPKAPK3"
+ },
+ "MOUSE60996": {
+  "is_tf": false,
+  "name": "CISH_MOUSE",
+  "species": "mouse",
+  "symbol": "CISH"
+ },
+ "MOUSE61027": {
+  "is_tf": false,
+  "name": "RADI_MOUSE",
+  "species": "mouse",
+  "symbol": "RDX"
+ },
+ "MOUSE61059": {
+  "is_tf": false,
+  "name": "ASPX_MOUSE",
+  "species": "mouse",
+  "symbol": "ACRV1"
+ },
+ "MOUSE61070": {
+  "is_tf": false,
+  "name": "NPAT_MOUSE",
+  "species": "mouse",
+  "symbol": "NPAT"
+ },
+ "MOUSE61071": {
+  "is_tf": false,
+  "name": "CHK1_MOUSE",
+  "species": "mouse",
+  "symbol": "CHEK1"
+ },
+ "MOUSE61075": {
+  "is_tf": false,
+  "name": "THIL_MOUSE",
+  "species": "mouse",
+  "symbol": "ACAT1"
+ },
+ "MOUSE61102": {
+  "is_tf": false,
+  "name": "CP19A_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP19A1"
+ },
+ "MOUSE61157": {
+  "is_tf": false,
+  "name": "NP_033471.2",
+  "species": "mouse",
+  "symbol": "TTK"
+ },
+ "MOUSE61185": {
+  "is_tf": false,
+  "name": "RABP1_MOUSE",
+  "species": "mouse",
+  "symbol": "CRABP1"
+ },
+ "MOUSE61237": {
+  "is_tf": false,
+  "name": "HYAL1_MOUSE",
+  "species": "mouse",
+  "symbol": "HYAL1"
+ },
+ "MOUSE61429": {
+  "is_tf": false,
+  "name": "A0A6I8MX03",
+  "species": "mouse",
+  "symbol": "UBE2S"
+ },
+ "MOUSE61477": {
+  "is_tf": false,
+  "name": "G3X919",
+  "species": "mouse",
+  "symbol": "TBX18"
+ },
+ "MOUSE61491": {
+  "is_tf": false,
+  "name": "5NTD_MOUSE",
+  "species": "mouse",
+  "symbol": "NT5E"
+ },
+ "MOUSE61512": {
+  "is_tf": false,
+  "name": "MMP7_MOUSE",
+  "species": "mouse",
+  "symbol": "MMP7"
+ },
+ "MOUSE61594": {
+  "is_tf": true,
+  "name": "SIN3A_MOUSE",
+  "species": "mouse",
+  "symbol": "SIN3A"
+ },
+ "MOUSE61660": {
+  "is_tf": true,
+  "name": "PRGR_MOUSE",
+  "species": "mouse",
+  "symbol": "PGR"
+ },
+ "MOUSE61690": {
+  "is_tf": true,
+  "name": "Q8C879",
+  "species": "mouse",
+  "symbol": "ZNF202"
+ },
+ "MOUSE61727": {
+  "is_tf": false,
+  "name": "NEIL1_MOUSE",
+  "species": "mouse",
+  "symbol": "NEIL1"
+ },
+ "MOUSE61813": {
+  "is_tf": false,
+  "name": "O55179",
+  "species": "mouse",
+  "symbol": "BCL2A1"
+ },
+ "MOUSE61831": {
+  "is_tf": false,
+  "name": "B2LA1_MOUSE",
+  "species": "mouse",
+  "symbol": "BCL2A1"
+ },
+ "MOUSE61840": {
+  "is_tf": false,
+  "name": "HSP7C_MOUSE",
+  "species": "mouse",
+  "symbol": "HSPA8"
+ },
+ "MOUSE61848": {
+  "is_tf": false,
+  "name": "Q497M6",
+  "species": "mouse",
+  "symbol": "BCL2A1"
+ },
+ "MOUSE61937": {
+  "is_tf": false,
+  "name": "CP1A1_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP1A1"
+ },
+ "MOUSE61951": {
+  "is_tf": false,
+  "name": "ENSMUSP00000067341.7",
+  "species": "mouse",
+  "symbol": "CLK3"
+ },
+ "MOUSE61981": {
+  "is_tf": false,
+  "name": "HPHL1_MOUSE",
+  "species": "mouse",
+  "symbol": "HEPH"
+ },
+ "MOUSE62016": {
+  "is_tf": false,
+  "name": "CP11A_MOUSE",
+  "species": "mouse",
+  "symbol": "CYP11A1"
+ },
+ "MOUSE62027": {
+  "is_tf": true,
+  "name": "ZIC1_MOUSE",
+  "species": "mouse",
+  "symbol": "ZIC1"
+ },
+ "MOUSE62080": {
+  "is_tf": false,
+  "name": "THY1_MOUSE",
+  "species": "mouse",
+  "symbol": "THY1"
+ },
+ "MOUSE62087": {
+  "is_tf": false,
+  "name": "HGFL_MOUSE",
+  "species": "mouse",
+  "symbol": "MST1"
+ },
+ "MOUSE62210": {
+  "is_tf": false,
+  "name": "C1QT5_MOUSE",
+  "species": "mouse",
+  "symbol": "C1QTNF5"
+ },
+ "MOUSE62271": {
+  "is_tf": false,
+  "name": "MUC18_MOUSE",
+  "species": "mouse",
+  "symbol": "MCAM"
+ },
+ "MOUSE62394": {
+  "is_tf": false,
+  "name": "HCN4_MOUSE",
+  "species": "mouse",
+  "symbol": "HCN4"
+ },
+ "MOUSE62435": {
+  "is_tf": false,
+  "name": "ABCG4_MOUSE",
+  "species": "mouse",
+  "symbol": "ABCG4"
+ },
+ "MOUSE62463": {
+  "is_tf": true,
+  "name": "HINFP_MOUSE",
+  "species": "mouse",
+  "symbol": "HINFP"
+ },
+ "MOUSE62489": {
+  "is_tf": false,
+  "name": "H2AX_MOUSE",
+  "species": "mouse",
+  "symbol": "HIST1H2AE"
+ },
+ "MOUSE62528": {
+  "is_tf": false,
+  "name": "RBX2_MOUSE",
+  "species": "mouse",
+  "symbol": "RNF7"
+ },
+ "MOUSE62531": {
+  "is_tf": false,
+  "name": "HYOU1_MOUSE",
+  "species": "mouse",
+  "symbol": "HYOU1"
+ },
+ "MOUSE62639": {
+  "is_tf": false,
+  "name": "ICAM1_MOUSE",
+  "species": "mouse",
+  "symbol": "ICAM1"
+ },
+ "MOUSE62691": {
+  "is_tf": true,
+  "name": "FOXL2_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXL2"
+ },
+ "MOUSE62699": {
+  "is_tf": false,
+  "name": "CXCR5_MOUSE",
+  "species": "mouse",
+  "symbol": "CXCR5"
+ },
+ "MOUSE62707": {
+  "is_tf": true,
+  "name": "NR2E3_MOUSE",
+  "species": "mouse",
+  "symbol": "NR2E3"
+ },
+ "MOUSE62814": {
+  "is_tf": false,
+  "name": "SOX14_MOUSE",
+  "species": "mouse",
+  "symbol": "SOX14"
+ },
+ "MOUSE62940": {
+  "is_tf": false,
+  "name": "CD3G_MOUSE",
+  "species": "mouse",
+  "symbol": "CD3G"
+ },
+ "MOUSE63021": {
+  "is_tf": false,
+  "name": "MPIP1_MOUSE",
+  "species": "mouse",
+  "symbol": "CDC25A"
+ },
+ "MOUSE63064": {
+  "is_tf": false,
+  "name": "Q6ITT1",
+  "species": "mouse",
+  "symbol": "FXYD2"
+ },
+ "MOUSE63151": {
+  "is_tf": false,
+  "name": "BACE1_MOUSE",
+  "species": "mouse",
+  "symbol": "BACE1"
+ },
+ "MOUSE63154": {
+  "is_tf": true,
+  "name": "PIAS1_MOUSE",
+  "species": "mouse",
+  "symbol": "XBP1"
+ },
+ "MOUSE63178": {
+  "is_tf": false,
+  "name": "LDLR_MOUSE",
+  "species": "mouse",
+  "symbol": "LDLR"
+ },
+ "MOUSE63210": {
+  "is_tf": false,
+  "name": "TAGL_MOUSE",
+  "species": "mouse",
+  "symbol": "TAGLN"
+ },
+ "MOUSE63218": {
+  "is_tf": true,
+  "name": "SMAD3_MOUSE",
+  "species": "mouse",
+  "symbol": "SMAD3"
+ },
+ "MOUSE63222": {
+  "is_tf": false,
+  "name": "SMAD6_MOUSE",
+  "species": "mouse",
+  "symbol": "SMAD6"
+ },
+ "MOUSE63302": {
+  "is_tf": false,
+  "name": "EPOR_MOUSE",
+  "species": "mouse",
+  "symbol": "EPOR"
+ },
+ "MOUSE63375": {
+  "is_tf": false,
+  "name": "APOA5_MOUSE",
+  "species": "mouse",
+  "symbol": "APOA5"
+ },
+ "MOUSE63445": {
+  "is_tf": false,
+  "name": "PPA5_MOUSE",
+  "species": "mouse",
+  "symbol": "ACP5"
+ },
+ "MOUSE63479": {
+  "is_tf": false,
+  "name": "SETD2_MOUSE",
+  "species": "mouse",
+  "symbol": "SETD2"
+ },
+ "MOUSE63515": {
+  "is_tf": false,
+  "name": "AT2C1_MOUSE",
+  "species": "mouse",
+  "symbol": "ATP2C1"
+ },
+ "MOUSE63550": {
+  "is_tf": false,
+  "name": "NPSR1_MOUSE",
+  "species": "mouse",
+  "symbol": "NPSR1"
+ },
+ "MOUSE63611": {
+  "is_tf": false,
+  "name": "TSP50_MOUSE",
+  "species": "mouse",
+  "symbol": "PRSS50"
+ },
+ "MOUSE63613": {
+  "is_tf": false,
+  "name": "E9Q1G8",
+  "species": "mouse",
+  "symbol": "SEPT7"
+ },
+ "MOUSE63641": {
+  "is_tf": false,
+  "name": "TDGF1_MOUSE",
+  "species": "mouse",
+  "symbol": "TDGF1"
+ },
+ "MOUSE63661": {
+  "is_tf": false,
+  "name": "TRFL_MOUSE",
+  "species": "mouse",
+  "symbol": "LCT"
+ },
+ "MOUSE63669": {
+  "is_tf": false,
+  "name": "CCRL2_MOUSE",
+  "species": "mouse",
+  "symbol": "CCR6"
+ },
+ "MOUSE63678": {
+  "is_tf": false,
+  "name": "PAF15_MOUSE",
+  "species": "mouse",
+  "symbol": "PCLAF"
+ },
+ "MOUSE63704": {
+  "is_tf": false,
+  "name": "MLH1_MOUSE",
+  "species": "mouse",
+  "symbol": "OCA2"
+ },
+ "MOUSE63732": {
+  "is_tf": false,
+  "name": "DAPK2_MOUSE",
+  "species": "mouse",
+  "symbol": "DAPK2"
+ },
+ "MOUSE63813": {
+  "is_tf": false,
+  "name": "CCR4_MOUSE",
+  "species": "mouse",
+  "symbol": "CCR4"
+ },
+ "MOUSE63853": {
+  "is_tf": false,
+  "name": "Q543C0",
+  "species": "mouse",
+  "symbol": "TGFBR2"
+ },
+ "MOUSE63859": {
+  "is_tf": true,
+  "name": "RORA_MOUSE",
+  "species": "mouse",
+  "symbol": "RORA"
+ },
+ "MOUSE63905": {
+  "is_tf": false,
+  "name": "CCNB2_MOUSE",
+  "species": "mouse",
+  "symbol": "CCNB2"
+ },
+ "MOUSE63940": {
+  "is_tf": false,
+  "name": "ADA10_MOUSE",
+  "species": "mouse",
+  "symbol": "ADAM10"
+ },
+ "MOUSE63956": {
+  "is_tf": false,
+  "name": "AL1A2_MOUSE",
+  "species": "mouse",
+  "symbol": "ALDH1A2"
+ },
+ "MOUSE64084": {
+  "is_tf": true,
+  "name": "CTNB1_MOUSE",
+  "species": "mouse",
+  "symbol": "CTNNB1"
+ },
+ "MOUSE64206": {
+  "is_tf": true,
+  "name": "HNF6_MOUSE",
+  "species": "mouse",
+  "symbol": "ONECUT1"
+ },
+ "MOUSE64326": {
+  "is_tf": false,
+  "name": "B2RTM1",
+  "species": "mouse",
+  "symbol": "TMEM158"
+ },
+ "MOUSE64335": {
+  "is_tf": false,
+  "name": "CCR1_MOUSE",
+  "species": "mouse",
+  "symbol": "CCR1"
+ },
+ "MOUSE64337": {
+  "is_tf": false,
+  "name": "CCR3_MOUSE",
+  "species": "mouse",
+  "symbol": "CCR3"
+ },
+ "MOUSE64367": {
+  "is_tf": true,
+  "name": "LIMD1_MOUSE",
+  "species": "mouse",
+  "symbol": "LIMD1"
+ },
+ "MOUSE64392": {
+  "is_tf": false,
+  "name": "MMP10_MOUSE",
+  "species": "mouse",
+  "symbol": "MMP10"
+ },
+ "MOUSE64397": {
+  "is_tf": false,
+  "name": "MMP1A_MOUSE",
+  "species": "mouse",
+  "symbol": "MMP1"
+ },
+ "MOUSE64413": {
+  "is_tf": false,
+  "name": "SPN90_MOUSE",
+  "species": "mouse",
+  "symbol": "VIM"
+ },
+ "MOUSE64484": {
+  "is_tf": false,
+  "name": "CASP1_MOUSE",
+  "species": "mouse",
+  "symbol": "CASP1"
+ },
+ "MOUSE64508": {
+  "is_tf": false,
+  "name": "MMP13_MOUSE",
+  "species": "mouse",
+  "symbol": "MMP13"
+ },
+ "MOUSE64511": {
+  "is_tf": false,
+  "name": "MMP12_MOUSE",
+  "species": "mouse",
+  "symbol": "MMP12"
+ },
+ "MOUSE64514": {
+  "is_tf": false,
+  "name": "G5E8A9",
+  "species": "mouse",
+  "symbol": "MMP1"
+ },
+ "MOUSE64515": {
+  "is_tf": false,
+  "name": "MMP3_MOUSE",
+  "species": "mouse",
+  "symbol": "MMP3"
+ },
+ "MOUSE64669": {
+  "is_tf": true,
+  "name": "ATRX_MOUSE",
+  "species": "mouse",
+  "symbol": "ATRX"
+ },
+ "MOUSE64735": {
+  "is_tf": false,
+  "name": "HEM0_MOUSE",
+  "species": "mouse",
+  "symbol": "ALAS2"
+ },
+ "MOUSE64746": {
+  "is_tf": false,
+  "name": "PGK1_MOUSE",
+  "species": "mouse",
+  "symbol": "PGK1"
+ },
+ "MOUSE65170": {
+  "is_tf": true,
+  "name": "HCFC1_MOUSE",
+  "species": "mouse",
+  "symbol": "HCFC1"
+ },
+ "MOUSE65195": {
+  "is_tf": true,
+  "name": "KLF8_MOUSE",
+  "species": "mouse",
+  "symbol": "KLF8"
+ },
+ "MOUSE65370": {
+  "is_tf": false,
+  "name": "KS6A3_MOUSE",
+  "species": "mouse",
+  "symbol": "RPS6KA3"
+ },
+ "MOUSE65555": {
+  "is_tf": false,
+  "name": "SYPH_MOUSE",
+  "species": "mouse",
+  "symbol": "SYP"
+ },
+ "MOUSE65563": {
+  "is_tf": false,
+  "name": "PLAC1_MOUSE",
+  "species": "mouse",
+  "symbol": "PLAC1"
+ },
+ "MOUSE65566": {
+  "is_tf": false,
+  "name": "Q673W2",
+  "species": "mouse",
+  "symbol": "KIR3DL1"
+ },
+ "MOUSE65572": {
+  "is_tf": false,
+  "name": "Q673W4",
+  "species": "mouse",
+  "symbol": "KIR3DL1"
+ },
+ "MOUSE65715": {
+  "is_tf": false,
+  "name": "CLD2_MOUSE",
+  "species": "mouse",
+  "symbol": "CLDN2"
+ },
+ "MOUSE65774": {
+  "is_tf": false,
+  "name": "BRS3_MOUSE",
+  "species": "mouse",
+  "symbol": "BRS3"
+ },
+ "MOUSE65790": {
+  "is_tf": false,
+  "name": "CD40L_MOUSE",
+  "species": "mouse",
+  "symbol": "CD40LG"
+ },
+ "MOUSE65839": {
+  "is_tf": false,
+  "name": "XLRS1_MOUSE",
+  "species": "mouse",
+  "symbol": "RS1"
+ },
+ "MOUSE65846": {
+  "is_tf": true,
+  "name": "T22D3_MOUSE",
+  "species": "mouse",
+  "symbol": "TSC22D3"
+ },
+ "MOUSE65869": {
+  "is_tf": true,
+  "name": "RBMX_MOUSE",
+  "species": "mouse",
+  "symbol": "RBMX"
+ },
+ "MOUSE65941": {
+  "is_tf": false,
+  "name": "B9EI38",
+  "species": "mouse",
+  "symbol": "REPS2"
+ },
+ "MOUSE65966": {
+  "is_tf": true,
+  "name": "RBBP7_MOUSE",
+  "species": "mouse",
+  "symbol": "RBBP7"
+ },
+ "MOUSE66075": {
+  "is_tf": false,
+  "name": "GRPR_MOUSE",
+  "species": "mouse",
+  "symbol": "GRPR"
+ },
+ "MOUSE66089": {
+  "is_tf": true,
+  "name": "GATA1_MOUSE",
+  "species": "mouse",
+  "symbol": "GATA1"
+ },
+ "MOUSE66145": {
+  "is_tf": false,
+  "name": "ACE2_MOUSE",
+  "species": "mouse",
+  "symbol": "ACE2"
+ },
+ "MOUSE66157": {
+  "is_tf": false,
+  "name": "VEGFD_MOUSE",
+  "species": "mouse",
+  "symbol": "VEGFD"
+ },
+ "MOUSE66170": {
+  "is_tf": true,
+  "name": "PIGA_MOUSE",
+  "species": "mouse",
+  "symbol": "SOX9"
+ },
+ "MOUSE66193": {
+  "is_tf": true,
+  "name": "NR0B1_MOUSE",
+  "species": "mouse",
+  "symbol": "NR0B1"
+ },
+ "MOUSE66390": {
+  "is_tf": false,
+  "name": "CY24B_MOUSE",
+  "species": "mouse",
+  "symbol": "CYBB"
+ },
+ "MOUSE66394": {
+  "is_tf": false,
+  "name": "TLR7_MOUSE",
+  "species": "mouse",
+  "symbol": "TLR7"
+ },
+ "MOUSE66412": {
+  "is_tf": false,
+  "name": "SRPX_MOUSE",
+  "species": "mouse",
+  "symbol": "SRPX"
+ },
+ "MOUSE66577": {
+  "is_tf": false,
+  "name": "AOFA_MOUSE",
+  "species": "mouse",
+  "symbol": "MAOA"
+ },
+ "MOUSE66580": {
+  "is_tf": false,
+  "name": "AOFB_MOUSE",
+  "species": "mouse",
+  "symbol": "MAOB"
+ },
+ "MOUSE66629": {
+  "is_tf": true,
+  "name": "FOXO4_MOUSE",
+  "species": "mouse",
+  "symbol": "FOXO4"
+ },
+ "MOUSE66632": {
+  "is_tf": false,
+  "name": "RGN_MOUSE",
+  "species": "mouse",
+  "symbol": "RGN"
+ },
+ "MOUSE66635": {
+  "is_tf": false,
+  "name": "IL2RG_MOUSE",
+  "species": "mouse",
+  "symbol": "IL2RG"
+ },
+ "MOUSE66656": {
+  "is_tf": false,
+  "name": "CXB1_MOUSE",
+  "species": "mouse",
+  "symbol": "GJB1"
+ },
+ "MOUSE66666": {
+  "is_tf": false,
+  "name": "SYN1_MOUSE",
+  "species": "mouse",
+  "symbol": "SYN1"
+ },
+ "MOUSE66667": {
+  "is_tf": false,
+  "name": "TIMP1_MOUSE",
+  "species": "mouse",
+  "symbol": "TIMP1"
+ },
+ "MOUSE66733": {
+  "is_tf": false,
+  "name": "CXCR3_MOUSE",
+  "species": "mouse",
+  "symbol": "CXCR3"
+ },
+ "MOUSE66758": {
+  "is_tf": false,
+  "name": "HDAC8_MOUSE",
+  "species": "mouse",
+  "symbol": "HDAC8"
+ },
+ "MOUSE66825": {
+  "is_tf": false,
+  "name": "SOX3_MOUSE",
+  "species": "mouse",
+  "symbol": "SOX3"
+ }
+}

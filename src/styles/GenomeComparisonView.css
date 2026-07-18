@@ -70,6 +70,7 @@
 .sw-tf { background: var(--accent); height: 10px; width: 3px; }
 .sw-1to1 { background: var(--success); }
 .sw-multi { background: var(--accent); }
+.sw-synteny { background: var(--primary); }
 
 .genome-summary {
   font-size: var(--text-base);

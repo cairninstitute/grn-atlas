@@ -7,9 +7,14 @@ OMA is used because it provides genomic coordinates AND pairwise orthologs from 
 single interface, and spans all domains of life (so human<->Arabidopsis, a
 cross-kingdom comparison, is covered -- unlike Ensembl Compara).
 
+This covers the animal side (human, mouse) plus the cross-kingdom bridge to
+Arabidopsis. Plant species (Arabidopsis<->tomato<->petunia) come from PLAZA via
+fetch_plaza_data.py, since OMA lacks petunia.
+
 Outputs (under backend/data/):
   - genome_positions.json : { gene_id: {species, chromosome, start, end, strand} }
   - orthologs.json        : [ {gene_a, species_a, gene_b, species_b, rel_type, score} ]
+  - genome_genes.json     : { gene_id: {species, symbol, name, is_tf} }  (new species only)
 
 The script is resumable: progress is checkpointed to .oma_cache.json, so it is
 safe to interrupt and re-run (already-resolved genes are skipped).
@@ -33,14 +38,18 @@ DATA_DIR = Path(__file__).parent.parent / "data"
 DB_PATH = DATA_DIR / "grn.sqlite3"
 POSITIONS_JSON = DATA_DIR / "genome_positions.json"
 ORTHOLOGS_JSON = DATA_DIR / "orthologs.json"
+GENES_JSON = DATA_DIR / "genome_genes.json"
 CACHE_JSON = DATA_DIR / ".oma_cache.json"
 
 API = "https://omabrowser.org/api"
 
-# Map our internal species names -> OMA genome codes. Extend as species are added.
-OMA_CODE = {
-    "human": "HUMAN",
-    "arabidopsis": "ARATH",
+# Target species to capture from each human gene's ortholog list, keyed by OMA
+# genome code. "id_kind" controls how target genes are identified:
+#   - "agi":   Arabidopsis, already in our DB (join on AGI locus id)
+#   - "omaid": a new species; genes are inserted keyed by their OMA id
+TARGETS = {
+    "ARATH": {"species": "arabidopsis", "id_kind": "agi"},
+    "MOUSE": {"species": "mouse", "id_kind": "omaid"},
 }
 
 AGI_RE = re.compile(r"^AT[1-5CM]G\d{5}$", re.IGNORECASE)
@@ -79,10 +88,9 @@ class Cache:
         if path.exists():
             self.data = json.loads(path.read_text())
         else:
-            self.data = {"positions": {}, "orthologs": {}, "omaid_to_agi": {}, "done_human": []}
-        self.data.setdefault("positions", {})
-        self.data.setdefault("orthologs", {})
-        self.data.setdefault("omaid_to_agi", {})
+            self.data = {}
+        for key in ("positions", "orthologs", "genes", "omaid_to_agi"):
+            self.data.setdefault(key, {})
         self.data.setdefault("done_human", [])
 
     def save(self):
@@ -92,7 +100,8 @@ class Cache:
 def load_db_genes():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
-    human = [r["id"] for r in conn.execute("SELECT id FROM genes WHERE species='human'")]
+    human = {r["id"]: bool(r["is_tf"])
+             for r in conn.execute("SELECT id, is_tf FROM genes WHERE species='human'")}
     arab = {r["id"].upper() for r in conn.execute("SELECT id FROM genes WHERE species='arabidopsis'")}
     conn.close()
     return human, arab
@@ -144,11 +153,10 @@ def find_human_entry(symbol):
     return pool[0]["entry_nr"] if pool else None
 
 
-def process_symbol(symbol, arab_ids, cache):
-    """Fetch coords + Arabidopsis orthologs for one human gene. Returns a dict
-    of results to be merged into the cache by the main thread."""
-    ARATH = OMA_CODE["arabidopsis"]
-    out = {"positions": {}, "orthologs": {}}
+def process_symbol(symbol, is_tf, arab_ids, cache):
+    """Fetch coords + orthologs (in all TARGETS species) for one human gene.
+    Returns a dict of results to be merged into the cache by the main thread."""
+    out = {"positions": {}, "orthologs": {}, "genes": {}}
     entry_nr = find_human_entry(symbol)
     if not entry_nr:
         return out
@@ -156,18 +164,30 @@ def process_symbol(symbol, arab_ids, cache):
     loc = loc_of(prot) if prot else None
     if loc:
         out["positions"][symbol] = {"species": "human", **loc}
+
     for o in http_get(f"{API}/protein/{entry_nr}/orthologs/") or []:
-        if o.get("species", {}).get("code") != ARATH:
+        target = TARGETS.get(o.get("species", {}).get("code"))
+        if not target:
             continue
-        agi = resolve_agi(o["omaid"], cache)
-        if not agi or agi.upper() not in arab_ids:
-            continue
-        aloc = loc_of(o)
-        if aloc:
-            out["positions"][agi] = {"species": "arabidopsis", **aloc}
-        out["orthologs"][f"{symbol}|{agi}"] = {
+        species = target["species"]
+        if target["id_kind"] == "agi":
+            gene_id = resolve_agi(o["omaid"], cache)
+            if not gene_id or gene_id.upper() not in arab_ids:
+                continue
+        else:  # new species keyed by OMA id
+            gene_id = o["omaid"]
+            out["genes"][gene_id] = {
+                "species": species,
+                "symbol": symbol,  # aligned to the human ortholog for comparison
+                "name": o.get("canonicalid") or symbol,
+                "is_tf": is_tf,
+            }
+        oloc = loc_of(o)
+        if oloc:
+            out["positions"][gene_id] = {"species": species, **oloc}
+        out["orthologs"][f"{symbol}|{gene_id}"] = {
             "gene_a": symbol, "species_a": "human",
-            "gene_b": agi, "species_b": "arabidopsis",
+            "gene_b": gene_id, "species_b": species,
             "rel_type": o.get("rel_type", ""),
             "score": o.get("score"),
         }
@@ -181,17 +201,19 @@ def main():
     pending = [s for s in human_genes if s not in done]
 
     print(f"Human genes: {len(human_genes)} ({len(done)} done, {len(pending)} pending)")
-    print(f"Arabidopsis genes in DB: {len(arab_ids)}")
+    print(f"Targets: {', '.join(t['species'] for t in TARGETS.values())}")
 
     processed = len(done)
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        futures = {pool.submit(process_symbol, s, arab_ids, cache): s for s in pending}
+        futures = {pool.submit(process_symbol, s, human_genes[s], arab_ids, cache): s
+                   for s in pending}
         for fut in as_completed(futures):
             symbol = futures[fut]
             try:
                 out = fut.result()
                 cache.data["positions"].update(out["positions"])
                 cache.data["orthologs"].update(out["orthologs"])
+                cache.data["genes"].update(out["genes"])
             except Exception as e:  # keep going; resumable
                 print(f"  ! {symbol}: {e}")
             done.add(symbol)
@@ -201,7 +223,8 @@ def main():
                 cache.save()
                 print(f"  {processed}/{len(human_genes)} processed, "
                       f"{len(cache.data['positions'])} positions, "
-                      f"{len(cache.data['orthologs'])} ortholog pairs")
+                      f"{len(cache.data['orthologs'])} orthologs, "
+                      f"{len(cache.data['genes'])} new-species genes")
 
     cache.data["done_human"] = sorted(done)
     cache.save()
@@ -211,8 +234,10 @@ def main():
     ORTHOLOGS_JSON.write_text(json.dumps(
         sorted(cache.data["orthologs"].values(), key=lambda o: (o["gene_a"], o["gene_b"])),
         indent=1))
+    GENES_JSON.write_text(json.dumps(cache.data["genes"], indent=1, sort_keys=True))
     print(f"Wrote {POSITIONS_JSON} ({len(cache.data['positions'])} positions)")
     print(f"Wrote {ORTHOLOGS_JSON} ({len(cache.data['orthologs'])} ortholog pairs)")
+    print(f"Wrote {GENES_JSON} ({len(cache.data['genes'])} new-species genes)")
 
 
 if __name__ == "__main__":
