@@ -38,7 +38,9 @@ POSITIONS_JSON = DATA_DIR / "plaza_positions.json"
 ORTHOLOGS_JSON = DATA_DIR / "orthologs_plaza.json"
 GENES_JSON = DATA_DIR / "genome_genes_plaza.json"
 SYMBOLS_JSON = DATA_DIR / "gene_symbols_plaza.json"
+ORTHOLOG_MAP_JSON = DATA_DIR / "ortholog_map_plaza.json"
 MAX_SYMBOLS_PER_GENE = 8
+MAX_ORTHOLOGS_PER_GENE = 3   # cap plant orthologs per Arabidopsis gene (per species)
 
 BASE = "https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_04_5"
 # Anchor points = synteny-based colinear gene pairs. Chosen over the gene-family
@@ -310,11 +312,14 @@ def load_ath_symbols():
     return syms
 
 
-def infer_plant_symbols(ath_symbols, keep_ids):
-    """Stream BHIF orthology and map each tomato/petunia gene to the Arabidopsis
-    symbols of its ortholog(s). Restricted to genes we actually keep."""
-    mapping = defaultdict(OrderedDict)  # plant_gene -> ordered set of symbols
-    print("Streaming BHIF orthology for symbol transfer (large file)…")
+def stream_bhif(ath_symbols, keep_ids, arab_ids):
+    """Single BHIF pass producing two things:
+      - symbols: {plant_gene: [Arabidopsis symbols]} (for search)
+      - omap:    {AGI: {species: [plant genes]}} for Arabidopsis genes in our
+                 regulatory set, used to project the Arabidopsis network."""
+    symbols = defaultdict(OrderedDict)
+    omap = defaultdict(lambda: defaultdict(list))
+    print("Streaming BHIF orthology (large file)…")
     for line in stream_lines(BHIF_URL):
         if not line or line.startswith("#"):
             continue
@@ -323,19 +328,26 @@ def infer_plant_symbols(ath_symbols, keep_ids):
             continue
         qg, qs, og, os_ = p[0], p[1], p[2], p[3]
         if qs == "ath" and os_ in NEW_SPECIES:
-            agi, plant = qg, og
+            agi, plant, plant_code = qg, og, os_
         elif os_ == "ath" and qs in NEW_SPECIES:
-            agi, plant = og, qg
+            agi, plant, plant_code = og, qg, qs
         else:
             continue
         if plant not in keep_ids:
             continue
-        for s in ath_symbols.get(agi.upper(), []):
-            if len(mapping[plant]) < MAX_SYMBOLS_PER_GENE:
-                mapping[plant][s] = None
-    out = {gid: list(syms) for gid, syms in mapping.items() if syms}
-    print(f"  inferred symbols for {len(out)} tomato/petunia genes")
-    return out
+        agi_u = agi.upper()
+        for s in ath_symbols.get(agi_u, []):
+            if len(symbols[plant]) < MAX_SYMBOLS_PER_GENE:
+                symbols[plant][s] = None
+        if agi_u in arab_ids:
+            lst = omap[agi_u][PLAZA_SPECIES[plant_code]]
+            if plant not in lst and len(lst) < MAX_ORTHOLOGS_PER_GENE:
+                lst.append(plant)
+    sym_out = {gid: list(s) for gid, s in symbols.items() if s}
+    omap_out = {agi: dict(sp) for agi, sp in omap.items()}
+    print(f"  inferred symbols for {len(sym_out)} genes; "
+          f"ortholog map for {len(omap_out)} Arabidopsis genes")
+    return sym_out, omap_out
 
 
 def main():
@@ -372,19 +384,22 @@ def main():
     located_ids = set(positions)
     pairs = [p for p in pairs if p["gene_a"] in located_ids and p["gene_b"] in located_ids]
 
-    # Inferred Arabidopsis symbols (e.g. CHS) for tomato/petunia, via BHIF.
+    # Single BHIF pass: inferred Arabidopsis symbols (e.g. CHS) for search, and
+    # an Arabidopsis->plant ortholog map used to project the regulatory network.
     ath_symbols = load_ath_symbols()
-    inferred_symbols = infer_plant_symbols(ath_symbols, set(genes))
+    inferred_symbols, ortholog_map = stream_bhif(ath_symbols, set(genes), arab_ids)
 
     POSITIONS_JSON.write_text(json.dumps(positions, indent=1, sort_keys=True))
     ORTHOLOGS_JSON.write_text(json.dumps(
         sorted(pairs, key=lambda p: (p["gene_a"], p["gene_b"])), indent=1))
     GENES_JSON.write_text(json.dumps(genes, indent=1, sort_keys=True))
     SYMBOLS_JSON.write_text(json.dumps(inferred_symbols, indent=1, sort_keys=True))
+    ORTHOLOG_MAP_JSON.write_text(json.dumps(ortholog_map, indent=1, sort_keys=True))
     print(f"Wrote {POSITIONS_JSON} ({len(positions)} positions)")
     print(f"Wrote {ORTHOLOGS_JSON} ({len(pairs)} ortholog pairs)")
     print(f"Wrote {GENES_JSON} ({len(genes)} tomato/petunia genes)")
     print(f"Wrote {SYMBOLS_JSON} ({len(inferred_symbols)} genes with inferred symbols)")
+    print(f"Wrote {ORTHOLOG_MAP_JSON} ({len(ortholog_map)} Arabidopsis genes mapped)")
 
 
 if __name__ == "__main__":

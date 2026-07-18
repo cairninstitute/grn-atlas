@@ -318,6 +318,14 @@
   font-weight: 500;
 }
 
+/* Orthology-projected (inferred) edges — visually distinct from measured ones. */
+.source-tag.inferred {
+  background-color: var(--bg-warning);
+  color: var(--warning-dark);
+  border: 1px dashed var(--warning-dark);
+  cursor: help;
+}
+
 /* Expand Button */
 .expand-button {
   padding: 6px 12px;

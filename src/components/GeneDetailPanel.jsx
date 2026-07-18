@@ -175,7 +175,13 @@ export default function GeneDetailPanel({ gene, data }) {
               {regulator.source_databases && regulator.source_databases.length > 0 && (
                 <div className="interaction-sources">
                   {regulator.source_databases.map((source, idx) => (
-                    <span key={idx} className="source-tag">{source}</span>
+                    <span
+                      key={idx}
+                      className={`source-tag ${source.startsWith('Inferred') ? 'inferred' : ''}`}
+                      title={source.startsWith('Inferred')
+                        ? 'Predicted by projecting the Arabidopsis network through orthology — not measured'
+                        : undefined}
+                    >{source.startsWith('Inferred:') ? 'Inferred (Arabidopsis)' : source}</span>
                   ))}
                 </div>
               )}
@@ -234,7 +240,13 @@ export default function GeneDetailPanel({ gene, data }) {
               {target.source_databases && target.source_databases.length > 0 && (
                 <div className="interaction-sources">
                   {target.source_databases.map((source, idx) => (
-                    <span key={idx} className="source-tag">{source}</span>
+                    <span
+                      key={idx}
+                      className={`source-tag ${source.startsWith('Inferred') ? 'inferred' : ''}`}
+                      title={source.startsWith('Inferred')
+                        ? 'Predicted by projecting the Arabidopsis network through orthology — not measured'
+                        : undefined}
+                    >{source.startsWith('Inferred:') ? 'Inferred (Arabidopsis)' : source}</span>
                   ))}
                 </div>
               )}

@@ -24,6 +24,12 @@ HUMAN_NAMES_JSON = DATA_DIR / "gene_names.json"
 ARABIDOPSIS_TSV = DATA_DIR / "regulation_arabidopsis.tsv"
 ARABIDOPSIS_NAMES_JSON = DATA_DIR / "gene_names_arabidopsis.json"
 
+# Tomato (PlantRegMap FunTFBS; see fetch_tomato_regulation.py). Optional.
+TOMATO_TSV = DATA_DIR / "regulation_tomato.tsv"
+# Arabidopsis->plant ortholog map for projecting the network onto tomato/petunia.
+ORTHOLOG_MAP_JSON = DATA_DIR / "ortholog_map_plaza.json"
+INFERRED_CONF_FACTOR = 0.7   # confidence penalty for orthology-projected edges
+
 # ATRM direction labels (literature-curated activation/repression)
 ATRM_TSV = DATA_DIR / "atrm_regulations.tsv"
 
@@ -135,10 +141,26 @@ def load_arabidopsis_edges():
     return edges
 
 
+def load_tomato_edges():
+    """Real tomato TF-target edges from PlantRegMap FunTFBS (optional file)."""
+    if not TOMATO_TSV.exists():
+        return []
+    edges = []
+    with open(TOMATO_TSV) as f:
+        for line in f:
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) < 4:
+                continue
+            tf, target, reg, conf = parts[0], parts[1], parts[2], float(parts[3])
+            edges.append((tf, target, reg, conf, "PlantRegMap"))
+    return edges
+
+
 def build():
     # Load edges
     human_edges = load_human_edges()
     arab_edges = load_arabidopsis_edges()
+    tomato_edges = load_tomato_edges()
 
     # Load gene names
     human_names = json.loads(HUMAN_NAMES_JSON.read_text())
@@ -245,8 +267,8 @@ def build():
         if arab_symbol(locus).upper() != locus.upper()
     }
 
-    # Insert all interactions
-    all_edges = human_edges + arab_edges
+    # Insert all interactions (human + Arabidopsis + real tomato)
+    all_edges = human_edges + arab_edges + tomato_edges
     conn.executemany(
         "INSERT OR IGNORE INTO interactions (source_id, target_id, regulation_type, confidence, sources) VALUES (?, ?, ?, ?, ?)",
         [(tf, target, reg, conf, json.dumps([src])) for tf, target, reg, conf, src in all_edges],
@@ -269,6 +291,34 @@ def build():
     )
 
     valid_ids = set(human_genes) | set(arab_all) | set(extra_genes)
+
+    # Project the Arabidopsis regulatory network onto tomato/petunia via the
+    # Arabidopsis->plant ortholog map: if AtTF regulates AtTarget and both have a
+    # plant ortholog in the same species, infer an edge between them. Clearly
+    # labeled (source "Inferred:Arabidopsis") and confidence-penalised so it is
+    # never mistaken for measured regulation.
+    omap = load_json(ORTHOLOG_MAP_JSON)  # {AGI(upper): {species: [plant genes]}}
+    inferred_edges = []
+    for tf, target, reg, conf, _src in arab_edges:
+        tf_orth = omap.get(tf.upper(), {})
+        tg_orth = omap.get(target.upper(), {})
+        for species in ("tomato", "petunia"):
+            for a in tf_orth.get(species, []):
+                for b in tg_orth.get(species, []):
+                    if a != b:
+                        inferred_edges.append(
+                            (a, b, reg, round(conf * INFERRED_CONF_FACTOR, 2)))
+    conn.executemany(
+        "INSERT OR IGNORE INTO interactions (source_id, target_id, regulation_type, confidence, sources) "
+        "VALUES (?, ?, ?, ?, ?)",
+        [(a, b, reg, conf, json.dumps(["Inferred:Arabidopsis"]))
+         for a, b, reg, conf in inferred_edges],
+    )
+
+    # Mark genes that act as a regulator (source of any real or inferred edge) as
+    # transcription factors, so the UI badges them.
+    tf_ids = {tf for tf, *_ in tomato_edges} | {a for a, *_ in inferred_edges}
+    conn.executemany("UPDATE genes SET is_tf = 1 WHERE id = ?", [(t,) for t in tf_ids])
 
     # Coordinates: merge OMA (animal) + PLAZA (plant). PLAZA wins on overlap.
     # Normalize chromosome names to a canonical short form so different sources
@@ -360,6 +410,8 @@ def build():
     print(f"Built {DB_PATH}:")
     print(f"  Human: {len(human_genes)} genes, {len(human_edges)} interactions")
     print(f"  Arabidopsis: {len(arab_all)} genes, {len(arab_edges)} interactions")
+    print(f"  Tomato (real, PlantRegMap): {len(tomato_edges)} interactions")
+    print(f"  Inferred (projected from Arabidopsis): {len(inferred_edges)} interactions")
     print(f"  Extra species genes: {len(extra_genes)}")
     print(f"  Total: {len(human_genes) + len(arab_all) + len(extra_genes)} genes")
 
