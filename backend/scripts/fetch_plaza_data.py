@@ -43,6 +43,7 @@ BASE = "https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_04_5"
 # for a chromosome-vs-chromosome comparison.
 ANCHOR_URL = f"{BASE}/IntegrativeOrthology/integrative_orthology.anchor_point.csv.gz"
 GFF_URL = "{base}/GFF/{sp}/annotation.selected_transcript.all_features.{sp}.gff3.gz"
+DESC_URL = "{base}/Descriptions/gene_description.{sp}.csv.gz"
 
 # PLAZA 3-letter code -> our internal species name. 'ath' already exists in the
 # DB (Arabidopsis); 'sly'/'pax' are new species inserted by build_db.
@@ -118,6 +119,22 @@ def load_orthologs(arab_ids):
         referenced.add((os_, og))
     print(f"  kept {len(pairs)} cross-species ortholog pairs")
     return pairs, referenced
+
+
+def load_descriptions(sp):
+    """Return {gene_id: functional description} from PLAZA. These are the only
+    human-readable names available for tomato/petunia (there are no short gene
+    symbols), so they double as the searchable gene name."""
+    desc = {}
+    print(f"Downloading {sp} gene descriptions…")
+    for line in stream_lines(DESC_URL.format(base=BASE, sp=sp)):
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split("\t")
+        if len(parts) >= 3 and parts[1] == "description" and parts[2]:
+            desc.setdefault(parts[0], parts[2])
+    print(f"  {sp}: {len(desc)} descriptions")
+    return desc
 
 
 def parse_gff(sp, wanted_ids):
@@ -275,12 +292,14 @@ def main():
             located = lift_petunia(located, petunia_lift)
         elif sp in NEW_SPECIES:
             located, _ = cap_scaffolds(located)  # fallback (e.g. Hi-C unavailable)
+        # Functional descriptions serve as the searchable name for new species.
+        descriptions = load_descriptions(sp) if sp in NEW_SPECIES else {}
         for gid, (chrom, start, end, strand, symbol) in located.items():
             positions[gid] = {"species": species, "chromosome": chrom,
                               "start": start, "end": end, "strand": strand}
             if sp in NEW_SPECIES:
                 genes[gid] = {"species": species, "symbol": symbol,
-                             "name": symbol, "is_tf": False}
+                             "name": descriptions.get(gid, symbol), "is_tf": False}
 
     # Drop ortholog pairs whose genes were not located (e.g. capped-out petunia).
     located_ids = set(positions)
