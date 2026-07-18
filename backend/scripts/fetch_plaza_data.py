@@ -11,9 +11,11 @@ per-species GFF annotations, and its Arabidopsis gene ids are AGI locus codes
 the shared join point between the OMA (animal) and PLAZA (plant) data.
 
 The PLAZA petunia annotation (P. axillaris v1.6.2) is scaffold-level. We lift its
-gene coordinates onto 7 chromosomes using the DNA Zoo Hi-C .assembly file (same
-v1.6.2 annotation, so gene ids are identical and PLAZA orthology is preserved).
-If that file is unavailable, petunia falls back to its largest scaffolds.
+gene coordinates onto 7 chromosomes using the DNA Zoo Hi-C .assembly (same v1.6.2
+annotation, so gene ids are identical and PLAZA orthology is preserved). That
+assembly is vendored gzipped in backend/data/ so the build needs no third-party
+host; if the local copy is missing it is downloaded, and if that also fails
+petunia falls back to its largest scaffolds.
 
 Outputs (under backend/data/):
   - plaza_positions.json     : { gene_id: {species, chromosome, start, end, strand} }
@@ -55,7 +57,10 @@ UA = {"User-Agent": "grn-atlas-build/1.0 (genome data enrichment)"}
 
 # DNA Zoo Hi-C assembly of P. axillaris v1.6.2 (7 chromosomes). 3D-DNA .assembly
 # format: scaffolds split into fragments, ordered/oriented into super-scaffolds.
-PETUNIA_HIC_ASSEMBLY = (
+# Vendored (gzipped) into the repo so the build is self-contained; the remote
+# URL is only a fallback if the local copy is missing.
+PETUNIA_HIC_LOCAL = DATA_DIR / "petunia_axillaris_v1.6.2_hic.assembly.gz"
+PETUNIA_HIC_URL = (
     "https://www.dropbox.com/s/81n270pmo0ssej2/"
     "Petunia_axillaris_v1.6.2_genome_HiC.assembly?dl=1"
 )
@@ -147,13 +152,18 @@ def build_petunia_lift():
       lift(scaffold, pos) -> (chrom_name, chrom_pos) or None
       chrom_len          -> {chrom_name: length}
     Returns (None, None) if the assembly cannot be fetched/parsed."""
-    print("Downloading petunia Hi-C assembly (for scaffold->chromosome liftover)…")
     try:
-        req = urllib.request.Request(PETUNIA_HIC_ASSEMBLY, headers=UA)
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            raw = resp.read().decode("utf-8", "replace")
+        if PETUNIA_HIC_LOCAL.exists():
+            print(f"Reading vendored petunia Hi-C assembly ({PETUNIA_HIC_LOCAL.name})…")
+            with gzip.open(PETUNIA_HIC_LOCAL, "rt", encoding="utf-8", errors="replace") as fh:
+                raw = fh.read()
+        else:
+            print("Downloading petunia Hi-C assembly (no vendored copy found)…")
+            req = urllib.request.Request(PETUNIA_HIC_URL, headers=UA)
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                raw = resp.read().decode("utf-8", "replace")
     except Exception as e:
-        print(f"  ! could not fetch Hi-C assembly ({e}); falling back to scaffolds")
+        print(f"  ! could not load Hi-C assembly ({e}); falling back to scaffolds")
         return None, None
 
     frags = {}          # cprops index -> (scaffold, length)
