@@ -250,10 +250,11 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 | 30 | `grn-coverage-report` | Score whether a species has the right loaded layers for an analysis intent |
 | 31 | `grn-candidate-triage` | Rank a candidate gene list for a research intent |
 | 32 | `grn-experiment-prioritization` | Recommend next analyses or experiments for selected genes |
-| 33 | `grn-research-brief` | Build a structured multi-step research and experiment brief |
-| 34 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
-| 35 | `grn-study-packet` | Assemble a shareable collaborator handoff packet with brief, plan, and citations |
-| 36 | `grn-study-report` | Turn a study packet into a collaborator-facing narrative report with markdown |
+| 33 | `grn-hypothesis-compare` | Compare competing candidate hypotheses and explain the current winner |
+| 34 | `grn-research-brief` | Build a structured multi-step research and experiment brief |
+| 35 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
+| 36 | `grn-study-packet` | Assemble a shareable collaborator handoff packet with brief, plan, and citations |
+| 37 | `grn-study-report` | Turn a study packet into a collaborator-facing narrative report with markdown |
 
 ## Agent skills
 

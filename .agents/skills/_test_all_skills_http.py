@@ -683,6 +683,28 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# GRN-HYPOTHESIS-COMPARE (HTTP)
+# =====================================================================
+r = run_skill("grn-hypothesis-compare",
+              ["--gene-ids", "TP53,MDM2,BAX", "--intent", "experiment"],
+              "hypothesis compare: TP53,MDM2,BAX HTTP")
+grade(r, [
+    ("has winner", lambda d: d.get("winner", {}).get("gene_id") == "TP53"),
+    ("has pairwise comparisons", lambda d: len(d.get("pairwise_comparisons", [])) > 0),
+    ("has overturn conditions", lambda d: len(d.get("overturn_conditions", [])) > 0),
+])
+results.append(r)
+
+r = run_skill("grn-hypothesis-compare",
+              ["--gene-ids", "Peaxi162Scf00118g00310,Peaxi162Scf00450g00110", "--intent", "rnai", "--species", "petunia"],
+              "hypothesis compare: petunia rnai HTTP")
+grade(r, [
+    ("has comparison table", lambda d: len(d.get("comparison_table", [])) > 0),
+    ("has summary", lambda d: len(d.get("summary", [])) > 0),
+])
+results.append(r)
+
+# =====================================================================
 # GRN-RESEARCH-BRIEF (HTTP)
 # =====================================================================
 r = run_skill("grn-research-brief",

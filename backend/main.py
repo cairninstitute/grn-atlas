@@ -17,6 +17,7 @@ import briefing
 import validation
 import packet
 import reporting
+import hypothesis
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1259,6 +1260,29 @@ async def study_report(request: StudyReportRequest):
     if not request.gene_ids:
         raise HTTPException(status_code=400, detail="gene_ids is required")
     return reporting.build_study_report(
+        db,
+        request.gene_ids,
+        intent=request.intent,
+        species=request.species,
+        max_candidates=request.max_candidates,
+        max_experiments=request.max_experiments,
+    )
+
+
+class HypothesisCompareRequest(BaseModel):
+    gene_ids: List[str]
+    intent: str = "experiment"
+    species: Optional[str] = None
+    max_candidates: int = Field(5, ge=1, le=20)
+    max_experiments: int = Field(3, ge=1, le=10)
+
+
+@app.post("/api/v1/research/hypothesis-compare")
+async def hypothesis_compare(request: HypothesisCompareRequest):
+    """Compare competing candidate hypotheses for the same research intent."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return hypothesis.compare_hypotheses(
         db,
         request.gene_ids,
         intent=request.intent,

@@ -298,6 +298,26 @@ else:
          "checks": [{"check": "execution", "pass": False}], "time_s": 0}
 results.append(r)
 
+# Test: hypothesis comparison agrees with candidate triage on the lead candidate
+r_hcmp = run_skill("grn-hypothesis-compare",
+                   ["--gene-ids", "TP53,BAX,MDM2", "--intent", "network"],
+                   "consistency: hypothesis compare TP53,BAX,MDM2")
+
+if r_hcmp["status"] == "OK" and r_triage["status"] == "OK":
+    cmp_lead = r_hcmp["data"].get("winner", {}).get("gene_id")
+    triage_lead = r_triage["data"].get("ranked_candidates", [{}])[0].get("gene_id")
+    r = {"skill": "cross-skill", "label": "consistency: hypothesis compare lead matches triage",
+         "status": "OK", "data": {"compare": cmp_lead, "triage": triage_lead},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("lead matches", lambda d: cmp_lead == triage_lead),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: hypothesis compare lead matches triage",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
 # Test: petunia RNAi prioritization surfaces dsRNA design when coverage says expression exists
 r_cov_rnai = run_skill("grn-coverage-report",
                        ["--species", "petunia", "--intent", "rnai"],

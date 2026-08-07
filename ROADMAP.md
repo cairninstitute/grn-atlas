@@ -172,6 +172,47 @@ data-free item ships first, then the expression linchpin, then the rest.
 
 ## 5. Iteration Log
 
+## 5A. Sprint 7–11 researcher-skill expansion plan
+
+- **Sprint 7 — Hypothesis comparison**
+  - Add a skill to compare two or more candidate genes/mechanisms/gene sets for the
+    same research intent.
+  - Output: ranked comparison, decisive evidence differences, conflicting signals,
+    confidence delta, and a recommended winner with overturn conditions.
+  - Validation: unit/API tests plus direct/HTTP skill coverage and one cross-skill
+    consistency check against existing triage/brief outputs.
+
+- **Sprint 8 — Confidence boundary / negative-result analysis**
+  - Add a skill to state what the atlas can and cannot support for a question.
+  - Output: supported claims, unsupported claims, ambiguity sources, missing layers,
+    safe interpretations, and concrete data needed to reduce uncertainty.
+  - Validation: unit/API tests plus direct/HTTP skill coverage on both strong and weak
+    evidence scenarios.
+
+- **Sprint 9 — Cross-species transferability**
+  - Add a skill to assess whether a regulatory claim or candidate can be transferred
+    from one species to another.
+  - Output: transferability score, conserved support, missing assumptions,
+    species-specific caveats, and recommended validation steps in the target species.
+  - Validation: unit/API tests plus direct/HTTP skill coverage and integration checks
+    against orthology/conservation outputs.
+
+- **Sprint 10 — Minimal validation path**
+  - Add a skill to convert a candidate and intent into the smallest defensible
+    execution path for follow-up.
+  - Output: minimal first step, prerequisite checks, blocker list, stop/go gates,
+    cheaper alternatives, and escalation path if the first step fails.
+  - Validation: unit/API tests plus direct/HTTP skill coverage and consistency with
+    validation-plan outputs.
+
+- **Sprint 11 — Evidence synthesis**
+  - Add a skill to synthesize atlas-backed evidence into a paper-style summary for a
+    gene or gene set without pretending to do external literature retrieval.
+  - Output: support summary, contradictory/weak evidence summary, source-backed
+    narrative, PMIDs/citations already present in the atlas, and reporting caveats.
+  - Validation: unit/API tests plus direct/HTTP skill coverage and consistency with
+    evidence-audit/provenance outputs.
+
 - **2026-08-07** — Shipped **research-readiness / evidence audit layer**. Added
   `backend/evidence.py` + `GET /api/v1/evidence/audit` to summarize support for a
   gene or edge across curated interactions, projected/inferred layers, motifs,
@@ -232,6 +273,15 @@ data-free item ships first, then the expression linchpin, then the rest.
   closes the last gap between machine-structured planning output and something a
   PI or collaborator can directly read, review, and forward. Validation: targeted
   report unit/API tests, plus direct + HTTP skill and integration regression.
+
+- **2026-08-07** — Shipped **hypothesis comparison workflow**. Added
+  `backend/hypothesis.py`, `POST /api/v1/research/hypothesis-compare`, and the
+  `grn-hypothesis-compare` skill to compare competing candidate genes for the same
+  intent using the existing triage, brief, and experiment-prioritization layers.
+  The output now explains the current winner, pairwise decisive factors, ranking
+  margins, and explicit overturn conditions instead of only returning independent
+  candidate scores. Validation: targeted comparison unit/API tests, plus direct +
+  HTTP skill and integration regression.
 
 - **2026-07-28** — **Human base-resolution binding (#45): assessed, deferred with a plan.**
   The useful ReMap-2022 human file (per-TF peaks) is 1.4 GB; the alternative JASPAR-vertebrate
