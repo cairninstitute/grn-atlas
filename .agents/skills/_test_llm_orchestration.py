@@ -22,6 +22,7 @@ import os
 import subprocess
 import sys
 import time
+import urllib.request
 from pathlib import Path
 
 SKILLS_DIR = Path(__file__).resolve().parent
@@ -1018,24 +1019,24 @@ QUESTIONS = [
 # ---------------------------------------------------------------------------
 
 def chat_completion(messages: list, model: str, api_key: str) -> dict:
-    import requests
-    resp = requests.post(
+    payload = json.dumps({
+        "model": model,
+        "messages": messages,
+        "tools": TOOLS,
+        "tool_choice": "auto",
+        "max_tokens": 4096,
+    }).encode("utf-8")
+    req = urllib.request.Request(
         OPENROUTER_URL,
+        data=payload,
         headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         },
-        json={
-            "model": model,
-            "messages": messages,
-            "tools": TOOLS,
-            "tool_choice": "auto",
-            "max_tokens": 4096,
-        },
-        timeout=120,
+        method="POST",
     )
-    resp.raise_for_status()
-    return resp.json()
+    with urllib.request.urlopen(req, timeout=120) as resp:
+        return json.loads(resp.read().decode("utf-8"))
 
 
 SYSTEM_PROMPT = """\

@@ -14,6 +14,7 @@ help:
 
 setup:
 	python3 -m venv venv
+	ln -sfn ../venv backend/venv
 	venv/bin/pip install -r backend/requirements.txt -r backend/requirements-dev.txt
 	npm install
 

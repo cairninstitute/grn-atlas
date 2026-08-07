@@ -14,7 +14,7 @@ npm install && npm run dev            # http://localhost:3001
 ```
 
 The backend needs `backend/data/grn.sqlite3` (gitignored, ~420 MB). Build it from the
-committed source caches (see below).
+fetched or locally supplied source caches (see below).
 
 ## Test
 
@@ -30,8 +30,8 @@ npx oxlint src/...                        # lint
 Third-party data is **not committed** (see LICENSE). Fetch it, then build:
 
 ```bash
-venv/bin/python backend/scripts/fetch_sources.py --tier light   # sources -> backend/data/ (network)
-venv/bin/python backend/scripts/build_db.py                     # deletes + rebuilds grn.sqlite3 (~10 s)
+venv/bin/python backend/scripts/fetch_sources.py --tier light   # sources -> backend/data/; bootstraps an intermediate DB on fresh clones
+venv/bin/python backend/scripts/build_db.py                     # final rebuild of grn.sqlite3 (~10 s)
 ```
 
 `build_db.py` is stdlib-only and glob-loads whatever caches are present in `backend/data/`
@@ -46,8 +46,9 @@ heavy layers below).
 
 ## Compute dependencies (only for regenerating derived data)
 
-These are **not** needed to run the app (the derived caches are committed), only to
-re-fetch/re-derive them:
+These are **not** needed to run the app once the corresponding caches already exist
+locally. A true fresh clone does not include those caches, so these tools are only needed
+when you choose to regenerate the heavy layers:
 
 - **kallisto** (expression + dsRNA transcript stores). Install a linux binary under
   `tools/kallisto/` (gitignored):

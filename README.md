@@ -24,8 +24,8 @@ python3 -m venv venv
 venv/bin/pip install -r backend/requirements.txt
 
 # 2. Fetch the source data (this repo does NOT redistribute third-party data), then build the DB
-venv/bin/python backend/scripts/fetch_sources.py --tier light   # pulls sources into backend/data/ (network, minutes)
-venv/bin/python backend/scripts/build_db.py                      # writes backend/data/grn.sqlite3 (gitignored)
+venv/bin/python backend/scripts/fetch_sources.py --tier light   # pulls sources into backend/data/ and bootstraps an intermediate DB on fresh clones
+venv/bin/python backend/scripts/build_db.py                      # final rebuild -> backend/data/grn.sqlite3 (gitignored)
 
 # 3. Run the API (http://localhost:8000, docs at /docs)
 cd backend && ../venv/bin/python -m uvicorn main:app --port 8000
@@ -107,7 +107,7 @@ confirm the build is complete.
   where col 1 = TF locus, col 2 = target locus, col 5 = direction label `A` / `R` / `D`.
   Source: ATRM (http://atrm.cbi.pku.edu.cn/). Skip if unavailable.
 
-Place both in `backend/data/`, then re-run `build_db.py`.
+Place both in `backend/data/`, then run `fetch_sources.py --tier light` and `build_db.py` again. The fetch script now bootstraps an intermediate database automatically on fresh clones so DB-dependent fetchers can resolve atlas gene IDs.
 
 ### Regenerating the heavy layers (optional)
 

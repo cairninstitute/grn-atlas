@@ -3,13 +3,16 @@ Shared utilities for GRN Atlas agent skills.
 
 Provides two execution modes:
   - Direct: import backend Python modules, query SQLite (no server needed)
-  - HTTP:   call the running FastAPI server via requests
+  - HTTP:   call the running FastAPI server via urllib (no extra dependency)
 """
 
 import argparse
 import json
 import os
 import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
@@ -25,30 +28,37 @@ def add_common_args(parser: argparse.ArgumentParser):
     )
 
 
-def http_get(base_url: str, path: str, params: dict | None = None):
-    import requests
-    r = requests.get(f"{base_url}{path}", params=params, timeout=30)
-    if not r.ok:
+def _http_json(method: str, base_url: str, path: str, payload: dict | None = None,
+               params: dict | None = None, timeout: int = 30):
+    url = f"{base_url}{path}"
+    if params:
+        query = urllib.parse.urlencode(params, doseq=True)
+        url = f"{url}?{query}"
+    data = None
+    headers = {"Accept": "application/json"}
+    if payload is not None:
+        data = json.dumps(payload).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(url, data=data, headers=headers, method=method)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", "replace")
         try:
-            err = r.json()
+            err = json.loads(body)
         except Exception:
-            err = {"error": r.text, "status_code": r.status_code}
+            err = {"error": body, "status_code": e.code}
         output(err)
         sys.exit(0)
-    return r.json()
+
+
+def http_get(base_url: str, path: str, params: dict | None = None):
+    return _http_json("GET", base_url, path, params=params, timeout=30)
 
 
 def http_post(base_url: str, path: str, payload: dict):
-    import requests
-    r = requests.post(f"{base_url}{path}", json=payload, timeout=60)
-    if not r.ok:
-        try:
-            err = r.json()
-        except Exception:
-            err = {"error": r.text, "status_code": r.status_code}
-        output(err)
-        sys.exit(0)
-    return r.json()
+    return _http_json("POST", base_url, path, payload=payload, timeout=60)
 
 
 def init_db():
