@@ -232,6 +232,49 @@ else:
          "checks": [{"check": "execution", "pass": False}], "time_s": 0}
 results.append(r)
 
+# Test: evidence audit agrees that TP53->BAX is supported when network/path exists
+r_audit = run_skill("grn-evidence-audit",
+                    ["--scope", "edge", "--source-id", "TP53", "--target-id", "BAX"],
+                    "consistency: evidence audit TP53->BAX")
+r_path = run_skill("grn-pathfinding",
+                   ["--source", "TP53", "--target", "BAX", "--max-depth", "1"],
+                   "consistency: pathfinding TP53->BAX")
+
+if r_audit["status"] == "OK" and r_path["status"] == "OK":
+    r = {"skill": "cross-skill", "label": "consistency: evidence audit aligns with direct TP53->BAX path",
+         "status": "OK", "data": {"audit": r_audit["data"]["summary"]["supported"], "paths": len(r_path["data"].get("paths", []))},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("audit supported", lambda d: d["audit"] is True),
+        ("has direct path", lambda d: d["paths"] > 0),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: evidence audit aligns with direct TP53->BAX path",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
+# Test: coverage report agrees with species capabilities for expression-ready species
+r_cov = run_skill("grn-coverage-report",
+                  ["--species", "arabidopsis", "--intent", "expression"],
+                  "consistency: coverage report arabidopsis expression")
+
+if r_cov["status"] == "OK" and r_species["status"] == "OK":
+    species_rows = {s["species"]: s for s in r_species["data"].get("species", [])}
+    expr_samples = species_rows["arabidopsis"]["layers"]["expression_samples"]
+    cov_samples = r_cov["data"]["available_layers"]["expression_samples"]
+    r = {"skill": "cross-skill", "label": "consistency: coverage report matches species expression counts",
+         "status": "OK", "data": {"species": expr_samples, "coverage": cov_samples},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("expression counts match", lambda d: d["species"] == d["coverage"]),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: coverage report matches species expression counts",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
 
 # =====================================================================
 # CATEGORY 3: Boundary / adversarial inputs

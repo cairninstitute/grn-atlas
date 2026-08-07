@@ -10,6 +10,8 @@ from fastapi.responses import PlainTextResponse, JSONResponse
 import provenance
 import expression
 import rnai
+import evidence
+import context
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1062,6 +1064,69 @@ async def get_freshness():
 async def get_citations():
     """BibTeX for every data source the atlas integrates."""
     return PlainTextResponse(provenance.bibtex(), media_type="application/x-bibtex")
+
+
+@app.get("/api/v1/evidence/audit")
+async def evidence_audit(
+    scope: str = Query(..., description="Audit scope: gene or edge"),
+    gene_id: Optional[str] = Query(None),
+    source_id: Optional[str] = Query(None),
+    target_id: Optional[str] = Query(None),
+    species: Optional[str] = Query(None),
+    depth: int = Query(1, ge=1),
+    debug: bool = Query(False),
+):
+    """Summarize which loaded atlas layers support a gene or regulatory edge."""
+    if scope == "gene":
+        if not gene_id:
+            raise HTTPException(status_code=400, detail="gene_id is required for scope=gene")
+        data = evidence.summarize_gene_evidence(db, gene_id)
+        if species and data.get("summary", {}).get("gene", {}).get("species") != species:
+            data.setdefault("coverage_gaps", []).append({
+                "layer": "species_filter",
+                "importance": "required",
+                "status": "mismatch",
+                "detail": f"Gene {gene_id} is not in species {species}.",
+            })
+            data.setdefault("notes", []).append("The requested species filter does not match the gene's species.")
+            data["confidence"] = evidence.confidence_from_evidence(data)
+    elif scope == "edge":
+        if not source_id or not target_id:
+            raise HTTPException(status_code=400, detail="source_id and target_id are required for scope=edge")
+        data = evidence.summarize_edge_evidence(db, source_id, target_id)
+        if species:
+            src_sp = data.get("summary", {}).get("source_gene", {}).get("species")
+            tgt_sp = data.get("summary", {}).get("target_gene", {}).get("species")
+            if src_sp and tgt_sp and (src_sp != species or tgt_sp != species):
+                data.setdefault("coverage_gaps", []).append({
+                    "layer": "species_filter",
+                    "importance": "required",
+                    "status": "mismatch",
+                    "detail": f"Edge {source_id}->{target_id} is not fully contained in species {species}.",
+                })
+                data.setdefault("notes", []).append("The requested species filter does not match the queried edge.")
+                data["confidence"] = evidence.confidence_from_evidence(data)
+    else:
+        raise HTTPException(status_code=400, detail="scope must be one of: gene, edge")
+
+    if debug:
+        data["debug"] = {
+            "scope": scope,
+            "depth": depth,
+            "species_filter": species,
+            "supporting_record_count": len(data.get("supporting_records", [])),
+        }
+    return data
+
+
+@app.get("/api/v1/coverage/report")
+async def coverage_report(
+    species: str = Query(...),
+    intent: str = Query(..., description="network|expression|motif|perturbation|orthology|traits|rnai|experiment"),
+    gene_id: Optional[str] = Query(None),
+):
+    """Readiness/coverage report for a species and analysis intent."""
+    return context.build_readiness_report(db, species, intent, gene_id)
 
 
 # ============= Gene-set analysis: subgraph + GO enrichment =============

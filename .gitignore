@@ -5,6 +5,7 @@ __pycache__/
 *.bak[0-9]
 venv/
 .venv/
+backend/venv
 *.egg-info/
 
 # Node

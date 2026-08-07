@@ -14,10 +14,9 @@ def main():
     args = parser.parse_args()
 
     if args.http:
-        import requests
-        resp = requests.get(f"{args.http}/api/v1/citations.bib")
-        resp.raise_for_status()
-        print(resp.text)
+        import urllib.request
+        with urllib.request.urlopen(f"{args.http}/api/v1/citations.bib", timeout=60) as resp:
+            print(resp.read().decode("utf-8"))
     else:
         sys.path.insert(0, str(common.BACKEND_DIR))
         import provenance

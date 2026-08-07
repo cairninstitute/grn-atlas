@@ -2511,6 +2511,57 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# GRN-EVIDENCE-AUDIT
+# =====================================================================
+r = run_skill("grn-evidence-audit",
+              ["--scope", "gene", "--gene-id", "TP53"],
+              "evidence audit: gene TP53")
+grade(r, [
+    ("supported gene", lambda d: d.get("summary", {}).get("supported") is True),
+    ("has confidence", lambda d: "confidence" in d),
+])
+results.append(r)
+
+r = run_skill("grn-evidence-audit",
+              ["--scope", "edge", "--source-id", "TP53", "--target-id", "BAX"],
+              "evidence audit: edge TP53->BAX")
+grade(r, [
+    ("has support counts", lambda d: "support_counts" in d.get("evidence_summary", {})),
+    ("edge supported", lambda d: d.get("summary", {}).get("supported") is True),
+])
+results.append(r)
+
+r = run_skill("grn-evidence-audit",
+              ["--scope", "edge", "--source-id", "TP53", "--target-id", "NOPE"],
+              "evidence audit: missing target")
+grade(r, [
+    ("unsupported edge", lambda d: d.get("confidence", {}).get("label") == "unsupported"),
+    ("reports coverage gaps", lambda d: len(d.get("coverage_gaps", [])) > 0),
+])
+results.append(r)
+
+# =====================================================================
+# GRN-COVERAGE-REPORT
+# =====================================================================
+r = run_skill("grn-coverage-report",
+              ["--species", "arabidopsis", "--intent", "expression"],
+              "coverage report: arabidopsis expression")
+grade(r, [
+    ("has readiness score", lambda d: "readiness_score" in d),
+    ("score positive", lambda d: d.get("readiness_score", 0) > 0),
+])
+results.append(r)
+
+r = run_skill("grn-coverage-report",
+              ["--species", "human", "--intent", "traits"],
+              "coverage report: human traits")
+grade(r, [
+    ("has recommended skills", lambda d: len(d.get("recommended_skills", [])) > 0),
+    ("traits layer available", lambda d: d.get("available_layers", {}).get("trait_associations", 0) > 0),
+])
+results.append(r)
+
+# =====================================================================
 # REPORT
 # =====================================================================
 print("=" * 70)

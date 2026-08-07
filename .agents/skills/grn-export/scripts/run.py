@@ -21,10 +21,16 @@ def main():
 
     if args.http:
         if args.format == "tsv":
-            import requests
-            r = requests.post(f"{args.http}/api/v1/export/edges", json=payload, timeout=60)
-            r.raise_for_status()
-            print(r.text)
+            import json
+            import urllib.request
+            req = urllib.request.Request(
+                f"{args.http}/api/v1/export/edges",
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json", "Accept": "text/plain"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                print(resp.read().decode("utf-8"))
             return
         data = common.http_post(args.http, "/api/v1/export/edges", payload)
     else:
