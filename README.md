@@ -182,7 +182,7 @@ edges without distinction.
 
 ### Frontend panels
 
-All 28 skills are exposed in the React frontend. The **Analysis** tab organizes them into
+All current skills are exposed in the React frontend. The **Analysis** tab organizes them into
 grouped sections:
 
 | Section | Panels |
@@ -206,9 +206,10 @@ Chained API call panels that combine two skills in sequence:
 | Module → Motif | `grn-module` → `grn-motif` | Detect gene communities, click one to run TF motif enrichment on its promoters |
 | Regulon → Differential | `grn-regulon` → `grn-diff-regulation` | Extract a TF's regulon, then compare its activity across tissue conditions |
 | Inferred → Validation | `grn-infer` → curated cross-ref | Predict regulatory edges, then show which have independent curated support (validation rate) |
+| Research Brief | `grn-candidate-triage` → `grn-experiment-prioritization` → `grn-evidence-audit` / `grn-coverage-report` | Build a structured next-step brief for candidate selection, evidence review, and experiment design |
 
-All 28 skills also work as **AgentSkills.io** agent tools in `.agents/skills/`, supporting both
-direct (SQLite) and HTTP (`--http URL`) modes. Run `make test-skills` to verify (292 tests).
+All listed skills also work as **AgentSkills.io** agent tools in `.agents/skills/`, supporting both
+direct (SQLite) and HTTP (`--http URL`) modes.
 
 ### Complete skill inventory
 
@@ -242,6 +243,11 @@ direct (SQLite) and HTTP (`--http URL`) modes. Run `make test-skills` to verify 
 | 26 | `grn-module` | Community detection on regulatory networks (louvain/leiden/infomap) |
 | 27 | `grn-diff-regulation` | Differential TF activity between tissue conditions |
 | 28 | `grn-infer` | GRNBoost2/GENIE3 inferred regulatory edges from expression data |
+| 29 | `grn-evidence-audit` | Audit support for a gene or edge across loaded evidence layers |
+| 30 | `grn-coverage-report` | Score whether a species has the right loaded layers for an analysis intent |
+| 31 | `grn-candidate-triage` | Rank a candidate gene list for a research intent |
+| 32 | `grn-experiment-prioritization` | Recommend next analyses or experiments for selected genes |
+| 33 | `grn-research-brief` | Build a structured multi-step research and experiment brief |
 
 ## Agent skills
 

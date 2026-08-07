@@ -13,6 +13,7 @@ import rnai
 import evidence
 import context
 import planning
+import briefing
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1169,6 +1170,29 @@ async def experiment_prioritize(request: ExperimentPrioritizationRequest):
         intent=request.intent,
         species=request.species,
         max_recommendations=request.max_recommendations,
+    )
+
+
+class ResearchBriefRequest(BaseModel):
+    gene_ids: List[str]
+    intent: str = "experiment"
+    species: Optional[str] = None
+    max_candidates: int = Field(5, ge=1, le=20)
+    max_experiments: int = Field(3, ge=1, le=10)
+
+
+@app.post("/api/v1/research/brief")
+async def research_brief(request: ResearchBriefRequest):
+    """Build a structured research brief for a gene list and analysis intent."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return briefing.build_research_brief(
+        db,
+        request.gene_ids,
+        intent=request.intent,
+        species=request.species,
+        max_candidates=request.max_candidates,
+        max_experiments=request.max_experiments,
     )
 
 

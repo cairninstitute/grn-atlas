@@ -2603,6 +2603,28 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# GRN-RESEARCH-BRIEF
+# =====================================================================
+r = run_skill("grn-research-brief",
+              ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],
+              "research brief: TP53,BAX,MDM2")
+grade(r, [
+    ("has candidate brief", lambda d: len(d.get("candidate_brief", [])) > 0),
+    ("has workflow plan", lambda d: len(d.get("workflow_plan", [])) > 0),
+    ("has executive summary", lambda d: len(d.get("executive_summary", [])) > 0),
+])
+results.append(r)
+
+r = run_skill("grn-research-brief",
+              ["--gene-ids", "Peaxi162Scf00118g00310", "--intent", "rnai", "--species", "petunia"],
+              "research brief: petunia rnai")
+grade(r, [
+    ("includes rnai validation step", lambda d: any(step.get("action") == "validate_rnai_design"
+                                                     for step in d.get("workflow_plan", []))),
+])
+results.append(r)
+
+# =====================================================================
 # REPORT
 # =====================================================================
 print("=" * 70)

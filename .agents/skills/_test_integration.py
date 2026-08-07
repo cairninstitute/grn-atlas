@@ -323,6 +323,28 @@ else:
          "checks": [{"check": "execution", "pass": False}], "time_s": 0}
 results.append(r)
 
+# Test: research brief agrees with triage and prioritization on the lead candidate
+r_brief = run_skill("grn-research-brief",
+                    ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],
+                    "consistency: research brief TP53,BAX,MDM2")
+
+if r_brief["status"] == "OK" and r_triage["status"] == "OK" and r_plan["status"] == "OK":
+    brief_lead = r_brief["data"].get("candidate_brief", [{}])[0].get("gene_id")
+    triage_lead = r_triage["data"].get("ranked_candidates", [{}])[0].get("gene_id")
+    plan_lead = r_plan["data"].get("plans", [{}])[0].get("gene_id")
+    r = {"skill": "cross-skill", "label": "consistency: research brief lead matches triage and prioritization",
+         "status": "OK", "data": {"brief": brief_lead, "triage": triage_lead, "plan": plan_lead},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("brief matches triage", lambda d: brief_lead == triage_lead),
+        ("brief matches prioritization", lambda d: brief_lead == plan_lead),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: research brief lead matches triage and prioritization",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
 
 # =====================================================================
 # CATEGORY 3: Boundary / adversarial inputs

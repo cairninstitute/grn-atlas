@@ -38,6 +38,11 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 | `grn-stats` | Atlas-wide or per-species database statistics |
 | `grn-provenance` | Data sources, methods, citations, and freshness audit |
 | `grn-species` | Per-species capability matrix |
+| `grn-evidence-audit` | Summarize what evidence layers support a gene or edge |
+| `grn-coverage-report` | Report whether a species is ready for a given analysis intent |
+| `grn-candidate-triage` | Rank a gene list for a research goal |
+| `grn-experiment-prioritization` | Recommend the next analyses or experiments to run |
+| `grn-research-brief` | Build a structured research brief and next-step workflow |
 
 ## Typical Workflows
 
@@ -48,6 +53,7 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 5. **Find co-regulated gene modules**: `grn-coexpression` → `grn-subgraph` → `grn-enrichment`
 6. **Upstream analysis**: `grn-upstream` → `grn-regulon` → `grn-enrichment`
 7. **Compare TF programs**: `grn-regulon-compare` → `grn-enrichment`
+8. **Plan a follow-up study**: `grn-candidate-triage` → `grn-experiment-prioritization` → `grn-research-brief`
 
 ## Execution Modes
 

@@ -156,7 +156,8 @@ def _experiment_options_for_gene(audit: dict[str, Any], readiness: dict[str, Any
     options = []
 
     if readiness.get("available_layers", {}).get("network_edges", 0) > 0:
-        score = 0.55 + (0.15 if gene.get("is_tf") else 0.0) + min(counts.get("curated", 0) / 40.0, 0.2)
+        base = 0.40 if intent == "rnai" else 0.55
+        score = base + (0.15 if gene.get("is_tf") else 0.0) + min(counts.get("curated", 0) / 40.0, 0.2)
         options.append({
             "experiment": "network_perturbation",
             "priority_score": round(min(score, 0.99), 3),
@@ -183,7 +184,7 @@ def _experiment_options_for_gene(audit: dict[str, Any], readiness: dict[str, Any
         })
 
     if species in ("petunia", "tomato", "arabidopsis") and readiness.get("available_layers", {}).get("expression_samples", 0) > 0:
-        score = 0.40 + (0.10 if intent == "rnai" else 0.0) + (0.10 if readiness.get("available_layers", {}).get("network_edges", 0) > 0 else 0.0)
+        score = 0.40 + (0.25 if intent == "rnai" else 0.0) + (0.10 if readiness.get("available_layers", {}).get("network_edges", 0) > 0 else 0.0)
         options.append({
             "experiment": "dsrna_design",
             "priority_score": round(min(score, 0.9), 3),

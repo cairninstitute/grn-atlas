@@ -194,6 +194,16 @@ data-free item ships first, then the expression linchpin, then the rest.
   green**, HTTP skill harness **65/65**, integration harness **39/39**, plus
   targeted direct-mode checks for the new skills.
 
+- **2026-08-07** — Shipped **research brief / study-design workflow**. Added
+  `backend/briefing.py`, `POST /api/v1/research/brief`, and the `grn-research-brief`
+  skill to turn a gene list into a structured brief with candidate ranking,
+  experiment recommendations, species-readiness context, evidence snapshots,
+  explicit risk flags, and an ordered workflow plan. RNAi briefs now lead with
+  dsRNA design when transcriptome support is present rather than generic network
+  perturbation. This closes the gap between low-level skill outputs and an actual
+  researcher-facing next-step plan. Validation: targeted unit/API tests green,
+  plus all-skills HTTP + integration regression after backend restart.
+
 - **2026-07-28** — **Human base-resolution binding (#45): assessed, deferred with a plan.**
   The useful ReMap-2022 human file (per-TF peaks) is 1.4 GB; the alternative JASPAR-vertebrate
   scan needs the ~3 GB human genome + promoter extraction. Either is a full new pipeline
