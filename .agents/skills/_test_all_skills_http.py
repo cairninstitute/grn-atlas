@@ -683,6 +683,28 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# GRN-CONFIDENCE-BOUNDARY (HTTP)
+# =====================================================================
+r = run_skill("grn-confidence-boundary",
+              ["--gene-ids", "TP53,BAX", "--intent", "experiment"],
+              "confidence boundary: TP53,BAX HTTP")
+grade(r, [
+    ("lead has supported claims", lambda d: len(d.get("lead_candidate", {}).get("supported_claims", [])) > 0),
+    ("lead has unsupported claims", lambda d: len(d.get("lead_candidate", {}).get("unsupported_claims", [])) > 0),
+    ("lead has data needed", lambda d: len(d.get("lead_candidate", {}).get("data_needed", [])) > 0),
+])
+results.append(r)
+
+r = run_skill("grn-confidence-boundary",
+              ["--gene-ids", "Peaxi162Scf00118g00310", "--intent", "rnai", "--species", "petunia"],
+              "confidence boundary: petunia rnai HTTP")
+grade(r, [
+    ("has candidate boundaries", lambda d: len(d.get("candidate_boundaries", [])) > 0),
+    ("has safe interpretations", lambda d: len(d.get("lead_candidate", {}).get("safe_interpretations", [])) > 0),
+])
+results.append(r)
+
+# =====================================================================
 # GRN-HYPOTHESIS-COMPARE (HTTP)
 # =====================================================================
 r = run_skill("grn-hypothesis-compare",

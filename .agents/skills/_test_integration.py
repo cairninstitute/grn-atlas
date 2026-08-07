@@ -365,6 +365,27 @@ else:
          "checks": [{"check": "execution", "pass": False}], "time_s": 0}
 results.append(r)
 
+# Test: confidence boundary lead matches research brief and surfaces coverage-driven unsupported claims
+r_boundary = run_skill("grn-confidence-boundary",
+                       ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],
+                       "consistency: confidence boundary TP53,BAX,MDM2")
+if r_boundary["status"] == "OK" and r_brief["status"] == "OK":
+    boundary_lead = r_boundary["data"].get("lead_candidate", {}).get("gene_id")
+    brief_lead = r_brief["data"].get("candidate_brief", [{}])[0].get("gene_id")
+    unsupported = r_boundary["data"].get("lead_candidate", {}).get("unsupported_claims", [])
+    r = {"skill": "cross-skill", "label": "consistency: confidence boundary lead matches brief and surfaces unsupported claims",
+         "status": "OK", "data": {"boundary": boundary_lead, "brief": brief_lead, "unsupported": unsupported},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("lead matches", lambda d: boundary_lead == brief_lead),
+        ("unsupported claims exist", lambda d: len(unsupported) > 0),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: confidence boundary lead matches brief and surfaces unsupported claims",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
 # Test: validation plan agrees with research brief on lead candidate and RNAi first action
 r_vplan = run_skill("grn-validation-plan",
                     ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],

@@ -283,6 +283,16 @@ data-free item ships first, then the expression linchpin, then the rest.
   candidate scores. Validation: targeted comparison unit/API tests, plus direct +
   HTTP skill and integration regression.
 
+- **2026-08-07** — Shipped **confidence-boundary workflow**. Added
+  `backend/boundary.py`, `POST /api/v1/research/confidence-boundary`, and the
+  `grn-confidence-boundary` skill to state what the current atlas state supports,
+  does not support, and leaves ambiguous for a candidate set and intent. The
+  output now translates evidence support, missing layers, and brief risks into
+  explicit unsupported claims, safe interpretations, and concrete data-needed
+  notes so researchers can avoid over-claiming from absence-of-evidence cases.
+  Validation: targeted boundary unit/API tests, plus direct + HTTP skill and
+  integration regression.
+
 - **2026-07-28** — **Human base-resolution binding (#45): assessed, deferred with a plan.**
   The useful ReMap-2022 human file (per-TF peaks) is 1.4 GB; the alternative JASPAR-vertebrate
   scan needs the ~3 GB human genome + promoter extraction. Either is a full new pipeline

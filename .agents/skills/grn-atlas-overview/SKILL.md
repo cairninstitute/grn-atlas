@@ -42,6 +42,7 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 | `grn-coverage-report` | Report whether a species is ready for a given analysis intent |
 | `grn-candidate-triage` | Rank a gene list for a research goal |
 | `grn-experiment-prioritization` | Recommend the next analyses or experiments to run |
+| `grn-confidence-boundary` | State what the atlas supports, does not support, and leaves ambiguous |
 | `grn-hypothesis-compare` | Compare competing candidate hypotheses and explain the current winner |
 | `grn-research-brief` | Build a structured research brief and next-step workflow |
 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
@@ -58,10 +59,11 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 6. **Upstream analysis**: `grn-upstream` → `grn-regulon` → `grn-enrichment`
 7. **Compare TF programs**: `grn-regulon-compare` → `grn-enrichment`
 8. **Plan a follow-up study**: `grn-candidate-triage` → `grn-experiment-prioritization` → `grn-research-brief`
-9. **Choose between competing candidates**: `grn-candidate-triage` → `grn-hypothesis-compare`
-10. **Turn a brief into a go/no-go plan**: `grn-research-brief` → `grn-validation-plan`
-11. **Prepare a collaborator handoff packet**: `grn-research-brief` → `grn-validation-plan` → `grn-study-packet`
-12. **Prepare a collaborator-readable report**: `grn-study-packet` → `grn-study-report`
+9. **State the confidence boundary before acting**: `grn-evidence-audit` → `grn-confidence-boundary`
+10. **Choose between competing candidates**: `grn-candidate-triage` → `grn-hypothesis-compare`
+11. **Turn a brief into a go/no-go plan**: `grn-research-brief` → `grn-validation-plan`
+12. **Prepare a collaborator handoff packet**: `grn-research-brief` → `grn-validation-plan` → `grn-study-packet`
+13. **Prepare a collaborator-readable report**: `grn-study-packet` → `grn-study-report`
 
 ## Execution Modes
 
