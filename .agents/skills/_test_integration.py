@@ -405,6 +405,29 @@ else:
          "checks": [{"check": "execution", "pass": False}], "time_s": 0}
 results.append(r)
 
+# Test: study report wraps the packet and preserves lead candidate + markdown sections
+r_report = run_skill("grn-study-report",
+                     ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],
+                     "consistency: study report TP53,BAX,MDM2")
+
+if r_report["status"] == "OK" and r_packet["status"] == "OK":
+    report_lead = r_report["data"].get("report_metadata", {}).get("lead_candidate")
+    packet_lead = r_packet["data"].get("packet_metadata", {}).get("lead_candidate")
+    md = r_report["data"].get("markdown", "")
+    r = {"skill": "cross-skill", "label": "consistency: study report wraps packet and has markdown sections",
+         "status": "OK", "data": {"report": report_lead, "packet": packet_lead, "markdown": md},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("lead matches", lambda d: report_lead == packet_lead),
+        ("has candidate section", lambda d: "## Candidate ranking" in md),
+        ("has citations section", lambda d: "## Citations" in md),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: study report wraps packet and has markdown sections",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
 
 # =====================================================================
 # CATEGORY 3: Boundary / adversarial inputs

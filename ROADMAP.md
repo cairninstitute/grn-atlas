@@ -224,6 +224,15 @@ data-free item ships first, then the expression linchpin, then the rest.
   unit/API tests, plus direct + HTTP skill and integration regression after
   backend restart.
 
+- **2026-08-07** — Shipped **study report / narrative handoff workflow**. Added
+  `backend/reporting.py`, `POST /api/v1/research/study-report`, and the
+  `grn-study-report` skill to turn the structured study packet into a readable
+  collaborator-facing report with executive summary, candidate table, experiment
+  recommendations, validation status, and citation-backed markdown output. This
+  closes the last gap between machine-structured planning output and something a
+  PI or collaborator can directly read, review, and forward. Validation: targeted
+  report unit/API tests, plus direct + HTTP skill and integration regression.
+
 - **2026-07-28** — **Human base-resolution binding (#45): assessed, deferred with a plan.**
   The useful ReMap-2022 human file (per-TF peaks) is 1.4 GB; the alternative JASPAR-vertebrate
   scan needs the ~3 GB human genome + promoter extraction. Either is a full new pipeline

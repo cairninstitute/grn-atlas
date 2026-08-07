@@ -2668,6 +2668,28 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# GRN-STUDY-REPORT
+# =====================================================================
+r = run_skill("grn-study-report",
+              ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],
+              "study report: TP53,BAX,MDM2")
+grade(r, [
+    ("has packet", lambda d: "packet" in d),
+    ("has markdown", lambda d: "markdown" in d),
+    ("markdown has citations section", lambda d: "## Citations" in d.get("markdown", "")),
+])
+results.append(r)
+
+r = run_skill("grn-study-report",
+              ["--gene-ids", "Peaxi162Scf00118g00310", "--intent", "rnai", "--species", "petunia"],
+              "study report: petunia rnai")
+grade(r, [
+    ("has report metadata", lambda d: "report_metadata" in d),
+    ("markdown has validation section", lambda d: "## Validation status" in d.get("markdown", "")),
+])
+results.append(r)
+
+# =====================================================================
 # REPORT
 # =====================================================================
 print("=" * 70)

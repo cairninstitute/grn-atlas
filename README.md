@@ -191,7 +191,7 @@ grouped sections:
 | **Network Structure** | Network Patterns, Centrality Metrics, Module Detection, Motif Query |
 | **Inference & Comparison** | Inferred Edges, Differential Regulation |
 | **Export** | Edge Export (JSON/TSV with genomic context) |
-| **Workflows** | 6 multi-skill chained panels (see below) |
+| **Workflows** | 7 multi-skill chained panels (see below) |
 
 Cross-panel integration: extract a regulon → one click sends the gene set to upstream
 regulator analysis.
@@ -209,6 +209,7 @@ Chained API call panels that combine two skills in sequence:
 | Research Brief | `grn-candidate-triage` → `grn-experiment-prioritization` → `grn-evidence-audit` / `grn-coverage-report` | Build a structured next-step brief for candidate selection, evidence review, and experiment design |
 | Validation Plan | `grn-research-brief` → `grn-validation-plan` | Convert a brief into a go/no-go checklist with decision gates, blockers, and success criteria |
 | Study Packet | `grn-research-brief` → `grn-validation-plan` → `grn-study-packet` | Assemble a collaborator handoff packet with execution notes, provenance, and citation-ready context |
+| Study Report | `grn-study-packet` → `grn-study-report` | Turn the structured packet into a collaborator-facing markdown report with summary, validation status, and citations |
 
 All listed skills also work as **AgentSkills.io** agent tools in `.agents/skills/`, supporting both
 direct (SQLite) and HTTP (`--http URL`) modes.
@@ -252,6 +253,7 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 | 33 | `grn-research-brief` | Build a structured multi-step research and experiment brief |
 | 34 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
 | 35 | `grn-study-packet` | Assemble a shareable collaborator handoff packet with brief, plan, and citations |
+| 36 | `grn-study-report` | Turn a study packet into a collaborator-facing narrative report with markdown |
 
 ## Agent skills
 
