@@ -12,6 +12,7 @@ import expression
 import rnai
 import evidence
 import context
+import planning
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1127,6 +1128,48 @@ async def coverage_report(
 ):
     """Readiness/coverage report for a species and analysis intent."""
     return context.build_readiness_report(db, species, intent, gene_id)
+
+
+class CandidateTriageRequest(BaseModel):
+    gene_ids: List[str]
+    intent: str = "experiment"
+    species: Optional[str] = None
+    top_n: int = Field(10, ge=1, le=100)
+
+
+@app.post("/api/v1/candidates/triage")
+async def candidate_triage(request: CandidateTriageRequest):
+    """Rank candidate genes for a research intent using evidence + coverage context."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return planning.triage_candidates(
+        db,
+        request.gene_ids,
+        intent=request.intent,
+        species=request.species,
+        top_n=request.top_n,
+    )
+
+
+class ExperimentPrioritizationRequest(BaseModel):
+    gene_ids: List[str]
+    intent: str = "experiment"
+    species: Optional[str] = None
+    max_recommendations: int = Field(5, ge=1, le=20)
+
+
+@app.post("/api/v1/experiments/prioritize")
+async def experiment_prioritize(request: ExperimentPrioritizationRequest):
+    """Recommend next experiments/analyses for one or more genes."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return planning.prioritize_experiments(
+        db,
+        request.gene_ids,
+        intent=request.intent,
+        species=request.species,
+        max_recommendations=request.max_recommendations,
+    )
 
 
 # ============= Gene-set analysis: subgraph + GO enrichment =============

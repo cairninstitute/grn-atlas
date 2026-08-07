@@ -2562,6 +2562,47 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# GRN-CANDIDATE-TRIAGE
+# =====================================================================
+r = run_skill("grn-candidate-triage",
+              ["--gene-ids", "TP53,BAX,MDM2", "--intent", "network"],
+              "candidate triage: TP53,BAX,MDM2")
+grade(r, [
+    ("has ranked candidates", lambda d: len(d.get("ranked_candidates", [])) > 0),
+    ("TP53 ranks first", lambda d: d.get("ranked_candidates", [{}])[0].get("gene_id") == "TP53"),
+])
+results.append(r)
+
+r = run_skill("grn-candidate-triage",
+              ["--gene-ids", "TP53,NOPE", "--intent", "experiment"],
+              "candidate triage: missing gene handling")
+grade(r, [
+    ("tracks excluded genes", lambda d: any(g.get("gene_id") == "NOPE" for g in d.get("excluded_genes", []))),
+])
+results.append(r)
+
+# =====================================================================
+# GRN-EXPERIMENT-PRIORITIZATION
+# =====================================================================
+r = run_skill("grn-experiment-prioritization",
+              ["--gene-ids", "TP53", "--intent", "experiment"],
+              "experiment prioritization: TP53")
+grade(r, [
+    ("has plan", lambda d: len(d.get("plans", [])) > 0),
+    ("has recommended experiments", lambda d: len(d.get("plans", [{}])[0].get("recommended_experiments", [])) > 0),
+])
+results.append(r)
+
+r = run_skill("grn-experiment-prioritization",
+              ["--gene-ids", "Peaxi162Scf00118g00310", "--intent", "rnai", "--species", "petunia"],
+              "experiment prioritization: petunia rnai")
+grade(r, [
+    ("includes dsrna option", lambda d: any(e.get("experiment") == "dsrna_design"
+                                             for e in d.get("plans", [{}])[0].get("recommended_experiments", []))),
+])
+results.append(r)
+
+# =====================================================================
 # REPORT
 # =====================================================================
 print("=" * 70)

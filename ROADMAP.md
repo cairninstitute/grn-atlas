@@ -172,6 +172,28 @@ data-free item ships first, then the expression linchpin, then the rest.
 
 ## 5. Iteration Log
 
+- **2026-08-07** — Shipped **research-readiness / evidence audit layer**. Added
+  `backend/evidence.py` + `GET /api/v1/evidence/audit` to summarize support for a
+  gene or edge across curated interactions, projected/inferred layers, motifs,
+  coexpression, pathways, traits, and ortholog context with a confidence label and
+  coverage gaps. Added the `grn-evidence-audit` skill plus direct/HTTP harness
+  coverage. Also added `backend/context.py` + `GET /api/v1/coverage/report` to
+  score species/intents for readiness and recommend next skills from loaded layers.
+  This closes a trust gap for researchers asking “how well-supported is this?” or
+  “can this species honestly answer my question?” Verified with new unit/API tests
+  and harness integration.
+
+- **2026-08-07** — Shipped **candidate triage + experiment prioritization** on top
+  of the evidence/coverage foundation. Added `backend/planning.py`,
+  `POST /api/v1/candidates/triage`, and `POST /api/v1/experiments/prioritize`, plus
+  the `grn-candidate-triage` and `grn-experiment-prioritization` skills. The atlas
+  can now rank gene lists for intents such as network follow-up or RNAi and suggest
+  the next plausible analyses/experiments (perturbation, expression context review,
+  motif follow-up, dsRNA design, trait follow-up, conservation check) from the
+  actually-loaded layers instead of static advice. Validation: backend **125 tests
+  green**, HTTP skill harness **65/65**, integration harness **39/39**, plus
+  targeted direct-mode checks for the new skills.
+
 - **2026-07-28** — **Human base-resolution binding (#45): assessed, deferred with a plan.**
   The useful ReMap-2022 human file (per-TF peaks) is 1.4 GB; the alternative JASPAR-vertebrate
   scan needs the ~3 GB human genome + promoter extraction. Either is a full new pipeline

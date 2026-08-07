@@ -275,6 +275,54 @@ else:
          "checks": [{"check": "execution", "pass": False}], "time_s": 0}
 results.append(r)
 
+# Test: candidate triage and experiment prioritization agree on the lead candidate
+r_triage = run_skill("grn-candidate-triage",
+                     ["--gene-ids", "TP53,BAX,MDM2", "--intent", "network"],
+                     "consistency: candidate triage TP53,BAX,MDM2")
+r_plan = run_skill("grn-experiment-prioritization",
+                   ["--gene-ids", "TP53,BAX,MDM2", "--intent", "network"],
+                   "consistency: experiment prioritization TP53,BAX,MDM2")
+
+if r_triage["status"] == "OK" and r_plan["status"] == "OK":
+    lead_triage = r_triage["data"].get("ranked_candidates", [{}])[0].get("gene_id")
+    lead_plan = r_plan["data"].get("plans", [{}])[0].get("gene_id")
+    r = {"skill": "cross-skill", "label": "consistency: triage lead matches first experiment plan",
+         "status": "OK", "data": {"triage": lead_triage, "plan": lead_plan},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("lead candidate matches", lambda d: lead_triage == lead_plan),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: triage lead matches first experiment plan",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
+# Test: petunia RNAi prioritization surfaces dsRNA design when coverage says expression exists
+r_cov_rnai = run_skill("grn-coverage-report",
+                       ["--species", "petunia", "--intent", "rnai"],
+                       "consistency: coverage report petunia rnai")
+r_rnai = run_skill("grn-experiment-prioritization",
+                   ["--gene-ids", "Peaxi162Scf00118g00310", "--intent", "rnai", "--species", "petunia"],
+                   "consistency: experiment prioritization petunia rnai")
+
+if r_cov_rnai["status"] == "OK" and r_rnai["status"] == "OK":
+    has_expr = r_cov_rnai["data"].get("available_layers", {}).get("expression_samples", 0) > 0
+    dsrna = any(e.get("experiment") == "dsrna_design"
+                for e in r_rnai["data"].get("plans", [{}])[0].get("recommended_experiments", []))
+    r = {"skill": "cross-skill", "label": "consistency: petunia rnai readiness enables dsRNA recommendation",
+         "status": "OK", "data": {"expression_available": has_expr, "dsrna_recommended": dsrna},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("expression available", lambda d: d["expression_available"] is True),
+        ("dsRNA recommended", lambda d: d["dsrna_recommended"] is True),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: petunia rnai readiness enables dsRNA recommendation",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
 
 # =====================================================================
 # CATEGORY 3: Boundary / adversarial inputs
