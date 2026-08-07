@@ -2778,6 +2778,28 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# GRN-EVIDENCE-SYNTHESIS
+# =====================================================================
+r = run_skill("grn-evidence-synthesis",
+              ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],
+              "evidence synthesis: TP53,BAX,MDM2")
+grade(r, [
+    ("has candidate syntheses", lambda d: len(d.get("candidate_syntheses", [])) > 0),
+    ("has citation bundle", lambda d: len(d.get("citation_bundle", {}).get("sources", [])) > 0),
+    ("has lead candidate", lambda d: d.get("lead_candidate", {}).get("gene_id") is not None),
+])
+results.append(r)
+
+r = run_skill("grn-evidence-synthesis",
+              ["--gene-ids", "Peaxi162Scf00118g00310", "--intent", "rnai", "--species", "petunia"],
+              "evidence synthesis: petunia rnai")
+grade(r, [
+    ("has overall caveats", lambda d: len(d.get("overall_caveats", [])) > 0),
+    ("candidate has reporting caveats", lambda d: len(d.get("candidate_syntheses", [{}])[0].get("reporting_caveats", [])) > 0),
+])
+results.append(r)
+
+# =====================================================================
 # REPORT
 # =====================================================================
 print("=" * 70)

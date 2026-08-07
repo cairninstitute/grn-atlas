@@ -253,11 +253,12 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 | 33 | `grn-confidence-boundary` | State what the atlas supports, does not support, and leaves ambiguous |
 | 34 | `grn-transferability` | Assess whether a candidate-level story transfers across species |
 | 35 | `grn-minimal-validation` | Compress a validation plan into the smallest defensible next step |
-| 36 | `grn-hypothesis-compare` | Compare competing candidate hypotheses and explain the current winner |
-| 37 | `grn-research-brief` | Build a structured multi-step research and experiment brief |
-| 38 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
-| 39 | `grn-study-packet` | Assemble a shareable collaborator handoff packet with brief, plan, and citations |
-| 40 | `grn-study-report` | Turn a study packet into a collaborator-facing narrative report with markdown |
+| 36 | `grn-evidence-synthesis` | Build a writing-ready, atlas-grounded evidence summary with PMIDs and citations |
+| 37 | `grn-hypothesis-compare` | Compare competing candidate hypotheses and explain the current winner |
+| 38 | `grn-research-brief` | Build a structured multi-step research and experiment brief |
+| 39 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
+| 40 | `grn-study-packet` | Assemble a shareable collaborator handoff packet with brief, plan, and citations |
+| 41 | `grn-study-report` | Turn a study packet into a collaborator-facing narrative report with markdown |
 
 ## Agent skills
 
@@ -270,9 +271,9 @@ venv/bin/python .agents/skills/grn-upstream/scripts/run.py --http http://localho
   --gene-ids "BAX,BCL2,CDKN1A,MDM2"
 
 # Run all skill tests
-venv/bin/python .agents/skills/_test_all_skills.py       # 292 direct tests
-venv/bin/python .agents/skills/_test_all_skills_http.py   # 57 HTTP tests (server must be running)
-venv/bin/python .agents/skills/_test_integration.py       # 35 integration tests (cross-skill, adversarial, perf, idempotency)
+venv/bin/python .agents/skills/_test_all_skills.py       # 294 direct tests
+venv/bin/python .agents/skills/_test_all_skills_http.py  # 59 HTTP tests (server must be running)
+venv/bin/python .agents/skills/_test_integration.py      # 49 integration tests (cross-skill, adversarial, perf, idempotency)
 npx playwright test                                       # 22 browser e2e tests (server must be running)
 ```
 
@@ -283,9 +284,9 @@ OpenRouter free tier) to validate tool selection and multi-step orchestration:
 
 | Test tier | Cases | Tested | Pass rate | What it tests |
 |---|---|---|---|---|
-| **Direct (no LLM)** | 292 | 292 | 100% (292/292) | Skill execution, argument handling, output validation against ground truth |
-| **HTTP mode** | 57 | 57 | 100% (57/57) | All skills via REST API with running server |
-| **Integration** | 35 | 35 | 100% (35/35) | Cross-skill consistency, boundary/adversarial, performance regression, idempotency |
+| **Direct (no LLM)** | 294 | 294 | 100% (294/294) | Skill execution, argument handling, output validation against ground truth |
+| **HTTP mode** | 59 | 59 | 100% (59/59) | All skills via REST API with running server |
+| **Integration** | 49 | 49 | 100% (49/49) | Cross-skill consistency, boundary/adversarial, performance regression, idempotency |
 | **E2E (Playwright)** | 22 | 22 | 100% (22/22) | Browser tests: all views, 14 analysis panels, 4 workflow chains, URL state |
 | **Single-skill LLM** | 292 | 292 | 91.4% (267/292) | LLM selects the correct tool and extracts correct parameters from natural language |
 | **Multi-skill orchestration** | 25 | 23 | — | LLM chains 2–5 skills across up to 10 rounds to answer complex biology questions |

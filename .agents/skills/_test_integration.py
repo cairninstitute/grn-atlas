@@ -488,6 +488,27 @@ else:
          "checks": [{"check": "execution", "pass": False}], "time_s": 0}
 results.append(r)
 
+# Test: evidence synthesis lead matches brief and retains citation context
+r_synth = run_skill("grn-evidence-synthesis",
+                    ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],
+                    "consistency: evidence synthesis TP53,BAX,MDM2")
+if r_synth["status"] == "OK" and r_brief["status"] == "OK" and r_packet["status"] == "OK":
+    synth_lead = r_synth["data"].get("lead_candidate", {}).get("gene_id")
+    brief_lead = r_brief["data"].get("candidate_brief", [{}])[0].get("gene_id")
+    synth_citations = r_synth["data"].get("citation_bundle", {}).get("source_keys", [])
+    r = {"skill": "cross-skill", "label": "consistency: evidence synthesis lead matches brief and keeps citations",
+         "status": "OK", "data": {"synthesis": synth_lead, "brief": brief_lead, "citations": synth_citations},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("lead matches", lambda d: synth_lead == brief_lead),
+        ("has citations", lambda d: len(synth_citations) > 0),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: evidence synthesis lead matches brief and keeps citations",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
 # Test: study report wraps the packet and preserves lead candidate + markdown sections
 r_report = run_skill("grn-study-report",
                      ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],

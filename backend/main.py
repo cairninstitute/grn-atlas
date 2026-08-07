@@ -21,6 +21,7 @@ import hypothesis
 import boundary
 import transferability
 import minpath
+import synthesis
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1351,6 +1352,29 @@ async def minimal_validation(request: MinimalValidationRequest):
     if not request.gene_ids:
         raise HTTPException(status_code=400, detail="gene_ids is required")
     return minpath.build_minimal_validation_path(
+        db,
+        request.gene_ids,
+        intent=request.intent,
+        species=request.species,
+        max_candidates=request.max_candidates,
+        max_experiments=request.max_experiments,
+    )
+
+
+class EvidenceSynthesisRequest(BaseModel):
+    gene_ids: List[str]
+    intent: str = "experiment"
+    species: Optional[str] = None
+    max_candidates: int = Field(3, ge=1, le=20)
+    max_experiments: int = Field(3, ge=1, le=10)
+
+
+@app.post("/api/v1/research/evidence-synthesis")
+async def evidence_synthesis(request: EvidenceSynthesisRequest):
+    """Build a citation-aware, atlas-grounded evidence synthesis for writing or review."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return synthesis.build_evidence_synthesis(
         db,
         request.gene_ids,
         intent=request.intent,

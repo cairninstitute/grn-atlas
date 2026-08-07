@@ -311,6 +311,15 @@ data-free item ships first, then the expression linchpin, then the rest.
   matrix. Validation: targeted minimal-path unit/API tests, plus direct + HTTP
   skill and integration regression.
 
+- **2026-08-07** — Shipped **evidence synthesis workflow**. Added
+  `backend/synthesis.py`, `POST /api/v1/research/evidence-synthesis`, and the
+  `grn-evidence-synthesis` skill to turn atlas-backed evidence into a writing-ready
+  summary with support statements, weak-evidence warnings, stored PMIDs, citation
+  bundle context, and reporting caveats. This is intentionally conservative: it
+  packages atlas evidence for manuscripts, slides, or collaborator review without
+  pretending to do external literature retrieval. Validation: targeted synthesis
+  unit/API tests, plus direct + HTTP skill and integration regression.
+
 - **2026-07-28** — **Human base-resolution binding (#45): assessed, deferred with a plan.**
   The useful ReMap-2022 human file (per-TF peaks) is 1.4 GB; the alternative JASPAR-vertebrate
   scan needs the ~3 GB human genome + promoter extraction. Either is a full new pipeline
