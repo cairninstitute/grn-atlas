@@ -251,11 +251,12 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 | 31 | `grn-candidate-triage` | Rank a candidate gene list for a research intent |
 | 32 | `grn-experiment-prioritization` | Recommend next analyses or experiments for selected genes |
 | 33 | `grn-confidence-boundary` | State what the atlas supports, does not support, and leaves ambiguous |
-| 34 | `grn-hypothesis-compare` | Compare competing candidate hypotheses and explain the current winner |
-| 35 | `grn-research-brief` | Build a structured multi-step research and experiment brief |
-| 36 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
-| 37 | `grn-study-packet` | Assemble a shareable collaborator handoff packet with brief, plan, and citations |
-| 38 | `grn-study-report` | Turn a study packet into a collaborator-facing narrative report with markdown |
+| 34 | `grn-transferability` | Assess whether a candidate-level story transfers across species |
+| 35 | `grn-hypothesis-compare` | Compare competing candidate hypotheses and explain the current winner |
+| 36 | `grn-research-brief` | Build a structured multi-step research and experiment brief |
+| 37 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
+| 38 | `grn-study-packet` | Assemble a shareable collaborator handoff packet with brief, plan, and citations |
+| 39 | `grn-study-report` | Turn a study packet into a collaborator-facing narrative report with markdown |
 
 ## Agent skills
 

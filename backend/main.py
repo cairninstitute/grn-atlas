@@ -19,6 +19,7 @@ import packet
 import reporting
 import hypothesis
 import boundary
+import transferability
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1313,6 +1314,25 @@ async def confidence_boundary(request: ConfidenceBoundaryRequest):
         species=request.species,
         max_candidates=request.max_candidates,
         max_experiments=request.max_experiments,
+    )
+
+
+class TransferabilityRequest(BaseModel):
+    gene_id: str
+    target_species: str
+    intent: str = "experiment"
+
+
+@app.post("/api/v1/research/transferability")
+async def transferability_assessment(request: TransferabilityRequest):
+    """Assess whether a candidate gene-level claim can be transferred to another species."""
+    if not request.gene_id:
+        raise HTTPException(status_code=400, detail="gene_id is required")
+    return transferability.assess_transferability(
+        db,
+        request.gene_id,
+        request.target_species,
+        intent=request.intent,
     )
 
 

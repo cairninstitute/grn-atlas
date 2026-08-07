@@ -293,6 +293,15 @@ data-free item ships first, then the expression linchpin, then the rest.
   Validation: targeted boundary unit/API tests, plus direct + HTTP skill and
   integration regression.
 
+- **2026-08-07** — Shipped **cross-species transferability workflow**. Added
+  `backend/transferability.py`, `POST /api/v1/research/transferability`, and the
+  `grn-transferability` skill to assess whether a candidate-level claim can be
+  transferred from the source species into a target species. The output combines
+  source confidence, ortholog presence, target-species readiness, explicit caveats,
+  and recommended validation steps without pretending that gene-level orthology
+  proves exact edge conservation. Validation: targeted transferability unit/API
+  tests, plus direct + HTTP skill and integration regression.
+
 - **2026-07-28** — **Human base-resolution binding (#45): assessed, deferred with a plan.**
   The useful ReMap-2022 human file (per-TF peaks) is 1.4 GB; the alternative JASPAR-vertebrate
   scan needs the ~3 GB human genome + promoter extraction. Either is a full new pipeline

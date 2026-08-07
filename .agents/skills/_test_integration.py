@@ -365,6 +365,26 @@ else:
          "checks": [{"check": "execution", "pass": False}], "time_s": 0}
 results.append(r)
 
+# Test: transferability surfaces an ortholog-backed target candidate
+r_transfer = run_skill("grn-transferability",
+                       ["--gene-id", "TP53", "--target-species", "mouse", "--intent", "network"],
+                       "consistency: transferability TP53 to mouse")
+if r_transfer["status"] == "OK":
+    target_gene = r_transfer["data"].get("best_target_ortholog", {}).get("gene_id")
+    caveats = r_transfer["data"].get("caveats", [])
+    r = {"skill": "cross-skill", "label": "consistency: transferability returns ortholog candidate with caveats",
+         "status": "OK", "data": {"target_gene": target_gene, "caveats": caveats},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("target ortholog present", lambda d: target_gene is not None),
+        ("caveats exist", lambda d: len(caveats) > 0),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: transferability returns ortholog candidate with caveats",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
 # Test: confidence boundary lead matches research brief and surfaces coverage-driven unsupported claims
 r_boundary = run_skill("grn-confidence-boundary",
                        ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],

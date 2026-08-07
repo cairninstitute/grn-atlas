@@ -2603,6 +2603,28 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# GRN-TRANSFERABILITY
+# =====================================================================
+r = run_skill("grn-transferability",
+              ["--gene-id", "TP53", "--target-species", "mouse", "--intent", "network"],
+              "transferability: TP53 to mouse")
+grade(r, [
+    ("has transferability label", lambda d: d.get("transferability_label") in {"high", "moderate", "low"}),
+    ("has supported transfer claims", lambda d: len(d.get("supported_transfer_claims", [])) > 0),
+    ("has validation recommendations", lambda d: len(d.get("recommended_validation", [])) > 0),
+])
+results.append(r)
+
+r = run_skill("grn-transferability",
+              ["--gene-id", "AT5G11260", "--target-species", "tomato", "--intent", "experiment"],
+              "transferability: HY5 to tomato")
+grade(r, [
+    ("has source gene", lambda d: "source_gene" in d),
+    ("has caveats", lambda d: len(d.get("caveats", [])) > 0),
+])
+results.append(r)
+
+# =====================================================================
 # GRN-CONFIDENCE-BOUNDARY
 # =====================================================================
 r = run_skill("grn-confidence-boundary",
