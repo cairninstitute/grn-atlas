@@ -14,6 +14,7 @@ import evidence
 import context
 import planning
 import briefing
+import validation
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1187,6 +1188,29 @@ async def research_brief(request: ResearchBriefRequest):
     if not request.gene_ids:
         raise HTTPException(status_code=400, detail="gene_ids is required")
     return briefing.build_research_brief(
+        db,
+        request.gene_ids,
+        intent=request.intent,
+        species=request.species,
+        max_candidates=request.max_candidates,
+        max_experiments=request.max_experiments,
+    )
+
+
+class ValidationPlanRequest(BaseModel):
+    gene_ids: List[str]
+    intent: str = "experiment"
+    species: Optional[str] = None
+    max_candidates: int = Field(3, ge=1, le=20)
+    max_experiments: int = Field(3, ge=1, le=10)
+
+
+@app.post("/api/v1/research/validation-plan")
+async def validation_plan(request: ValidationPlanRequest):
+    """Build an execution-ready validation plan from the research brief layer."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return validation.build_validation_plan(
         db,
         request.gene_ids,
         intent=request.intent,

@@ -2625,6 +2625,27 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# GRN-VALIDATION-PLAN
+# =====================================================================
+r = run_skill("grn-validation-plan",
+              ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],
+              "validation plan: TP53,BAX,MDM2")
+grade(r, [
+    ("has validation tracks", lambda d: len(d.get("validation_tracks", [])) > 0),
+    ("has decision gates", lambda d: len(d.get("decision_gates", [])) > 0),
+    ("has execution checklist", lambda d: len(d.get("execution_checklist", [])) > 0),
+])
+results.append(r)
+
+r = run_skill("grn-validation-plan",
+              ["--gene-ids", "Peaxi162Scf00118g00310", "--intent", "rnai", "--species", "petunia"],
+              "validation plan: petunia rnai")
+grade(r, [
+    ("leads with dsrna design", lambda d: d.get("validation_tracks", [{}])[0].get("experiment") == "dsrna_design"),
+])
+results.append(r)
+
+# =====================================================================
 # REPORT
 # =====================================================================
 print("=" * 70)

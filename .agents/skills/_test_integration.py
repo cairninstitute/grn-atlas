@@ -345,6 +345,44 @@ else:
          "checks": [{"check": "execution", "pass": False}], "time_s": 0}
 results.append(r)
 
+# Test: validation plan agrees with research brief on lead candidate and RNAi first action
+r_vplan = run_skill("grn-validation-plan",
+                    ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],
+                    "consistency: validation plan TP53,BAX,MDM2")
+
+if r_vplan["status"] == "OK" and r_brief["status"] == "OK":
+    plan_lead = r_vplan["data"].get("lead_candidate", {}).get("gene_id")
+    brief_lead = r_brief["data"].get("candidate_brief", [{}])[0].get("gene_id")
+    r = {"skill": "cross-skill", "label": "consistency: validation plan lead matches research brief",
+         "status": "OK", "data": {"validation": plan_lead, "brief": brief_lead},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("lead matches", lambda d: plan_lead == brief_lead),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: validation plan lead matches research brief",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
+r_vplan_rnai = run_skill("grn-validation-plan",
+                         ["--gene-ids", "Peaxi162Scf00118g00310", "--intent", "rnai", "--species", "petunia"],
+                         "consistency: validation plan petunia rnai")
+
+if r_vplan_rnai["status"] == "OK":
+    first_exp = r_vplan_rnai["data"].get("validation_tracks", [{}])[0].get("experiment")
+    r = {"skill": "cross-skill", "label": "consistency: validation plan rnai starts with dsrna_design",
+         "status": "OK", "data": {"experiment": first_exp},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("first experiment is dsrna_design", lambda d: first_exp == "dsrna_design"),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: validation plan rnai starts with dsrna_design",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
 
 # =====================================================================
 # CATEGORY 3: Boundary / adversarial inputs

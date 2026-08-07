@@ -207,6 +207,7 @@ Chained API call panels that combine two skills in sequence:
 | Regulon → Differential | `grn-regulon` → `grn-diff-regulation` | Extract a TF's regulon, then compare its activity across tissue conditions |
 | Inferred → Validation | `grn-infer` → curated cross-ref | Predict regulatory edges, then show which have independent curated support (validation rate) |
 | Research Brief | `grn-candidate-triage` → `grn-experiment-prioritization` → `grn-evidence-audit` / `grn-coverage-report` | Build a structured next-step brief for candidate selection, evidence review, and experiment design |
+| Validation Plan | `grn-research-brief` → `grn-validation-plan` | Convert a brief into a go/no-go checklist with decision gates, blockers, and success criteria |
 
 All listed skills also work as **AgentSkills.io** agent tools in `.agents/skills/`, supporting both
 direct (SQLite) and HTTP (`--http URL`) modes.
@@ -248,6 +249,7 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 | 31 | `grn-candidate-triage` | Rank a candidate gene list for a research intent |
 | 32 | `grn-experiment-prioritization` | Recommend next analyses or experiments for selected genes |
 | 33 | `grn-research-brief` | Build a structured multi-step research and experiment brief |
+| 34 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
 
 ## Agent skills
 

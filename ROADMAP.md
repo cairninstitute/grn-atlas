@@ -204,6 +204,16 @@ data-free item ships first, then the expression linchpin, then the rest.
   researcher-facing next-step plan. Validation: targeted unit/API tests green,
   plus all-skills HTTP + integration regression after backend restart.
 
+- **2026-08-07** — Shipped **validation plan / execution checklist workflow**. Added
+  `backend/validation.py`, `POST /api/v1/research/validation-plan`, and the
+  `grn-validation-plan` skill to convert a research brief into ranked validation
+  tracks, decision gates, blockers, experiment-specific success criteria, failure
+  signals, and an ordered execution checklist. RNAi validation plans now start
+  with `dsrna_design` when transcriptome support exists, while network-oriented
+  plans expose explicit go/no-go gates for weaker or narrower follow-up paths.
+  This closes the gap between “what should we do next?” and “what are the concrete
+  acceptance criteria before we do it?”.
+
 - **2026-07-28** — **Human base-resolution binding (#45): assessed, deferred with a plan.**
   The useful ReMap-2022 human file (per-TF peaks) is 1.4 GB; the alternative JASPAR-vertebrate
   scan needs the ~3 GB human genome + promoter extraction. Either is a full new pipeline
