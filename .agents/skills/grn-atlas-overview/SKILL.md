@@ -44,6 +44,7 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 | `grn-experiment-prioritization` | Recommend the next analyses or experiments to run |
 | `grn-research-brief` | Build a structured research brief and next-step workflow |
 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
+| `grn-study-packet` | Assemble a shareable collaborator handoff packet with brief, plan, provenance, and citations |
 
 ## Typical Workflows
 
@@ -56,6 +57,7 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 7. **Compare TF programs**: `grn-regulon-compare` → `grn-enrichment`
 8. **Plan a follow-up study**: `grn-candidate-triage` → `grn-experiment-prioritization` → `grn-research-brief`
 9. **Turn a brief into a go/no-go plan**: `grn-research-brief` → `grn-validation-plan`
+10. **Prepare a collaborator handoff packet**: `grn-research-brief` → `grn-validation-plan` → `grn-study-packet`
 
 ## Execution Modes
 

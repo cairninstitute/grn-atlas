@@ -15,6 +15,7 @@ import context
 import planning
 import briefing
 import validation
+import packet
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1211,6 +1212,29 @@ async def validation_plan(request: ValidationPlanRequest):
     if not request.gene_ids:
         raise HTTPException(status_code=400, detail="gene_ids is required")
     return validation.build_validation_plan(
+        db,
+        request.gene_ids,
+        intent=request.intent,
+        species=request.species,
+        max_candidates=request.max_candidates,
+        max_experiments=request.max_experiments,
+    )
+
+
+class StudyPacketRequest(BaseModel):
+    gene_ids: List[str]
+    intent: str = "experiment"
+    species: Optional[str] = None
+    max_candidates: int = Field(3, ge=1, le=20)
+    max_experiments: int = Field(3, ge=1, le=10)
+
+
+@app.post("/api/v1/research/study-packet")
+async def study_packet(request: StudyPacketRequest):
+    """Build a shareable study packet with brief, validation plan, and citations."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return packet.build_study_packet(
         db,
         request.gene_ids,
         intent=request.intent,

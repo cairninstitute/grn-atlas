@@ -726,6 +726,28 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# GRN-STUDY-PACKET (HTTP)
+# =====================================================================
+r = run_skill("grn-study-packet",
+              ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],
+              "study packet: TP53,BAX,MDM2 HTTP")
+grade(r, [
+    ("has brief", lambda d: "brief" in d),
+    ("has validation plan", lambda d: "validation_plan" in d),
+    ("has citation bundle", lambda d: len(d.get("citation_bundle", {}).get("sources", [])) > 0),
+])
+results.append(r)
+
+r = run_skill("grn-study-packet",
+              ["--gene-ids", "Peaxi162Scf00118g00310", "--intent", "rnai", "--species", "petunia"],
+              "study packet: petunia rnai HTTP")
+grade(r, [
+    ("handoff has checklist", lambda d: len(d.get("handoff", {}).get("handoff_checklist", [])) > 0),
+    ("packet metadata present", lambda d: "packet_metadata" in d),
+])
+results.append(r)
+
+# =====================================================================
 # REPORT
 # =====================================================================
 print("=" * 70)

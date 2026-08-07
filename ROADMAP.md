@@ -214,6 +214,16 @@ data-free item ships first, then the expression linchpin, then the rest.
   This closes the gap between “what should we do next?” and “what are the concrete
   acceptance criteria before we do it?”.
 
+- **2026-08-07** — Shipped **study packet / collaborator handoff workflow**. Added
+  `backend/packet.py`, `POST /api/v1/research/study-packet`, and the
+  `grn-study-packet` skill to bundle a research brief, validation plan, execution
+  hints, provenance freshness, and citation-ready source context into one
+  shareable artifact. The packet surfaces a lead candidate, compact workflow
+  metadata, and a collaborator checklist so follow-up work can move from triage
+  to execution without re-deriving the rationale. Validation: targeted packet
+  unit/API tests, plus direct + HTTP skill and integration regression after
+  backend restart.
+
 - **2026-07-28** — **Human base-resolution binding (#45): assessed, deferred with a plan.**
   The useful ReMap-2022 human file (per-TF peaks) is 1.4 GB; the alternative JASPAR-vertebrate
   scan needs the ~3 GB human genome + promoter extraction. Either is a full new pipeline
