@@ -44,6 +44,7 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 | `grn-experiment-prioritization` | Recommend the next analyses or experiments to run |
 | `grn-confidence-boundary` | State what the atlas supports, does not support, and leaves ambiguous |
 | `grn-transferability` | Assess whether a candidate-level story transfers across species |
+| `grn-minimal-validation` | Compress a validation plan into the smallest defensible next step |
 | `grn-hypothesis-compare` | Compare competing candidate hypotheses and explain the current winner |
 | `grn-research-brief` | Build a structured research brief and next-step workflow |
 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
@@ -62,10 +63,11 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 8. **Plan a follow-up study**: `grn-candidate-triage` → `grn-experiment-prioritization` → `grn-research-brief`
 9. **State the confidence boundary before acting**: `grn-evidence-audit` → `grn-confidence-boundary`
 10. **Assess cross-species transfer before extrapolating**: `grn-orthology` → `grn-transferability`
-11. **Choose between competing candidates**: `grn-candidate-triage` → `grn-hypothesis-compare`
-12. **Turn a brief into a go/no-go plan**: `grn-research-brief` → `grn-validation-plan`
-13. **Prepare a collaborator handoff packet**: `grn-research-brief` → `grn-validation-plan` → `grn-study-packet`
-14. **Prepare a collaborator-readable report**: `grn-study-packet` → `grn-study-report`
+11. **Reduce a full validation matrix to the minimum next move**: `grn-validation-plan` → `grn-minimal-validation`
+12. **Choose between competing candidates**: `grn-candidate-triage` → `grn-hypothesis-compare`
+13. **Turn a brief into a go/no-go plan**: `grn-research-brief` → `grn-validation-plan`
+14. **Prepare a collaborator handoff packet**: `grn-research-brief` → `grn-validation-plan` → `grn-study-packet`
+15. **Prepare a collaborator-readable report**: `grn-study-packet` → `grn-study-report`
 
 ## Execution Modes
 

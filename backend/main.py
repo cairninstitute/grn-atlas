@@ -20,6 +20,7 @@ import reporting
 import hypothesis
 import boundary
 import transferability
+import minpath
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1333,6 +1334,29 @@ async def transferability_assessment(request: TransferabilityRequest):
         request.gene_id,
         request.target_species,
         intent=request.intent,
+    )
+
+
+class MinimalValidationRequest(BaseModel):
+    gene_ids: List[str]
+    intent: str = "experiment"
+    species: Optional[str] = None
+    max_candidates: int = Field(3, ge=1, le=20)
+    max_experiments: int = Field(3, ge=1, le=10)
+
+
+@app.post("/api/v1/research/minimal-validation")
+async def minimal_validation(request: MinimalValidationRequest):
+    """Compress the broader validation plan into the smallest defensible next step."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return minpath.build_minimal_validation_path(
+        db,
+        request.gene_ids,
+        intent=request.intent,
+        species=request.species,
+        max_candidates=request.max_candidates,
+        max_experiments=request.max_experiments,
     )
 
 

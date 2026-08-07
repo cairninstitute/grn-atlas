@@ -302,6 +302,15 @@ data-free item ships first, then the expression linchpin, then the rest.
   proves exact edge conservation. Validation: targeted transferability unit/API
   tests, plus direct + HTTP skill and integration regression.
 
+- **2026-08-07** — Shipped **minimal validation workflow**. Added
+  `backend/minpath.py`, `POST /api/v1/research/minimal-validation`, and the
+  `grn-minimal-validation` skill to compress the broader validation plan into the
+  smallest defensible next action. The output now highlights the first step,
+  prerequisite checks, stop/go gates, blockers, fallback alternatives, and an
+  escalation path without forcing the researcher to parse the full validation
+  matrix. Validation: targeted minimal-path unit/API tests, plus direct + HTTP
+  skill and integration regression.
+
 - **2026-07-28** — **Human base-resolution binding (#45): assessed, deferred with a plan.**
   The useful ReMap-2022 human file (per-TF peaks) is 1.4 GB; the alternative JASPAR-vertebrate
   scan needs the ~3 GB human genome + promoter extraction. Either is a full new pipeline

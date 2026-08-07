@@ -2603,6 +2603,28 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# GRN-MINIMAL-VALIDATION
+# =====================================================================
+r = run_skill("grn-minimal-validation",
+              ["--gene-ids", "TP53,BAX", "--intent", "experiment"],
+              "minimal validation: TP53,BAX")
+grade(r, [
+    ("has minimal first step", lambda d: d.get("minimal_first_step", {}).get("experiment") is not None),
+    ("has prerequisite checks", lambda d: len(d.get("prerequisite_checks", [])) > 0),
+    ("has stop/go gates", lambda d: len(d.get("stop_go_gates", [])) > 0),
+])
+results.append(r)
+
+r = run_skill("grn-minimal-validation",
+              ["--gene-ids", "Peaxi162Scf00118g00310", "--intent", "rnai", "--species", "petunia"],
+              "minimal validation: petunia rnai")
+grade(r, [
+    ("has escalation path", lambda d: len(d.get("escalation_path", [])) > 0),
+    ("has alternatives", lambda d: "fallback_alternatives" in d),
+])
+results.append(r)
+
+# =====================================================================
 # GRN-TRANSFERABILITY
 # =====================================================================
 r = run_skill("grn-transferability",

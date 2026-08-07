@@ -426,6 +426,28 @@ else:
          "checks": [{"check": "execution", "pass": False}], "time_s": 0}
 results.append(r)
 
+# Test: minimal validation path lead and first step align with validation plan
+r_minv = run_skill("grn-minimal-validation",
+                   ["--gene-ids", "TP53,BAX,MDM2", "--intent", "experiment"],
+                   "consistency: minimal validation TP53,BAX,MDM2")
+if r_minv["status"] == "OK" and r_vplan["status"] == "OK":
+    min_lead = r_minv["data"].get("lead_candidate", {}).get("gene_id")
+    vplan_lead = r_vplan["data"].get("lead_candidate", {}).get("gene_id")
+    min_step = r_minv["data"].get("minimal_first_step", {}).get("experiment")
+    first_track = r_vplan["data"].get("validation_tracks", [{}])[0].get("experiment")
+    r = {"skill": "cross-skill", "label": "consistency: minimal validation aligns with validation plan",
+         "status": "OK", "data": {"minimal_lead": min_lead, "plan_lead": vplan_lead, "minimal_step": min_step, "plan_step": first_track},
+         "error": None, "time_s": 0}
+    grade(r, [
+        ("lead matches", lambda d: min_lead == vplan_lead),
+        ("step present", lambda d: min_step is not None),
+    ])
+else:
+    r = {"skill": "cross-skill", "label": "consistency: minimal validation aligns with validation plan",
+         "status": "ERROR", "grade": "FAIL", "data": None, "error": "prerequisite failed",
+         "checks": [{"check": "execution", "pass": False}], "time_s": 0}
+results.append(r)
+
 r_vplan_rnai = run_skill("grn-validation-plan",
                          ["--gene-ids", "Peaxi162Scf00118g00310", "--intent", "rnai", "--species", "petunia"],
                          "consistency: validation plan petunia rnai")
