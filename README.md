@@ -1,14 +1,30 @@
 # GRN Atlas
 
-Interactive multi-species **gene-regulatory-network atlas**: explore regulatory networks,
-sequence/binding context, expression, pathways, traits, cross-species conservation,
-predicted perturbations, and in-silico **dsRNA / RNAi design** — with every predicted or
-inferred value clearly labelled distinct from measured data.
+GRN Atlas is an interactive multi-species **gene regulatory network atlas** for researchers
+who need to move from a gene or gene set to a defensible next step quickly. It combines
+regulatory networks, sequence and binding context, expression, pathways, traits,
+cross-species conservation, predicted perturbations, and in-silico **dsRNA / RNAi design**
+in one workspace — with predicted and inferred results always labelled separately from
+measured data.
 
 React + Cytoscape.js frontend · FastAPI + SQLite backend.
 
-Species: **human, mouse, arabidopsis, tomato, petunia** (dahlia onboarding prepared).
-Layers vary by species — see the live matrix at `GET /api/v1/species`.
+Current species coverage: **human, mouse, arabidopsis, tomato, petunia** (with dahlia
+onboarding prepared). Data layers vary by species; see the live coverage matrix at
+`GET /api/v1/species`.
+
+GRN Atlas can be used in three ways:
+
+- through the browser UI for interactive network exploration
+- through the FastAPI backend for programmatic analysis and reproducible workflows
+- through the included AgentSkills.io-compatible skills for LLM-guided single-skill and
+  multi-step orchestration
+
+This repository is intended for **academic research, education, and non-commercial
+exploration**. If you are evaluating it from a fresh clone, the important detail is that
+the repository does **not** ship third-party source data or a prebuilt database. You fetch
+the upstream inputs locally, build the SQLite atlas, and then run the UI/API on top of
+that local build.
 
 ---
 
