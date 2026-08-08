@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use GRN Atlas in academic work, please cite the software using this metadata and also cite the upstream data sources exposed by the atlas provenance and citations endpoints."
+title: "GRN Atlas"
+abstract: "Interactive multi-species gene regulatory network atlas with browser UI, FastAPI backend, and agent skills for network analysis, regulatory evidence review, perturbation planning, dsRNA design, and cross-species comparison."
+type: software
+authors:
+  - family-names: "Institute"
+    given-names: "CAIRN"
+email: dev@cairninstitute.com
+repository-code: "https://github.com/cairninstitute/grn-atlas"
+url: "https://github.com/cairninstitute/grn-atlas"
+keywords:
+  - gene regulatory network
+  - systems biology
+  - bioinformatics
+  - transcriptomics
+  - plant biology
+  - network biology
+license: "LicenseRef-CAIRN-NonCommercial"

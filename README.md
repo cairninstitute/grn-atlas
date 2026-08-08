@@ -68,6 +68,9 @@ education, and personal experimentation are allowed under the terms in
 redistribution as part of a paid product or service requires separate permission
 from CAIRN Institute.
 
+For software citation metadata, see [CITATION.cff](CITATION.cff). For data-source
+citations, use the provenance and BibTeX endpoints described below.
+
 Important scope boundaries:
 
 - **Code in this repository** is licensed under the project-level
