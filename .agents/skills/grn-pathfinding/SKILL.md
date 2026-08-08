@@ -1,6 +1,6 @@
 ---
 name: grn-pathfinding
-description: "Find regulatory paths between two genes in the network. Uses breadth-first search to discover how one gene may regulate another through a chain of transcription factor interactions. Returns paths with per-step confidence and evidence."
+description: "Use when the question asks how one gene regulates another through a path or chain, such as 'path from TP53 to BAX', 'direct vs indirect regulation', or 'what route connects gene A to gene B'. Finds regulatory paths between two genes with per-step confidence and evidence. Not for general neighborhood lookup; use grn-network for regulators or targets of one gene."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

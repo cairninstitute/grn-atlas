@@ -467,6 +467,235 @@ TOOLS = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_evidence_audit",
+            "description": "Summarize what evidence layers support a gene or regulatory edge, including curated, inferred, motif, coexpression, pathway, and trait support.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "scope": {"type": "string", "enum": ["gene", "edge"], "description": "Audit a gene or a specific regulatory edge"},
+                    "gene_id": {"type": "string", "description": "Gene ID when scope=gene"},
+                    "source_id": {"type": "string", "description": "Source gene ID when scope=edge"},
+                    "target_id": {"type": "string", "description": "Target gene ID when scope=edge"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "depth": {"type": "integer", "description": "Context depth (default 1)"},
+                },
+                "required": ["scope"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_coverage_report",
+            "description": "Report whether a species has the required and optional layers needed for a given analysis intent, with readiness score and missing layers.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "species": {"type": "string", "description": "Species name"},
+                    "intent": {"type": "string", "enum": ["network", "expression", "motif", "perturbation", "orthology", "traits", "rnai", "experiment"], "description": "Analysis intent"},
+                    "gene_id": {"type": "string", "description": "Optional gene ID for gene-specific context"},
+                },
+                "required": ["species", "intent"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_candidate_triage",
+            "description": "Rank a gene list for a research intent using evidence support, TF status, and species coverage.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent (experiment, network, rnai, etc.)"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "top": {"type": "integer", "description": "Maximum ranked candidates to return (default 10)"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_experiment_prioritization",
+            "description": "Recommend the next analyses or experiments to run for one or more genes based on evidence support and species coverage.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "max_recommendations": {"type": "integer", "description": "Maximum recommendations per candidate (default 5)"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_confidence_boundary",
+            "description": "State what the current atlas evidence supports, does not support, and leaves ambiguous for a candidate gene set and analysis intent.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "max_candidates": {"type": "integer", "description": "Maximum candidates to summarize"},
+                    "max_experiments": {"type": "integer", "description": "Maximum experiment summaries"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_transferability",
+            "description": "Assess whether a gene-level claim or candidate can be transferred from the source species to a target species, including ortholog support and caveats.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_id": {"type": "string", "description": "Source gene ID"},
+                    "target_species": {"type": "string", "description": "Target species"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                },
+                "required": ["gene_id", "target_species"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_minimal_validation",
+            "description": "Turn a candidate set and analysis intent into the smallest defensible validation path, including first step, blockers, stop/go gates, and fallback path.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "max_candidates": {"type": "integer", "description": "Maximum candidates to summarize"},
+                    "max_experiments": {"type": "integer", "description": "Maximum experiment summaries"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_evidence_synthesis",
+            "description": "Synthesize atlas-backed evidence for a gene or gene set into a paper-style summary with support, weak evidence, stored PMIDs, citations, and reporting caveats.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "max_candidates": {"type": "integer", "description": "Maximum candidates to summarize"},
+                    "max_experiments": {"type": "integer", "description": "Maximum experiment summaries"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_hypothesis_compare",
+            "description": "Compare competing candidate genes for the same analysis intent and explain which hypothesis is currently best supported and what evidence would change the ranking.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated candidate gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "max_candidates": {"type": "integer", "description": "Maximum candidates to compare"},
+                    "max_experiments": {"type": "integer", "description": "Maximum experiment summaries"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_research_brief",
+            "description": "Build a structured research brief for a gene list and analysis intent, combining candidate ranking, experiment recommendations, species readiness, and evidence snapshots.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "max_candidates": {"type": "integer", "description": "Maximum candidates to include"},
+                    "max_experiments": {"type": "integer", "description": "Maximum experiment recommendations"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_validation_plan",
+            "description": "Build an execution-ready validation plan from a gene list and analysis intent, including ranked validation tracks, decision gates, blockers, and success criteria.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "max_candidates": {"type": "integer", "description": "Maximum candidates to include"},
+                    "max_experiments": {"type": "integer", "description": "Maximum experiment tracks"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_study_packet",
+            "description": "Build a shareable study packet from a gene list and analysis intent, bundling the research brief, validation plan, collaborator handoff notes, and citation/provenance context.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "max_candidates": {"type": "integer", "description": "Maximum candidates to include"},
+                    "max_experiments": {"type": "integer", "description": "Maximum experiment tracks"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_study_report",
+            "description": "Build a collaborator-facing study report from a gene list and analysis intent, turning the study packet into a structured narrative with summary, validation status, and citations.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "max_candidates": {"type": "integer", "description": "Maximum candidates to include"},
+                    "max_experiments": {"type": "integer", "description": "Maximum experiment tracks"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
 ]
 
 # ---------------------------------------------------------------------------
@@ -507,6 +736,10 @@ def _tool_to_cli(tool_name: str, args: dict, http_url: str | None) -> list[str]:
         "min_fold_change": "--min-fold-change",
         "min_importance": "--min-importance",
         "compare_curated": "--compare-curated",
+        "scope": "--scope", "source_id": "--source-id", "target_id": "--target-id",
+        "intent": "--intent", "target_species": "--target-species",
+        "max_recommendations": "--max-recommendations",
+        "max_candidates": "--max-candidates", "max_experiments": "--max-experiments",
     }
 
     _BOOL_FLAGS = {"include_edge_support", "compare_curated"}
@@ -560,13 +793,27 @@ def _n_skills(trace):
 
 def _answer_has(trace, *terms):
     """Check if the final answer contains all terms (case-insensitive)."""
-    ans = (trace.get("final_answer") or "").lower()
-    return all(t.lower() in ans for t in terms)
+    raw = trace.get("final_answer") or ""
+    ans = raw.lower() if isinstance(raw, str) else str(raw).lower()
+    flat_terms = []
+    for t in terms:
+        if isinstance(t, (list, tuple, set)):
+            flat_terms.extend(str(x) for x in t)
+        else:
+            flat_terms.append(str(t))
+    return all(t.lower() in ans for t in flat_terms)
 
 def _answer_has_any(trace, *terms):
     """Check if the final answer contains any of the terms."""
-    ans = (trace.get("final_answer") or "").lower()
-    return any(t.lower() in ans for t in terms)
+    raw = trace.get("final_answer") or ""
+    ans = raw.lower() if isinstance(raw, str) else str(raw).lower()
+    flat_terms = []
+    for t in terms:
+        if isinstance(t, (list, tuple, set)):
+            flat_terms.extend(str(x) for x in t)
+        else:
+            flat_terms.append(str(t))
+    return any(t.lower() in ans for t in flat_terms)
 
 def _answer_has_number(trace):
     """Check if the final answer contains at least one number."""
@@ -730,10 +977,10 @@ QUESTIONS = [
     # =================================================================
     {
         "question": (
-            "I want to design an RNAi screen targeting the Arabidopsis orthologs of the "
-            "light-response genes HY5 (AT5G11260) and PIF4 (AT2G43010). "
-            "Screen both for dsRNA designability, and for whichever has better specificity, "
-            "predict the downstream perturbation effects of silencing it."
+            "Screen HY5 (AT5G11260) and PIF4 (AT2G43010) in Arabidopsis for dsRNA "
+            "designability. Explicitly tell me which gene has better specificity or lower "
+            "off-target burden, then predict the downstream perturbation effects of "
+            "silencing that winner."
         ),
         "checks": [
             ("used dsrna_screen or dsrna", lambda t: _used(t, "grn_dsrna_screen", "grn_dsrna")),
@@ -741,6 +988,34 @@ QUESTIONS = [
             ("mentions specificity or off-target", lambda t:
                 _answer_has_any(t, "specific", "off-target", "off_target")),
             ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+        ],
+    },
+    {
+        "question": (
+            "Screen ABF1 (AT1G49720), ABF2 (AT1G45249), and PIF4 (AT2G43010) in "
+            "Arabidopsis for dsRNA designability. Tell me which target has the best "
+            "specificity and the lowest off-target burden."
+        ),
+        "checks": [
+            ("used dsrna_screen", lambda t: _used(t, "grn_dsrna_screen")),
+            ("mentions specificity or off-target", lambda t:
+                _answer_has_any(t, "specific", "off-target", "off_target", "burden")),
+            ("used 1 or more skills", lambda t: _n_skills(t) >= 1),
+        ],
+    },
+    {
+        "question": (
+            "Screen HY5 (AT5G11260) and PIF4 (AT2G43010) in Arabidopsis for dsRNA "
+            "designability. Then, for the more specific target, predict downstream "
+            "perturbation effects and summarize which biological processes are enriched."
+        ),
+        "checks": [
+            ("used dsrna_screen or dsrna", lambda t: _used(t, "grn_dsrna_screen", "grn_dsrna")),
+            ("used perturbation", lambda t: _used(t, "grn_perturbation")),
+            ("used enrichment", lambda t: _used(t, "grn_enrichment")),
+            ("mentions specificity or off-target", lambda t:
+                _answer_has_any(t, "specific", "off-target", "off_target")),
+            ("used >= 3 skills", lambda t: _n_skills(t) >= 3),
         ],
     },
 
@@ -968,9 +1243,9 @@ QUESTIONS = [
         "checks": [
             ("used inferred edges", lambda t: _used(t, "grn_inferred_edges")),
             ("queried both methods", lambda t:
-                sum(1 for c in t["tool_calls"]
-                    if c["name"] == "grn_inferred_edges") >= 2
-                or _answer_has_any(t, ["GRNBoost2", "GENIE3", "both"])),
+                {str(c["args"].get("method", "")).upper() for c in t["tool_calls"]
+                 if c["name"] == "grn_inferred_edges" and c["args"].get("method")} >= {"GRNBOOST2", "GENIE3"}
+                or _answer_has_any(t, "GRNBoost2", "GENIE3", "both")),
             ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
         ],
     },
@@ -1009,6 +1284,101 @@ QUESTIONS = [
             ("used modules", lambda t: _used(t, "grn_modules")),
             ("used inferred edges", lambda t: _used(t, "grn_inferred_edges")),
             ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+        ],
+    },
+    {
+        "question": (
+            "For TP53, BAX, and MDM2 in a human experiment follow-up, rank the candidates, "
+            "recommend the next experiments, and then build a structured research brief."
+        ),
+        "checks": [
+            ("used candidate triage", lambda t: _used(t, "grn_candidate_triage")),
+            ("used experiment prioritization", lambda t: _used(t, "grn_experiment_prioritization")),
+            ("used research brief", lambda t: _used(t, "grn_research_brief")),
+            ("used >= 3 skills", lambda t: _n_skills(t) >= 3),
+        ],
+    },
+    {
+        "question": (
+            "Before I act on TP53 and BAX in a human experiment setting, audit what supports the "
+            "TP53 to BAX edge, state the confidence boundary for the candidate set, and then "
+            "produce a writing-ready evidence synthesis."
+        ),
+        "checks": [
+            ("used evidence audit", lambda t: _used(t, "grn_evidence_audit")),
+            ("used confidence boundary", lambda t: _used(t, "grn_confidence_boundary")),
+            ("used evidence synthesis", lambda t: _used(t, "grn_evidence_synthesis")),
+            ("used >= 3 skills", lambda t: _n_skills(t) >= 3),
+        ],
+    },
+    {
+        "question": (
+            "I want to run RNAi on the petunia gene Peaxi162Scf00118g00310. "
+            "First check whether petunia has the required atlas coverage for RNAi, then build "
+            "a validation plan, and finally reduce that to the minimal next move."
+        ),
+        "checks": [
+            ("used coverage report", lambda t: _used(t, "grn_coverage_report")),
+            ("used validation plan", lambda t: _used(t, "grn_validation_plan")),
+            ("used minimal validation", lambda t: _used(t, "grn_minimal_validation")),
+            ("used >= 3 skills", lambda t: _n_skills(t) >= 3),
+        ],
+    },
+    {
+        "question": (
+            "Compare TP53, BAX, and MDM2 as competing experiment hypotheses in human. "
+            "First triage them, then compare the competing hypotheses and explain what evidence "
+            "would change the current winner."
+        ),
+        "checks": [
+            ("used candidate triage", lambda t: _used(t, "grn_candidate_triage")),
+            ("used hypothesis compare", lambda t: _used(t, "grn_hypothesis_compare")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+        ],
+    },
+    {
+        "question": (
+            "Assess whether TP53-driven network conclusions transfer from human to mouse. "
+            "Use ortholog context if needed, run a transferability assessment, and explain the caveats."
+        ),
+        "checks": [
+            ("used orthology or conservation context", lambda t: _used(t, "grn_orthology", "grn_conservation")),
+            ("used transferability", lambda t: _used(t, "grn_transferability")),
+            ("mentions caveat or transfer", lambda t: _answer_has_any(t, "caveat", "transfer", "ortholog", "mouse")),
+        ],
+    },
+    {
+        "question": (
+            "Prepare a collaborator handoff for TP53, BAX, and MDM2 in a human experiment follow-up. "
+            "Build the research brief, convert it into a validation plan, then generate both a study "
+            "packet and a study report."
+        ),
+        "checks": [
+            ("used study packet", lambda t: _used(t, "grn_study_packet")),
+            ("used study report", lambda t: _used(t, "grn_study_report")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+        ],
+    },
+    {
+        "question": (
+            "Find the Arabidopsis gene HY5 by searching the atlas, then retrieve its detailed record "
+            "and tell me its locus ID and whether it is a transcription factor."
+        ),
+        "checks": [
+            ("used gene search", lambda t: _used(t, "grn_gene_search")),
+            ("used gene info", lambda t: _used(t, "grn_gene_info")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+        ],
+    },
+    {
+        "question": (
+            "For Arabidopsis HY5 (AT5G11260), find which transcription factor motifs are present in its "
+            "promoter and whether any of those motif hits have known edge support."
+        ),
+        "checks": [
+            ("used motif query", lambda t: _used(t, "grn_motif_query")),
+            ("used >= 1 skills", lambda t: _n_skills(t) >= 1),
+            ("mentions motif or promoter", lambda t: _answer_has_any(t, "motif", "promoter", "binding")),
         ],
     },
 ]

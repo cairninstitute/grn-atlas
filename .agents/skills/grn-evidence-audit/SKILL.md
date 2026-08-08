@@ -1,6 +1,6 @@
 ---
 name: grn-evidence-audit
-description: Summarize what evidence layers support a gene or regulatory edge, including curated, inferred, motif, coexpression, pathway, and trait support, with confidence and coverage gaps.
+description: Use to audit what evidence supports a gene or regulatory edge before acting on it. Good for requests like 'what supports TP53→BAX', 'audit the evidence', or 'what evidence layers back this claim'. Often followed by grn-confidence-boundary or grn-evidence-synthesis.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 

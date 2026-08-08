@@ -1,6 +1,6 @@
 ---
 name: grn-dsrna
-description: "Design or analyze dsRNA sequences for RNA interference (RNAi) gene silencing. Given a target gene, designs the most specific dsRNA window. Given a dsRNA sequence, predicts off-target silencing across the transcriptome. Use for RNAi experiment planning."
+description: "Use for single-gene RNAi planning or dsRNA sequence analysis. Good for requests like 'design dsRNA for HY5', 'can I silence this gene with RNAi', or 'analyze this dsRNA for off-targets'. For screening multiple genes or ranking candidates, use grn-dsrna-screen."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

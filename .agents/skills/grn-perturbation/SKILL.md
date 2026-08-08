@@ -1,6 +1,6 @@
 ---
 name: grn-perturbation
-description: "Predict the downstream effects of knocking out or overexpressing a gene. Uses signed regulatory path propagation to estimate which genes would be up- or down-regulated and by how much. Use for in-silico perturbation experiments."
+description: "Use to predict downstream effects of knocking out, silencing, or overexpressing one or more genes in silico. Good for prompts like 'what happens if MYC is knocked out' or 'what genes change if HY5 is silenced'. Often used after grn-dsrna or grn-dsrna-screen."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

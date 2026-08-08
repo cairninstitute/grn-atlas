@@ -1,6 +1,6 @@
 ---
 name: grn-hypothesis-compare
-description: Compare competing candidate genes for the same analysis intent and explain which hypothesis is currently best supported, why, and what evidence would overturn it.
+description: Use when the task is to compare competing gene hypotheses for the same intent and explain which is currently best supported, why, and what evidence would change the winner. Good for requests like 'compare competing candidates' or 'which hypothesis is strongest'. Usually follows grn-candidate-triage rather than replacing it.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 

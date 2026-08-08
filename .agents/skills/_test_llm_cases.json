@@ -5109,7 +5109,7 @@
   {
     "skill": "grn-dsrna-screen",
     "label": "screen-content: results have expected fields",
-    "question": "Screen AT1G49720, AT5G11260, AT2G43010 for dsRNA in Arabidopsis. Show designability, symbols, and off-target counts.",
+    "question": "Use the dsRNA screen for AT1G49720, AT5G11260, AT2G43010 in Arabidopsis. Report designability, gene symbols, and off-target counts for each target.",
     "expected_tools": [
       "grn_dsrna_screen"
     ],
@@ -5251,6 +5251,32 @@
     "skill": "grn-dsrna-screen",
     "label": "screen: custom design window",
     "question": "Screen AT1G49720 and AT5G11260 for dsRNA in Arabidopsis with a design window of 100bp.",
+    "expected_tools": [
+      "grn_dsrna_screen"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dsrna_screen"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AT1G49720"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dsrna-screen",
+    "label": "screen: off-target burden only",
+    "question": "Screen AT1G49720, AT5G11260, and AT2G43010 in Arabidopsis for dsRNA designability and report only the off-target burden ranking.",
     "expected_tools": [
       "grn_dsrna_screen"
     ],
@@ -7124,6 +7150,359 @@
         "type": "arg_eq",
         "arg": "top",
         "value": 10
+      }
+    ]
+  },
+  {
+    "skill": "grn-candidate-triage",
+    "label": "candidate triage: TP53 BAX MDM2 top 2",
+    "question": "Rank TP53, BAX, and MDM2 as human experiment candidates and show me the top 2.",
+    "expected_tools": [
+      "grn_candidate_triage"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_candidate_triage"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "skill": "grn-confidence-boundary",
+    "label": "confidence boundary: TP53 BAX experiment",
+    "question": "For TP53 and BAX in the human experiment setting, state what the atlas supports, what it does not support, and what remains ambiguous.",
+    "expected_tools": [
+      "grn_confidence_boundary"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_confidence_boundary"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      }
+    ]
+  },
+  {
+    "skill": "grn-coverage-report",
+    "label": "coverage report: petunia rnai",
+    "question": "Does petunia have the required coverage for RNAi analysis?",
+    "expected_tools": [
+      "grn_coverage_report"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coverage_report"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "rnai"
+      }
+    ]
+  },
+  {
+    "skill": "grn-evidence-audit",
+    "label": "evidence audit: TP53 to BAX edge",
+    "question": "Audit the evidence supporting the TP53 to BAX regulatory edge in humans.",
+    "expected_tools": [
+      "grn_evidence_audit"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_evidence_audit"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "scope",
+        "value": "edge"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source_id",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_id",
+        "value": "BAX"
+      }
+    ]
+  },
+  {
+    "skill": "grn-evidence-synthesis",
+    "label": "evidence synthesis: TP53 BAX",
+    "question": "Write a paper-style evidence summary for TP53 and BAX in an experiment follow-up context, including any stored citation-ready support.",
+    "expected_tools": [
+      "grn_evidence_synthesis"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_evidence_synthesis"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      }
+    ]
+  },
+  {
+    "skill": "grn-experiment-prioritization",
+    "label": "experiment prioritization: TP53 BAX",
+    "question": "For TP53 and BAX in human experiment follow-up, recommend the next analyses or experiments to run.",
+    "expected_tools": [
+      "grn_experiment_prioritization"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_experiment_prioritization"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      }
+    ]
+  },
+  {
+    "skill": "grn-hypothesis-compare",
+    "label": "hypothesis compare: TP53 BAX MDM2",
+    "question": "Compare TP53, BAX, and MDM2 as competing human experiment candidates and explain which hypothesis is currently strongest.",
+    "expected_tools": [
+      "grn_hypothesis_compare"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_hypothesis_compare"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      }
+    ]
+  },
+  {
+    "skill": "grn-minimal-validation",
+    "label": "minimal validation: TP53 BAX",
+    "question": "For TP53 and BAX in an experiment follow-up, give me the smallest defensible next validation step.",
+    "expected_tools": [
+      "grn_minimal_validation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_minimal_validation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      }
+    ]
+  },
+  {
+    "skill": "grn-research-brief",
+    "label": "research brief: TP53 BAX MDM2",
+    "question": "Build a structured research brief for TP53, BAX, and MDM2 in a human experiment follow-up.",
+    "expected_tools": [
+      "grn_research_brief"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_research_brief"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      }
+    ]
+  },
+  {
+    "skill": "grn-study-packet",
+    "label": "study packet: TP53 BAX MDM2",
+    "question": "Create a collaborator-ready study packet for TP53, BAX, and MDM2 in a human experiment follow-up.",
+    "expected_tools": [
+      "grn_study_packet"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_study_packet"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      }
+    ]
+  },
+  {
+    "skill": "grn-study-report",
+    "label": "study report: TP53 BAX MDM2",
+    "question": "Create a collaborator-facing study report for TP53, BAX, and MDM2 in a human experiment follow-up.",
+    "expected_tools": [
+      "grn_study_report"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_study_report"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      }
+    ]
+  },
+  {
+    "skill": "grn-transferability",
+    "label": "transferability: TP53 to mouse",
+    "question": "Assess whether TP53-based findings can be transferred from human to mouse for network analysis.",
+    "expected_tools": [
+      "grn_transferability"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_transferability"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "gene_id",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_species",
+        "value": "mouse"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "network"
+      }
+    ]
+  },
+  {
+    "skill": "grn-validation-plan",
+    "label": "validation plan: TP53 BAX MDM2",
+    "question": "Build an execution-ready validation plan for TP53, BAX, and MDM2 in a human experiment follow-up.",
+    "expected_tools": [
+      "grn_validation_plan"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_validation_plan"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
       }
     ]
   }

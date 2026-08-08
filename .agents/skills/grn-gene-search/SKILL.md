@@ -1,6 +1,6 @@
 ---
 name: grn-gene-search
-description: "Search for genes by name, symbol, or keyword across species in the GRN Atlas regulatory network database. Use when looking up gene identifiers, finding genes by keyword, or resolving gene symbols to IDs for human, mouse, Arabidopsis, tomato, or petunia."
+description: "Use when the gene identifier is unknown, ambiguous, or must be found by name, symbol, alias, or keyword. Good for requests like 'find HY5', 'search for AN2', or resolving symbols to atlas gene IDs across human, mouse, Arabidopsis, tomato, and petunia. Not for detailed metadata after the gene is identified; use grn-gene-info next."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

@@ -1,6 +1,6 @@
 ---
 name: grn-study-report
-description: Build a collaborator-facing study report from a gene list and analysis intent, turning the study packet into a structured narrative with summary, validation status, and citations.
+description: Use when the output should be a collaborator-facing narrative report rather than a bundled packet. Converts the study packet or brief into a structured report with summary, validation status, and citations. Good for requests like 'study report', 'collaborator report', or 'write this up for a collaborator'. Often paired with grn-study-packet.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 

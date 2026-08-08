@@ -1,6 +1,6 @@
 ---
 name: grn-species
-description: "List all species in the GRN Atlas with their available capabilities. Returns a per-species matrix showing which features (expression, motifs, traits, orthologs, genome coordinates) are available."
+description: "Use when the question is 'which species support X', 'what data layers are available by species', or 'which organisms have expression, motifs, traits, orthologs, or coordinates'. Often the first step before choosing a species for downstream expression, motif, RNAi, or network analysis."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

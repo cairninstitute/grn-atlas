@@ -1,6 +1,6 @@
 ---
 name: grn-dsrna-screen
-description: "Batch dsRNA designability screen across a gene set or pathway. Ranks genes by off-target burden to identify the best RNAi targets. Optionally predicts downstream effects of silencing the set. Use for high-throughput RNAi experiment planning."
+description: "Use for multi-gene or pathway-level RNAi screening: compare several candidate genes, rank dsRNA designability, and identify the most specific target with the lowest off-target burden. Good for prompts like 'screen ABF1, ABF2, and PIF4' or 'which target is best for an RNAi experiment'. Often followed by grn-perturbation or grn-enrichment."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas
@@ -14,6 +14,15 @@ backend/venv/bin/python .agents/skills/grn-dsrna-screen/scripts/run.py --gene-id
 backend/venv/bin/python .agents/skills/grn-dsrna-screen/scripts/run.py --pathway-id GO:0009651 --species arabidopsis
 ```
 
+## Workflow
+
+- when the user compares multiple RNAi targets, call this before any single-gene dsRNA design skill
+- if the user asks for screening results plus the screen-level predicted effect of the set, stay in `grn-dsrna-screen` because this skill already returns optional `predicted_effect`
+- if the user asks what happens after silencing the best target, or asks for downstream effects of one selected winner, follow this with `grn-perturbation`
+- if the user asks what processes or pathways are affected, follow perturbation with `grn-enrichment`
+- mention which target looks most specific or has the lowest off-target burden when the request is comparative
+- if the user says `screen` but only provides one gene, use `grn-dsrna-screen` or `grn-dsrna`; prefer `grn-dsrna` when the intent is pure design for that one gene, and prefer `grn-dsrna-screen` when the user still wants ranking-style fields like off-target burden or predicted effect
+
 ### Parameters
 - `--gene-ids` (optional) — comma-separated gene IDs to screen
 - `--pathway-id` (optional) — pathway ID to screen all member genes
@@ -26,3 +35,10 @@ backend/venv/bin/python .agents/skills/grn-dsrna-screen/scripts/run.py --pathway
 
 ### Output
 JSON with ranked gene list (designable count, off-target burden, mean TPM) and optional predicted downstream effects of silencing the set.
+
+## Routing examples
+
+- `screen ABF1, ABF2, and PIF4 for dsRNA designability` → call `grn-dsrna-screen`
+- `screen ABF1, ABF2, and PIF4, then perturb the best target` → call `grn-dsrna-screen`, then `grn-perturbation`
+- `screen ABF1, ABF2, and PIF4, then explain enriched processes for the winner` → call `grn-dsrna-screen`, then `grn-perturbation`, then `grn-enrichment`
+- `screen AT1G49720 alone for off-target burden` → call `grn-dsrna-screen` or `grn-dsrna`

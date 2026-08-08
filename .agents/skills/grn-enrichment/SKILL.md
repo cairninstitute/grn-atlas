@@ -1,6 +1,6 @@
 ---
 name: grn-enrichment
-description: "Run overrepresentation analysis on a set of genes. Supports GO term enrichment, Reactome pathway enrichment, GWAS trait enrichment, and transcription factor binding motif enrichment. Returns significant terms with p-values and FDR correction."
+description: "Use when you already have a gene set and need biological interpretation through GO, pathway, trait, or motif enrichment. Good follow-up to perturbation, regulon, inferred-edge, overlap, or differential-expression analyses. Trigger on requests like 'what pathways are enriched', 'what GO terms are overrepresented', or 'what processes do these genes control'."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas
@@ -28,3 +28,8 @@ backend/venv/bin/python .agents/skills/grn-enrichment/scripts/run.py --gene-ids 
 
 ### Output
 JSON object with enriched terms, each including term name, p-value, FDR-corrected q-value, and matched genes.
+
+## Notes
+
+- use this after `grn-perturbation`, `grn-regulon-compare`, or `grn-infer` when the user asks what processes or pathways are enriched
+- if the user asks what GO terms are enriched among predicted targets from an inferred network, first call `grn-infer`, then call this skill on the returned target set

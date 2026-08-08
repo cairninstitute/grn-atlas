@@ -26,6 +26,7 @@ import os
 import subprocess
 import sys
 import time
+import urllib.request
 from pathlib import Path
 
 SKILLS_DIR = Path(__file__).resolve().parent
@@ -246,31 +247,30 @@ def evaluate_check(check: dict, tool_name: str | None, tool_args: dict, tool_dat
 
 def ask_for_tool_call(question: str, model: str, api_key: str) -> dict:
     """Ask the LLM a question and get back its tool call choice."""
-    import requests
-
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT + "\n\nAnswer the question using exactly ONE tool call. Do not chain multiple calls."},
         {"role": "user", "content": question},
     ]
 
     try:
-        resp = requests.post(
+        payload = json.dumps({
+            "model": model,
+            "messages": messages,
+            "tools": TOOLS,
+            "tool_choice": "auto",
+            "max_tokens": 1024,
+        }).encode("utf-8")
+        req = urllib.request.Request(
             OPENROUTER_URL,
+            data=payload,
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
             },
-            json={
-                "model": model,
-                "messages": messages,
-                "tools": TOOLS,
-                "tool_choice": "auto",
-                "max_tokens": 1024,
-            },
-            timeout=60,
+            method="POST",
         )
-        resp.raise_for_status()
-        data = resp.json()
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
 
         if "choices" not in data:
             err = data.get("error", {})

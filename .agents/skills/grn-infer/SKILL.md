@@ -1,10 +1,13 @@
 ---
 name: grn-infer
 description: >
-  Query GRNBoost2/GENIE3-inferred regulatory edges from expression data.
-  Returns predicted TF-target relationships ranked by importance score.
-  These are computationally inferred (NOT experimentally validated) and
-  should be interpreted with caution given limited sample sizes (18-29 samples).
+  Use for expression-inferred regulatory edges from GRNBoost2 or GENIE3,
+  including predicted regulators, predicted targets, method comparison,
+  and inferred edges with curated overlap. Good for prompts like 'what
+  does GRNBoost2 predict', 'compare GRNBoost2 vs GENIE3', or 'find
+  inferred regulators of HY5'. Not for curated network neighborhoods;
+  use grn-network for known regulators or targets. Often followed by
+  grn-gene-info, grn-network, grn-enrichment, or grn-diff-regulation.
 parameters:
   - name: gene_id
     type: string
@@ -51,3 +54,19 @@ backend/venv/bin/python .agents/skills/grn-infer/scripts/run.py \
 backend/venv/bin/python .agents/skills/grn-infer/scripts/run.py \
   --species arabidopsis --gene-id HY5 --compare-curated --http http://localhost:8000
 ```
+
+## Workflow
+
+- if the user asks for inferred regulators or inferred targets only, call this skill directly
+- if the user asks to compare GRNBoost2 and GENIE3, call this skill for both methods rather than answering from one method alone
+- if the user asks for metadata about the TFs or genes returned by the overlap, follow this with `grn-gene-info`
+- if the user asks what biological processes or pathways the inferred targets control, follow this with `grn-enrichment`
+- if the user asks whether inferred regulators or targets also appear in the curated network, follow this with `grn-network`
+- if the user asks whether inferred TFs differ across tissues or conditions, follow this with `grn-diff-regulation`
+
+## Routing examples
+
+- `what does GRNBoost2 predict for HY5` → call `grn-infer`
+- `compare GRNBoost2 vs GENIE3 for AT3G24650, then look up the shared TFs` → call `grn-infer` for both methods, then `grn-gene-info`
+- `what genes does PIL5 regulate according to GRNBoost2, and what GO terms are enriched` → call `grn-infer`, then `grn-enrichment`
+- `which inferred regulators of HY5 also appear in the curated network` → call `grn-infer`, then `grn-network`

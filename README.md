@@ -60,6 +60,26 @@ venv/bin/python -m pytest backend -q     # backend: unit + DB-invariant + API-co
 npm run test                             # frontend (vitest)
 ```
 
+## License
+
+This repository is **source-available for non-commercial use**. Academic research,
+education, and personal experimentation are allowed under the terms in
+[LICENSE](LICENSE). Commercial use, hosted service use, internal business use, or
+redistribution as part of a paid product or service requires separate permission
+from CAIRN Institute.
+
+Important scope boundaries:
+
+- **Code in this repository** is licensed under the project-level
+  source-available non-commercial license in [LICENSE](LICENSE).
+- **Fetched third-party data** is **not** covered by the repository license. Each
+  upstream source keeps its own terms and may impose additional academic-use or
+  redistribution restrictions.
+- **Contributions** are governed by [CONTRIBUTING.md](CONTRIBUTING.md) and
+  [CLA_POLICY.md](CLA_POLICY.md). If you submit code, you must have the right to do
+  so and you grant CAIRN Institute the rights needed to maintain and commercialize
+  the project.
+
 ## Full data setup, caveats & quality checks
 
 The `light` quick-start above gives a working atlas, but **not every layer is fully
@@ -216,6 +236,11 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 
 ### Complete skill inventory
 
+The repository currently contains **42 documented skills**:
+
+- **41 callable analysis/workflow skills** listed below
+- **1 overview/router skill**: `grn-atlas-overview`
+
 | # | Skill | Description |
 |---|---|---|
 | 1 | `grn-gene-search` | Fuzzy gene search by name, symbol, or ID |
@@ -288,13 +313,17 @@ OpenRouter free tier) to validate tool selection and multi-step orchestration:
 | **HTTP mode** | 59 | 59 | 100% (59/59) | All skills via REST API with running server |
 | **Integration** | 49 | 49 | 100% (49/49) | Cross-skill consistency, boundary/adversarial, performance regression, idempotency |
 | **E2E (Playwright)** | 22 | 22 | 100% (22/22) | Browser tests: all views, 14 analysis panels, 4 workflow chains, URL state |
-| **Single-skill LLM** | 292 | 292 | 91.4% (267/292) | LLM selects the correct tool and extracts correct parameters from natural language |
-| **Multi-skill orchestration** | 25 | 23 | — | LLM chains 2–5 skills across up to 10 rounds to answer complex biology questions |
+| **Single-skill LLM** | 305 | 305 | 92.8% (283/305) | LLM selects the correct tool and extracts correct parameters from natural language |
+| **Multi-skill orchestration** | 35 | 35 | 94.3% (33/35) | LLM chains 1–7 skills across multi-step biology and workflow questions |
 
-All 28 skills have LLM test coverage (292/292 cases tested, no rate-limit gaps).
-Of 25 failures: 20 were tool-confusion (LLM picked a related but wrong skill, e.g.
-`grn_network` instead of `grn_subgraph`), and 5 selected the correct tool but failed
-argument or output checks. Tool selection accuracy: **93.2%** (272/292).
+All **42 documented skills** have repository documentation, and all **41 callable
+analysis/workflow skills** plus the `grn-atlas-overview` router skill have LLM-facing
+coverage in the current skill suite.
+The latest full Nemotron single-skill rerun exercised **305/305** cases with **93.4%**
+tool-selection accuracy (**285/305**) and **283/305** full-case passes. Subsequent
+targeted prompt/skill/harness fixes improved the previously weak RNAi-screen,
+conservation, inferred-edge, and workflow chains; the latest full orchestration rerun
+reached **33/35 PASS** on Saturday, August 8, 2026.
 
 Integration tests (`_test_integration.py`) cover four categories:
 cross-skill consistency (regulon↔network, search↔info, inferred↔curated, orthology, expression↔coexpression),
@@ -304,7 +333,8 @@ performance regression (timing gates on all major skills), and idempotency (repe
 Multi-skill orchestration questions cover patterns like: network intersection, RNAi experiment
 pipelines, regulon comparison + enrichment, cross-species conservation, upstream analysis +
 validation, cascade modeling, expression-guided network analysis, inferred-edge validation,
-and full experimental design workflows. Test harnesses are in `.agents/skills/_test_llm_orchestration.py`,
+candidate ranking, evidence synthesis, collaborator handoff, and full experimental design
+workflows. Test harnesses are in `.agents/skills/_test_llm_orchestration.py`,
 `_test_llm_single_skill.py`, and `_test_integration.py`.
 
 ## Docs
@@ -312,6 +342,10 @@ and full experimental design workflows. Test harnesses are in `.agents/skills/_t
   plan, and a dated iteration log.
 - **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** — run, test, rebuild, compute-dep bootstrap.
 - **[docs/ONBOARDING_SPECIES.md](docs/ONBOARDING_SPECIES.md)** — add a new species.
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — contribution process, review expectations, and
+  contributor rights terms.
+- **[CLA_POLICY.md](CLA_POLICY.md)** — contributor license terms that preserve CAIRN
+  Institute's productization rights.
 
 ## Data provenance & citations
 Every integrated source (TRRUST, PlantRegMap, PLAZA, OMA, JASPAR, Plant Reactome, GWAS

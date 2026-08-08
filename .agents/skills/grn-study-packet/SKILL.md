@@ -1,6 +1,6 @@
 ---
 name: grn-study-packet
-description: Build a shareable study packet from a gene list and analysis intent, bundling the research brief, validation plan, collaborator handoff notes, and citation/provenance context.
+description: Use when preparing a shareable collaborator handoff or analysis packet for a gene list and intent. Bundles the research brief, validation plan, provenance, citations, and handoff context into one package. Trigger on requests like 'study packet', 'handoff', 'shareable packet', 'collaborator package', or 'preserve this analysis'.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 

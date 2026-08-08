@@ -1,6 +1,6 @@
 ---
 name: grn-confidence-boundary
-description: State what the current atlas evidence supports, does not support, and leaves ambiguous for a candidate gene set and analysis intent.
+description: Use to state what the current atlas evidence supports, does not support, and leaves uncertain for a candidate set and intent. Good for requests like 'how far can I trust this', 'what is still ambiguous', or 'state the confidence boundary'. Often follows grn-evidence-audit.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 

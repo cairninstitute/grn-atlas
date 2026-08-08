@@ -1,6 +1,6 @@
 ---
 name: grn-evidence-synthesis
-description: Synthesize atlas-backed evidence for a gene or gene set into a paper-style summary with support, weak evidence, stored PMIDs, citations, and reporting caveats.
+description: Use when the user wants a writing-ready evidence summary for a gene or candidate set, including support, caveats, PMIDs, and citation context. Good for requests like 'write up the evidence', 'paper-style summary', or 'evidence synthesis'. Often follows grn-evidence-audit and grn-confidence-boundary.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 

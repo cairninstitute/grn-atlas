@@ -1,6 +1,6 @@
 ---
 name: grn-experiment-prioritization
-description: Recommend the next analyses or experiments to run for one or more genes based on evidence support and species coverage, including perturbation, expression, motif, RNAi, and conservation follow-up.
+description: Use to recommend the next analyses or experiments for one or more candidate genes after triage. Good for requests like 'what should I test next', 'recommend follow-up experiments', or 'what analyses are highest value now'. Often follows grn-candidate-triage and feeds grn-research-brief.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 

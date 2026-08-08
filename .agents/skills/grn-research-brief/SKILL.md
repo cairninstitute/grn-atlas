@@ -1,6 +1,6 @@
 ---
 name: grn-research-brief
-description: Build a structured research brief for a gene list and analysis intent, combining candidate ranking, experiment recommendations, species readiness, evidence snapshots, risks, and an ordered next-step workflow.
+description: Use when the user wants a structured research brief for a gene list and intent, combining ranked candidates, follow-up experiments, readiness, evidence, risks, and next steps. Good for requests like 'make a brief', 'summarize this for follow-up', or 'prepare a structured research summary'. Often built after candidate triage and experiment prioritization.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: grn-candidate-triage
-description: Rank a gene list for a research intent using evidence support, TF status, and species coverage so a researcher can decide which candidates merit follow-up first.
+description: Use to rank a candidate gene list for a specific intent and decide which genes deserve follow-up first. Good for requests like 'triage these candidates', 'rank TP53, BAX, and MDM2', or 'which genes should I prioritize'. Often followed by grn-hypothesis-compare, grn-experiment-prioritization, or grn-research-brief.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 

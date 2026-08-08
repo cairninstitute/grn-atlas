@@ -1,6 +1,6 @@
 ---
 name: grn-network
-description: "Explore the regulatory network neighborhood of a gene. Returns its regulators (transcription factors that control it) and targets (genes it regulates), with confidence scores and evidence sources. Use for network exploration, finding upstream regulators, or downstream targets."
+description: "Use for single-gene network neighborhood questions: upstream regulators, downstream targets, or the local signaling neighborhood of one gene. Returns regulators and targets with evidence and confidence. Not for paths between two genes; use grn-pathfinding for causal chains or routes."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas
