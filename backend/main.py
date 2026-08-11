@@ -27,6 +27,7 @@ import differential
 import experiment_optimizer
 import literature
 import consensus
+import sequence_design
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1471,6 +1472,78 @@ async def counterfactual_analysis(request: CounterfactualAnalysisRequest):
         species=request.species,
         include_external=request.include_external,
         years_back=request.years_back,
+    )
+
+
+class VariantEffectRequest(BaseModel):
+    gene_id: str
+    position: int = Field(..., ge=0)
+    assembly: Optional[str] = None
+    window_type: str = "promoter"
+    ref: Optional[str] = None
+    alt: Optional[str] = None
+
+
+@app.post("/api/v1/variants/effect")
+async def variant_effect(request: VariantEffectRequest):
+    """Estimate whether a promoter-region variant overlaps motif-supported regulatory sites."""
+    return sequence_design.variant_effect(
+        db,
+        gene_id=request.gene_id,
+        position=request.position,
+        assembly=request.assembly,
+        window_type=request.window_type,
+        ref=request.ref,
+        alt=request.alt,
+    )
+
+
+class PromoterEditPrioritizationRequest(BaseModel):
+    gene_id: str
+    top: int = Field(10, ge=1, le=50)
+
+
+@app.post("/api/v1/promoter/edit-prioritize")
+async def promoter_edit_prioritize(request: PromoterEditPrioritizationRequest):
+    """Prioritize promoter windows whose motif-supported sites are most strategic to perturb."""
+    return sequence_design.promoter_edit_prioritization(db, request.gene_id, top=request.top)
+
+
+class CrisprDesignRequest(BaseModel):
+    sequence: Optional[str] = None
+    gene_id: Optional[str] = None
+    pam: str = "NGG"
+    top: int = Field(10, ge=1, le=50)
+
+
+@app.post("/api/v1/crispr/design")
+async def crispr_design(request: CrisprDesignRequest):
+    """Design CRISPR guides from an input sequence using simple sequence heuristics."""
+    return sequence_design.crispr_design(
+        sequence=request.sequence,
+        gene_id=request.gene_id,
+        pam=request.pam,
+        top=request.top,
+    )
+
+
+class PrimerDesignRequest(BaseModel):
+    sequence: Optional[str] = None
+    gene_id: Optional[str] = None
+    product_min: int = Field(80, ge=40, le=500)
+    product_max: int = Field(250, ge=60, le=1000)
+    top: int = Field(10, ge=1, le=50)
+
+
+@app.post("/api/v1/primers/design")
+async def primer_design(request: PrimerDesignRequest):
+    """Design PCR/qPCR primer pairs from an input sequence using simple heuristics."""
+    return sequence_design.primer_design(
+        sequence=request.sequence,
+        gene_id=request.gene_id,
+        product_min=request.product_min,
+        product_max=request.product_max,
+        top=request.top,
     )
 
 

@@ -58,6 +58,10 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 | `grn-literature-review` | Retrieve recent external literature for genes, edges, pathways, or phenotypes and classify support vs contradiction |
 | `grn-consensus-ranking` | Rank competing candidates by a weighted consensus across atlas evidence layers |
 | `grn-counterfactual-analysis` | Explain what evidence shifts would most likely overturn the current lead candidate |
+| `grn-variant-effect` | Assess whether a promoter-region variant overlaps motif-supported regulatory sites |
+| `grn-promoter-edit-prioritization` | Prioritize motif-supported promoter sites as editing targets |
+| `grn-crispr-design` | Suggest sequence-only heuristic CRISPR guides |
+| `grn-primer-design` | Suggest sequence-only heuristic primer pairs |
 
 ## Typical Workflows
 
@@ -82,6 +86,7 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 19. **Choose the highest-value feasible next step**: `grn-experiment-prioritization` → `grn-experiment-optimizer`
 20. **Check the latest external evidence**: `grn-evidence-audit` → `grn-literature-review` → `grn-evidence-synthesis`
 21. **Get a robust winner and ask what would flip it**: `grn-consensus-ranking` → `grn-counterfactual-analysis`
+22. **Move from regulatory site to assay design**: `grn-variant-effect` → `grn-promoter-edit-prioritization` → `grn-crispr-design` / `grn-primer-design`
 
 ## Execution Modes
 
