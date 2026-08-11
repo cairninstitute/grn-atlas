@@ -224,6 +224,217 @@ data-free item ships first, then the expression linchpin, then the rest.
   “can this species honestly answer my question?” Verified with new unit/API tests
   and harness integration.
 
+## 5B. Sprint 12+ researcher workflow expansion plan
+
+### Objective
+
+Extend GRN Atlas from an atlas-internal analysis system into a broader researcher
+workflow system that can answer:
+
+- what does the atlas know?
+- what does the latest literature say?
+- what does my dataset say?
+- what intervention or assay should I run next under real constraints?
+- how would a variant, promoter edit, or CRISPR perturbation change the
+  regulatory story?
+
+### Wave structure
+
+The next expansion should be built in three waves:
+
+1. **Wave 1 — user-data and decision workflows**
+   - `grn-dataset-import`
+   - `grn-user-gene-set-analysis`
+   - `grn-differential-expression`
+   - `grn-experiment-optimizer`
+2. **Wave 2 — literature, genetics, and assay expansion**
+   - `grn-literature-review`
+   - `grn-consensus-ranking`
+   - `grn-counterfactual-analysis`
+   - `grn-phenotype-to-candidates`
+   - `grn-variant-effect`
+   - `grn-promoter-edit-prioritization`
+   - `grn-crispr-design`
+   - `grn-primer-design`
+3. **Wave 3 — advanced state/context analysis**
+   - `grn-celltype-regulation`
+   - `grn-trajectory-regulation`
+   - `grn-combinatorial-perturbation`
+   - `grn-species-onboarding-plan`
+
+### Major milestones
+
+#### Milestone 1 — user gene-set ingestion and analysis
+
+- Add `backend/importers.py` to parse plain gene lists and CSV/TSV files.
+- Add identifier normalization and species guessing over atlas gene IDs/symbols.
+- Add `POST /api/v1/datasets/import` to return:
+  - parsed rows
+  - mapped genes
+  - ambiguous/unmapped genes
+  - species guess
+  - dataset type guess
+- Add `POST /api/v1/user/gene-set/analyze` to run:
+  - enrichment
+  - upstream regulator analysis
+  - subgraph extraction
+  - candidate triage
+  - evidence summaries
+- Add skills:
+  - `grn-dataset-import`
+  - `grn-user-gene-set-analysis`
+- Validation:
+  - backend unit/API tests
+  - direct/HTTP skill tests
+  - one integration test chaining import → analysis
+
+#### Milestone 2 — differential-expression workflows
+
+- Add `POST /api/v1/expression/differential`.
+- Support:
+  - atlas-mode group comparison from named samples/tissues
+  - imported DE tables or expression matrices
+- Output:
+  - ranked DE genes
+  - top up/down genes
+  - sample-count and confidence warnings
+  - recommended downstream skills
+- Add skill:
+  - `grn-differential-expression`
+- Validation:
+  - backend unit/API tests
+  - direct/HTTP skill coverage
+  - integration test: differential → upstream → enrichment
+
+#### Milestone 3 — constraint-aware experiment planning
+
+- Add `POST /api/v1/experiments/optimize`.
+- Accept:
+  - gene list
+  - intent
+  - species
+  - budget/timeline constraints
+  - allowed assay classes
+- Output:
+  - ranked experiments
+  - rationale
+  - blockers
+  - cheaper/faster alternatives
+  - expected information gain proxy
+- Add skill:
+  - `grn-experiment-optimizer`
+- Validation:
+  - backend unit/API tests
+  - direct/HTTP skill tests
+  - integration test against validation-plan/minimal-validation
+
+#### Milestone 4 — literature-grounded external evidence
+
+- Add `backend/literature.py` and external-source adapters.
+- Add `GET /api/v1/literature/review`.
+- Support:
+  - gene
+  - edge
+  - pathway
+  - phenotype/topic queries
+- Output:
+  - supporting papers
+  - contradicting papers
+  - latest evidence summary
+  - explicit “atlas vs external” boundary
+- Add skill:
+  - `grn-literature-review`
+- Validation:
+  - adapter tests with fixtures
+  - HTTP/API tests
+  - integration test with evidence-audit/evidence-synthesis
+
+#### Milestone 5 — consensus and counterfactual decision support
+
+- Add weighted evidence aggregation across:
+  - network support
+  - motif support
+  - expression/coexpression
+  - traits/pathways
+  - orthology/conservation
+  - literature (if available)
+- Add skills:
+  - `grn-consensus-ranking`
+  - `grn-counterfactual-analysis`
+- Validation:
+  - consistency tests against candidate-triage/hypothesis-compare
+  - LLM routing tests for subtle “why not this gene?” prompts
+
+#### Milestone 6 — variant, promoter-edit, and CRISPR support
+
+- Add sequence-aware variant effect scoring on motif instances.
+- Add promoter edit prioritization.
+- Add CRISPR guide design and primer design support.
+- Add skills:
+  - `grn-variant-effect`
+  - `grn-promoter-edit-prioritization`
+  - `grn-crispr-design`
+  - `grn-primer-design`
+- Validation:
+  - sequence-level unit tests
+  - API/skill tests with fixed fixtures
+  - integration test with motif/export workflows
+
+#### Milestone 7 — advanced state/context analysis
+
+- Add cell-type / single-cell regulatory analysis when data layers exist.
+- Add trajectory/time-series regulatory analysis when data layers exist.
+- Add combinatorial perturbation search.
+- Add species onboarding planning support.
+- Add skills:
+  - `grn-celltype-regulation`
+  - `grn-trajectory-regulation`
+  - `grn-combinatorial-perturbation`
+  - `grn-species-onboarding-plan`
+- Validation:
+  - blocked until the required data layers are present
+
+### Data-bound vs software-bound work
+
+- **Software-bound now**
+  - dataset import
+  - user gene-set analysis
+  - differential expression over current plant panels
+  - experiment optimization
+  - consensus ranking
+  - counterfactual analysis
+  - phenotype-to-candidates
+- **Needs external API integration**
+  - literature review
+- **Needs new sequence/tooling layers**
+  - variant effect
+  - promoter edit prioritization
+  - CRISPR design
+  - primer design
+- **Data-blocked for now**
+  - cell-type regulation
+  - trajectory regulation
+
+### Validation loop for every milestone
+
+1. Implement backend logic + unit tests.
+2. Add API surface + contract tests.
+3. Add direct skill wrapper + direct harness coverage.
+4. Add HTTP skill wrapper + HTTP harness coverage.
+5. Add cross-skill integration coverage.
+6. Add/refresh LLM single-skill and orchestration cases.
+7. Fix routing/frontmatter ambiguity if the LLM chooses the wrong skill.
+
+### Immediate execution order
+
+1. **Milestone 1** — dataset import + user gene-set analysis
+2. **Milestone 2** — differential expression
+3. **Milestone 3** — experiment optimizer
+4. **Milestone 4** — literature review
+5. **Milestone 5** — consensus + counterfactual
+6. **Milestone 6** — variant/promoter/CRISPR
+7. **Milestone 7** — cell-state / onboarding work
+
 - **2026-08-07** — Shipped **candidate triage + experiment prioritization** on top
   of the evidence/coverage foundation. Added `backend/planning.py`,
   `POST /api/v1/candidates/triage`, and `POST /api/v1/experiments/prioritize`, plus

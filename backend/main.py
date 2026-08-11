@@ -22,6 +22,7 @@ import boundary
 import transferability
 import minpath
 import synthesis
+import importers
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1202,6 +1203,130 @@ async def research_brief(request: ResearchBriefRequest):
         max_candidates=request.max_candidates,
         max_experiments=request.max_experiments,
     )
+
+
+class DatasetImportRequest(BaseModel):
+    content: str
+    species: Optional[str] = None
+    filename: Optional[str] = None
+
+
+@app.post("/api/v1/datasets/import")
+async def dataset_import(request: DatasetImportRequest):
+    """Parse and normalize a user-provided gene list or simple tabular dataset."""
+    return importers.import_gene_dataset(
+        db,
+        request.content,
+        species=request.species,
+        filename=request.filename,
+    )
+
+
+class UserGeneSetAnalysisRequest(BaseModel):
+    gene_ids: Optional[List[str]] = None
+    content: Optional[str] = None
+    species: Optional[str] = None
+    filename: Optional[str] = None
+    intent: str = "experiment"
+    top_terms: int = Field(8, ge=1, le=50)
+    top_regulators: int = Field(8, ge=1, le=50)
+    top_candidates: int = Field(5, ge=1, le=20)
+    include_subgraph: bool = True
+
+
+def _resolve_analysis_gene_set(request: UserGeneSetAnalysisRequest) -> dict[str, Any]:
+    if request.content:
+        imported = importers.import_gene_dataset(
+            db,
+            request.content,
+            species=request.species,
+            filename=request.filename,
+        )
+    elif request.gene_ids:
+        imported = importers.normalize_gene_ids(db, request.gene_ids, species=request.species)
+    else:
+        raise HTTPException(status_code=400, detail="Provide content or gene_ids")
+
+    mapped = imported.get("mapped_gene_ids", [])
+    if not mapped:
+        raise HTTPException(status_code=400, detail="No atlas genes could be mapped from the input")
+
+    if request.species:
+        species = request.species
+    else:
+        species = imported.get("species_guess")
+    if not species:
+        raise HTTPException(status_code=400, detail="Could not determine species; provide species explicitly")
+
+    kept = []
+    excluded = []
+    for gene_id in mapped:
+        gene = db.get_gene(gene_id)
+        if not gene:
+            excluded.append({"gene_id": gene_id, "status": "missing"})
+            continue
+        if gene.species != species:
+            excluded.append({"gene_id": gene_id, "status": "species_mismatch", "species": gene.species})
+            continue
+        kept.append(gene_id)
+    kept = list(dict.fromkeys(kept))
+    if not kept:
+        raise HTTPException(status_code=400, detail=f"No mapped genes matched species '{species}'")
+    return {"imported": imported, "species": species, "gene_ids": kept, "excluded": excluded}
+
+
+@app.post("/api/v1/user/gene-set/analyze")
+async def user_gene_set_analyze(request: UserGeneSetAnalysisRequest):
+    """Run a first-pass atlas analysis over a user-provided or imported gene set."""
+    resolved = _resolve_analysis_gene_set(request)
+    species = resolved["species"]
+    gene_ids = resolved["gene_ids"]
+
+    enrich = await enrichment(EnrichmentRequest(
+        gene_ids=gene_ids,
+        species=species,
+        max_terms=request.top_terms,
+        min_genes=1,
+    ))
+    upstream = await upstream_regulators(UpstreamRequest(
+        gene_ids=gene_ids,
+        species=species,
+        top=request.top_regulators,
+        min_overlap=1,
+    ))
+    triage = planning.triage_candidates(
+        db,
+        gene_ids,
+        intent=request.intent,
+        species=species,
+        top_n=request.top_candidates,
+    )
+    subgraph = None
+    if request.include_subgraph:
+        subgraph = await get_subgraph(SubgraphRequest(gene_ids=gene_ids))
+
+    evidence_summaries = []
+    for gene_id in triage.get("ranked_candidates", [])[:min(request.top_candidates, 3)]:
+        evidence_summaries.append(evidence.summarize_gene_evidence(db, gene_id["gene_id"]))
+
+    recommended = ["grn-enrichment", "grn-upstream", "grn-candidate-triage", "grn-evidence-audit"]
+    if request.intent == "rnai":
+        recommended[:0] = ["grn-dsrna-screen", "grn-dsrna"]
+
+    return {
+        "species": species,
+        "intent": request.intent,
+        "input_gene_count": len(resolved["imported"].get("rows", [])) or len(gene_ids),
+        "analyzed_gene_count": len(gene_ids),
+        "import_summary": resolved["imported"],
+        "excluded_genes": resolved["excluded"],
+        "enrichment": enrich,
+        "upstream_regulators": upstream,
+        "candidate_triage": triage,
+        "subgraph": subgraph,
+        "evidence_summaries": evidence_summaries,
+        "recommended_skills": list(dict.fromkeys(recommended)),
+    }
 
 
 class ValidationPlanRequest(BaseModel):
