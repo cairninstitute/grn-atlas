@@ -26,6 +26,7 @@ import importers
 import differential
 import experiment_optimizer
 import literature
+import consensus
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1423,6 +1424,54 @@ async def literature_review(
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+class ConsensusRankingRequest(BaseModel):
+    gene_ids: List[str]
+    intent: str = "experiment"
+    species: Optional[str] = None
+    top_n: int = Field(10, ge=1, le=50)
+    include_external: bool = False
+    years_back: int = Field(5, ge=1, le=25)
+
+
+@app.post("/api/v1/research/consensus-ranking")
+async def consensus_ranking(request: ConsensusRankingRequest):
+    """Rank candidate genes by a consensus score across atlas evidence layers."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return consensus.rank_consensus(
+        db,
+        request.gene_ids,
+        intent=request.intent,
+        species=request.species,
+        top_n=request.top_n,
+        include_external=request.include_external,
+        years_back=request.years_back,
+    )
+
+
+class CounterfactualAnalysisRequest(BaseModel):
+    gene_ids: List[str]
+    intent: str = "experiment"
+    species: Optional[str] = None
+    include_external: bool = False
+    years_back: int = Field(5, ge=1, le=25)
+
+
+@app.post("/api/v1/research/counterfactual-analysis")
+async def counterfactual_analysis(request: CounterfactualAnalysisRequest):
+    """Explain what evidence changes would most likely overturn the current lead candidate."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return consensus.counterfactual_analysis(
+        db,
+        request.gene_ids,
+        intent=request.intent,
+        species=request.species,
+        include_external=request.include_external,
+        years_back=request.years_back,
+    )
 
 
 class ValidationPlanRequest(BaseModel):

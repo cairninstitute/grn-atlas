@@ -56,6 +56,8 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 | `grn-differential-expression` | Compare atlas tissues/groups or ingest a DEG table to surface genes with the largest expression shifts |
 | `grn-experiment-optimizer` | Re-rank follow-up experiments using budget, time, and assay constraints |
 | `grn-literature-review` | Retrieve recent external literature for genes, edges, pathways, or phenotypes and classify support vs contradiction |
+| `grn-consensus-ranking` | Rank competing candidates by a weighted consensus across atlas evidence layers |
+| `grn-counterfactual-analysis` | Explain what evidence shifts would most likely overturn the current lead candidate |
 
 ## Typical Workflows
 
@@ -79,6 +81,7 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 18. **Compare conditions or tissues**: `grn-differential-expression` → `grn-upstream` → `grn-enrichment`
 19. **Choose the highest-value feasible next step**: `grn-experiment-prioritization` → `grn-experiment-optimizer`
 20. **Check the latest external evidence**: `grn-evidence-audit` → `grn-literature-review` → `grn-evidence-synthesis`
+21. **Get a robust winner and ask what would flip it**: `grn-consensus-ranking` → `grn-counterfactual-analysis`
 
 ## Execution Modes
 

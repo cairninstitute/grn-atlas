@@ -255,9 +255,9 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 
 ### Complete skill inventory
 
-The repository currently contains **47 documented skills**:
+The repository currently contains **49 documented skills**:
 
-- **46 callable analysis/workflow skills** listed below
+- **48 callable analysis/workflow skills** listed below
 - **1 overview/router skill**: `grn-atlas-overview`
 
 | # | Skill | Description |
@@ -308,6 +308,8 @@ The repository currently contains **47 documented skills**:
 | 44 | `grn-differential-expression` | Compare atlas tissue groups or import a precomputed DEG table to identify genes with the largest expression changes |
 | 45 | `grn-experiment-optimizer` | Re-rank follow-up experiments using budget, timeline, and allowed assay constraints instead of only scientific priority |
 | 46 | `grn-literature-review` | Retrieve recent external literature for a gene, edge, pathway, or phenotype and classify papers as support, contradiction, or mention |
+| 47 | `grn-consensus-ranking` | Rank competing candidates by a weighted consensus across atlas evidence layers and optional external literature support |
+| 48 | `grn-counterfactual-analysis` | Explain what evidence shifts would most likely overturn the current lead candidate or flip the ranking |
 
 ## Agent skills
 
@@ -340,7 +342,7 @@ OpenRouter free tier) to validate tool selection and multi-step orchestration:
 | **Single-skill LLM** | 305 | 305 | 92.8% (283/305) | LLM selects the correct tool and extracts correct parameters from natural language |
 | **Multi-skill orchestration** | 35 | 35 | 94.3% (33/35) | LLM chains 1–7 skills across multi-step biology and workflow questions |
 
-All **47 documented skills** have repository documentation, and all **46 callable
+All **49 documented skills** have repository documentation, and all **48 callable
 analysis/workflow skills** plus the `grn-atlas-overview` router skill have LLM-facing
 coverage in the current skill suite.
 The latest full Nemotron single-skill rerun exercised **305/305** cases with **93.4%**
