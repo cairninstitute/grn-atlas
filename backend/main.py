@@ -25,6 +25,7 @@ import synthesis
 import importers
 import differential
 import experiment_optimizer
+import literature
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1392,6 +1393,36 @@ async def differential_expression(request: DifferentialExpressionRequest):
         )
     data["recommended_skills"] = ["grn-upstream", "grn-enrichment", "grn-candidate-triage"]
     return data
+
+
+@app.get("/api/v1/literature/review")
+async def literature_review(
+    scope: str = Query(..., description="gene|edge|pathway|phenotype"),
+    gene_id: Optional[str] = Query(None),
+    source_id: Optional[str] = Query(None),
+    target_id: Optional[str] = Query(None),
+    query: Optional[str] = Query(None),
+    species: Optional[str] = Query(None),
+    years_back: int = Query(5, ge=1, le=25),
+    max_results: int = Query(10, ge=1, le=25),
+):
+    """Retrieve recent external literature relevant to a gene, edge, pathway, or phenotype."""
+    if scope not in {"gene", "edge", "pathway", "phenotype"}:
+        raise HTTPException(status_code=400, detail="scope must be one of: gene, edge, pathway, phenotype")
+    try:
+        return literature.review_literature(
+            db,
+            scope=scope,
+            gene_id=gene_id,
+            source_id=source_id,
+            target_id=target_id,
+            query=query,
+            species=species,
+            years_back=years_back,
+            max_results=max_results,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 class ValidationPlanRequest(BaseModel):

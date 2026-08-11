@@ -55,6 +55,7 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 | `grn-user-gene-set-analysis` | Run a first-pass atlas workflow over a user-provided gene set: enrichment, upstream, triage, subgraph |
 | `grn-differential-expression` | Compare atlas tissues/groups or ingest a DEG table to surface genes with the largest expression shifts |
 | `grn-experiment-optimizer` | Re-rank follow-up experiments using budget, time, and assay constraints |
+| `grn-literature-review` | Retrieve recent external literature for genes, edges, pathways, or phenotypes and classify support vs contradiction |
 
 ## Typical Workflows
 
@@ -77,6 +78,7 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 17. **Analyze a user-provided hit list**: `grn-dataset-import` → `grn-user-gene-set-analysis`
 18. **Compare conditions or tissues**: `grn-differential-expression` → `grn-upstream` → `grn-enrichment`
 19. **Choose the highest-value feasible next step**: `grn-experiment-prioritization` → `grn-experiment-optimizer`
+20. **Check the latest external evidence**: `grn-evidence-audit` → `grn-literature-review` → `grn-evidence-synthesis`
 
 ## Execution Modes
 
