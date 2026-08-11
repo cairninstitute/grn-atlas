@@ -24,6 +24,7 @@ import minpath
 import synthesis
 import importers
 import differential
+import experiment_optimizer
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1179,6 +1180,33 @@ async def experiment_prioritize(request: ExperimentPrioritizationRequest):
         request.gene_ids,
         intent=request.intent,
         species=request.species,
+        max_recommendations=request.max_recommendations,
+    )
+
+
+class ExperimentOptimizeRequest(BaseModel):
+    gene_ids: List[str]
+    intent: str = "experiment"
+    species: Optional[str] = None
+    budget_level: Optional[str] = None
+    timeline_days: Optional[int] = Field(None, ge=1, le=365)
+    allowed_assays: List[str] = []
+    max_recommendations: int = Field(5, ge=1, le=20)
+
+
+@app.post("/api/v1/experiments/optimize")
+async def experiment_optimize(request: ExperimentOptimizeRequest):
+    """Recommend experiments after adjusting for budget, timeline, and assay constraints."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return experiment_optimizer.optimize_experiments(
+        db,
+        request.gene_ids,
+        intent=request.intent,
+        species=request.species,
+        budget_level=request.budget_level,
+        timeline_days=request.timeline_days,
+        allowed_assays=request.allowed_assays,
         max_recommendations=request.max_recommendations,
     )
 
