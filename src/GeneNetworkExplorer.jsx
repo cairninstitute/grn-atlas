@@ -13,11 +13,12 @@ import { COLLECTIONS } from './collections';
 import InterventionDesigner from './components/InterventionDesigner';
 import AnalysisView from './components/AnalysisView';
 import PathwayView from './components/PathwayView';
+import WorkflowWorkspace from './components/WorkflowWorkspace';
 import './styles/GeneNetworkExplorer.css';
 
 export default function GeneNetworkExplorer() {
   const [selectedGene, setSelectedGene] = useState(null);
-  const [viewMode, setViewMode] = useState('network');
+  const [viewMode, setViewMode] = useState('workflow');
   const [filters, setFilters] = useState({
     kingdom: ['Animalia'],
     species: ['human'],
@@ -194,7 +195,16 @@ export default function GeneNetworkExplorer() {
             </div>
           )}
 
-          {viewMode === 'analysis' ? (
+          {viewMode === 'workflow' ? (
+            <WorkflowWorkspace
+              selectedGene={selectedGene}
+              networkData={networkData}
+              filters={filters}
+              onNavigate={setViewMode}
+              onOpenGeneSetAnalysis={() => setShowGeneSet(true)}
+              onOpenDsRna={() => { setDsRnaTarget(selectedGene); setShowDsRna(true); }}
+            />
+          ) : viewMode === 'analysis' ? (
             <AnalysisView />
           ) : viewMode === 'genome' ? (
             <GenomeComparisonView />

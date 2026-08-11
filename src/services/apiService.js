@@ -422,6 +422,273 @@ export const analyticsAPI = {
   }
 };
 
+export const workflowAPI = {
+  importDataset: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/datasets/import`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: options.content || '',
+        species: options.species || null,
+        filename: options.filename || null,
+      }),
+    });
+    return response.json();
+  },
+
+  analyzeGeneSet: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/user/gene-set/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: options.content || null,
+        gene_ids: options.geneIds || null,
+        species: options.species || null,
+        filename: options.filename || null,
+        intent: options.intent || 'experiment',
+        top_terms: options.topTerms || 8,
+        top_regulators: options.topRegulators || 8,
+        top_candidates: options.topCandidates || 5,
+        include_subgraph: options.includeSubgraph !== false,
+      }),
+    });
+    return response.json();
+  },
+
+  consensusRanking: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/research/consensus-ranking`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_ids: options.geneIds || [],
+        intent: options.intent || 'experiment',
+        species: options.species || null,
+        top_n: options.topN || 10,
+        include_external: options.includeExternal || false,
+        years_back: options.yearsBack || 5,
+      }),
+    });
+    return response.json();
+  },
+
+  counterfactualAnalysis: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/research/counterfactual-analysis`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_ids: options.geneIds || [],
+        intent: options.intent || 'experiment',
+        species: options.species || null,
+        include_external: options.includeExternal || false,
+        years_back: options.yearsBack || 5,
+      }),
+    });
+    return response.json();
+  },
+
+  researchBrief: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/research/brief`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_ids: options.geneIds || [],
+        intent: options.intent || 'experiment',
+        species: options.species || null,
+        max_candidates: options.maxCandidates || 5,
+        max_experiments: options.maxExperiments || 3,
+      }),
+    });
+    return response.json();
+  },
+
+  validationPlan: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/research/validation-plan`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_ids: options.geneIds || [],
+        intent: options.intent || 'experiment',
+        species: options.species || null,
+        max_candidates: options.maxCandidates || 3,
+        max_experiments: options.maxExperiments || 3,
+      }),
+    });
+    return response.json();
+  },
+
+  studyReport: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/research/study-report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_ids: options.geneIds || [],
+        intent: options.intent || 'experiment',
+        species: options.species || null,
+        max_candidates: options.maxCandidates || 3,
+        max_experiments: options.maxExperiments || 3,
+      }),
+    });
+    return response.json();
+  },
+
+  experimentOptimize: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/experiments/optimize`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_ids: options.geneIds || [],
+        intent: options.intent || 'experiment',
+        species: options.species || null,
+        budget_level: options.budgetLevel || null,
+        timeline_days: options.timelineDays || null,
+        allowed_assays: options.allowedAssays || [],
+        max_recommendations: options.maxRecommendations || 5,
+      }),
+    });
+    return response.json();
+  },
+
+  differentialExpression: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/expression/differential`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        species: options.species || null,
+        group_a: options.groupA || [],
+        group_b: options.groupB || [],
+        content: options.content || null,
+        filename: options.filename || null,
+        top: options.top || 50,
+        min_abs_log2fc: options.minAbsLog2Fc || 0,
+      }),
+    });
+    return response.json();
+  },
+
+  literatureReview: async (options = {}) => {
+    const params = new URLSearchParams({
+      scope: options.scope || 'gene',
+      years_back: String(options.yearsBack || 5),
+      max_results: String(options.maxResults || 10),
+    });
+    if (options.geneId) params.set('gene_id', options.geneId);
+    if (options.sourceId) params.set('source_id', options.sourceId);
+    if (options.targetId) params.set('target_id', options.targetId);
+    if (options.query) params.set('query', options.query);
+    if (options.species) params.set('species', options.species);
+    const response = await fetch(`${API_BASE}/literature/review?${params.toString()}`);
+    return response.json();
+  },
+
+  variantEffect: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/variants/effect`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_id: options.geneId,
+        position: options.position,
+        assembly: options.assembly || null,
+        window_type: options.windowType || 'promoter',
+        ref: options.ref || null,
+        alt: options.alt || null,
+      }),
+    });
+    return response.json();
+  },
+
+  promoterEditPrioritize: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/promoter/edit-prioritize`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_id: options.geneId,
+        top: options.top || 10,
+      }),
+    });
+    return response.json();
+  },
+
+  crisprDesign: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/crispr/design`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sequence: options.sequence || null,
+        gene_id: options.geneId || null,
+        pam: options.pam || 'NGG',
+        top: options.top || 10,
+      }),
+    });
+    return response.json();
+  },
+
+  primerDesign: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/primers/design`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sequence: options.sequence || null,
+        gene_id: options.geneId || null,
+        product_min: options.productMin || 80,
+        product_max: options.productMax || 250,
+        top: options.top || 10,
+      }),
+    });
+    return response.json();
+  },
+
+  celltypeRegulation: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/celltype/regulation`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        species: options.species,
+        gene_ids: options.geneIds || null,
+      }),
+    });
+    return response.json();
+  },
+
+  trajectoryRegulation: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/trajectory/regulation`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        species: options.species,
+        gene_ids: options.geneIds || null,
+      }),
+    });
+    return response.json();
+  },
+
+  combinatorialPerturbation: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/perturb/combinatorial`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_ids: options.geneIds || [],
+        action: options.action || 'ko',
+        combo_size: options.comboSize || 2,
+        species: options.species || null,
+        top: options.top || 10,
+      }),
+    });
+    return response.json();
+  },
+
+  speciesOnboardingPlan: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/species/onboarding-plan`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        species_name: options.speciesName,
+        intended_capabilities: options.intendedCapabilities || [],
+      }),
+    });
+    return response.json();
+  },
+};
+
 // GraphQL query helper
 export const graphqlAPI = {
   query: async (query, variables = {}) => {

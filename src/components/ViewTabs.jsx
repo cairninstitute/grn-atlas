@@ -2,13 +2,14 @@ import React from 'react';
 import '../styles/ViewTabs.css';
 
 const TABS = [
-  { id: 'network', label: 'Network', icon: '🔗' },
+  { id: 'workflow', label: 'Workflow', icon: '🧭' },
+  { id: 'network', label: 'Explorer', icon: '🔗' },
   { id: 'organism', label: 'Organism', icon: '🌐' },
-  { id: 'pathways', label: 'Pathways', icon: '🛤️' },
-  { id: 'comparison', label: 'Comparison', icon: '⚖️' },
+  { id: 'pathways', label: 'Paths', icon: '🛤️' },
+  { id: 'comparison', label: 'Orthology', icon: '⚖️' },
   { id: 'genome', label: 'Genome', icon: '🧬' },
   { id: 'design', label: 'Design', icon: '✏️' },
-  { id: 'analysis', label: 'Analysis', icon: '🔬' }
+  { id: 'analysis', label: 'Lab', icon: '🔬' }
 ];
 
 export default function ViewTabs({ viewMode, onViewChange }) {
