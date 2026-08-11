@@ -28,6 +28,7 @@ import experiment_optimizer
 import literature
 import consensus
 import sequence_design
+import advanced
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1545,6 +1546,62 @@ async def primer_design(request: PrimerDesignRequest):
         product_max=request.product_max,
         top=request.top,
     )
+
+
+class CelltypeRegulationRequest(BaseModel):
+    species: str
+    gene_ids: Optional[List[str]] = None
+
+
+@app.post("/api/v1/celltype/regulation")
+async def celltype_regulation(request: CelltypeRegulationRequest):
+    """Report readiness for cell-type / single-cell regulatory analysis."""
+    return advanced.celltype_regulation(db, request.species, gene_ids=request.gene_ids)
+
+
+class TrajectoryRegulationRequest(BaseModel):
+    species: str
+    gene_ids: Optional[List[str]] = None
+
+
+@app.post("/api/v1/trajectory/regulation")
+async def trajectory_regulation(request: TrajectoryRegulationRequest):
+    """Report readiness for trajectory / time-series regulatory analysis."""
+    return advanced.trajectory_regulation(db, request.species, gene_ids=request.gene_ids)
+
+
+class CombinatorialPerturbationRequest(BaseModel):
+    gene_ids: List[str]
+    action: str = "ko"
+    combo_size: int = Field(2, ge=2, le=3)
+    species: Optional[str] = None
+    top: int = Field(10, ge=1, le=50)
+
+
+@app.post("/api/v1/perturb/combinatorial")
+async def combinatorial_perturbation(request: CombinatorialPerturbationRequest):
+    """Rank pairwise or triple perturbation combinations by predicted downstream impact."""
+    if not request.gene_ids:
+        raise HTTPException(status_code=400, detail="gene_ids is required")
+    return advanced.combinatorial_perturbation(
+        db,
+        request.gene_ids,
+        action=request.action,
+        combo_size=request.combo_size,
+        species=request.species,
+        top=request.top,
+    )
+
+
+class SpeciesOnboardingPlanRequest(BaseModel):
+    species_name: str
+    intended_capabilities: List[str] = []
+
+
+@app.post("/api/v1/species/onboarding-plan")
+async def species_onboarding_plan(request: SpeciesOnboardingPlanRequest):
+    """Build a staged species-onboarding plan against the current atlas architecture."""
+    return advanced.species_onboarding_plan(request.species_name, request.intended_capabilities)
 
 
 class ValidationPlanRequest(BaseModel):

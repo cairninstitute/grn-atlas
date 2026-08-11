@@ -255,9 +255,9 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 
 ### Complete skill inventory
 
-The repository currently contains **53 documented skills**:
+The repository currently contains **57 documented skills**:
 
-- **52 callable analysis/workflow skills** listed below
+- **56 callable analysis/workflow skills** listed below
 - **1 overview/router skill**: `grn-atlas-overview`
 
 | # | Skill | Description |
@@ -314,6 +314,10 @@ The repository currently contains **53 documented skills**:
 | 50 | `grn-promoter-edit-prioritization` | Prioritize promoter windows and motif-supported sites that are strategic edit targets |
 | 51 | `grn-crispr-design` | Suggest sequence-only heuristic CRISPR guides for a provided DNA sequence |
 | 52 | `grn-primer-design` | Suggest sequence-only heuristic PCR/qPCR primer pairs for a provided DNA sequence |
+| 53 | `grn-celltype-regulation` | Report readiness and missing layers for cell-type or single-cell regulatory analysis |
+| 54 | `grn-trajectory-regulation` | Report readiness and missing layers for trajectory or time-series regulatory analysis |
+| 55 | `grn-combinatorial-perturbation` | Rank pairwise or triple perturbation combinations by predicted downstream impact |
+| 56 | `grn-species-onboarding-plan` | Generate a staged plan for onboarding a new species into the atlas architecture |
 
 ## Agent skills
 
@@ -346,7 +350,7 @@ OpenRouter free tier) to validate tool selection and multi-step orchestration:
 | **Single-skill LLM** | 305 | 305 | 92.8% (283/305) | LLM selects the correct tool and extracts correct parameters from natural language |
 | **Multi-skill orchestration** | 35 | 35 | 94.3% (33/35) | LLM chains 1–7 skills across multi-step biology and workflow questions |
 
-All **53 documented skills** have repository documentation, and all **52 callable
+All **57 documented skills** have repository documentation, and all **56 callable
 analysis/workflow skills** plus the `grn-atlas-overview` router skill have LLM-facing
 coverage in the current skill suite.
 The latest full Nemotron single-skill rerun exercised **305/305** cases with **93.4%**

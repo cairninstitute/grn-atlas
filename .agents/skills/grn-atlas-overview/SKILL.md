@@ -62,6 +62,10 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 | `grn-promoter-edit-prioritization` | Prioritize motif-supported promoter sites as editing targets |
 | `grn-crispr-design` | Suggest sequence-only heuristic CRISPR guides |
 | `grn-primer-design` | Suggest sequence-only heuristic primer pairs |
+| `grn-celltype-regulation` | Report readiness and missing layers for cell-type / single-cell analysis |
+| `grn-trajectory-regulation` | Report readiness and missing layers for trajectory / time-series analysis |
+| `grn-combinatorial-perturbation` | Rank pairwise or triple perturbation combinations by predicted downstream impact |
+| `grn-species-onboarding-plan` | Generate a staged plan for onboarding a new species |
 
 ## Typical Workflows
 
@@ -87,6 +91,7 @@ GRN Atlas is a multi-species gene regulatory network database covering **human, 
 20. **Check the latest external evidence**: `grn-evidence-audit` → `grn-literature-review` → `grn-evidence-synthesis`
 21. **Get a robust winner and ask what would flip it**: `grn-consensus-ranking` → `grn-counterfactual-analysis`
 22. **Move from regulatory site to assay design**: `grn-variant-effect` → `grn-promoter-edit-prioritization` → `grn-crispr-design` / `grn-primer-design`
+23. **Explore advanced future workflows honestly**: `grn-celltype-regulation` / `grn-trajectory-regulation` / `grn-combinatorial-perturbation` / `grn-species-onboarding-plan`
 
 ## Execution Modes
 
