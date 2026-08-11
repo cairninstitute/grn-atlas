@@ -23,6 +23,7 @@ import transferability
 import minpath
 import synthesis
 import importers
+import differential
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -1327,6 +1328,42 @@ async def user_gene_set_analyze(request: UserGeneSetAnalysisRequest):
         "evidence_summaries": evidence_summaries,
         "recommended_skills": list(dict.fromkeys(recommended)),
     }
+
+
+class DifferentialExpressionRequest(BaseModel):
+    species: Optional[str] = None
+    group_a: List[str] = []
+    group_b: List[str] = []
+    content: Optional[str] = None
+    filename: Optional[str] = None
+    top: int = Field(50, ge=1, le=200)
+    min_abs_log2fc: float = 0.0
+
+
+@app.post("/api/v1/expression/differential")
+async def differential_expression(request: DifferentialExpressionRequest):
+    """Gene-level differential expression for atlas sample groups or imported DE tables."""
+    if request.content:
+        data = differential.analyze_imported_deg_table(
+            db,
+            request.content,
+            species=request.species,
+            filename=request.filename,
+            top=request.top,
+        )
+    else:
+        if not request.species:
+            raise HTTPException(status_code=400, detail="species is required for atlas-mode differential expression")
+        data = differential.analyze_atlas_contrast(
+            db,
+            request.species,
+            request.group_a,
+            request.group_b,
+            top=request.top,
+            min_abs_log2fc=request.min_abs_log2fc,
+        )
+    data["recommended_skills"] = ["grn-upstream", "grn-enrichment", "grn-candidate-triage"]
+    return data
 
 
 class ValidationPlanRequest(BaseModel):

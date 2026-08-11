@@ -255,9 +255,9 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 
 ### Complete skill inventory
 
-The repository currently contains **44 documented skills**:
+The repository currently contains **45 documented skills**:
 
-- **43 callable analysis/workflow skills** listed below
+- **44 callable analysis/workflow skills** listed below
 - **1 overview/router skill**: `grn-atlas-overview`
 
 | # | Skill | Description |
@@ -305,6 +305,7 @@ The repository currently contains **44 documented skills**:
 | 41 | `grn-study-report` | Turn a study packet into a collaborator-facing narrative report with markdown |
 | 42 | `grn-dataset-import` | Parse a user gene list/CSV/TSV, map genes onto the atlas, and report ambiguous or unmapped rows |
 | 43 | `grn-user-gene-set-analysis` | Run enrichment, upstream-regulator analysis, candidate triage, and subgraph extraction on a user-provided gene set |
+| 44 | `grn-differential-expression` | Compare atlas tissue groups or import a precomputed DEG table to identify genes with the largest expression changes |
 
 ## Agent skills
 
@@ -337,7 +338,7 @@ OpenRouter free tier) to validate tool selection and multi-step orchestration:
 | **Single-skill LLM** | 305 | 305 | 92.8% (283/305) | LLM selects the correct tool and extracts correct parameters from natural language |
 | **Multi-skill orchestration** | 35 | 35 | 94.3% (33/35) | LLM chains 1–7 skills across multi-step biology and workflow questions |
 
-All **44 documented skills** have repository documentation, and all **43 callable
+All **45 documented skills** have repository documentation, and all **44 callable
 analysis/workflow skills** plus the `grn-atlas-overview` router skill have LLM-facing
 coverage in the current skill suite.
 The latest full Nemotron single-skill rerun exercised **305/305** cases with **93.4%**
