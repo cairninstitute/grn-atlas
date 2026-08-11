@@ -329,9 +329,9 @@ venv/bin/python .agents/skills/grn-regulon/scripts/run.py --gene-id TP53 --depth
 venv/bin/python .agents/skills/grn-upstream/scripts/run.py --http http://localhost:8000 \
   --gene-ids "BAX,BCL2,CDKN1A,MDM2"
 
-# Run all skill tests
-venv/bin/python .agents/skills/_test_all_skills.py       # 294 direct tests
-venv/bin/python .agents/skills/_test_all_skills_http.py  # 59 HTTP tests (server must be running)
+# Run legacy skill harnesses
+venv/bin/python .agents/skills/_test_all_skills.py       # 319 direct tests across 41 skills
+venv/bin/python .agents/skills/_test_all_skills_http.py  # 83 HTTP tests across 41 skills (server must be running)
 venv/bin/python .agents/skills/_test_integration.py      # 49 integration tests (cross-skill, adversarial, perf, idempotency)
 npx playwright test                                       # 22 browser e2e tests (server must be running)
 ```
@@ -343,21 +343,30 @@ OpenRouter free tier) to validate tool selection and multi-step orchestration:
 
 | Test tier | Cases | Tested | Pass rate | What it tests |
 |---|---|---|---|---|
-| **Direct (no LLM)** | 294 | 294 | 100% (294/294) | Skill execution, argument handling, output validation against ground truth |
-| **HTTP mode** | 59 | 59 | 100% (59/59) | All skills via REST API with running server |
+| **Direct skill harness** | 319 | 319 | 100% (319/319) | Local skill execution, argument handling, output validation against ground truth for the legacy 41-skill harness |
+| **HTTP skill harness** | 83 | 83 | 100% (83/83) | Same legacy 41-skill harness exercised through the REST API |
 | **Integration** | 49 | 49 | 100% (49/49) | Cross-skill consistency, boundary/adversarial, performance regression, idempotency |
 | **E2E (Playwright)** | 22 | 22 | 100% (22/22) | Browser tests: all views, 14 analysis panels, 4 workflow chains, URL state |
-| **Single-skill LLM** | 305 | 305 | 92.8% (283/305) | LLM selects the correct tool and extracts correct parameters from natural language |
+| **Backend API pytest** | 165 | 165 | 100% (165/165) | API contracts, science helpers, and milestone 1-7 workflow endpoints including the newer researcher-facing skills |
+| **Frontend Vitest** | 9 | 9 | 100% (9/9) | Frontend component / utility regression coverage |
+| **Single-skill LLM** | 306 | 306 | 92.5% (283/306) | LLM selects the correct legacy tool and extracts correct parameters from natural language |
 | **Multi-skill orchestration** | 35 | 35 | 94.3% (33/35) | LLM chains 1–7 skills across multi-step biology and workflow questions |
 
-All **57 documented skills** have repository documentation, and all **56 callable
-analysis/workflow skills** plus the `grn-atlas-overview` router skill have LLM-facing
-coverage in the current skill suite.
-The latest full Nemotron single-skill rerun exercised **305/305** cases with **93.4%**
-tool-selection accuracy (**285/305**) and **283/305** full-case passes. Subsequent
-targeted prompt/skill/harness fixes improved the previously weak RNAi-screen,
+All **57 documented skills** are documented in-repo, but the repository's older
+direct/HTTP/LLM harnesses do **not** yet cover every newly added milestone 2-7 skill.
+As of **Tuesday, August 11, 2026**, the broad automated coverage boundary is:
+
+- legacy direct skill harness: **41 callable skills**, **319/319 PASS**
+- legacy HTTP skill harness: **41 callable skills**, **83/83 PASS**
+- newer milestone 2-7 skills: covered today by dedicated backend API tests inside
+  `backend/tests/` plus targeted CLI smoke checks
+
+The latest full Nemotron single-skill rerun exercised **306/306** legacy-harness cases
+with **93.1%** tool-selection accuracy (**285/306**) and **283/306** full-case passes.
+Subsequent targeted prompt/skill/harness fixes improved the previously weak RNAi-screen,
 conservation, inferred-edge, and workflow chains; the latest full orchestration rerun
-reached **33/35 PASS** on Saturday, August 8, 2026.
+reached **33/35 PASS** on Saturday, August 8, 2026. Expanding the LLM harnesses to cover
+the milestone 2-7 skills remains open follow-up work.
 
 Integration tests (`_test_integration.py`) cover four categories:
 cross-skill consistency (regulon↔network, search↔info, inferred↔curated, orthology, expression↔coexpression),
