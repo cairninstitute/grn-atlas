@@ -7940,5 +7940,62 @@
         "value": "network"
       }
     ]
+  },
+  {
+    "skill": "grn-shared-regulators",
+    "label": "shared regulators: TP53 and MYC",
+    "question": "What transcription factors regulate both TP53 and MYC in humans?",
+    "expected_tools": [
+      "grn_shared_regulators"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_shared_regulators"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "MYC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-shared-regulators",
+    "label": "shared regulators: BAX BCL2 CDKN1A",
+    "question": "Find the common upstream regulators of BAX, BCL2, and CDKN1A in human.",
+    "expected_tools": [
+      "grn_shared_regulators"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_shared_regulators"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "CDKN1A"
+      }
+    ]
   }
 ]

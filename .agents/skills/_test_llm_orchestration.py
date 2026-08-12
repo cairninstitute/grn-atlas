@@ -105,6 +105,23 @@ TOOLS = [
     {
         "type": "function",
         "function": {
+            "name": "grn_shared_regulators",
+            "description": "Find transcription factors that regulate two or more target genes in common, with per-target direction and confidence.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated target gene IDs"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "min_confidence": {"type": "number", "description": "Min edge confidence (default 0.3)"},
+                    "top": {"type": "integer", "description": "Max shared regulators to return (default 25)"}
+                },
+                "required": ["gene_ids"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "grn_enrichment",
             "description": "Run overrepresentation analysis (GO, pathway, trait, motif) on a gene set.",
             "parameters": {
@@ -1107,8 +1124,11 @@ QUESTIONS = [
             "For each shared regulator, tell me whether it activates or represses each gene."
         ),
         "checks": [
-            ("used network or subgraph", lambda t: _used(t, "grn_network", "grn_subgraph")),
+            ("used shared-regulator analysis", lambda t: _used(t, "grn_shared_regulators", "grn_network", "grn_subgraph")),
             ("queried both TP53 and MYC", lambda t: (
+                _used_with(t, "grn_shared_regulators", "gene_ids", "TP53")
+                and _used_with(t, "grn_shared_regulators", "gene_ids", "MYC")
+            ) or (
                 sum(1 for c in t["tool_calls"]
                     if c["name"] == "grn_network" and c["args"].get("gene_id") in ("TP53", "MYC")) >= 2
                 or _used(t, "grn_subgraph")

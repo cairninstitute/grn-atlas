@@ -1,6 +1,6 @@
 ---
 name: grn-enrichment
-description: "Use when you already have a gene set and need biological interpretation through GO, pathway, trait, or motif enrichment. Good follow-up to perturbation, regulon, inferred-edge, overlap, or differential-expression analyses. Trigger on requests like 'what pathways are enriched', 'what GO terms are overrepresented', or 'what processes do these genes control'."
+description: "Use when you already have a gene set and need biological interpretation through GO, pathway, trait, or motif enrichment. This is a common follow-up after grn-perturbation, grn-regulon-compare, grn-infer, overlap, or differential-expression analyses. Trigger especially when the user asks what processes, pathways, or functions are affected."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas
