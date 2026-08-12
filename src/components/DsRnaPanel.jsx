@@ -87,44 +87,198 @@ function Verdict({ offCount }) {
   return <span className="gs-cons-no">⚠ predicted to also hit {offCount} other gene{offCount === 1 ? '' : 's'}</span>;
 }
 
+function summarizeDownstream(result) {
+  const pe = result?.predicted_effect;
+  if (!pe) return { total: 0, known: 0, unknown: 0 };
+  return {
+    total: pe.affected || 0,
+    known: (pe.down || 0) + (pe.up || 0),
+    unknown: pe.unknown || 0,
+  };
+}
+
+function compareTargets(left, right) {
+  if (!left || !right) return null;
+  const leftDownstream = summarizeDownstream(left);
+  const rightDownstream = summarizeDownstream(right);
+  const leftWholeGeneOffTargets = left.off_targets?.length ?? left.off_target_gene_count ?? 0;
+  const rightWholeGeneOffTargets = right.off_targets?.length ?? right.off_target_gene_count ?? 0;
+
+  const leftScore =
+    (left.off_target_gene_count === 0 ? 3 : 0) +
+    (leftWholeGeneOffTargets === 0 ? 2 : 0) +
+    (leftDownstream.unknown === 0 ? 2 : 0) +
+    (leftDownstream.total > 0 && leftDownstream.total <= 15 ? 1 : 0);
+  const rightScore =
+    (right.off_target_gene_count === 0 ? 3 : 0) +
+    (rightWholeGeneOffTargets === 0 ? 2 : 0) +
+    (rightDownstream.unknown === 0 ? 2 : 0) +
+    (rightDownstream.total > 0 && rightDownstream.total <= 15 ? 1 : 0);
+
+  if (leftScore === rightScore) {
+    return {
+      winner: null,
+      reasons: ['Both candidates are similarly clean by the current specificity and interpretability heuristics.'],
+    };
+  }
+
+  const winner = leftScore > rightScore ? left : right;
+  const loser = winner === left ? right : left;
+  const winnerDownstream = winner === left ? leftDownstream : rightDownstream;
+  const loserDownstream = winner === left ? rightDownstream : leftDownstream;
+  const winnerWholeGeneOffTargets = winner === left ? leftWholeGeneOffTargets : rightWholeGeneOffTargets;
+  const loserWholeGeneOffTargets = winner === left ? rightWholeGeneOffTargets : leftWholeGeneOffTargets;
+  const winnerSymbol = winner.on_target?.symbol || 'This candidate';
+  const loserSymbol = loser.on_target?.symbol || 'the other candidate';
+  const reasons = [];
+
+  if ((winner.off_target_gene_count ?? 0) < (loser.off_target_gene_count ?? 0)) {
+    reasons.push(`${winnerSymbol} has fewer best-window off-target genes than ${loserSymbol}.`);
+  } else if (winnerWholeGeneOffTargets < loserWholeGeneOffTargets) {
+    reasons.push(`${winnerSymbol} has fewer whole-transcript off-target risks than ${loserSymbol}.`);
+  }
+
+  if (winnerDownstream.unknown < loserDownstream.unknown) {
+    reasons.push(`${winnerSymbol} has fewer unknown downstream effects, so the outcome is easier to interpret.`);
+  }
+
+  if (winnerDownstream.total < loserDownstream.total) {
+    reasons.push(`${winnerSymbol} perturbs a smaller predicted downstream program (${winnerDownstream.total} vs ${loserDownstream.total} genes).`);
+  }
+
+  if (!reasons.length) {
+    reasons.push(`${winnerSymbol} scores better on the current specificity and interpretability heuristics.`);
+  }
+
+  return { winner, reasons };
+}
+
+function ComparisonCard({ title, result }) {
+  if (!result) return null;
+  const pe = result?.predicted_effect;
+  const seqOut = result.design ? result.design.sequence : '';
+  const gc = gcPercent(seqOut);
+  return (
+    <div className="gs-compare-card">
+      <h4>{title}</h4>
+      <p className="gs-metrics"><Verdict offCount={result.off_target_gene_count} /></p>
+      <p className="gs-metrics">
+        {result.on_target?.symbol || 'Unknown'} · {result.dsrna_length} bp · specificity {(result.specificity * 100).toFixed(0)}%
+      </p>
+      {result.on_target?.mean_tpm != null && (
+        <p className="gs-metrics">mean TPM {result.on_target.mean_tpm}</p>
+      )}
+      {gc != null && (
+        <p className="gs-metrics">GC {gc}% · off-target genes {result.off_target_gene_count}</p>
+      )}
+      {result.design && (
+        <p className="gs-metrics">window {result.design.start}–{result.design.end}</p>
+      )}
+      {pe && (
+        <p className="gs-metrics">
+          downstream: {pe.affected} affected · ↓{pe.down} · ↑{pe.up} · ?{pe.unknown}
+        </p>
+      )}
+      {result.design?.sequence && (
+        <textarea className="gs-input" rows={3} readOnly value={result.design.sequence} />
+      )}
+    </div>
+  );
+}
+
 // dsRNA / RNAi design + off-target analysis. Everything is PREDICTED silencing
 // (siRNA k-mer matching), not a guarantee of knockdown.
-export default function DsRnaPanel({ open, onClose, initialTarget, initialSpecies }) {
+export default function DsRnaPanel({ open, onClose, initialTarget, initialCompareTarget, initialSpecies, initialSet }) {
   const [seq, setSeq] = useState('');
   const [target, setTarget] = useState('');
+  const [compareTarget, setCompareTarget] = useState('');
   const [species, setSpecies] = useState('petunia');
   const [setText, setSetText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [res, setRes] = useState(null);
+  const [compareRes, setCompareRes] = useState(null);
   const [screen, setScreen] = useState(null);
   const [copied, setCopied] = useState(false);
 
   // Prefill when launched from a specific gene ("Design dsRNA for this gene").
   useEffect(() => {
-    if (open && initialTarget) {
+    if (open) {
       setSpecies(initialSpecies || 'petunia');
-      setTarget(initialTarget);
-      setSeq(''); setRes(null); setScreen(null); setError(null);
+      const initialTargetText = typeof initialTarget === 'string'
+        ? initialTarget
+        : (initialTarget?.label || initialTarget?.symbol || initialTarget?.id || '');
+      const initialCompareTargetText = typeof initialCompareTarget === 'string'
+        ? initialCompareTarget
+        : (initialCompareTarget?.label || initialCompareTarget?.symbol || initialCompareTarget?.id || '');
+      const initialSetText = Array.isArray(initialSet)
+        ? initialSet
+            .map((item) => (typeof item === 'string'
+              ? item
+              : (item?.label || item?.symbol || item?.id || item?.gene_id || '')))
+            .filter(Boolean)
+            .join(', ')
+        : (typeof initialSet === 'string' ? initialSet : '');
+      setTarget(initialTargetText);
+      setCompareTarget(initialCompareTargetText || '');
+      setSetText(initialSetText);
+      setSeq(''); setRes(null); setCompareRes(null); setScreen(null); setError(null);
     }
-  }, [open, initialTarget, initialSpecies]);
+  }, [open, initialTarget, initialCompareTarget, initialSpecies, initialSet]);
+
+  const pe = res?.predicted_effect;
+  const effectSymbolCounts = React.useMemo(() => {
+    const counts = {};
+    for (const row of pe?.top || []) {
+      const key = row.symbol || row.gene_id || '';
+      counts[key] = (counts[key] || 0) + 1;
+    }
+    return counts;
+  }, [pe]);
+  const comparisonSummary = React.useMemo(() => compareTargets(res, compareRes), [res, compareRes]);
 
   if (!open) return null;
+
+  const designForTarget = async (targetText, activeSpecies, sequence = null) => {
+    let targetId = null;
+    if (targetText?.trim()) {
+      const g = await resolveGene(targetText.trim(), activeSpecies);
+      if (!g) throw new Error(`No ${activeSpecies} gene matching "${targetText.trim()}".`);
+      targetId = g.id;
+    }
+    return analysisAPI.dsrna({ sequence: sequence?.trim() || null, targetGeneId: targetId, species: activeSpecies });
+  };
 
   const run = async () => {
     if (!seq.trim() && !target.trim()) { setError('Enter a target gene (name or id), or paste a dsRNA sequence.'); return; }
     setLoading(true); setError(null); setRes(null); setCopied(false);
     try {
-      let targetId = null;
-      if (target.trim()) {
-        const g = await resolveGene(target.trim(), species);
-        if (!g) { setError(`No ${species} gene matching "${target.trim()}".`); setLoading(false); return; }
-        targetId = g.id;
-      }
-      const r = await analysisAPI.dsrna({ sequence: seq.trim() || null, targetGeneId: targetId, species });
+      const r = await designForTarget(target, species, seq);
       if (r.available === false) setError(r.note || 'No transcript store for this species.');
       else setRes(r);
     } catch (e) { setError(e.message); } finally { setLoading(false); }
+  };
+
+  const runCompare = async () => {
+    if (!target.trim() || !compareTarget.trim()) {
+      setError('Enter two target genes to compare.');
+      return;
+    }
+    setLoading(true); setError(null); setCopied(false);
+    try {
+      const [left, right] = await Promise.all([
+        designForTarget(target, species, null),
+        designForTarget(compareTarget, species, null),
+      ]);
+      if (left.available === false) throw new Error(left.note || 'No transcript store for this species.');
+      if (right.available === false) throw new Error(right.note || 'No transcript store for this species.');
+      setRes(left);
+      setCompareRes(right);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const runScreen = async () => {
@@ -147,7 +301,6 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialSpecie
     }
   };
 
-  const pe = res?.predicted_effect;
   const examples = EXAMPLES[species] || [];
   return (
     <div className="gs-overlay" onClick={onClose}>
@@ -173,6 +326,14 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialSpecie
           <GeneSearchInput species={species} value={target} onChange={setTarget}
             placeholder="target gene — type a name (e.g. AN2)" style={{ flex: 1 }} />
         </div>
+        <div className="gs-cons-controls">
+          <label className="gs-label">Compare against</label>
+          <GeneSearchInput species={species} value={compareTarget} onChange={setCompareTarget}
+            placeholder="second target — type a name (e.g. JAF13)" style={{ flex: 1 }} />
+          <button className="gs-run-sm" onClick={runCompare} disabled={loading || !target.trim() || !compareTarget.trim()}>
+            {loading ? 'Comparing…' : 'Compare top 2'}
+          </button>
+        </div>
         {examples.length > 0 && (
           <p className="gs-hint">
             Try:{' '}
@@ -193,6 +354,29 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialSpecie
 
         {res && (
           <>
+            {compareRes && (
+              <div className="gs-section">
+                <h3>Side-by-side comparison</h3>
+                {comparisonSummary && (
+                  <div className="gs-compare-summary">
+                    <p className="gs-metrics">
+                      {comparisonSummary.winner
+                        ? <>Recommended first target: <strong>{comparisonSummary.winner.on_target?.symbol}</strong></>
+                        : 'No clear first target from the current heuristic.'}
+                    </p>
+                    <ul className="gs-compare-reasons">
+                      {comparisonSummary.reasons.map((reason) => (
+                        <li key={reason}>{reason}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <div className="gs-compare-grid">
+                  <ComparisonCard title={target || 'Target A'} result={res} />
+                  <ComparisonCard title={compareTarget || 'Target B'} result={compareRes} />
+                </div>
+              </div>
+            )}
             <div className="gs-section">
               <h3>{res.mode === 'design' ? 'Designed dsRNA' : 'dsRNA analysis'}</h3>
               <p className="gs-metrics"><Verdict offCount={res.off_target_gene_count} /></p>
@@ -263,7 +447,12 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialSpecie
                     <tbody>
                       {pe.top.map((e, i) => (
                         <tr key={i}>
-                          <td>{e.symbol}</td>
+                          <td>
+                            {e.symbol}
+                            {effectSymbolCounts[e.symbol] > 1 && e.gene_id ? (
+                              <span className="gs-label"> · {e.gene_id}</span>
+                            ) : null}
+                          </td>
                           <td>{e.predicted_direction === 'up' ? '↑ up' : e.predicted_direction === 'down' ? '↓ down' : '? unknown'}</td>
                           <td className="gs-num">{e.magnitude.toFixed(2)}</td>
                         </tr>
