@@ -67,6 +67,16 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
       .catch((err) => console.error('Failed to load species list:', err));
   }, []);
 
+  useEffect(() => {
+    setSelectedKingdoms(new Set(filters.kingdom));
+    setSelectedSpecies(new Set(filters.species));
+    setRegulationTypes(new Set(filters.regulationType));
+    setConfidence(filters.minConfidence);
+    setIncludeInferred(filters.includeInferred !== false);
+    setDirection(filters.direction);
+    setMaxDepth(filters.maxDepth);
+  }, [filters]);
+
   // Fetch gene suggestions
   useEffect(() => {
     if (searchInput.length < 2) {

@@ -67,6 +67,14 @@ def test_dataset_import_plain_list_maps_and_reports_unmapped(client):
     assert r["species_guess"] == "human"
 
 
+def test_dataset_import_plain_list_accepts_comma_and_semicolon_separators(client):
+    payload = {"content": "TP53,BAX;MDM2", "species": "human"}
+    r = client.post("/api/v1/datasets/import", json=payload).json()
+    assert r["dataset_type"] == "plain_gene_list"
+    assert r["mapped_gene_ids"] == ["TF1", "TG1", "TG2"]
+    assert r["unmapped_count"] == 0
+
+
 def test_dataset_import_tabular_detects_columns_and_scores(client):
     payload = {"content": "gene_symbol,score\nTP53,2.1\nMDM2,1.2\n", "species": "human", "filename": "hits.csv"}
     r = client.post("/api/v1/datasets/import", json=payload).json()
@@ -77,6 +85,14 @@ def test_dataset_import_tabular_detects_columns_and_scores(client):
     assert r["filename"] == "hits.csv"
 
 
+def test_dataset_import_normalizes_species_text(client):
+    payload = {"content": "TP53\nBAX\n", "species": " Human "}
+    r = client.post("/api/v1/datasets/import", json=payload).json()
+    assert r["species_filter"] == "human"
+    assert r["species_guess"] == "human"
+    assert r["mapped_gene_ids"] == ["TF1", "TG1"]
+
+
 def test_user_gene_set_analysis_runs_first_pass_workflow(client):
     payload = {"content": "TP53\nBAX\nMDM2\n", "species": "human", "intent": "network"}
     r = client.post("/api/v1/user/gene-set/analyze", json=payload).json()
@@ -85,3 +101,10 @@ def test_user_gene_set_analysis_runs_first_pass_workflow(client):
     assert r["candidate_triage"]["ranked_candidates"][0]["gene_id"] == "TF1"
     assert r["upstream_regulators"]["regulators"][0]["gene_id"] == "TF1"
     assert "subgraph" in r and len(r["subgraph"]["nodes"]) == 3
+
+
+def test_user_gene_set_analysis_normalizes_species_text(client):
+    payload = {"content": "TP53\nBAX\nMDM2\n", "species": " HUMAN ", "intent": "network"}
+    r = client.post("/api/v1/user/gene-set/analyze", json=payload).json()
+    assert r["species"] == "human"
+    assert r["analyzed_gene_count"] == 3

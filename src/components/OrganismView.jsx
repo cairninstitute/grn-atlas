@@ -11,9 +11,9 @@ const LABEL = {
 const label = (s) => LABEL[s] || (s ? s[0].toUpperCase() + s.slice(1) : s);
 const fmt = (n) => (n ?? 0).toLocaleString();
 
-export default function OrganismView({ onSelectGene }) {
+export default function OrganismView({ initialSpecies = 'arabidopsis', onSpeciesChange, onSelectGene }) {
   const [speciesList, setSpeciesList] = useState([]);
-  const [species, setSpecies] = useState('arabidopsis');
+  const [species, setSpecies] = useState(initialSpecies || 'arabidopsis');
   const [includeInferred, setIncludeInferred] = useState(true);
   const [topN, setTopN] = useState(25);
   const [minConfidence, setMinConfidence] = useState(0);
@@ -29,6 +29,12 @@ export default function OrganismView({ onSelectGene }) {
       if (list.length && !list.includes(species)) setSpecies(list[0]);
     }).catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (initialSpecies && initialSpecies !== species) {
+      setSpecies(initialSpecies);
+    }
+  }, [initialSpecies]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!species) return;
@@ -66,7 +72,7 @@ export default function OrganismView({ onSelectGene }) {
       <div className="org-controls">
         <div className="org-picker">
           <label>Organism</label>
-          <select value={species} onChange={(e) => setSpecies(e.target.value)}>
+          <select value={species} onChange={(e) => { setSpecies(e.target.value); onSpeciesChange?.(e.target.value); }}>
             {speciesList.map((s) => <option key={s} value={s}>{label(s)}</option>)}
           </select>
         </div>

@@ -65,6 +65,15 @@ def gene_of(header_token: str) -> str:
     return header_token.rsplit(".", 1)[0]
 
 
+def _window_off_targets(subseq: str, genes_with: Dict[str, set], target_gene: str, k: int) -> set:
+    """Distinct off-target genes hit by a dsRNA window, accounting for both diced strands."""
+    hit = set()
+    for w in query_kmers(subseq, k):
+        hit |= genes_with.get(w, set())
+    hit.discard(target_gene)
+    return hit
+
+
 def load_transcripts(path: Path) -> Dict[str, str]:
     """gene_id -> concatenated transcript sequence(s) (isoforms joined by a k-blocker).
     Reads a (gzipped) FASTA whose headers start with a transcript id."""
@@ -139,24 +148,24 @@ def design(target_gene: str, transcripts: Dict[str, str], k: int = 21,
     tseq = transcripts.get(target_gene)
     if not tseq or len(tseq) < k:
         return {"error": f"no transcript for {target_gene}"}
-    # first, the target's own k-mers, and which other genes each one appears in
+    # first, the target's own k-mers (and their reverse complements), and which other
+    # genes each active siRNA appears in.
     tk = {w: i for i, w in kmers(tseq, k)}
-    off_by_kmer: Dict[str, set] = {w: set() for w in tk}
+    target_active = set(tk) | {revcomp(w) for w in tk}
+    genes_with: Dict[str, set] = {w: set() for w in target_active}
     for gid, seq in transcripts.items():
         if gid == target_gene:
             continue
         for _, w in kmers(seq, k):
-            if w in off_by_kmer:
-                off_by_kmer[w].add(gid)
+            if w in genes_with:
+                genes_with[w].add(gid)
     # slide a window over the target; score = number of distinct off-target genes hit
     best = None
     L = len(tseq)
     win = min(window, L)
     for start in range(0, max(1, L - win + 1), step):
         sub = tseq[start:start + win]
-        hit = set()
-        for _, w in kmers(sub, k):
-            hit |= off_by_kmer.get(w, set())
+        hit = _window_off_targets(sub, genes_with, target_gene, k)
         if best is None or len(hit) < best["off_target_gene_count"]:
             best = {"start": start, "end": start + win, "sequence": sub,
                     "off_target_gene_count": len(hit),
@@ -171,7 +180,7 @@ def design(target_gene: str, transcripts: Dict[str, str], k: int = 21,
     span = max(1, L - k + 1)
     for i, w in kmers(tseq, k):
         b = min(n_bins - 1, i * n_bins // span)
-        c = len(off_by_kmer.get(w, ()))
+        c = len((genes_with.get(w, set()) | genes_with.get(revcomp(w), set())) - {target_gene})
         if c > bins[b]:
             bins[b] = c
     best["offtarget_profile"] = bins
@@ -188,11 +197,13 @@ def screen(target_genes: List[str], transcripts: Dict[str, str], k: int = 21,
     Ranks genes by designability (fewest off-targets in the best window first).
     """
     targets = [g for g in dict.fromkeys(target_genes) if g in transcripts]
-    # union of all target k-mers -> which target(s) each belongs to (for reference)
+    # union of all target k-mers and their reverse complements, because dsRNA is diced
+    # from both strands and both siRNA orientations can contribute to off-targets.
     tk_by_gene = {g: {w: i for i, w in kmers(transcripts[g], k)} for g in targets}
     union = set()
     for m in tk_by_gene.values():
         union |= set(m)
+        union |= {revcomp(w) for w in m}
     # single pass: for each union k-mer, which genes contain it
     genes_with: Dict[str, set] = {w: set() for w in union}
     for gid, seq in transcripts.items():
@@ -204,8 +215,11 @@ def screen(target_genes: List[str], transcripts: Dict[str, str], k: int = 21,
     out = []
     for g in targets:
         tseq = transcripts[g]
-        # off-target genes per k-mer of this target
-        off_by_pos = [(i, genes_with.get(w, set()) - {g}) for i, w in kmers(tseq, k)]
+        # off-target genes per target-position k-mer, accounting for both dsRNA strands
+        off_by_pos = [
+            (i, (genes_with.get(w, set()) | genes_with.get(revcomp(w), set())) - {g})
+            for i, w in kmers(tseq, k)
+        ]
         best = None
         L = len(tseq)
         win = min(window, L)

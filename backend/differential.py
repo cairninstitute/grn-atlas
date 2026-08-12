@@ -127,7 +127,8 @@ def analyze_imported_deg_table(db, content: str, species: str | None = None,
 
 
 def analyze_atlas_contrast(db, species: str, group_a: list[str], group_b: list[str],
-                           top: int = 50, min_abs_log2fc: float = 0.0) -> dict[str, Any]:
+                           top: int = 50, min_abs_log2fc: float = 0.0,
+                           force_include_gene_ids: list[str] | None = None) -> dict[str, Any]:
     mx = expression.get_matrix(species)
     if mx is None:
         return {"mode": "atlas_groups", "species": species, "results": [],
@@ -160,6 +161,8 @@ def analyze_atlas_contrast(db, species: str, group_a: list[str], group_b: list[s
         rows.append({
             "gene_id": gene_id,
             "symbol": gene.symbol if gene else gene_id,
+            "label": getattr(gene, "label", None) or (gene.symbol if gene else gene_id),
+            "label_inferred": bool(getattr(gene, "label_inferred", False)) if gene else False,
             "species": species,
             "mean_group_a": round(mean_a, 4),
             "mean_group_b": round(mean_b, 4),
@@ -168,6 +171,11 @@ def analyze_atlas_contrast(db, species: str, group_a: list[str], group_b: list[s
             "is_tf": bool(gene.is_tf) if gene else False,
         })
     rows.sort(key=lambda r: (-abs(r["log2fc"]), r["symbol"]))
+    force_ids = [g for g in dict.fromkeys(force_include_gene_ids or [])]
+    forced = []
+    if force_ids:
+        by_id = {row["gene_id"]: row for row in rows}
+        forced = [by_id[g] for g in force_ids if g in by_id]
     return {
         "mode": "atlas_groups",
         "species": species,
@@ -175,6 +183,7 @@ def analyze_atlas_contrast(db, species: str, group_a: list[str], group_b: list[s
         "group_b": group_b,
         "available_tissues": available_tissues,
         "results": rows[:top],
+        "forced_results": forced,
         "tested_genes": len(rows),
         "warnings": [],
     }

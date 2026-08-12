@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import io
+import re
 from collections import Counter
 from typing import Any
 
@@ -52,13 +53,15 @@ def _parse_plain(content: str) -> list[dict[str, Any]]:
         token = line.strip()
         if not token or token.startswith("#"):
             continue
-        out.append({
-            "row_index": idx,
-            "raw_value": token,
-            "gene_token": token,
-            "score": None,
-            "extra": {},
-        })
+        parts = [part.strip() for part in re.split(r"[,\t;]+", token) if part.strip()]
+        for part in parts:
+            out.append({
+                "row_index": idx,
+                "raw_value": part,
+                "gene_token": part,
+                "score": None,
+                "extra": {},
+            })
     return out
 
 

@@ -53,8 +53,17 @@ def test_candidate_triage_ranks_tf_first(client):
     r = client.post("/api/v1/candidates/triage", json={"gene_ids": ["TG1", "TF1"], "intent": "network"}).json()
     assert r["ranked_candidates"][0]["gene_id"] == "TF1"
     assert r["ranked_candidates"][0]["priority_score"] >= r["ranked_candidates"][1]["priority_score"]
+    assert r["ranked_candidates"][0]["label"] == "TF1"
+    assert r["ranked_candidates"][0]["label_inferred"] is False
 
 
 def test_candidate_triage_tracks_missing(client):
     r = client.post("/api/v1/candidates/triage", json={"gene_ids": ["TF1", "NOPE"], "intent": "experiment"}).json()
     assert any(item["gene_id"] == "NOPE" for item in r["excluded_genes"])
+
+
+def test_upstream_regulators_include_friendly_labels(client):
+    r = client.post("/api/v1/upstream-regulators", json={"gene_ids": ["TG1"], "species": "human", "min_overlap": 1}).json()
+    assert r["regulators"][0]["gene_id"] == "TF1"
+    assert r["regulators"][0]["label"] == "TF1"
+    assert r["regulators"][0]["label_inferred"] is False

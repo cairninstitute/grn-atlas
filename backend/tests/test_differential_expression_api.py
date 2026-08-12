@@ -71,6 +71,20 @@ def test_atlas_differential_expression_contrast(client):
     assert r["species"] == "petunia"
     assert r["results"][0]["gene_id"] in {"GX", "GZ"}
     assert r["recommended_skills"] == ["grn-upstream", "grn-enrichment", "grn-candidate-triage"]
+    assert "label" in r["results"][0]
+
+
+def test_atlas_differential_expression_force_includes_requested_genes(client):
+    r = client.post("/api/v1/expression/differential", json={
+        "species": "petunia",
+        "group_a": ["leaf"],
+        "group_b": ["flower"],
+        "top": 1,
+        "gene_ids": ["GY"],
+    }).json()
+    assert r["results"][0]["gene_id"] != "GY"
+    assert r["forced_results"][0]["gene_id"] == "GY"
+    assert r["forced_results"][0]["label"] == "GY"
 
 
 def test_imported_deg_table_maps_rows(client):

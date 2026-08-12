@@ -85,6 +85,20 @@ def test_screen_ranks_by_designability():
     assert r[0]["gene_id"] == "CLEAN"
 
 
+def test_design_and_screen_match_scan_for_reverse_complement_offtargets():
+    tx = {
+        "TARGET": "AAAAGGGG",
+        "OTHER": "TTTTCCCC",
+    }
+    d = rnai.design("TARGET", tx, k=4, window=4, step=4)
+    s = rnai.scan(d["sequence"], tx, k=4, target_gene="TARGET")
+    batch = rnai.screen(["TARGET"], tx, k=4, window=4, step=4)[0]
+    assert d["off_target_gene_count"] == 1
+    assert s["off_target_gene_count"] == 1
+    assert batch["best_window_off_targets"] == 1
+    assert batch["transcript_off_targets"] == 1
+
+
 def test_load_transcripts_gene_aggregation(tmp_path):
     import gzip
     fa = tmp_path / "transcripts_x.fasta.gz"

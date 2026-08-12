@@ -102,6 +102,21 @@
   color: var(--text-secondary);
 }
 
+.workflow-gene-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.workflow-gene-badge-inferred strong {
+  color: #9ec5ff;
+}
+
+.workflow-inferred-mark {
+  color: #7db3ff;
+  font-weight: 700;
+}
+
 .workflow-card-header {
   display: flex;
   justify-content: space-between;
@@ -175,8 +190,91 @@
   color: var(--text-secondary);
 }
 
+.workflow-help-text {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
 .workflow-field-span-2 {
   grid-column: span 2;
+}
+
+.workflow-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.workflow-checkbox-card {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.workflow-checkbox-card input {
+  margin-top: 2px;
+}
+
+.workflow-checkbox-title {
+  font-weight: 600;
+}
+
+.workflow-checkbox-description {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.workflow-tissue-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.workflow-tissue-card {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.workflow-tissue-name {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.workflow-chip-btn {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(125, 179, 255, 0.22);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+}
+
+.workflow-chip-btn-active {
+  background: rgba(74, 144, 226, 0.2);
+  color: #9ec5ff;
+}
+
+.workflow-chip-btn-active-b {
+  background: rgba(140, 197, 116, 0.16);
+  color: #b8e59c;
+  border-color: rgba(140, 197, 116, 0.24);
+}
+
+.workflow-toggle-inline {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
 }
 
 .workflow-textarea {
@@ -210,6 +308,49 @@
 
 .workflow-result-block {
   margin-top: 16px;
+}
+
+.workflow-paper-item {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.workflow-paper-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.workflow-paper-link:hover {
+  text-decoration: underline;
+}
+
+.workflow-paper-tooltip {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 20;
+  width: min(560px, 75vw);
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(10, 16, 26, 0.97);
+  border: 1px solid rgba(125, 179, 255, 0.28);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.workflow-paper-tooltip strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #9ec5ff;
+}
+
+.workflow-paper-item:hover .workflow-paper-tooltip,
+.workflow-paper-item:focus-within .workflow-paper-tooltip {
+  display: block;
 }
 
 .workflow-list {
@@ -300,6 +441,14 @@
   .workflow-advanced-grid,
   .workflow-context-summary,
   .workflow-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workflow-checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workflow-tissue-grid {
     grid-template-columns: 1fr;
   }
 

@@ -29,7 +29,7 @@ import literature
 import consensus
 import sequence_design
 import advanced
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from pathlib import Path as FilePath
@@ -49,6 +49,13 @@ app = FastAPI(
     description="Gene Regulatory Network visualization backend",
     version="1.0.0"
 )
+
+
+def _normalize_species_input(value: Optional[str]) -> Optional[str]:
+    if value is None:
+        return None
+    normalized = value.strip().lower().replace("_", " ")
+    return normalized or None
 
 # ============= CORS Configuration =============
 app.add_middleware(
@@ -728,6 +735,8 @@ async def upstream_regulators(request: UpstreamRequest):
         results.append({
             "gene_id": tf_id,
             "symbol": gene_info.symbol if gene_info else tf_id,
+            "label": (gene_info.label if gene_info else tf_id),
+            "label_inferred": bool(gene_info.label_inferred) if gene_info else False,
             "is_tf": True,
             "regulon_size": K,
             "overlap_count": k,
@@ -1243,6 +1252,11 @@ class DatasetImportRequest(BaseModel):
     species: Optional[str] = None
     filename: Optional[str] = None
 
+    @field_validator("species", mode="before")
+    @classmethod
+    def normalize_species(cls, value):
+        return _normalize_species_input(value)
+
 
 @app.post("/api/v1/datasets/import")
 async def dataset_import(request: DatasetImportRequest):
@@ -1265,6 +1279,11 @@ class UserGeneSetAnalysisRequest(BaseModel):
     top_regulators: int = Field(8, ge=1, le=50)
     top_candidates: int = Field(5, ge=1, le=20)
     include_subgraph: bool = True
+
+    @field_validator("species", mode="before")
+    @classmethod
+    def normalize_species(cls, value):
+        return _normalize_species_input(value)
 
 
 def _resolve_analysis_gene_set(request: UserGeneSetAnalysisRequest) -> dict[str, Any]:
@@ -1366,6 +1385,7 @@ class DifferentialExpressionRequest(BaseModel):
     species: Optional[str] = None
     group_a: List[str] = []
     group_b: List[str] = []
+    gene_ids: List[str] = []
     content: Optional[str] = None
     filename: Optional[str] = None
     top: int = Field(50, ge=1, le=200)
@@ -1393,6 +1413,7 @@ async def differential_expression(request: DifferentialExpressionRequest):
             request.group_b,
             top=request.top,
             min_abs_log2fc=request.min_abs_log2fc,
+            force_include_gene_ids=request.gene_ids,
         )
     data["recommended_skills"] = ["grn-upstream", "grn-enrichment", "grn-candidate-triage"]
     return data

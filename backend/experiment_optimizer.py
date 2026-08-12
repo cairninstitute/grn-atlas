@@ -65,6 +65,8 @@ def optimize_experiments(db, gene_ids: list[str], intent: str = "experiment",
             ranked.append({
                 "gene_id": plan["gene_id"],
                 "symbol": plan["symbol"],
+                "label": plan.get("label") or plan["symbol"] or plan["gene_id"],
+                "label_inferred": bool(plan.get("label_inferred", False)),
                 "species": plan["species"],
                 "experiment": exp["experiment"],
                 "base_priority_score": exp["priority_score"],

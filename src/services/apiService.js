@@ -1,5 +1,11 @@
 const API_BASE = '/api/v1';
 
+const normalizeSpecies = (species) => {
+  if (typeof species !== 'string') return null;
+  const normalized = species.trim().toLowerCase().replace(/_/g, ' ');
+  return normalized || null;
+};
+
 // Gene API calls
 export const geneAPI = {
   search: async (query, limit = 10, species = null) => {
@@ -429,7 +435,7 @@ export const workflowAPI = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         content: options.content || '',
-        species: options.species || null,
+        species: normalizeSpecies(options.species),
         filename: options.filename || null,
       }),
     });
@@ -443,7 +449,7 @@ export const workflowAPI = {
       body: JSON.stringify({
         content: options.content || null,
         gene_ids: options.geneIds || null,
-        species: options.species || null,
+        species: normalizeSpecies(options.species),
         filename: options.filename || null,
         intent: options.intent || 'experiment',
         top_terms: options.topTerms || 8,
@@ -556,6 +562,7 @@ export const workflowAPI = {
         species: options.species || null,
         group_a: options.groupA || [],
         group_b: options.groupB || [],
+        gene_ids: options.geneIds || [],
         content: options.content || null,
         filename: options.filename || null,
         top: options.top || 50,

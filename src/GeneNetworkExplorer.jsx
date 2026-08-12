@@ -16,6 +16,15 @@ import PathwayView from './components/PathwayView';
 import WorkflowWorkspace from './components/WorkflowWorkspace';
 import './styles/GeneNetworkExplorer.css';
 
+const SPECIES_TO_KINGDOM = {
+  human: 'Animalia',
+  mouse: 'Animalia',
+  arabidopsis: 'Plantae',
+  tomato: 'Plantae',
+  petunia: 'Plantae',
+  rice: 'Plantae',
+};
+
 export default function GeneNetworkExplorer() {
   const [selectedGene, setSelectedGene] = useState(null);
   const [viewMode, setViewMode] = useState('workflow');
@@ -39,6 +48,40 @@ export default function GeneNetworkExplorer() {
   const handleCyInit = useCallback((cy) => {
     cyInstanceRef.current = cy;
   }, []);
+
+  const focusGeneByRecord = useCallback(async (geneLike) => {
+    if (!geneLike) return;
+    const geneId = geneLike.gene_id || geneLike.id;
+    if (!geneId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const geneResponse = await fetch(`/api/v1/genes/${geneId}`);
+      const geneData = await geneResponse.json();
+      if (!geneData?.id) {
+        setError('Gene not found');
+        return;
+      }
+      setSelectedGene(geneData);
+      const networkResponse = await fetch(`/api/v1/pathways/neighborhood/${geneData.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          max_depth: filters.maxDepth,
+          direction: filters.direction,
+          regulation_type: filters.regulationType,
+          min_confidence: filters.minConfidence,
+          include_inferred: filters.includeInferred,
+        }),
+      });
+      const networkJson = await networkResponse.json();
+      setNetworkData(networkJson);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [filters]);
 
   // Search for a gene
   const handleGeneSearch = useCallback(async (symbol) => {
@@ -106,6 +149,9 @@ export default function GeneNetworkExplorer() {
   const [showGeneSet, setShowGeneSet] = useState(false);
   const [showDsRna, setShowDsRna] = useState(false);
   const [dsRnaTarget, setDsRnaTarget] = useState(null);
+  const [dsRnaCompareTarget, setDsRnaCompareTarget] = useState(null);
+  const [dsRnaSet, setDsRnaSet] = useState([]);
+  const [workflowDsRnaSeed, setWorkflowDsRnaSeed] = useState(null);
   const [collection, setCollection] = useState(null);
   const openCollection = useCallback((col) => {
     setCollection(col);
@@ -146,6 +192,24 @@ export default function GeneNetworkExplorer() {
     setFilters(newFilters);
   }, []);
 
+  const handleSpeciesChange = useCallback((nextSpecies) => {
+    if (!nextSpecies) return;
+    const normalized = nextSpecies.trim().toLowerCase();
+    const nextKingdom = SPECIES_TO_KINGDOM[normalized];
+    setFilters((prev) => ({
+      ...prev,
+      species: [normalized],
+      kingdom: nextKingdom ? [nextKingdom] : prev.kingdom,
+    }));
+    if (selectedGene?.species && selectedGene.species !== normalized) {
+      setSelectedGene(null);
+      setNetworkData(null);
+      setExpandedNodes(new Set());
+      setPathwaySource(null);
+      setPathwayTarget(null);
+    }
+  }, [selectedGene]);
+
   // Handle node expansion in network
   const handleNodeExpand = useCallback((nodeId) => {
     const newExpandedNodes = new Set(expandedNodes);
@@ -177,7 +241,18 @@ export default function GeneNetworkExplorer() {
               title="GO enrichment and network metrics for a gene set">
               📊 Analyze
             </button>
-            <button className="copy-link-btn" onClick={() => { setDsRnaTarget(null); setShowDsRna(true); }}
+            <button
+              className="copy-link-btn"
+              onClick={() => {
+                setDsRnaTarget(workflowDsRnaSeed?.target || selectedGene || null);
+                setDsRnaCompareTarget(workflowDsRnaSeed?.compareTarget || null);
+                setDsRnaSet(
+                  workflowDsRnaSeed?.geneSet?.length
+                    ? workflowDsRnaSeed.geneSet
+                    : analysisGeneIds,
+                );
+                setShowDsRna(true);
+              }}
               title="Design a dsRNA / predict RNAi silencing + off-targets">
               🧬 dsRNA
             </button>
@@ -201,15 +276,27 @@ export default function GeneNetworkExplorer() {
               networkData={networkData}
               filters={filters}
               onNavigate={setViewMode}
+              onSpeciesChange={handleSpeciesChange}
+              onFocusGeneChange={focusGeneByRecord}
               onOpenGeneSetAnalysis={() => setShowGeneSet(true)}
-              onOpenDsRna={() => { setDsRnaTarget(selectedGene); setShowDsRna(true); }}
+              onDsRnaSeedChange={setWorkflowDsRnaSeed}
+              onOpenDsRna={(payload) => {
+                setDsRnaTarget(payload?.target || selectedGene);
+                setDsRnaCompareTarget(payload?.compareTarget || null);
+                setDsRnaSet(payload?.geneSet || analysisGeneIds);
+                setShowDsRna(true);
+              }}
             />
           ) : viewMode === 'analysis' ? (
             <AnalysisView />
           ) : viewMode === 'genome' ? (
             <GenomeComparisonView />
           ) : viewMode === 'organism' ? (
-            <OrganismView onSelectGene={(symbol) => { handleGeneSearch(symbol); setViewMode('network'); }} />
+            <OrganismView
+              initialSpecies={filters?.species?.[0]}
+              onSpeciesChange={handleSpeciesChange}
+              onSelectGene={(symbol) => { handleGeneSearch(symbol); setViewMode('network'); }}
+            />
           ) : !selectedGene ? (
             <div className="empty-state">
               <div className="empty-icon">🧬</div>
@@ -262,7 +349,7 @@ export default function GeneNetworkExplorer() {
                   <GeneDetailPanel
                     gene={selectedGene}
                     data={networkData}
-                    onDesignDsRna={() => { setDsRnaTarget(selectedGene); setShowDsRna(true); }}
+                    onDesignDsRna={() => { setDsRnaTarget(selectedGene); setDsRnaCompareTarget(null); setDsRnaSet(analysisGeneIds); setShowDsRna(true); }}
                   />
                 </>
               )}
@@ -297,7 +384,10 @@ export default function GeneNetworkExplorer() {
       </div>
 
       <DsRnaPanel open={showDsRna} onClose={() => setShowDsRna(false)}
-        initialTarget={dsRnaTarget?.symbol} initialSpecies={dsRnaTarget?.species} />
+        initialTarget={dsRnaTarget}
+        initialCompareTarget={dsRnaCompareTarget}
+        initialSpecies={dsRnaTarget?.species || filters?.species?.[0]}
+        initialSet={dsRnaSet} />
 
       <GeneSetPanel
         open={showGeneSet}
