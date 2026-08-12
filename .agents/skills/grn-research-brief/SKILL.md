@@ -1,6 +1,6 @@
 ---
 name: grn-research-brief
-description: Use when the user wants a structured research brief for a gene list and intent, combining ranked candidates, follow-up experiments, readiness, evidence, risks, and next steps. Good for requests like 'make a brief', 'summarize this for follow-up', or 'prepare a structured research summary'. Often built after candidate triage and experiment prioritization.
+description: Use when the user explicitly wants a structured brief, collaborator handoff, or execution-oriented summary for a gene list and intent, combining ranked candidates, follow-up experiments, readiness, evidence, risks, and next steps. Trigger on requests like 'make a brief', 'prepare a structured summary', 'package this for follow-up', or 'build a handoff-ready report'. Do not use when the user is simply asking to analyze a hit list or interpret a gene set; prefer grn-user-gene-set-analysis for that earlier analysis step.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 
@@ -16,3 +16,4 @@ backend/venv/bin/python .agents/skills/grn-research-brief/scripts/run.py --gene-
 
 - use this when the user wants a concrete next-step plan rather than a single lookup
 - the brief is intentionally structured so a downstream agent or UI can render it directly
+- if the user says "analyze this hit list" without asking for a brief or handoff artifact, prefer `grn-user-gene-set-analysis`

@@ -7505,5 +7505,440 @@
         "value": "experiment"
       }
     ]
+  },
+  {
+    "skill": "grn-dataset-import",
+    "label": "dataset import: human hit list",
+    "question": "Import this human hit list into the atlas and map the genes: TP53, BAX, MDM2.",
+    "expected_tools": [
+      "grn_dataset_import"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dataset_import"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-user-gene-set-analysis",
+    "label": "user gene-set analysis: TP53 BAX MDM2",
+    "question": "Analyze this human hit list with the atlas for experiment follow-up: TP53, BAX, MDM2.",
+    "expected_tools": [
+      "grn_user_gene_set_analysis"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_user_gene_set_analysis"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      }
+    ]
+  },
+  {
+    "skill": "grn-differential-expression",
+    "label": "differential expression: arabidopsis root vs inflorescence",
+    "question": "Which Arabidopsis genes change most between root and inflorescence? Show the top results.",
+    "expected_tools": [
+      "grn_differential_expression"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_differential_expression"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "group_a",
+        "value": "root"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "group_b",
+        "value": "inflorescence"
+      }
+    ]
+  },
+  {
+    "skill": "grn-experiment-optimizer",
+    "label": "experiment optimizer: TP53 BAX low budget",
+    "question": "For TP53 and BAX, rank the best follow-up experiments if I only have a low budget and 3 days.",
+    "expected_tools": [
+      "grn_experiment_optimizer"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_experiment_optimizer"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "budget_level",
+        "value": "low"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "timeline_days",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "skill": "grn-literature-review",
+    "label": "literature review: TP53 BAX edge",
+    "question": "Find recent papers about the TP53 to BAX regulatory relationship from the last 3 years.",
+    "expected_tools": [
+      "grn_literature_review"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_literature_review"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "scope",
+        "value": "edge"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source_id",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_id",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "years_back",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "skill": "grn-consensus-ranking",
+    "label": "consensus ranking: TP53 BAX MDM2 external",
+    "question": "Give me a consensus ranking for TP53, BAX, and MDM2 in a human experiment follow-up, including external literature.",
+    "expected_tools": [
+      "grn_consensus_ranking"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_consensus_ranking"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      },
+      {
+        "type": "arg_eq",
+        "arg": "include_external",
+        "value": true
+      }
+    ]
+  },
+  {
+    "skill": "grn-counterfactual-analysis",
+    "label": "counterfactual analysis: TP53 BAX MDM2",
+    "question": "For TP53, BAX, and MDM2 in a human experiment follow-up, what evidence would most likely flip the current winner?",
+    "expected_tools": [
+      "grn_counterfactual_analysis"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_counterfactual_analysis"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "experiment"
+      }
+    ]
+  },
+  {
+    "skill": "grn-variant-effect",
+    "label": "variant effect: HY5 promoter A to G",
+    "question": "Does an A to G promoter variant at position 1900 affect HY5 (AT5G11260)?",
+    "expected_tools": [
+      "grn_variant_effect"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_variant_effect"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "gene_id",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "position",
+        "value": 1900
+      },
+      {
+        "type": "arg_equals",
+        "arg": "ref",
+        "value": "A"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "alt",
+        "value": "G"
+      }
+    ]
+  },
+  {
+    "skill": "grn-promoter-edit-prioritization",
+    "label": "promoter edit prioritize: HY5",
+    "question": "Which promoter sites are the best editing targets for HY5 (AT5G11260)?",
+    "expected_tools": [
+      "grn_promoter_edit_prioritization"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_promoter_edit_prioritization"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "gene_id",
+        "value": "AT5G11260"
+      }
+    ]
+  },
+  {
+    "skill": "grn-crispr-design",
+    "label": "crispr design: simple sequence",
+    "question": "Design CRISPR guides for this DNA sequence using the default NGG PAM: ATGCGGCCGGTACCGGATCCGGTACCGGATCCGGTACCGGATCCGGTAA.",
+    "expected_tools": [
+      "grn_crispr_design"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_crispr_design"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "sequence",
+        "value": "ATGCGGCC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "pam",
+        "value": "NGG"
+      }
+    ]
+  },
+  {
+    "skill": "grn-primer-design",
+    "label": "primer design: simple amplicon",
+    "question": "Design PCR primers for this sequence with an amplicon around 80 to 250 bp: ATGCGGCCGGTACCGGATCCGGTACCGGATCCGGTACCGGATCCGGTAAATGCGGCCGGTACCGGATCCGGTACCGGATCCGGTACCGGATCCGGTAA.",
+    "expected_tools": [
+      "grn_primer_design"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_primer_design"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "sequence",
+        "value": "ATGCGGCC"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "product_min",
+        "value": 80
+      },
+      {
+        "type": "arg_equals",
+        "arg": "product_max",
+        "value": 250
+      }
+    ]
+  },
+  {
+    "skill": "grn-celltype-regulation",
+    "label": "celltype regulation: human TP53 BAX",
+    "question": "Is cell-type or single-cell regulatory analysis currently supported for TP53 and BAX in humans?",
+    "expected_tools": [
+      "grn_celltype_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_celltype_regulation"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      }
+    ]
+  },
+  {
+    "skill": "grn-trajectory-regulation",
+    "label": "trajectory regulation: human TP53 BAX",
+    "question": "Is trajectory or pseudotime regulatory analysis currently supported for TP53 and BAX in humans?",
+    "expected_tools": [
+      "grn_trajectory_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_trajectory_regulation"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      }
+    ]
+  },
+  {
+    "skill": "grn-combinatorial-perturbation",
+    "label": "combinatorial perturbation: TP53 BAX MDM2 pairs",
+    "question": "Which pairwise human knockout among TP53, BAX, and MDM2 has the largest predicted downstream effect?",
+    "expected_tools": [
+      "grn_combinatorial_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_combinatorial_perturbation"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "combo_size",
+        "value": 2
+      },
+      {
+        "type": "arg_equals",
+        "arg": "action",
+        "value": "ko"
+      }
+    ]
+  },
+  {
+    "skill": "grn-species-onboarding-plan",
+    "label": "species onboarding plan: wheat",
+    "question": "What would it take to onboard wheat into the atlas with network, expression, motif, orthology, and RNAi support?",
+    "expected_tools": [
+      "grn_species_onboarding_plan"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_species_onboarding_plan"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species_name",
+        "value": "wheat"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "intended_capabilities",
+        "value": "network"
+      }
+    ]
   }
 ]

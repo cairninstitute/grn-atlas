@@ -696,6 +696,269 @@ TOOLS = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_dataset_import",
+            "description": "Import a user gene list or simple CSV/TSV content into the atlas, mapping symbols/IDs onto atlas genes and reporting ambiguous or unmapped rows.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "content": {"type": "string", "description": "Inline gene list or CSV/TSV content"},
+                    "species": {"type": "string", "description": "Optional species hint"},
+                    "filename": {"type": "string", "description": "Optional source filename label"},
+                },
+                "required": ["content"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_user_gene_set_analysis",
+            "description": "Run a first-pass atlas workflow over a user-provided gene set: import/mapping summary, enrichment, upstream regulators, candidate triage, and optional subgraph.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated atlas gene IDs or symbols"},
+                    "content": {"type": "string", "description": "Inline gene list or CSV/TSV content"},
+                    "species": {"type": "string", "description": "Optional species override"},
+                    "filename": {"type": "string", "description": "Optional source filename label"},
+                    "intent": {"type": "string", "description": "Analysis intent: experiment, network, rnai, traits"},
+                    "top_terms": {"type": "integer", "description": "Maximum enrichment terms"},
+                    "top_regulators": {"type": "integer", "description": "Maximum upstream regulators"},
+                    "top_candidates": {"type": "integer", "description": "Maximum ranked candidates"},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_differential_expression",
+            "description": "Compare two atlas tissue/condition groups or analyze an imported DEG table to find genes with the largest expression changes.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "species": {"type": "string", "description": "Species name for atlas-mode comparisons"},
+                    "group_a": {"type": "string", "description": "Comma-separated tissues/conditions for group A"},
+                    "group_b": {"type": "string", "description": "Comma-separated tissues/conditions for group B"},
+                    "content": {"type": "string", "description": "Inline DEG table content"},
+                    "filename": {"type": "string", "description": "Optional source filename label"},
+                    "top": {"type": "integer", "description": "Maximum rows to return"},
+                    "min_abs_log2fc": {"type": "number", "description": "Minimum absolute log2 fold change filter"},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_experiment_optimizer",
+            "description": "Re-rank follow-up experiments using feasibility constraints such as budget, time, and allowed assay classes.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "budget_level": {"type": "string", "enum": ["low", "medium", "high"], "description": "Budget constraint"},
+                    "timeline_days": {"type": "integer", "description": "Time constraint in days"},
+                    "allowed_assays": {"type": "string", "description": "Comma-separated assay classes"},
+                    "max_recommendations": {"type": "integer", "description": "Maximum ranked experiments"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_literature_review",
+            "description": "Retrieve external literature relevant to a gene, edge, pathway, or phenotype and classify papers as support, contradiction, or mention.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "scope": {"type": "string", "enum": ["gene", "edge", "pathway", "phenotype"], "description": "Review scope"},
+                    "gene_id": {"type": "string", "description": "Gene ID for gene scope"},
+                    "source_id": {"type": "string", "description": "Source gene ID for edge scope"},
+                    "target_id": {"type": "string", "description": "Target gene ID for edge scope"},
+                    "query": {"type": "string", "description": "Free-text query for pathway or phenotype scope"},
+                    "species": {"type": "string", "description": "Optional species hint"},
+                    "years_back": {"type": "integer", "description": "Recency window in years"},
+                    "max_results": {"type": "integer", "description": "Maximum papers to return"},
+                },
+                "required": ["scope"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_consensus_ranking",
+            "description": "Rank candidate genes by a weighted consensus across atlas evidence layers and optional external literature support.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "top_n": {"type": "integer", "description": "Maximum candidates to return"},
+                    "include_external": {"type": "boolean", "description": "Whether to incorporate external literature"},
+                    "years_back": {"type": "integer", "description": "External literature recency window"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_counterfactual_analysis",
+            "description": "Explain what evidence shifts would most likely overturn the current lead candidate or flip the ranking.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "include_external": {"type": "boolean", "description": "Whether to incorporate external literature"},
+                    "years_back": {"type": "integer", "description": "External literature recency window"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_variant_effect",
+            "description": "Assess whether a promoter-region variant overlaps motif-supported regulatory sites for a gene.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_id": {"type": "string", "description": "Gene ID"},
+                    "position": {"type": "integer", "description": "Genomic position"},
+                    "assembly": {"type": "string", "description": "Optional assembly label"},
+                    "window_type": {"type": "string", "description": "Window type, typically promoter"},
+                    "ref": {"type": "string", "description": "Reference allele"},
+                    "alt": {"type": "string", "description": "Alternate allele"},
+                },
+                "required": ["gene_id", "position"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_promoter_edit_prioritization",
+            "description": "Prioritize motif-supported promoter sites or windows that are strategic editing targets for changing regulation of a gene.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_id": {"type": "string", "description": "Gene ID"},
+                    "top": {"type": "integer", "description": "Maximum prioritized sites/windows"},
+                },
+                "required": ["gene_id"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_crispr_design",
+            "description": "Suggest simple heuristic CRISPR guide RNAs from a provided DNA sequence or gene context.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "sequence": {"type": "string", "description": "DNA sequence to design guides from"},
+                    "gene_id": {"type": "string", "description": "Gene ID if using atlas-linked context"},
+                    "pam": {"type": "string", "description": "PAM sequence (default NGG)"},
+                    "top": {"type": "integer", "description": "Maximum guides to return"},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_primer_design",
+            "description": "Suggest simple heuristic PCR/qPCR primer pairs from a provided DNA sequence or gene context.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "sequence": {"type": "string", "description": "DNA sequence to design primers from"},
+                    "gene_id": {"type": "string", "description": "Gene ID if using atlas-linked context"},
+                    "product_min": {"type": "integer", "description": "Minimum amplicon size"},
+                    "product_max": {"type": "integer", "description": "Maximum amplicon size"},
+                    "top": {"type": "integer", "description": "Maximum primer pairs to return"},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_celltype_regulation",
+            "description": "Report readiness and missing layers for cell-type or single-cell regulatory analysis.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "species": {"type": "string", "description": "Species name"},
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                },
+                "required": ["species"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_trajectory_regulation",
+            "description": "Report readiness and missing layers for time-series, pseudotime, or trajectory-resolved regulation.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "species": {"type": "string", "description": "Species name"},
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                },
+                "required": ["species"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_combinatorial_perturbation",
+            "description": "Rank pairwise or triple perturbation combinations by predicted downstream impact.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
+                    "action": {"type": "string", "description": "Intervention action such as ko or oe"},
+                    "combo_size": {"type": "integer", "description": "Combination size (2 or 3)"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "top": {"type": "integer", "description": "Maximum combinations to return"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_species_onboarding_plan",
+            "description": "Generate a staged plan for onboarding a new species into the atlas architecture, including required data layers and implementation steps.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "species_name": {"type": "string", "description": "New species to onboard"},
+                    "intended_capabilities": {"type": "string", "description": "Comma-separated capabilities to support"},
+                },
+                "required": ["species_name"],
+            },
+        },
+    },
 ]
 
 # ---------------------------------------------------------------------------
@@ -740,9 +1003,23 @@ def _tool_to_cli(tool_name: str, args: dict, http_url: str | None) -> list[str]:
         "intent": "--intent", "target_species": "--target-species",
         "max_recommendations": "--max-recommendations",
         "max_candidates": "--max-candidates", "max_experiments": "--max-experiments",
+        "content": "--content", "filename": "--filename",
+        "top_terms": "--top-terms", "top_regulators": "--top-regulators",
+        "top_candidates": "--top-candidates",
+        "group_a": "--group-a", "group_b": "--group-b",
+        "min_abs_log2fc": "--min-abs-log2fc",
+        "budget_level": "--budget-level", "timeline_days": "--timeline-days",
+        "allowed_assays": "--allowed-assays",
+        "years_back": "--years-back", "max_results": "--max-results",
+        "top_n": "--top-n", "include_external": "--include-external",
+        "position": "--position", "assembly": "--assembly", "window_type": "--window-type",
+        "ref": "--ref", "alt": "--alt", "pam": "--pam",
+        "product_min": "--product-min", "product_max": "--product-max",
+        "combo_size": "--combo-size", "species_name": "--species-name",
+        "intended_capabilities": "--intended-capabilities",
     }
 
-    _BOOL_FLAGS = {"include_edge_support", "compare_curated"}
+    _BOOL_FLAGS = {"include_edge_support", "compare_curated", "include_external"}
 
     for key, val in args.items():
         if key in arg_map and val is not None:
@@ -1379,6 +1656,83 @@ QUESTIONS = [
             ("used motif query", lambda t: _used(t, "grn_motif_query")),
             ("used >= 1 skills", lambda t: _n_skills(t) >= 1),
             ("mentions motif or promoter", lambda t: _answer_has_any(t, "motif", "promoter", "binding")),
+        ],
+    },
+    {
+        "question": (
+            "I have this human hit list: TP53, BAX, and MDM2. Import the list into the atlas, "
+            "then run a first-pass gene-set analysis and tell me the top ranked candidate and "
+            "the top predicted upstream regulator."
+        ),
+        "checks": [
+            ("used dataset import", lambda t: _used(t, "grn_dataset_import")),
+            ("used user gene-set analysis", lambda t: _used(t, "grn_user_gene_set_analysis")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+            ("mentions TP53 or upstream", lambda t: _answer_has_any(t, "TP53", "upstream", "regulator")),
+        ],
+    },
+    {
+        "question": (
+            "Compare root versus inflorescence in Arabidopsis to find strongly shifted genes. "
+            "Then, assuming a low budget and only 3 days, rank the most feasible follow-up "
+            "experiments for the top candidates."
+        ),
+        "checks": [
+            ("used differential expression", lambda t: _used(t, "grn_differential_expression")),
+            ("used experiment optimizer", lambda t: _used(t, "grn_experiment_optimizer")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+            ("mentions low budget or 3 days", lambda t: _answer_has_any(t, "low", "3", "budget", "day")),
+        ],
+    },
+    {
+        "question": (
+            "For TP53, BAX, and MDM2 in a human experiment follow-up, look up recent external literature "
+            "for TP53 and the TP53 to BAX relationship, then build a consensus ranking with external evidence "
+            "and explain what would overturn the current winner."
+        ),
+        "checks": [
+            ("used literature review", lambda t: _used(t, "grn_literature_review")),
+            ("used consensus ranking", lambda t: _used(t, "grn_consensus_ranking")),
+            ("used counterfactual analysis", lambda t: _used(t, "grn_counterfactual_analysis")),
+            ("used >= 3 skills", lambda t: _n_skills(t) >= 3),
+        ],
+    },
+    {
+        "question": (
+            "For HY5 (AT5G11260), assess whether a promoter variant at position 1900 with A to G overlaps "
+            "a motif-supported regulatory site. Then prioritize the best promoter edit targets and suggest "
+            "both CRISPR guides and primer pairs for follow-up."
+        ),
+        "checks": [
+            ("used variant effect", lambda t: _used(t, "grn_variant_effect")),
+            ("used promoter prioritization", lambda t: _used(t, "grn_promoter_edit_prioritization")),
+            ("used crispr design", lambda t: _used(t, "grn_crispr_design")),
+            ("used primer design", lambda t: _used(t, "grn_primer_design")),
+            ("used >= 4 skills", lambda t: _n_skills(t) >= 4),
+        ],
+    },
+    {
+        "question": (
+            "For TP53 and BAX in human, tell me honestly whether cell-type and trajectory-level regulatory "
+            "analysis are supported today, and what layers are missing. Then tell me what it would take to "
+            "onboard wheat into the atlas with network, expression, motif, orthology, and RNAi support."
+        ),
+        "checks": [
+            ("used celltype readiness", lambda t: _used(t, "grn_celltype_regulation")),
+            ("used trajectory readiness", lambda t: _used(t, "grn_trajectory_regulation")),
+            ("used species onboarding", lambda t: _used(t, "grn_species_onboarding_plan")),
+            ("used >= 3 skills", lambda t: _n_skills(t) >= 3),
+        ],
+    },
+    {
+        "question": (
+            "Among TP53, BAX, and MDM2 in human, rank the pairwise knockout combinations by predicted downstream "
+            "impact. Then compare that combination-level result against the single-gene consensus ranking."
+        ),
+        "checks": [
+            ("used combinatorial perturbation", lambda t: _used(t, "grn_combinatorial_perturbation")),
+            ("used consensus ranking", lambda t: _used(t, "grn_consensus_ranking")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
         ],
     },
 ]

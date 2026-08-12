@@ -1,6 +1,6 @@
 ---
 name: grn-dataset-import
-description: "Use when the researcher provides a gene list, CSV, or TSV that needs to be mapped onto atlas genes before analysis. Good for prompts like 'analyze this hit list', 'map these gene symbols', or 'import this DEG table'. Not for the downstream interpretation itself; use grn-user-gene-set-analysis next."
+description: "Use when the researcher explicitly needs import or mapping before analysis: map a raw gene list, CSV, TSV, DEG table, or messy symbol list onto atlas genes and report ambiguous or unmapped rows. Trigger on requests like 'import this hit list', 'map these symbols', 'which rows failed to map', or 'normalize this DEG table'. Do not use for downstream biological interpretation if the user is really asking what the atlas says about the genes after mapping; use grn-user-gene-set-analysis for that next step."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas
@@ -22,6 +22,12 @@ backend/venv/bin/python .agents/skills/grn-dataset-import/scripts/run.py --file 
 - `--http URL` — optional running GRN Atlas server
 
 Exactly one of `--content` or `--file` is required.
+
+## Routing boundary
+
+- Use this skill when the core task is **mapping / normalization / unresolved rows**
+- Do **not** use this skill when the core task is **interpretation / ranking / enrichment / upstream analysis**
+- If the user says "analyze this hit list" and does not care about the intermediate mapping report, prefer `grn-user-gene-set-analysis`
 
 ### Output
 
