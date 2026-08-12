@@ -1,5 +1,21 @@
 [
   {
+    "skill": "grn-atlas-overview",
+    "label": "atlas overview: supported species and analyses",
+    "question": "What species and kinds of analyses are supported by the GRN Atlas?",
+    "expected_tools": [
+      "grn_atlas_overview"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_atlas_overview"
+        ]
+      }
+    ]
+  },
+  {
     "skill": "grn-gene-search",
     "label": "search: TP53 exact in human",
     "question": "Search for the gene TP53 in humans and show me the top 5 results.",
@@ -494,7 +510,7 @@
       },
       {
         "type": "data_contains_string",
-        "value": "AT5G11260"
+        "value": "HY5"
       }
     ]
   },
@@ -1783,7 +1799,7 @@
       },
       {
         "type": "data_contains_string",
-        "value": "AT5G11260"
+        "value": "HY5"
       },
       {
         "type": "arg_lte",

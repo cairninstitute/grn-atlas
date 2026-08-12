@@ -1,6 +1,6 @@
 ---
 name: grn-gene-info
-description: "Use when a specific gene has already been identified and you need its detailed record: locus or Ensembl ID, symbol, species, aliases, type, or transcription-factor status. Often used immediately after grn-gene-search. Not for finding unknown genes by keyword."
+description: "Use when a specific gene has already been identified and you need its detailed record: locus or Ensembl ID, symbol, species, aliases, type, or transcription-factor status. Often used immediately after grn-gene-search. Also use after grn-infer when the user asks to look up, inspect, or compare the shared TFs returned by a GRNBoost2 versus GENIE3 comparison. Not for finding unknown genes by keyword."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

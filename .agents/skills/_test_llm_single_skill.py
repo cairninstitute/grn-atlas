@@ -26,6 +26,7 @@ import os
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -35,6 +36,8 @@ PYTHON = str(REPO_ROOT / "backend" / "venv" / "bin" / "python")
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 DEFAULT_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free"
+API_RETRIES = 6
+API_BACKOFF_S = 5
 
 sys.path.insert(0, str(SKILLS_DIR))
 from _test_llm_orchestration import TOOLS, execute_tool, SYSTEM_PROMPT, _tool_to_cli
@@ -269,13 +272,35 @@ def ask_for_tool_call(question: str, model: str, api_key: str) -> dict:
             },
             method="POST",
         )
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
+        data = None
+        last_err = None
+        for attempt in range(API_RETRIES):
+            try:
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                break
+            except urllib.error.HTTPError as e:
+                body = e.read().decode("utf-8", "replace")
+                last_err = f"HTTP Error {e.code}: {body[:300]}"
+                if e.code == 429 or "rate limit" in body.lower() or "too many requests" in body.lower():
+                    time.sleep(min(API_BACKOFF_S * (2 ** attempt), 60))
+                    continue
+                raise
+            except Exception as e:
+                last_err = str(e)
+                if "429" in last_err or "rate limit" in last_err.lower() or "too many requests" in last_err.lower():
+                    time.sleep(min(API_BACKOFF_S * (2 ** attempt), 60))
+                    continue
+                raise
+        if data is None:
+            return {"error": last_err or "api request failed", "name": None, "args": {}}
 
         if "choices" not in data:
             err = data.get("error", {})
             if isinstance(err, dict):
                 err = err.get("message", str(data))
+            if isinstance(err, str) and ("rate limit" in err.lower() or "too many requests" in err.lower()):
+                return {"error": f"rate_limited: {err}", "name": None, "args": {}}
             return {"error": str(err), "name": None, "args": {}}
 
         msg = data["choices"][0]["message"]

@@ -5,7 +5,10 @@ description: >
   including predicted regulators, predicted targets, method comparison,
   and inferred edges with curated overlap. Good for prompts like 'what
   does GRNBoost2 predict', 'compare GRNBoost2 vs GENIE3', or 'find
-  inferred regulators of HY5'. Not for curated network neighborhoods;
+  inferred regulators of HY5'. If the user asks which TFs are predicted
+  by both methods, or asks to look up the shared TFs after comparison,
+  do not stop at inference; follow with grn-gene-info for the overlap.
+  Not for curated network neighborhoods;
   use grn-network for known regulators or targets. Often followed by
   grn-gene-info, grn-network, grn-enrichment, or grn-diff-regulation.
 parameters:

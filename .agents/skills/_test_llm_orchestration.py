@@ -22,6 +22,7 @@ import os
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -32,12 +33,25 @@ PYTHON = str(REPO_ROOT / "backend" / "venv" / "bin" / "python")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 DEFAULT_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free"
 MAX_TOOL_ROUNDS = 10
+API_RETRIES = 6
+API_BACKOFF_S = 5
 
 # ---------------------------------------------------------------------------
 # Tool definitions (OpenAI function-calling format)
 # ---------------------------------------------------------------------------
 
 TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_atlas_overview",
+            "description": "Get a compact overview of the GRN Atlas: high-level supported species coverage, major analysis types, and example workflows. Not for exact species capability details, provenance manifests, or citation export.",
+            "parameters": {
+                "type": "object",
+                "properties": {}
+            },
+        },
+    },
     {
         "type": "function",
         "function": {
@@ -58,7 +72,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_gene_info",
-            "description": "Get detailed info about a gene by ID or symbol. Returns id, symbol, name, species, gene_type, is_tf, synonyms.",
+            "description": "Get detailed info about a gene by ID or symbol. Returns id, symbol, name, species, gene_type, is_tf, synonyms. Use after search, orthology, regulon, or inferred-edge comparison when the user asks to look up shared TFs or inspect overlapping hits.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -185,7 +199,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_subgraph",
-            "description": "Extract the induced regulatory subgraph for a gene set.",
+            "description": "Extract the induced regulatory subgraph for a gene set. Prefer this when the user gives 2 or more genes and asks for the edges or interactions among them.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -308,7 +322,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_species",
-            "description": "List all species with their available capabilities (expression, motifs, traits, etc).",
+            "description": "List all species with their available capabilities (expression, motifs, traits, etc). Use this for exact species support and per-species capability details, not grn_atlas_overview.",
             "parameters": {"type": "object", "properties": {}},
         },
     },
@@ -316,7 +330,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_provenance",
-            "description": "Get data provenance manifest: version, methods, data sources with DOIs.",
+            "description": "Get the data provenance manifest: version, methods, data sources with DOIs. Use this for exact provenance and method/source details, not grn_atlas_overview.",
             "parameters": {"type": "object", "properties": {}},
         },
     },
@@ -397,7 +411,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_export",
-            "description": "Export regulatory edges with genomic coordinates in JSON or TSV.",
+            "description": "Export regulatory edges with genomic coordinates in JSON or TSV. Use this when the user explicitly asks to export edges or coordinates, even for a single or non-TF gene.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -468,7 +482,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_inferred_edges",
-            "description": "Query GRNBoost2/GENIE3-inferred regulatory edges from expression data. Returns predicted TF-target relationships ranked by importance score. These are computational predictions, not experimentally validated. Available for arabidopsis, tomato, petunia.",
+            "description": "Query GRNBoost2/GENIE3-inferred regulatory edges from expression data. Returns predicted TF-target relationships ranked by importance score. These are computational predictions, not experimentally validated. Available for arabidopsis, tomato, petunia. When asked to compare methods and then inspect the TFs predicted by both, use this first and follow with grn_gene_info for the overlap.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -1548,6 +1562,30 @@ QUESTIONS = [
     },
     {
         "question": (
+            "Export the BibTeX citations for the atlas data sources, then tell me what "
+            "data sources and DOIs are recorded in the atlas provenance manifest."
+        ),
+        "checks": [
+            ("used citations", lambda t: _used(t, "grn_citations")),
+            ("used provenance", lambda t: _used(t, "grn_provenance")),
+            ("mentions doi or source", lambda t: _answer_has_any(t, "doi", "source", "trrust", "jaspar", "plantregmap")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+        ],
+    },
+    {
+        "question": (
+            "Get the full TP53 regulon in human, then run pathway enrichment on the "
+            "regulon genes and summarize the main pathways represented."
+        ),
+        "checks": [
+            ("used regulon", lambda t: _used(t, "grn_regulon")),
+            ("used enrichment", lambda t: _used(t, "grn_enrichment")),
+            ("mentions pathway or enriched", lambda t: _answer_has_any(t, "pathway", "enrich", "process")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+        ],
+    },
+    {
+        "question": (
             "What genes does GRNBoost2 predict are regulated by PIL5 (AT2G20180) in "
             "Arabidopsis? Run GO enrichment on those predicted targets to see what "
             "biological processes PIL5 might be controlling."
@@ -1779,8 +1817,26 @@ def chat_completion(messages: list, model: str, api_key: str) -> dict:
         },
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+    last_err = None
+    for attempt in range(API_RETRIES):
+        try:
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", "replace")
+            last_err = {"message": f"HTTP Error {e.code}: {body[:300]}"}
+            if e.code == 429 or "rate limit" in body.lower() or "too many requests" in body.lower():
+                time.sleep(min(API_BACKOFF_S * (2 ** attempt), 60))
+                continue
+            raise
+        except Exception as e:
+            msg = str(e)
+            last_err = {"message": msg}
+            if "429" in msg or "rate limit" in msg.lower() or "too many requests" in msg.lower():
+                time.sleep(min(API_BACKOFF_S * (2 ** attempt), 60))
+                continue
+            raise
+    return {"error": last_err or {"message": "api request failed after retries"}}
 
 
 SYSTEM_PROMPT = """\

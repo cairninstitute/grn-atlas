@@ -1,6 +1,6 @@
 ---
 name: grn-atlas-overview
-description: Overview of the GRN Atlas gene regulatory network database and all available skills. Use as a starting point to discover what analyses are available, which species are supported, and which skill to invoke for a given task.
+description: Overview of the GRN Atlas gene regulatory network database and all available skills. Use as a starting point to discover the major analysis types, high-level supported species coverage, and which skill to invoke for a given task. Not for exact per-species capability details, provenance manifests, or citation export; use grn-species, grn-provenance, or grn-citations for those specific requests.
 metadata:
   author: grn-atlas
   version: "1.0"

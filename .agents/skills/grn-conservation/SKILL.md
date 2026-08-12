@@ -1,6 +1,6 @@
 ---
 name: grn-conservation
-description: "Use when comparing whether regulatory edges or regulatory programs are conserved between species, such as 'is TP53→BAX conserved in mouse' or 'which HY5 edges are shared between Arabidopsis and tomato'. Focuses on conserved versus species-specific regulation across ortholog context. Not for just finding ortholog genes; use grn-orthology first if the cross-species counterpart is unknown."
+description: "Use when comparing whether regulatory edges or regulatory programs are conserved between species, such as 'is TP53→BAX conserved in mouse' or 'which HY5 edges are shared between Arabidopsis and tomato'. Focuses on conserved versus species-specific regulation across ortholog context. If the user already specifies the genes and target species, call this directly even when no conserved edges may be found or the genes may be absent; return an empty or no-conservation result rather than detouring to gene search. Not for just finding ortholog genes; use grn-orthology first if the cross-species counterpart is unknown."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

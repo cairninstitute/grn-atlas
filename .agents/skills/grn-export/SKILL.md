@@ -1,6 +1,6 @@
 ---
 name: grn-export
-description: "Export regulatory edges with genomic coordinates, promoter windows, and motif binding sites. Returns detailed edge data for a gene set in JSON or TSV format, suitable for downstream analysis or integration with other tools."
+description: "Export regulatory edges with genomic coordinates, promoter windows, and motif binding sites. Returns detailed edge data for a gene set in JSON or TSV format, suitable for downstream analysis or integration with other tools. Use this when the user explicitly asks to export edges or coordinates, even for a single gene or a non-TF gene, rather than detouring into search."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas
