@@ -16,9 +16,16 @@ REPO_ROOT = SKILLS_DIR.parents[1]
 
 def run_one(question_id: int, timeout_s: int, env: dict[str, str]) -> dict:
     t0 = time.time()
+    model = env.get("LLM_TEST_MODEL")
+    provider = env.get("LLM_TEST_PROVIDER")
+    cmd = [sys.executable, str(SKILLS_DIR / "_test_llm_orchestration.py"), "--question", str(question_id)]
+    if model:
+        cmd += ["--model", model]
+    if provider:
+        cmd += ["--provider", provider]
     try:
         proc = subprocess.run(
-            [sys.executable, str(SKILLS_DIR / "_test_llm_orchestration.py"), "--question", str(question_id)],
+            cmd,
             capture_output=True,
             text=True,
             timeout=timeout_s,
@@ -58,6 +65,8 @@ def run_one(question_id: int, timeout_s: int, env: dict[str, str]) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="Exhaustive isolated orchestration runner")
+    parser.add_argument("--model", default=orch.DEFAULT_MODEL)
+    parser.add_argument("--provider", default="auto", choices=["auto", "openrouter", "openai"])
     parser.add_argument("--retries", type=int, default=1, help="Retries after the first attempt for non-pass cases")
     parser.add_argument("--timeout", type=int, default=420, help="Per-question timeout in seconds")
     parser.add_argument("--sleep-between", type=float, default=0.0, help="Sleep between questions to avoid rate limits")
@@ -67,6 +76,8 @@ def main():
 
     question_ids = [args.question] if args.question else list(range(1, len(orch.QUESTIONS) + 1))
     env = os.environ.copy()
+    env["LLM_TEST_MODEL"] = args.model
+    env["LLM_TEST_PROVIDER"] = args.provider
     results = []
     out_path = Path(args.out)
 

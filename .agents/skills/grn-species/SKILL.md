@@ -1,6 +1,6 @@
 ---
 name: grn-species
-description: "Use when the question is 'which species support X', 'what data layers are available by species', or 'which organisms have expression, motifs, traits, orthologs, or coordinates'. Often the first step before choosing a species for downstream expression, motif, RNAi, or network analysis."
+description: "Use when the question is about which species are available or what capabilities each species supports, such as 'which species have expression data', 'does petunia have RNAi support', or 'show species capability fields'. Prefer this over grn-atlas-overview whenever the user wants the concrete species list or per-species capability details."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

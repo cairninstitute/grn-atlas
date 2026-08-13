@@ -1,6 +1,6 @@
 ---
 name: grn-expression
-description: "Get the expression profile of a gene across RNA-seq samples. Returns per-sample TPM values showing where and how strongly a gene is expressed. Available for species with built expression matrices."
+description: "Use when the task is to retrieve a gene's expression profile across samples or tissues, including simple prompts like 'expression of PIF4 in Arabidopsis', 'show HY5 expression', or 'what is the TPM profile of TP53'. This is for expression values, not coexpression or differential comparisons."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

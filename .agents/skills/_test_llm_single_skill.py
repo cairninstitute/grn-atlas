@@ -8,10 +8,12 @@ the skill, and grades the output against ground truth.
 
 Usage:
     export OPENROUTER_API_KEY=sk-or-...
+    export OPENAI_API_KEY=sk-...
     backend/venv/bin/python .agents/skills/_test_llm_single_skill.py [options]
 
 Options:
-    --model MODEL_ID    OpenRouter model (default: nvidia/nemotron-3-ultra-550b-a55b:free)
+    --model MODEL_ID    Model id (default: nvidia/nemotron-3-ultra-550b-a55b:free)
+    --provider NAME     auto | openrouter | openai
     --http URL          Pass through to skills
     --verbose           Print tool calls and results
     --skill SKILL       Run only tests for this skill (e.g. grn-network)
@@ -35,12 +37,50 @@ REPO_ROOT = SKILLS_DIR.parents[1]
 PYTHON = str(REPO_ROOT / "backend" / "venv" / "bin" / "python")
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 DEFAULT_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free"
 API_RETRIES = 6
 API_BACKOFF_S = 5
+API_TIMEOUT_S = 180
 
 sys.path.insert(0, str(SKILLS_DIR))
-from _test_llm_orchestration import TOOLS, execute_tool, SYSTEM_PROMPT, _tool_to_cli
+from _test_llm_orchestration import TOOLS, execute_tool, SYSTEM_PROMPT, _tool_to_cli, resolve_provider, get_api_key
+
+
+def classify_error(err: str | None) -> str | None:
+    if not err:
+        return None
+    txt = str(err).lower()
+    if "upstream idle timeout exceeded" in txt or "timed out" in txt or "timeout" in txt:
+        return "provider_timeout"
+    if "internal server error" in txt or "upstream error from nvidia" in txt:
+        return "provider_internal"
+    if "rate_limited" in txt or "rate limit" in txt or "too many requests" in txt or "429" in txt:
+        return "provider_rate_limit"
+    if "http error 404" in txt:
+        return "backend_404"
+    if "http error 502" in txt or "bad gateway" in txt:
+        return "backend_502"
+    if "http error" in txt:
+        return "backend_http"
+    if err == "no_tool_call":
+        return "no_tool_call"
+    return "other_error"
+
+
+def classify_failure_mode(tool_name: str | None, expected_tools: list[str], err: str | None, grade: str) -> str | None:
+    if grade == "PASS":
+        return None
+    category = classify_error(err)
+    if category:
+        return category
+    if tool_name and expected_tools and tool_name not in expected_tools:
+        return "wrong_tool"
+    if tool_name and expected_tools and tool_name in expected_tools:
+        return "right_tool_bad_args_or_data"
+    if not tool_name:
+        return "no_tool_call"
+    return "unknown_failure"
 
 
 def _execute_full(tool_name: str, args: dict, http_url: str | None):
@@ -248,23 +288,29 @@ def evaluate_check(check: dict, tool_name: str | None, tool_args: dict, tool_dat
 # LLM single-tool-call
 # ---------------------------------------------------------------------------
 
-def ask_for_tool_call(question: str, model: str, api_key: str) -> dict:
+def ask_for_tool_call(question: str, model: str, api_key: str, provider: str = "auto") -> dict:
     """Ask the LLM a question and get back its tool call choice."""
+    provider = resolve_provider(model, provider)
+    api_url = OPENAI_URL if provider == "openai" else OPENROUTER_URL
     messages = [
-        {"role": "system", "content": SYSTEM_PROMPT + "\n\nAnswer the question using exactly ONE tool call. Do not chain multiple calls."},
+        {"role": "system", "content": SYSTEM_PROMPT + "\n\nAnswer the question using exactly ONE tool call. Do not chain multiple calls. Do not answer from prior knowledge. If one tool directly matches the request, call that exact tool rather than a broader adjacent tool. For exact symbol searches use grn_gene_search; for source-to-target routes use grn_pathfinding; for species capability questions use grn_species; for provenance and methods use grn_provenance; for screening requests use grn_dsrna_screen; for TF activity shifts use grn_diff_regulation; for inferred-edge questions use grn_inferred_edges; if the user explicitly says regulon, use grn_regulon even if the gene may be non-TF or have zero targets; for multi-gene upstream-regulator ranking use grn_upstream and preserve an explicit species such as human."},
         {"role": "user", "content": question},
     ]
 
     try:
-        payload = json.dumps({
+        payload_obj = {
             "model": model,
             "messages": messages,
             "tools": TOOLS,
             "tool_choice": "auto",
-            "max_tokens": 1024,
-        }).encode("utf-8")
+        }
+        if provider == "openai":
+            payload_obj["max_completion_tokens"] = 1024
+        else:
+            payload_obj["max_tokens"] = 1024
+        payload = json.dumps(payload_obj).encode("utf-8")
         req = urllib.request.Request(
-            OPENROUTER_URL,
+            api_url,
             data=payload,
             headers={
                 "Authorization": f"Bearer {api_key}",
@@ -276,19 +322,31 @@ def ask_for_tool_call(question: str, model: str, api_key: str) -> dict:
         last_err = None
         for attempt in range(API_RETRIES):
             try:
-                with urllib.request.urlopen(req, timeout=60) as resp:
+                with urllib.request.urlopen(req, timeout=API_TIMEOUT_S) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
                 break
             except urllib.error.HTTPError as e:
                 body = e.read().decode("utf-8", "replace")
                 last_err = f"HTTP Error {e.code}: {body[:300]}"
-                if e.code == 429 or "rate limit" in body.lower() or "too many requests" in body.lower():
+                if (
+                    e.code == 429
+                    or "rate limit" in body.lower()
+                    or "too many requests" in body.lower()
+                    or "upstream idle timeout exceeded" in body.lower()
+                    or "timed out" in body.lower()
+                ):
                     time.sleep(min(API_BACKOFF_S * (2 ** attempt), 60))
                     continue
                 raise
             except Exception as e:
                 last_err = str(e)
-                if "429" in last_err or "rate limit" in last_err.lower() or "too many requests" in last_err.lower():
+                if (
+                    "429" in last_err
+                    or "rate limit" in last_err.lower()
+                    or "too many requests" in last_err.lower()
+                    or "upstream idle timeout exceeded" in last_err.lower()
+                    or "timed out" in last_err.lower()
+                ):
                     time.sleep(min(API_BACKOFF_S * (2 ** attempt), 60))
                     continue
                 raise
@@ -326,6 +384,7 @@ def ask_for_tool_call(question: str, model: str, api_key: str) -> dict:
 def main():
     parser = argparse.ArgumentParser(description="Single-skill LLM test harness")
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--provider", default="auto", choices=["auto", "openrouter", "openai"])
     parser.add_argument("--http", default=None)
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--skill", default=None, help="Run only tests for this skill")
@@ -336,9 +395,11 @@ def main():
                         help="Test cases JSON file")
     args = parser.parse_args()
 
-    api_key = os.environ.get("OPENROUTER_API_KEY")
+    provider = resolve_provider(args.model, args.provider)
+    api_key = get_api_key(provider)
     if not api_key:
-        print("ERROR: Set OPENROUTER_API_KEY environment variable", file=sys.stderr)
+        env_name = "OPENAI_API_KEY" if provider == "openai" else "OPENROUTER_API_KEY"
+        print(f"ERROR: Set {env_name} environment variable", file=sys.stderr)
         sys.exit(1)
 
     # Load test cases
@@ -379,7 +440,7 @@ def main():
             time.sleep(args.delay)
 
         t0 = time.time()
-        response = ask_for_tool_call(tc["question"], args.model, api_key, )
+        response = ask_for_tool_call(tc["question"], args.model, api_key, provider=provider)
         api_time = time.time() - t0
 
         tool_name = response.get("name")
@@ -426,6 +487,8 @@ def main():
             "checks": check_results,
             "api_time_s": round(api_time, 1),
             "error": response.get("error"),
+            "error_category": classify_error(response.get("error")),
+            "failure_mode": classify_failure_mode(tool_name, expected_tools, response.get("error"), grade),
         }
         all_results.append(result)
 

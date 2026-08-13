@@ -1,6 +1,6 @@
 ---
 name: grn-provenance
-description: "Get the data provenance manifest for the GRN Atlas database. Returns version information, methods, and data sources with DOIs and citations. Use to understand what data the atlas contains and how to cite it."
+description: "Get the data provenance manifest for the GRN Atlas database. Use for exact provenance, methods, versions, source freshness, and source lists such as 'what methods generated inferred edges', 'which sources are stale', 'show version info', or 'what data sources are included'. Prefer this over grn-atlas-overview whenever the question is about methods, source status, versioning, or provenance details."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

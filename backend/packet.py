@@ -60,7 +60,8 @@ def _citation_bundle(brief: dict[str, Any], intent: str) -> dict[str, Any]:
 
 def _hints_for_collaborator(brief: dict[str, Any], validation_plan: dict[str, Any]) -> list[str]:
     hints = []
-    lead = brief.get("candidate_brief", [{}])[0]
+    candidate_brief = brief.get("candidate_brief") or []
+    lead = candidate_brief[0] if candidate_brief else {}
     if lead:
         hints.append(
             f"Start with {lead.get('symbol') or lead.get('gene_id')} because it is the lead candidate in the current brief."

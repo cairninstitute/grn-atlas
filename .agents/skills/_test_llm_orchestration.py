@@ -2,16 +2,18 @@
 """
 LLM skill-orchestration test harness for GRN Atlas.
 
-Sends complex multi-step biology questions to an LLM (via OpenRouter),
+Sends complex multi-step biology questions to an LLM,
 exposes all GRN Atlas skills as callable tools, lets the model call them
 iteratively, and grades the final synthesized answer.
 
 Usage:
     export OPENROUTER_API_KEY=sk-or-...
+    export OPENAI_API_KEY=sk-...
     backend/venv/bin/python .agents/skills/_test_llm_orchestration.py
 
 Options:
-    --model MODEL_ID    OpenRouter model (default: nvidia/nemotron-3-ultra-550b-a55b:free)
+    --model MODEL_ID    Model id (default: nvidia/nemotron-3-ultra-550b-a55b:free)
+    --provider NAME     auto | openrouter | openai
     --http URL          Pass through to skills (use running server instead of direct DB)
     --verbose           Print full conversation traces
     --question N        Run only question N (1-indexed)
@@ -31,10 +33,12 @@ REPO_ROOT = SKILLS_DIR.parents[1]
 PYTHON = str(REPO_ROOT / "backend" / "venv" / "bin" / "python")
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 DEFAULT_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free"
 MAX_TOOL_ROUNDS = 10
 API_RETRIES = 6
 API_BACKOFF_S = 5
+API_TIMEOUT_S = 180
 
 # ---------------------------------------------------------------------------
 # Tool definitions (OpenAI function-calling format)
@@ -56,7 +60,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_gene_search",
-            "description": "Search for genes by name, symbol, or keyword. Returns matching genes with id, symbol, name, species, gene_type, is_tf.",
+            "description": "Search for genes by exact symbol, alias, name, or keyword. Use this first when the gene identifier is unknown, ambiguous, or the user asks to find or search for a gene such as 'find TP53 in human' or 'search MYC limit 1'. Returns matching genes with id, symbol, name, species, gene_type, is_tf.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -87,7 +91,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_network",
-            "description": "Get regulators and/or targets of a gene with confidence scores.",
+            "description": "Get the immediate regulators and/or targets of one gene with confidence scores. Use this for prompts like 'downstream targets of ABF1' or 'all regulatory connections for NFKB1'. Prefer this over grn_regulon when the user wants only the local neighborhood rather than the full expanded regulon.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -103,7 +107,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_pathfinding",
-            "description": "Find regulatory paths between two genes via BFS.",
+            "description": "Find regulatory paths from a source gene to a target gene through intermediate regulators or targets. Use this for prompts like 'path from TP53 to BAX', 'direct path TP53 to TERT', or source→target connectivity questions. Prefer this over grn_network when both endpoints are specified.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -120,7 +124,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_shared_regulators",
-            "description": "Find transcription factors that regulate two or more target genes in common, with per-target direction and confidence.",
+            "description": "Find transcription factors that regulate two or more target genes in common, with per-target direction and confidence. Use this first for questions like 'what regulates both TP53 and MYC', 'shared regulators', or 'common upstream TFs'. Prefer this over separate grn_network calls when the user wants the overlap.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -137,7 +141,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_enrichment",
-            "description": "Run overrepresentation analysis (GO, pathway, trait, motif) on a gene set.",
+            "description": "Run overrepresentation analysis (GO, pathway, trait, motif) on a gene set. Use this when the user asks what GO terms, pathways, functions, motifs, or GWAS traits are enriched, including single-gene trait prompts like 'GWAS traits for TP53' or 'is TP53 associated with cancer in GWAS data?'. Prefer this over grn_gene_info or grn_evidence_audit when the task is explicit trait/GWAS enrichment.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -152,7 +156,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_expression",
-            "description": "Get expression profile (TPM per sample) for a gene.",
+            "description": "Get the expression profile of a single gene across samples or tissues, returning TPM per sample. Use this for straightforward prompts like 'expression of PIF4 in arabidopsis' or 'show ABF2 expression'.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -166,7 +170,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_coexpression",
-            "description": "Find top co-expressed genes by Pearson correlation.",
+            "description": "Find top co-expressed genes by Pearson correlation. Use this after you have identified a specific gene and the user asks for co-expressed partners, especially requests like 'top 5 co-expressed genes'.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -182,7 +186,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_perturbation",
-            "description": "Predict downstream effects of knocking out or overexpressing a gene.",
+            "description": "Predict downstream effects of knocking out or overexpressing a gene. Use this after dsRNA/RNAi design when the user asks what genes would change if the target is silenced or knocked out. Pass the target in gene_id (or gene_ids for multi-intervention). Do not send a separate species argument; species is inferred from the gene ID or symbol resolution upstream.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -213,7 +217,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_orthology",
-            "description": "Find cross-species orthologs with their regulatory networks.",
+            "description": "Find cross-species orthologs with their regulatory networks. Use this when the question asks whether a gene or regulatory relationship carries over to another species such as mouse, tomato, or petunia.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -228,7 +232,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_conservation",
-            "description": "Analyze conservation of regulatory edges between two species.",
+            "description": "Analyze conservation of regulatory edges between two species. Use this when the user asks whether a relationship or pathway is conserved across species and wants an explicit conservation judgment.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -243,7 +247,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_cascade",
-            "description": "Predict regulatory cascade effects from upstream interventions on a target gene.",
+            "description": "Predict how upstream interventions propagate through the network to affect a target gene. Use this when the user asks what changing one or more regulators would do to a downstream target, rather than asking for a generic perturbation outcome.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -259,7 +263,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_regulon",
-            "description": "Extract the full regulon of a transcription factor (all direct+indirect targets).",
+            "description": "Extract the full regulon of a transcription factor (all direct+indirect targets). Prefer this when the user explicitly asks for a regulon. Do not swap to grn_network just because the regulon may be empty or the gene may not be a TF.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -292,7 +296,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_upstream",
-            "description": "Predict which TFs best explain a gene set (upstream regulator analysis).",
+            "description": "Predict which TFs best explain a gene set using enrichment over TF regulons. Use this for prompts like 'upstream regulators of these genes', 'which TFs best explain this DEG set', or 'regulate at least 3 of these genes'. Prefer this over grn_shared_regulators when the task is explanatory ranking for a gene set rather than just overlap listing. If the prompt specifies a species such as 'in human', pass that species explicitly.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -322,7 +326,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_species",
-            "description": "List all species with their available capabilities (expression, motifs, traits, etc). Use this for exact species support and per-species capability details, not grn_atlas_overview.",
+            "description": "List supported species together with their available capabilities such as expression, motifs, inferred edges, traits, and RNAi support. Use this first for questions like 'which species are available', 'does the atlas have petunia', 'which species support expression data', or capability-coverage comparisons. Prefer this over grn_atlas_overview for exact species/capability checks.",
             "parameters": {"type": "object", "properties": {}},
         },
     },
@@ -330,7 +334,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_provenance",
-            "description": "Get the data provenance manifest: version, methods, data sources with DOIs. Use this for exact provenance and method/source details, not grn_atlas_overview.",
+            "description": "Get the exact atlas provenance manifest: version, build metadata, methods, data sources, and DOIs. Use this for prompts about freshness, methods, source papers, or how a layer was generated such as 'what method produced inferred edges' or 'what sources back regulator identification'. Prefer this over grn_atlas_overview for exact provenance details.",
             "parameters": {"type": "object", "properties": {}},
         },
     },
@@ -346,7 +350,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_centrality",
-            "description": "Compute centrality metrics (degree, betweenness, closeness, eigenvector) for genes.",
+            "description": "Compute centrality metrics (degree, betweenness, closeness, eigenvector) for genes. Use this to find top hub genes or transcription factors in a chosen species, especially when the user asks for the top out-degree hub.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -363,7 +367,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_dsrna",
-            "description": "Design or analyze dsRNA for RNAi gene silencing.",
+            "description": "Design or analyze dsRNA for RNAi gene silencing. Use this first for 'design dsRNA', 'can I silence this gene with RNAi', or 'is this target designable'. If the user also asks what silencing would do, follow with grn_perturbation or grn_network and then grn_enrichment.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -379,7 +383,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_dsrna_screen",
-            "description": "Batch dsRNA designability screen across a gene set. Ranks genes by off-target burden.",
+            "description": "Screen one or more genes for dsRNA designability and rank them by off-target burden and design cleanliness. Use this when the user asks to compare, rank, or screen candidate genes for RNAi suitability, even if the list contains only one gene.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -426,7 +430,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_motif_query",
-            "description": "Query TF binding motif hits in gene promoters. Given a gene, find what TFs may bind its promoter. Given a TF, find which genes it may regulate via motif evidence. Optionally cross-reference with known regulatory edges. Available for arabidopsis, tomato, petunia only.",
+            "description": "Query TF binding motif hits in gene promoters. Given a gene, find what TFs may bind its promoter. Given a TF, find which genes it may regulate via motif evidence. Optionally cross-reference with known regulatory edges. Use this even if the species may be unsupported when the user explicitly asks about promoter motifs, so the tool can return graceful unavailability. Available for arabidopsis, tomato, petunia only.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -463,7 +467,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_diff_regulation",
-            "description": "Compare TF regulatory activity between two groups of conditions/tissues. Identifies TFs whose targets show differential expression. Available for arabidopsis, tomato, petunia.",
+            "description": "Compare transcription-factor regulatory activity between two tissue or condition groups, based on how each TF's targets shift between group A and group B. Use this for TF-activity-shift questions like 'which TFs change between root and inflorescence' or 'compare petal_limb vs seedling'. Prefer this over grn_differential_expression when the user wants regulators rather than just changed genes. Available for arabidopsis, tomato, petunia.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -482,7 +486,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_inferred_edges",
-            "description": "Query GRNBoost2/GENIE3-inferred regulatory edges from expression data. Returns predicted TF-target relationships ranked by importance score. These are computational predictions, not experimentally validated. Available for arabidopsis, tomato, petunia. When asked to compare methods and then inspect the TFs predicted by both, use this first and follow with grn_gene_info for the overlap.",
+            "description": "Query expression-inferred regulatory edges from GRNBoost2 or GENIE3. Returns predicted TF-target relationships ranked by importance score. Use this for prompts like 'HY5 inferred regulators', 'GENIE3 predictions for PIL5', or 'expression-based network edges'. If the user also asks what the predicted target set does, represents, or is enriched for, follow this with grn_enrichment on the returned targets. These are computational predictions, not experimentally validated. Available for arabidopsis, tomato, petunia.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -521,7 +525,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_coverage_report",
-            "description": "Report whether a species has the required and optional layers needed for a given analysis intent, with readiness score and missing layers.",
+            "description": "Report whether a species has the required and optional atlas layers needed for a specific analysis intent, with readiness score and missing layers. Use this for capability-readiness questions like 'can petunia support RNAi analysis' or 'is tomato ready for motif analysis'.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -694,6 +698,42 @@ TOOLS = [
     {
         "type": "function",
         "function": {
+            "name": "grn_phenotype_targeting",
+            "description": "Turn a phenotype or design goal into atlas-grounded candidate genes, ranking, readiness, and follow-up recommendations. Use when the user starts from an outcome such as changing flower color or targeting drought-response regulators rather than from a gene list.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "species": {"type": "string", "description": "Species name"},
+                    "phenotype": {"type": "string", "description": "Phenotype, trait, or design objective"},
+                    "intent": {"type": "string", "description": "Research intent such as experiment or rnai"},
+                    "max_candidates": {"type": "integer", "description": "Maximum candidates to keep"},
+                    "years_back": {"type": "integer", "description": "Literature recency window"},
+                },
+                "required": ["species", "phenotype"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "grn_decision_boundary",
+            "description": "Produce a single decision-ready summary of what is supported now, unsupported now, ambiguous now, what evidence would overturn the current winner, and the smallest next validation move.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "gene_ids": {"type": "string", "description": "Comma-separated gene IDs or resolvable symbols"},
+                    "intent": {"type": "string", "description": "Research intent"},
+                    "species": {"type": "string", "description": "Species name"},
+                    "max_candidates": {"type": "integer", "description": "Maximum candidates to compare"},
+                    "max_experiments": {"type": "integer", "description": "Maximum experiment tracks"},
+                },
+                "required": ["gene_ids"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "grn_study_packet",
             "description": "Build a shareable study packet from a gene list and analysis intent, bundling the research brief, validation plan, collaborator handoff notes, and citation/provenance context.",
             "parameters": {
@@ -730,8 +770,24 @@ TOOLS = [
     {
         "type": "function",
         "function": {
+            "name": "grn_input_normalization",
+            "description": "Normalize messy pasted gene lists, CSV/TSV snippets, aliases, duplicated rows, or mixed-species input before atlas import or analysis. Use this first when the main need is cleanup and deterministic preprocessing rather than immediate biological interpretation.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "content": {"type": "string", "description": "Inline pasted content to normalize"},
+                    "filename": {"type": "string", "description": "Optional source filename label"},
+                    "species": {"type": "string", "description": "Optional species filter for disambiguation"},
+                },
+                "required": ["content"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "grn_dataset_import",
-            "description": "Import a user gene list or simple CSV/TSV content into the atlas, mapping symbols/IDs onto atlas genes and reporting ambiguous or unmapped rows.",
+            "description": "Import or map a raw user gene list, DEG list, or simple CSV/TSV content into atlas genes, returning mapped, ambiguous, and unmapped rows. Use this first when the user explicitly provides external content to load, paste, import, or map before analysis. If the user says 'import this hit list, then analyze it', call this first.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -747,7 +803,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "grn_user_gene_set_analysis",
-            "description": "Run a first-pass atlas workflow over a user-provided gene set: import/mapping summary, enrichment, upstream regulators, candidate triage, and optional subgraph.",
+            "description": "Run a first-pass atlas workflow over a user-provided gene set: import/mapping summary, enrichment, upstream regulators, candidate triage, and optional subgraph. Use this for prompts like 'analyze this hit list' or 'first-pass analysis of these genes'. Prefer this over grn_research_brief when the user wants analysis results rather than a collaborator-facing brief.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -1037,6 +1093,7 @@ def _tool_to_cli(tool_name: str, args: dict, http_url: str | None) -> list[str]:
         "content": "--content", "filename": "--filename",
         "top_terms": "--top-terms", "top_regulators": "--top-regulators",
         "top_candidates": "--top-candidates",
+        "phenotype": "--phenotype",
         "group_a": "--group-a", "group_b": "--group-b",
         "min_abs_log2fc": "--min-abs-log2fc",
         "budget_level": "--budget-level", "timeline_days": "--timeline-days",
@@ -1125,7 +1182,9 @@ def _answer_has_any(trace, *terms):
 
 def _answer_has_number(trace):
     """Check if the final answer contains at least one number."""
-    return any(ch.isdigit() for ch in trace["final_answer"])
+    raw = trace.get("final_answer") or ""
+    ans = raw if isinstance(raw, str) else str(raw)
+    return any(ch.isdigit() for ch in ans)
 
 
 QUESTIONS = [
@@ -1557,6 +1616,7 @@ QUESTIONS = [
                 {str(c["args"].get("method", "")).upper() for c in t["tool_calls"]
                  if c["name"] == "grn_inferred_edges" and c["args"].get("method")} >= {"GRNBOOST2", "GENIE3"}
                 or _answer_has_any(t, "GRNBoost2", "GENIE3", "both")),
+            ("used gene info or gene search on overlap", lambda t: _used(t, "grn_gene_info", "grn_gene_search")),
             ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
         ],
     },
@@ -1696,6 +1756,74 @@ QUESTIONS = [
     },
     {
         "question": (
+            "Which genes should I target if I want to change flower color in petunia using RNAi? "
+            "Start from the phenotype, ground the candidates into the atlas, and tell me the best follow-up mode."
+        ),
+        "checks": [
+            ("used phenotype targeting", lambda t: _used(t, "grn_phenotype_targeting")),
+            ("mentions petunia", lambda t: _answer_has(t, "petunia")),
+            ("mentions RNAi or dsRNA", lambda t: _answer_has_any(t, "rnai", "dsrna", "follow-up")),
+        ],
+    },
+    {
+        "question": (
+            "For TP53, BAX, and MDM2 in human, give me one decision-ready summary: "
+            "what is supported now, what is still ambiguous, what would overturn the current winner, "
+            "and what is the smallest defensible next step?"
+        ),
+        "checks": [
+            ("used decision boundary", lambda t: _used(t, "grn_decision_boundary")),
+            ("mentions supported or ambiguous", lambda t: _answer_has_any(t, "supported", "ambiguous", "uncertain")),
+            ("mentions next step", lambda t: _answer_has_any(t, "next step", "validation", "defensible")),
+        ],
+    },
+    {
+        "question": (
+            "Build me a collaborator-ready packet for AN2, JAF13, and DFR in petunia RNAi follow-up, "
+            "including uncertainty and strategy comparison."
+        ),
+        "checks": [
+            ("used study packet or report", lambda t: _used(t, "grn_study_packet", "grn_study_report")),
+            ("mentions uncertainty or strategy", lambda t: _answer_has_any(t, "uncertainty", "strategy", "comparison")),
+            ("mentions petunia", lambda t: _answer_has(t, "petunia")),
+        ],
+    },
+    {
+        "question": (
+            "I have a messy mixed-species DEG-like paste with TP53, BAX, AT5G11260, and one bad row. "
+            "Normalize it first, tell me the likely schema and species mix, then explain what I should do next "
+            "before running atlas interpretation."
+        ),
+        "checks": [
+            ("used input normalization", lambda t: _used(t, "grn_input_normalization")),
+            ("mentions species or mixed", lambda t: _answer_has_any(t, "species", "mixed", "human", "arabidopsis")),
+            ("mentions next step", lambda t: _answer_has_any(t, "next", "import", "filter", "analysis")),
+        ],
+    },
+    {
+        "question": (
+            "For Arabidopsis HY5, assess whether the conclusion transfers to petunia. "
+            "If there is no exact ortholog, tell me the best available family-level analogs and the caveats."
+        ),
+        "checks": [
+            ("used transferability", lambda t: _used(t, "grn_transferability")),
+            ("mentions analog or ortholog", lambda t: _answer_has_any(t, "analog", "ortholog", "petunia")),
+            ("mentions caveats", lambda t: _answer_has_any(t, "caveat", "unsupported", "uncertain")),
+        ],
+    },
+    {
+        "question": (
+            "In human, compare pairwise knockout combinations among TP53, MYC, and MDM2. "
+            "Tell me whether any combination gives a materially larger predicted impact than the best single-gene intervention."
+        ),
+        "checks": [
+            ("used combinatorial perturbation", lambda t: _used(t, "grn_combinatorial_perturbation")),
+            ("used perturbation or consensus", lambda t: _used(t, "grn_perturbation", "grn_consensus_ranking")),
+            ("mentions combination or single-gene baseline", lambda t: _answer_has_any(t, "combination", "single-gene", "baseline", "pairwise")),
+        ],
+    },
+    {
+        "question": (
             "Find the Arabidopsis gene HY5 by searching the atlas, then retrieve its detailed record "
             "and tell me its locus ID and whether it is a transcription factor."
         ),
@@ -1793,23 +1921,222 @@ QUESTIONS = [
             ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
         ],
     },
+    # =================================================================
+    # Category 22: Phenotype-first / literature-guided petunia ideation
+    # =================================================================
+    {
+        "question": (
+            "Which genes are the best targets for changing flower color in petunia? "
+            "Start with broad literature-guided suggestions, map them into atlas-supported "
+            "petunia candidates, and rank the best intervention targets."
+        ),
+        "checks": [
+            ("used literature review or phenotype targeting", lambda t: _used(t, "grn_literature_review", "grn_phenotype_targeting")),
+            ("used candidate triage or consensus ranking", lambda t:
+                _used(t, "grn_candidate_triage", "grn_consensus_ranking", "grn_phenotype_targeting")),
+            ("mentions petunia candidate genes", lambda t:
+                _answer_has_any(t, "AN2", "JAF13", "DFR", "petunia")),
+            ("mentions ranking or target prioritization", lambda t:
+                _answer_has_any(t, "rank", "best target", "candidate", "priority")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+        ],
+    },
+    # =================================================================
+    # Category 23: Weak-signal / uncertainty handling
+    # =================================================================
+    {
+        "question": (
+            "I compared these petunia candidates for flower color change and none looks strongly separated. "
+            "What does the current atlas evidence support, what does it not support, and what is the smallest "
+            "next experiment that would reduce uncertainty?"
+        ),
+        "checks": [
+            ("used decision boundary or confidence boundary", lambda t: _used(t, "grn_decision_boundary", "grn_confidence_boundary")),
+            ("used minimal validation or validation plan or decision boundary", lambda t:
+                _used(t, "grn_minimal_validation", "grn_validation_plan", "grn_decision_boundary")),
+            ("mentions uncertainty or not supported", lambda t:
+                _answer_has_any(t, "uncertain", "does not support", "not support", "confidence", "boundary")),
+            ("mentions next experiment or next step", lambda t:
+                _answer_has_any(t, "next experiment", "next step", "validation")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+        ],
+    },
+    # =================================================================
+    # Category 24: Messy import and first-pass recovery
+    # =================================================================
+    {
+        "question": (
+            "I pasted a messy DEG list from Excel. Please import it, map what you can, tell me what failed to map, "
+            "and then run a first-pass atlas interpretation.\n\n"
+            "Gene,log2FC,padj\n"
+            "TP53,2.1,0.001\n"
+            "BAX,1.8,0.004\n"
+            "BADROW,,\n"
+            "CDKN1A,1.3,0.01\n"
+            "P53,-0.4,0.7"
+        ),
+        "checks": [
+            ("used dataset import", lambda t: _used(t, "grn_dataset_import")),
+            ("used user gene-set analysis", lambda t: _used(t, "grn_user_gene_set_analysis")),
+            ("mentions unmapped or failed rows", lambda t:
+                _answer_has_any(t, "failed", "unmapped", "could not map", "BADROW")),
+            ("mentions first-pass interpretation", lambda t:
+                _answer_has_any(t, "first-pass", "top ranked", "upstream regulator", "candidate")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+        ],
+    },
+    # =================================================================
+    # Category 25: Experimental tradeoff comparison
+    # =================================================================
+    {
+        "question": (
+            "For petunia flower-color control, compare dsRNA knockdown of JAF13 versus promoter editing of AN2. "
+            "Which looks like the more practical first experiment under a modest budget?"
+        ),
+        "checks": [
+            ("used dsrna or dsrna screen", lambda t: _used(t, "grn_dsrna", "grn_dsrna_screen")),
+            ("used promoter edit prioritization or crispr", lambda t:
+                _used(t, "grn_promoter_edit_prioritization", "grn_crispr_design")),
+            ("used experiment prioritization or optimizer", lambda t:
+                _used(t, "grn_experiment_prioritization", "grn_experiment_optimizer")),
+            ("mentions comparison language", lambda t:
+                _answer_has_any(t, "compare", "more practical", "first experiment", "budget")),
+            ("used >= 3 skills", lambda t: _n_skills(t) >= 3),
+        ],
+    },
+    # =================================================================
+    # Category 26: Non-model species readiness + ranking
+    # =================================================================
+    {
+        "question": (
+            "For petunia, identify candidate regulators of petal pigmentation, then assess whether RNAi "
+            "follow-up is actually supported for those candidates."
+        ),
+        "checks": [
+            ("used candidate triage or literature review", lambda t:
+                _used(t, "grn_candidate_triage", "grn_literature_review", "grn_user_gene_set_analysis", "grn_phenotype_targeting")),
+            ("used coverage report", lambda t: _used(t, "grn_coverage_report")),
+            ("mentions RNAi support or coverage", lambda t:
+                _answer_has_any(t, "RNAi", "coverage", "supported", "petunia")),
+            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+        ],
+    },
+    # =================================================================
+    # Category 27: Literature-grounded mapping into atlas
+    # =================================================================
+    {
+        "question": (
+            "Use recent literature to identify the gene families most often implicated in flower-color control "
+            "in petunia and related ornamentals, then map those ideas into atlas-supported petunia candidates."
+        ),
+        "checks": [
+            ("used literature review", lambda t: _used(t, "grn_literature_review")),
+            ("mentions mapped petunia candidates", lambda t:
+                _answer_has_any(t, "AN2", "JAF13", "DFR", "CHS", "petunia")),
+            ("mentions family or homolog logic", lambda t:
+                _answer_has_any(t, "family", "homolog", "MYB", "bHLH", "WD40")),
+            ("used >= 1 skills", lambda t: _n_skills(t) >= 1),
+        ],
+    },
+    # =================================================================
+    # Category 28: Honest species/coverage boundary explanation
+    # =================================================================
+    {
+        "question": (
+            "Tell me honestly what the atlas can and cannot support today for petunia flower-color intervention planning."
+        ),
+        "checks": [
+            ("used coverage report or species", lambda t: _used(t, "grn_coverage_report", "grn_species")),
+            ("mentions can and cannot support", lambda t:
+                _answer_has_any(t, "can support", "cannot support", "not supported", "petunia")),
+            ("mentions intervention planning or RNAi or expression", lambda t:
+                _answer_has_any(t, "intervention", "RNAi", "expression", "network", "validation")),
+            ("used >= 1 skills", lambda t: _n_skills(t) >= 1),
+        ],
+    },
+    # =================================================================
+    # Category 29: Strategy comparison: single vs combo perturbation
+    # =================================================================
+    {
+        "question": (
+            "For TP53, compare single-gene knockout versus double knockout with MYC. "
+            "Which strategy is more likely to reveal broader downstream network effects?"
+        ),
+        "checks": [
+            ("used perturbation or combinatorial perturbation", lambda t:
+                _used(t, "grn_perturbation", "grn_combinatorial_perturbation")),
+            ("mentions single vs double comparison", lambda t:
+                _answer_has_any(t, "single", "double", "broader", "downstream effect")),
+            ("mentions which is more likely", lambda t:
+                _answer_has_any(t, "more likely", "broader", "larger", "stronger")),
+            ("used >= 1 skills", lambda t: _n_skills(t) >= 1),
+        ],
+    },
+    # =================================================================
+    # Category 30: Unsupported-analysis boundary quality
+    # =================================================================
+    {
+        "question": (
+            "Do full cell-type regulatory analysis for TP53 and BAX right now."
+        ),
+        "checks": [
+            ("used celltype readiness", lambda t: _used(t, "grn_celltype_regulation")),
+            ("mentions missing layers or readiness", lambda t:
+                _answer_has_any(t, "missing", "not supported", "readiness", "cell-type", "single-cell")),
+            ("used >= 1 skills", lambda t: _n_skills(t) >= 1),
+        ],
+    },
+    # =================================================================
+    # Category 31: Mixed-species import boundary
+    # =================================================================
+    {
+        "question": (
+            "Import this mixed-species list and tell me what can be analyzed cleanly in human versus Arabidopsis: "
+            "TP53, AT5G11260, BAX, HY5."
+        ),
+        "checks": [
+            ("used dataset import or gene search", lambda t: _used(t, "grn_dataset_import", "grn_gene_search")),
+            ("mentions both human and Arabidopsis", lambda t:
+                _answer_has_any(t, "human", "arabidopsis", "AT5G11260", "TP53")),
+            ("mentions cleanly analyzed or species separation", lambda t:
+                _answer_has_any(t, "cleanly", "species", "separate", "mixed-species", "can be analyzed")),
+            ("used >= 1 skills", lambda t: _n_skills(t) >= 1),
+        ],
+    },
 ]
 
 
 # ---------------------------------------------------------------------------
-# OpenRouter chat completion
+# Provider-backed chat completion
 # ---------------------------------------------------------------------------
 
-def chat_completion(messages: list, model: str, api_key: str) -> dict:
-    payload = json.dumps({
+def resolve_provider(model: str, provider: str = "auto") -> str:
+    if provider and provider != "auto":
+        return provider
+    return "openai" if model.startswith("gpt-") else "openrouter"
+
+
+def get_api_key(provider: str) -> str | None:
+    env_name = "OPENAI_API_KEY" if provider == "openai" else "OPENROUTER_API_KEY"
+    return os.environ.get(env_name)
+
+
+def chat_completion(messages: list, model: str, api_key: str, provider: str = "auto") -> dict:
+    provider = resolve_provider(model, provider)
+    api_url = OPENAI_URL if provider == "openai" else OPENROUTER_URL
+    payload_obj = {
         "model": model,
         "messages": messages,
         "tools": TOOLS,
         "tool_choice": "auto",
-        "max_tokens": 4096,
-    }).encode("utf-8")
+    }
+    if provider == "openai":
+        payload_obj["max_completion_tokens"] = 4096
+    else:
+        payload_obj["max_tokens"] = 4096
+    payload = json.dumps(payload_obj).encode("utf-8")
     req = urllib.request.Request(
-        OPENROUTER_URL,
+        api_url,
         data=payload,
         headers={
             "Authorization": f"Bearer {api_key}",
@@ -1820,19 +2147,31 @@ def chat_completion(messages: list, model: str, api_key: str) -> dict:
     last_err = None
     for attempt in range(API_RETRIES):
         try:
-            with urllib.request.urlopen(req, timeout=120) as resp:
+            with urllib.request.urlopen(req, timeout=API_TIMEOUT_S) as resp:
                 return json.loads(resp.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8", "replace")
             last_err = {"message": f"HTTP Error {e.code}: {body[:300]}"}
-            if e.code == 429 or "rate limit" in body.lower() or "too many requests" in body.lower():
+            if (
+                e.code == 429
+                or "rate limit" in body.lower()
+                or "too many requests" in body.lower()
+                or "upstream idle timeout exceeded" in body.lower()
+                or "timed out" in body.lower()
+            ):
                 time.sleep(min(API_BACKOFF_S * (2 ** attempt), 60))
                 continue
             raise
         except Exception as e:
             msg = str(e)
             last_err = {"message": msg}
-            if "429" in msg or "rate limit" in msg.lower() or "too many requests" in msg.lower():
+            if (
+                "429" in msg
+                or "rate limit" in msg.lower()
+                or "too many requests" in msg.lower()
+                or "upstream idle timeout exceeded" in msg.lower()
+                or "timed out" in msg.lower()
+            ):
                 time.sleep(min(API_BACKOFF_S * (2 ** attempt), 60))
                 continue
             raise
@@ -1847,9 +2186,30 @@ design dsRNA, and more.
 
 When answering questions:
 1. Use the available tools to gather data — don't guess.
-2. You may call multiple tools in sequence to build up a complete answer.
-3. Synthesize the tool results into a clear, data-backed answer.
-4. Cite specific numbers from the tool outputs.
+2. Do not answer from prior knowledge when the question is about genes, regulators, dsRNA, perturbation, enrichment, or atlas content. Make at least one tool call first.
+3. If the question asks for multiple things, complete every requested subtask before giving the final answer. Do not stop after the first useful tool.
+4. If the prompt explicitly asks you to run, compare, enrich, validate, or summarize a second analysis on the results of a first analysis, you must make the second tool call as well. Do not treat the first tool result as sufficient.
+5. Prefer the most direct specialized tool when one exists:
+   - cleanup/normalization of messy pasted input before import -> grn_input_normalization
+   - shared/common regulators across multiple genes -> grn_shared_regulators
+   - best upstream TFs explaining a gene set, DEG set, or min-overlap style upstream analysis -> grn_upstream
+   - if the user explicitly says regulon -> grn_regulon, even if the gene may be non-TF or have zero targets
+   - promoter motif questions, even for unsupported species -> grn_motif_query
+   - dsRNA or RNAi designability for one gene -> grn_dsrna
+   - what silencing / knockout changes -> grn_perturbation
+   - what GO terms or pathways are enriched -> grn_enrichment
+6. Common RNAi chain: if asked whether a dsRNA can be designed and what silencing would do, call grn_dsrna, then grn_perturbation or grn_network, then grn_enrichment.
+7. Common discovery chain: if asked which species support a capability, call grn_species first, choose one matching species from the result, then continue the remaining requested analysis steps in that species.
+8. Common import-first chain: if the user explicitly says import or map a hit list before analysis, call grn_dataset_import first, then call grn_user_gene_set_analysis or the requested downstream analysis.
+9. Common inferred-validation chain: if the user asks for inferred edges or inferred regulators and then asks whether they also appear in the curated network, call grn_inferred_edges first, then call grn_network for the curated validation step.
+10. Common phenotype-first chain: if the user starts from a phenotype or design intent rather than a gene list, especially in a non-model species such as petunia, prefer grn_phenotype_targeting. Use grn_literature_review only when the user explicitly wants paper-level context or recent external literature.
+11. Common support-readiness chain: if the user asks whether a candidate, species, or proposed follow-up is actually supported for RNAi, expression, conservation, or another atlas workflow, call grn_coverage_report after the candidate-discovery step instead of answering from general impressions.
+12. Common uncertainty-boundary chain: if the user explicitly says confidence boundary, call grn_confidence_boundary. Otherwise, if the user asks what the atlas supports, does not support, what remains uncertain, or what smallest next step reduces uncertainty, prefer grn_decision_boundary. If the wording is weak-signal or generic but still asks about current atlas evidence, support vs non-support, uncertainty, or the smallest next experiment, you still must call grn_decision_boundary or grn_confidence_boundary rather than answer from general reasoning alone. If needed, expand it with grn_confidence_boundary and grn_minimal_validation.
+13. Common inferred-compare chain: if the user asks to compare GRNBoost2 and GENIE3 and then inspect the overlapping TFs, call grn_inferred_edges for both methods first, then call grn_gene_info or grn_gene_search on at least one overlapping TF before finishing.
+14. Common inferred-enrichment chain: if the user asks for GRNBoost2 or GENIE3 predicted targets and then asks what processes those targets represent, call grn_inferred_edges first and then call grn_enrichment on the returned target set before answering.
+15. In the final answer, explicitly state the requested conclusion words when relevant (for example conserved/not conserved, ortholog, mouse, shared regulators, enriched pathways) instead of implying them.
+16. Synthesize the tool results into a clear, data-backed answer.
+17. Cite specific numbers from the tool outputs.
 
 Key gene IDs to know:
 - Human genes use symbols directly: TP53, MYC, BAX, NFKB1, E2F1, etc.
@@ -1859,6 +2219,7 @@ Key gene IDs to know:
 
 
 def run_question(question: str, model: str, api_key: str, http_url: str | None,
+                 provider: str = "auto",
                  verbose: bool = False) -> dict:
     """Run a single multi-step question through the LLM agent loop."""
     messages = [
@@ -1872,7 +2233,7 @@ def run_question(question: str, model: str, api_key: str, http_url: str | None,
             print(f"  [round {round_num + 1}]")
 
         try:
-            response = chat_completion(messages, model, api_key)
+            response = chat_completion(messages, model, api_key, provider=provider)
         except Exception as e:
             return {
                 "tool_calls": tool_calls_log,
@@ -1954,14 +2315,17 @@ def run_question(question: str, model: str, api_key: str, http_url: str | None,
 def main():
     parser = argparse.ArgumentParser(description="LLM skill-orchestration test")
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--provider", default="auto", choices=["auto", "openrouter", "openai"])
     parser.add_argument("--http", default=None, help="GRN Atlas server URL")
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--question", type=int, default=None, help="Run only question N (1-indexed)")
     args = parser.parse_args()
 
-    api_key = os.environ.get("OPENROUTER_API_KEY")
+    provider = resolve_provider(args.model, args.provider)
+    api_key = get_api_key(provider)
     if not api_key:
-        print("ERROR: Set OPENROUTER_API_KEY environment variable", file=sys.stderr)
+        env_name = "OPENAI_API_KEY" if provider == "openai" else "OPENROUTER_API_KEY"
+        print(f"ERROR: Set {env_name} environment variable", file=sys.stderr)
         sys.exit(1)
 
     questions = QUESTIONS
@@ -1982,7 +2346,7 @@ def main():
         q_num = (args.question or i + 1)
         print(f"Q{q_num}: {q['question'][:80]}...")
         t0 = time.time()
-        trace = run_question(q["question"], args.model, api_key, args.http, args.verbose)
+        trace = run_question(q["question"], args.model, api_key, args.http, provider, args.verbose)
         elapsed = time.time() - t0
 
         check_results = []

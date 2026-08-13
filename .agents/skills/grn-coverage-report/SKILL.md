@@ -1,6 +1,6 @@
 ---
 name: grn-coverage-report
-description: Use first when you need to know whether a species has enough atlas support for an analysis intent such as RNAi, transfer, or network follow-up. Reports readiness, missing layers, and recommended next skills. Often followed by grn-validation-plan or grn-minimal-validation.
+description: Use first when you need to know whether a species has enough atlas support for an analysis intent such as RNAi, transfer, or network follow-up. Trigger on prompts like 'does petunia support RNAi analysis', 'is this species ready for motif work', or 'what layers are missing for this intent'. Reports readiness, missing layers, and recommended next skills. Often followed by grn-validation-plan or grn-minimal-validation.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 

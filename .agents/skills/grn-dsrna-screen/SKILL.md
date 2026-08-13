@@ -1,6 +1,6 @@
 ---
 name: grn-dsrna-screen
-description: "Use for multi-gene or pathway-level RNAi screening: compare several candidate genes, rank dsRNA designability, and identify the most specific target with the lowest off-target burden. Good for prompts like 'screen ABF1, ABF2, and PIF4' or 'which target is best for an RNAi experiment'. Often followed by grn-perturbation or grn-enrichment."
+description: "Use for dsRNA designability screening when the user wants ranking-style output such as off-target burden, best-window burden, or screen-level predicted effect. Trigger on prompts like 'screen ABF1, ABF2, and PIF4', 'compare these RNAi targets', 'rank by off-target burden', or even 'screen this one gene for burden fields'. Prefer this over grn-dsrna when the request is explicitly a screen or ranking task, even if only one gene is provided."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

@@ -1,6 +1,6 @@
 ---
 name: grn-pathfinding
-description: "Use when the question asks how one gene regulates another through a path or chain, such as 'path from TP53 to BAX', 'direct vs indirect regulation', or 'what route connects gene A to gene B'. Finds regulatory paths between two genes with per-step confidence and evidence. Not for general neighborhood lookup; use grn-network for regulators or targets of one gene."
+description: "Use when the question asks for a path, route, chain, or direct/indirect connection between two genes, such as 'path from TP53 to BAX', 'direct path from TP53 to TERT', or 'what route connects gene A to gene B'. Prefer this over grn-network whenever both a source and target gene are named and the task is connectivity rather than neighborhood lookup."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

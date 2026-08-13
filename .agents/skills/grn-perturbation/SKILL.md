@@ -1,6 +1,6 @@
 ---
 name: grn-perturbation
-description: "Use to predict downstream effects of knocking out, silencing, or overexpressing one or more genes in silico. Good for prompts like 'what happens if MYC is knocked out' or 'what genes change if HY5 is silenced'. Use after RNAi or dsRNA design when the user asks what genes, pathways, or regulators would change after silencing a target. Often follow with grn-enrichment to interpret affected genes."
+description: "Use to predict downstream effects of knocking out, silencing, or overexpressing one or more genes in silico. Trigger on prompts like 'what happens if MYC is knocked out', 'what genes change if HY5 is silenced', or 'what downstream program would this RNAi affect'. This is the standard follow-up after grn-dsrna when the user asks what silencing would do. Often follow immediately with grn-enrichment when the user also asks what processes, pathways, or GO terms are affected."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

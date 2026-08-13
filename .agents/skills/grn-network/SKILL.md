@@ -1,6 +1,6 @@
 ---
 name: grn-network
-description: "Use for single-gene network neighborhood questions: upstream regulators, downstream targets, or the local signaling neighborhood of one gene. Returns regulators and targets with evidence and confidence. Not for paths between two genes; use grn-pathfinding for causal chains or routes."
+description: "Use for single-gene network neighborhood questions: upstream regulators, downstream targets, or the local signaling neighborhood of one gene. Prefer this for prompts like 'what are the downstream targets of ABF1' or 'all regulatory connections for NFKB1'. Use this instead of grn-regulon when the user wants the immediate neighbors of one gene rather than the full expanded regulon. Not for paths between two genes; use grn-pathfinding for causal chains or routes."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

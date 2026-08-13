@@ -1,6 +1,6 @@
 ---
 name: grn-dsrna
-description: "Use for single-gene RNAi planning or dsRNA sequence analysis. Good for requests like 'design dsRNA for HY5', 'can I silence this gene with RNAi', or 'analyze this dsRNA for off-targets'. When the user also asks what silencing would do, what pathways would change, or how to validate the knockdown, do not stop at dsRNA design; follow with grn-perturbation, grn-network, and often grn-enrichment. For screening multiple genes or ranking candidates, use grn-dsrna-screen."
+description: "Use for single-gene RNAi planning or dsRNA sequence analysis: 'design dsRNA for HY5', 'can I silence this gene with RNAi', 'is this target designable', or 'analyze this dsRNA for off-targets'. If the user also asks what silencing would do, what downstream genes would change, what pathways or GO terms are enriched, or how to validate the knockdown, do not stop after dsRNA design. Chain this with grn-perturbation or grn-network, then usually grn-enrichment. For multi-gene screening or ranking, use grn-dsrna-screen instead."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

@@ -1,6 +1,6 @@
 ---
 name: grn-shared-regulators
-description: "Find transcription factors that regulate two or more target genes in common, with per-target activation or repression direction, confidence, and evidence. Use for prompts like 'what regulates both TP53 and MYC', 'find shared upstream TFs for this gene pair', or 'which regulators control all genes in this set'. Prefer this over repeated grn-network calls when the user explicitly wants shared or common regulators across multiple targets."
+description: "Use when the user asks who regulates two or more genes in common, especially prompts like 'what regulates both TP53 and MYC', 'shared regulators of these genes', 'common upstream TFs', or 'which transcription factors control all genes in this set'. This skill is the first-choice tool for shared/common regulator questions because it returns the overlap directly plus per-target activation or repression direction, confidence, and evidence. Prefer it over repeated grn-network calls unless the user explicitly wants separate per-gene neighborhoods."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

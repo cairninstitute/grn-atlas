@@ -67,6 +67,9 @@ def _citations_markdown(packet_data: dict[str, Any]) -> str:
 
 def _sectioned_markdown(report: dict[str, Any]) -> str:
     sections = report["report_sections"]
+    uncertainty = sections.get("uncertainty_summary", [])
+    strategy = sections.get("strategy_comparison")
+    species_limits = sections.get("species_limitations", [])
     return "\n\n".join(
         [
             f"# {report['title']}",
@@ -74,6 +77,9 @@ def _sectioned_markdown(report: dict[str, Any]) -> str:
             "## Lead candidate\n" + sections["lead_candidate"],
             "## Candidate ranking\n" + sections["candidate_table"],
             "## Recommended experiments\n" + sections["recommended_experiments"],
+            "## Uncertainty boundary\n" + ("\n".join(f"- {item}" for item in uncertainty) if uncertainty else "_No uncertainty summary available._"),
+            "## Strategy comparison\n" + (strategy if strategy else "_No strategy comparison available._"),
+            "## Species limitations\n" + ("\n".join(f"- {item}" for item in species_limits) if species_limits else "_No species limitations recorded._"),
             "## Validation status\n" + sections["validation_status"],
             "## Collaborator handoff\n" + "\n".join(f"- {item}" for item in sections["handoff_checklist"]),
             "## Citations\n" + sections["citations"],
@@ -107,6 +113,18 @@ def build_study_report(db, gene_ids: list[str], intent: str = "experiment",
             ),
             "candidate_table": _candidate_markdown(packet_data),
             "recommended_experiments": _experiment_markdown(packet_data),
+            "uncertainty_summary": packet_data.get("decision_boundary", {}).get("summary", [])
+            or packet_data.get("decision_boundary", {}).get("summary", [])
+            or packet_data.get("brief", {}).get("risk_flags", []),
+            "strategy_comparison": (
+                "\n".join(
+                    f"- {item.get('strategy')}: {item.get('symbol') or item.get('gene_id')} "
+                    f"(score {item.get('optimized_priority_score')})"
+                    for item in (packet_data.get("strategy_comparison", {}).get("ranked_strategies", []))
+                )
+                or None
+            ),
+            "species_limitations": packet_data.get("species_limitations", []),
             "validation_status": _validation_markdown(packet_data),
             "handoff_checklist": packet_data.get("handoff", {}).get("handoff_checklist", []),
             "citations": _citations_markdown(packet_data),

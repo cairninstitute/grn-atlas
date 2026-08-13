@@ -1,6 +1,6 @@
 ---
 name: grn-diff-regulation
-description: "Compare TF regulatory activity between two groups of conditions/tissues. Identifies TFs whose targets show differential expression consistent with their regulatory role. Available for arabidopsis, tomato, petunia."
+description: "Use when the question asks which transcription factors or regulatory programs shift between two tissues or conditions, such as 'root vs inflorescence TF activity', 'petunia corolla vs petal regulators', or 'which TFs are differentially active'. Prefer this over grn-differential-expression when the focus is TF/regulatory activity rather than the raw gene-level DEG list."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

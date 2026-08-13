@@ -1,6 +1,6 @@
 ---
 name: grn-user-gene-set-analysis
-description: "Use when the researcher wants the atlas to interpret a hit list directly: run first-pass analysis over a user-provided gene set or imported table, including enrichment, upstream regulators, candidate triage, and a local subgraph. Trigger on requests like 'analyze my hit list', 'what does the atlas say about these genes', 'triage these hits', or 'summarize this gene set biologically'. Prefer this over grn-research-brief when the user wants analysis results rather than a structured collaborator-ready brief. Prefer this over grn-dataset-import when the user wants analysis, even if light mapping is needed internally."
+description: "Use when the researcher wants the atlas to interpret a hit list directly: run first-pass analysis over a user-provided gene set or imported table, including enrichment, upstream regulators, candidate triage, and a local subgraph. Trigger on requests like 'analyze my hit list', 'what does the atlas say about these genes', 'triage these hits', 'summarize this gene set biologically', or 'analyze this hit list for experiment follow-up'. Prefer this over grn-research-brief when the user wants analysis results rather than a structured collaborator-ready brief."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

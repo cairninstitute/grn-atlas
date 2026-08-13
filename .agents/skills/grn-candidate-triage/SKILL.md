@@ -1,6 +1,6 @@
 ---
 name: grn-candidate-triage
-description: Use to rank a candidate gene list for a specific intent and decide which genes deserve follow-up first. Good for requests like 'triage these candidates', 'rank TP53, BAX, and MDM2', or 'which genes should I prioritize'. Often followed by grn-hypothesis-compare, grn-experiment-prioritization, or grn-research-brief.
+description: Use to rank a candidate gene list for a specific intent and decide which genes deserve follow-up first. Good for requests like 'triage these candidates', 'rank TP53, BAX, and MDM2', or 'which genes should I prioritize'. Also use after literature-first phenotype ideation once candidate genes have been mapped into the atlas, especially for non-model workflows such as petunia pigment or trait targeting. Often followed by grn-hypothesis-compare, grn-experiment-prioritization, grn-coverage-report, or grn-research-brief.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 ---
 
@@ -16,3 +16,4 @@ backend/venv/bin/python .agents/skills/grn-candidate-triage/scripts/run.py --gen
 
 - use this before deeper follow-up when the user has several plausible genes
 - `--intent` shifts the scoring weights toward network, traits, RNAi, or general experiment planning
+- for phenotype-first questions, it is often the ranking step after `grn-literature-review` or gene-set mapping

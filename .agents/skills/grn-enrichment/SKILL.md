@@ -1,6 +1,6 @@
 ---
 name: grn-enrichment
-description: "Use when you already have a gene set and need biological interpretation through GO, pathway, trait, or motif enrichment. This is a common follow-up after grn-perturbation, grn-regulon-compare, grn-infer, overlap, or differential-expression analyses. Trigger especially when the user asks what processes, pathways, or functions are affected."
+description: "Use when you already have a gene set and need GO, pathway, trait, or motif enrichment. This includes exact prompts like 'GO enrichment for these genes', 'pathway enrichment', 'trait enrichment for TP53', 'GWAS traits for TP53', 'is TP53 associated with cancer in GWAS data', or 'motif enrichment for these Arabidopsis TFs'. Prefer this whenever the task is enrichment analysis, even for one gene or for empty/negative gene sets. Do not switch to grn-gene-info or grn-evidence-audit when the user is explicitly asking for trait/GWAS enrichment."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

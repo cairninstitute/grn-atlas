@@ -1,6 +1,6 @@
 ---
 name: grn-motif
-description: "Query TF binding motif hits in gene promoters. Find what TFs may bind a gene's promoter, or which genes a TF may regulate via motif evidence. Cross-reference with known regulatory edges. Available for arabidopsis, tomato, petunia (JASPAR 2024)."
+description: "Query TF binding motif hits in gene promoters. Find what TFs may bind a gene's promoter, or which genes a TF may regulate via motif evidence. Cross-reference with known regulatory edges. Use this even when the selected species is unsupported if the user explicitly asks for promoter motifs, so the tool can return a graceful 'not available' response. Available for arabidopsis, tomato, petunia (JASPAR 2024)."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

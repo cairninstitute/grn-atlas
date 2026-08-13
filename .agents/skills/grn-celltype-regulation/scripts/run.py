@@ -7,6 +7,31 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "_grn-common" / "sc
 import common
 
 
+def _postprocess(data):
+    data["readiness_category"] = "supported" if data.get("supported") else "blocked"
+    data["missing_layer_taxonomy"] = [
+        {"layer": layer, "reason": "required_for_celltype_workflow"} for layer in data.get("required_layers", [])
+    ]
+    data["actionable_readiness_summary"] = {
+        "supported": data.get("supported"),
+        "reason": data.get("reason"),
+        "smallest_next_data_move": (data.get("recommended_next_steps") or [None])[0],
+    }
+    data["onboarding_priority_layers"] = data.get("required_layers", [])
+    data["minimal_dataset_requirements"] = [
+        "cell-level expression matrix",
+        "cell annotations",
+        "cell-type-resolved regulatory edges",
+    ]
+    data["readiness_to_analysis_gap"] = len(data.get("required_layers", []))
+    data["future_enabled_workflows"] = [
+        "cell-type-specific upstream analysis",
+        "cell-state differential regulation",
+        "cell-type regulon prioritization",
+    ]
+    return data
+
+
 def main():
     parser = argparse.ArgumentParser(description="Cell-type regulation readiness")
     common.add_common_args(parser)
@@ -20,7 +45,7 @@ def main():
         sys.path.insert(0, str(common.BACKEND_DIR))
         import main as backend
         data = common.run_async(backend.celltype_regulation(backend.CelltypeRegulationRequest(**payload)))
-    common.output(data)
+    common.output(_postprocess(data))
 
 
 if __name__ == "__main__":

@@ -1798,8 +1798,9 @@
         ]
       },
       {
-        "type": "data_contains_string",
-        "value": "HY5"
+        "type": "arg_contains",
+        "arg": "gene_id",
+        "value": "AT5G11260"
       },
       {
         "type": "arg_lte",
@@ -2892,7 +2893,8 @@
         ]
       },
       {
-        "type": "data_contains_string",
+        "type": "arg_contains",
+        "arg": "gene_id",
         "value": "AT5G11260"
       }
     ]
@@ -2912,7 +2914,8 @@
         ]
       },
       {
-        "type": "data_contains_string",
+        "type": "arg_contains",
+        "arg": "gene_id",
         "value": "AT5G11260"
       },
       {
@@ -6101,11 +6104,6 @@
       },
       {
         "type": "arg_equals",
-        "arg": "species",
-        "value": "human"
-      },
-      {
-        "type": "arg_equals",
         "arg": "metric",
         "value": "out_degree"
       },
@@ -6132,11 +6130,6 @@
       },
       {
         "type": "arg_equals",
-        "arg": "species",
-        "value": "human"
-      },
-      {
-        "type": "arg_equals",
         "arg": "metric",
         "value": "in_degree"
       },
@@ -6160,11 +6153,6 @@
         "tools": [
           "grn_centrality"
         ]
-      },
-      {
-        "type": "arg_equals",
-        "arg": "species",
-        "value": "human"
       },
       {
         "type": "arg_equals",
@@ -6225,11 +6213,6 @@
       },
       {
         "type": "arg_equals",
-        "arg": "species",
-        "value": "human"
-      },
-      {
-        "type": "arg_equals",
         "arg": "metric",
         "value": "out_degree"
       },
@@ -6263,11 +6246,6 @@
         "tools": [
           "grn_centrality"
         ]
-      },
-      {
-        "type": "arg_equals",
-        "arg": "species",
-        "value": "human"
       },
       {
         "type": "arg_equals",
@@ -6356,11 +6334,6 @@
         "tools": [
           "grn_centrality"
         ]
-      },
-      {
-        "type": "arg_equals",
-        "arg": "species",
-        "value": "human"
       },
       {
         "type": "arg_equals",
@@ -6992,7 +6965,7 @@
       {
         "type": "arg_contains",
         "arg": "gene_id",
-        "value": "HY5"
+        "value": "AT5G11260"
       }
     ]
   },
@@ -7538,7 +7511,7 @@
       },
       {
         "type": "arg_contains",
-        "arg": "gene_ids",
+        "arg": "content",
         "value": "TP53"
       },
       {
@@ -8011,6 +7984,554 @@
         "type": "arg_contains",
         "arg": "gene_ids",
         "value": "CDKN1A"
+      }
+    ]
+  },
+  {
+    "skill": "grn-input-normalization",
+    "label": "input normalization: messy alias list",
+    "question": "Normalize this pasted list before atlas import and tell me what mapped cleanly: TP53, bax, tumor protein p53, CDKN1A.",
+    "expected_tools": [
+      "grn_input_normalization"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_input_normalization"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "content",
+        "value": "tumor protein p53"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dataset-import",
+    "label": "dataset import: messy alias list",
+    "question": "Import this messy gene list and tell me what mapped cleanly: TP53, bax, tumor protein p53, CDKN1A.",
+    "expected_tools": [
+      "grn_dataset_import"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dataset_import"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "content",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "content",
+        "value": "tumor protein p53"
+      }
+    ]
+  },
+  {
+    "skill": "grn-dataset-import",
+    "label": "dataset import: csv-like deg snippet",
+    "question": "Import this CSV-like DEG snippet and preserve the gene content for downstream analysis.\n\nGene,log2FC,padj\nTP53,2.1,0.001\nBAX,1.8,0.004\nBADROW,,\nCDKN1A,1.3,0.01",
+    "expected_tools": [
+      "grn_dataset_import"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_dataset_import"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "content",
+        "value": "BADROW"
+      }
+    ]
+  },
+  {
+    "skill": "grn-literature-review",
+    "label": "literature review: petunia phenotype-first flower color",
+    "question": "Use recent literature to identify the gene families most often implicated in flower-color control in petunia and related ornamentals.",
+    "expected_tools": [
+      "grn_literature_review"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_literature_review"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "scope",
+        "value": "phenotype"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "query",
+        "value": "petunia"
+      }
+    ]
+  },
+  {
+    "skill": "grn-candidate-triage",
+    "label": "candidate triage: petunia flower color rnai",
+    "question": "Rank AN2, JAF13, and DFR as petunia candidates for flower-color RNAi follow-up.",
+    "expected_tools": [
+      "grn_candidate_triage"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_candidate_triage"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AN2"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "rnai"
+      }
+    ]
+  },
+  {
+    "skill": "grn-coverage-report",
+    "label": "coverage report: petunia flower-color rnai",
+    "question": "Does petunia have enough atlas support for RNAi follow-up on flower-color genes?",
+    "expected_tools": [
+      "grn_coverage_report"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_coverage_report"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "rnai"
+      }
+    ]
+  },
+  {
+    "skill": "grn-transferability",
+    "label": "transferability: TP53 human to mouse caveats",
+    "question": "Assess whether TP53-driven network conclusions transfer from human to mouse, including the caveats.",
+    "expected_tools": [
+      "grn_transferability"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_transferability"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "gene_id",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "network"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_species",
+        "value": "mouse"
+      }
+    ]
+  },
+  {
+    "skill": "grn-experiment-prioritization",
+    "label": "experiment prioritization: TP53 BAX MDM2 next experiments",
+    "question": "For TP53, BAX, and MDM2 in human, recommend the next experiments in priority order.",
+    "expected_tools": [
+      "grn_experiment_prioritization"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_experiment_prioritization"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      }
+    ]
+  },
+  {
+    "skill": "grn-experiment-optimizer",
+    "label": "experiment optimizer: low budget 3 day follow-up",
+    "question": "For TP53, BAX, and MDM2 in human, assuming a low budget and only 3 days, rank the most feasible follow-up experiments.",
+    "expected_tools": [
+      "grn_experiment_optimizer"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_experiment_optimizer"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "budget_level",
+        "value": "low"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "timeline_days",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "skill": "grn-literature-review",
+    "label": "literature review: TP53 BAX edge recent papers",
+    "question": "What recent external literature supports or contradicts the TP53 to BAX regulatory relationship?",
+    "expected_tools": [
+      "grn_literature_review"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_literature_review"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "scope",
+        "value": "edge"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source_id",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_id",
+        "value": "BAX"
+      }
+    ]
+  },
+  {
+    "skill": "grn-upstream",
+    "label": "upstream: explanatory ranking not just overlap",
+    "question": "For BAX, BCL2, and CDKN1A in human, rank the transcription factors that best explain this gene set, not just the shared overlap.",
+    "expected_tools": [
+      "grn_upstream"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_upstream"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-phenotype-targeting",
+    "label": "phenotype targeting: petunia flower color rnai",
+    "question": "Which genes should I target if I want to change flower color in petunia using RNAi? Ground the candidates into the atlas and rank them.",
+    "expected_tools": [
+      "grn_phenotype_targeting"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_phenotype_targeting"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "rnai"
+      }
+    ]
+  },
+  {
+    "skill": "grn-decision-boundary",
+    "label": "decision boundary: TP53 BAX MDM2 experiment",
+    "question": "For TP53, BAX, and MDM2 in human, give me one decision-ready summary of what is supported, what is ambiguous, what would overturn the current winner, and the smallest next validation step.",
+    "expected_tools": [
+      "grn_decision_boundary"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_decision_boundary"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-phenotype-targeting",
+    "label": "phenotype targeting: arabidopsis ABA drought",
+    "question": "For Arabidopsis, I want to target ABA signaling and drought-response regulators. Start from the phenotype and rank the best candidates for follow-up.",
+    "expected_tools": [
+      "grn_phenotype_targeting"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_phenotype_targeting"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-phenotype-targeting",
+    "label": "phenotype targeting: flowering time",
+    "question": "In Arabidopsis, which genes should I target if I want to shift flowering time? Ground the phenotype into atlas candidates first.",
+    "expected_tools": [
+      "grn_phenotype_targeting"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_phenotype_targeting"
+        ]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "phenotype",
+        "value": "flowering"
+      }
+    ]
+  },
+  {
+    "skill": "grn-decision-boundary",
+    "label": "decision boundary: petunia rnai candidates",
+    "question": "For AN2, JAF13, and DFR in petunia RNAi follow-up, tell me what is supported now, what is still uncertain, and what smallest next step would reduce uncertainty most.",
+    "expected_tools": [
+      "grn_decision_boundary"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_decision_boundary"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "rnai"
+      }
+    ]
+  },
+  {
+    "skill": "grn-input-normalization",
+    "label": "input normalization: mixed-species deg table",
+    "question": "Normalize this pasted DEG-like table before atlas import and tell me the likely schema and species mix: Gene,log2FC,padj,notes TP53,2.1,0.001,strong BAX,1.8,0.004,apoptosis AT5G11260,0.7,0.02,mixed BADROW,,,",
+    "expected_tools": [
+      "grn_input_normalization"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_input_normalization"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-combinatorial-perturbation",
+    "label": "combinatorial perturbation: TP53 MYC pairwise value",
+    "question": "In human, compare pairwise knockout combinations among TP53, MYC, and MDM2 and tell me whether any combination adds more predicted impact than the best single-gene intervention.",
+    "expected_tools": [
+      "grn_combinatorial_perturbation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_combinatorial_perturbation"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-transferability",
+    "label": "transferability: arabidopsis to petunia analog",
+    "question": "For Arabidopsis HY5, assess whether the conclusion transfers to petunia and, if there is no ortholog, tell me the best family-level analogs and caveats.",
+    "expected_tools": [
+      "grn_transferability"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_transferability"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_species",
+        "value": "petunia"
+      }
+    ]
+  },
+  {
+    "skill": "grn-study-packet",
+    "label": "study packet: petunia rnai handoff",
+    "question": "Build a collaborator-ready study packet for AN2, JAF13, and DFR in petunia RNAi follow-up, including uncertainty and strategy comparison.",
+    "expected_tools": [
+      "grn_study_packet"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_study_packet"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      }
+    ]
+  },
+  {
+    "skill": "grn-study-report",
+    "label": "study report: petunia rnai collaborator report",
+    "question": "Generate a collaborator-facing report for AN2, JAF13, and DFR in petunia RNAi follow-up, with uncertainty, species limitations, and recommended strategy.",
+    "expected_tools": [
+      "grn_study_report"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_study_report"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      }
+    ]
+  },
+  {
+    "skill": "grn-celltype-regulation",
+    "label": "celltype readiness: unsupported human single-cell",
+    "question": "For TP53 and BAX in human, tell me honestly whether cell-type regulatory analysis is supported and what data layers are still missing.",
+    "expected_tools": [
+      "grn_celltype_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_celltype_regulation"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-trajectory-regulation",
+    "label": "trajectory readiness: unsupported human pseudotime",
+    "question": "For TP53 and BAX in human, tell me whether pseudotime or trajectory-level regulatory analysis is supported and what would be required to enable it.",
+    "expected_tools": [
+      "grn_trajectory_regulation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_trajectory_regulation"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
       }
     ]
   }

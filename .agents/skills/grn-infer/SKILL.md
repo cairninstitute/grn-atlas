@@ -4,7 +4,8 @@ description: >
   Use for expression-inferred regulatory edges from GRNBoost2 or GENIE3,
   including predicted regulators, predicted targets, method comparison,
   and inferred edges with curated overlap. Good for prompts like 'what
-  does GRNBoost2 predict', 'compare GRNBoost2 vs GENIE3', or 'find
+  does GRNBoost2 predict', 'compare GRNBoost2 vs GENIE3', 'expression-based
+  network', 'GENIE3 predictions for PIL5', or 'find
   inferred regulators of HY5'. If the user asks which TFs are predicted
   by both methods, or asks to look up the shared TFs after comparison,
   do not stop at inference; follow with grn-gene-info for the overlap.
@@ -65,6 +66,7 @@ backend/venv/bin/python .agents/skills/grn-infer/scripts/run.py \
 - if the user asks for metadata about the TFs or genes returned by the overlap, follow this with `grn-gene-info`
 - if the user asks what biological processes or pathways the inferred targets control, follow this with `grn-enrichment`
 - if the user asks whether inferred regulators or targets also appear in the curated network, follow this with `grn-network`
+- if the user asks for the top inferred regulators and then asks whether they also appear in the curated network, do not stop after `grn-infer`; follow with `grn-network` for the curated validation step
 - if the user asks whether inferred TFs differ across tissues or conditions, follow this with `grn-diff-regulation`
 
 ## Routing examples
