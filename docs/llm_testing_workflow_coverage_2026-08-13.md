@@ -8,8 +8,8 @@ This note captures the current summary of what kinds of questions are being aske
 
 There are two broad classes of LLM test questions in the repo:
 
-1. Single-skill routing questions: 334 total
-2. Multi-skill orchestration questions: 53 total
+1. Single-skill routing questions: 347 total
+2. Multi-skill orchestration questions: 59 total
 
 Single-skill questions test whether the model picks the correct skill and arguments for one prompt.
 
@@ -61,15 +61,17 @@ Multi-skill orchestration questions test whether the model chains multiple skill
 
 ## Single-skill coverage by workflow
 
-| Workflow | Cases | What it covers | Assessment |
-|---|---:|---|---|
-| Network topology | 93 | local neighborhoods, paths, subgraphs, motifs, centrality, modules, regulons, upstream/shared regulators, inferred edges, differential regulation | Strong |
-| Gene lookup / atlas orientation | 69 | gene search, gene info, species, stats, provenance, citations, atlas overview | Strong |
-| Intervention design | 55 | dsRNA, dsRNA screening, perturbation, cascades, combinatorial perturbation, promoter edit / CRISPR / primer follow-up | Strong |
-| Functional interpretation | 45 | GO/pathway/trait/motif enrichment, export for downstream tools | Strong |
-| Expression context | 23 | expression, coexpression, differential expression, cell-type readiness, trajectory readiness | Moderate |
-| Cross-species reasoning | 22 | orthology, conservation, transferability | Moderate |
-| Research planning | 27 | triage, evidence audit, coverage report, validation plans, research briefs, literature review, consensus ranking, onboarding plans, messy import, phenotype-first planning boundaries | Moderate |
+The exact current matrix size is **347** single-skill questions. The workflow groupings below are a current qualitative breakdown of where coverage is strongest rather than a second stale numeric accounting:
+
+| Workflow | What it covers | Assessment |
+|---|---|---|
+| Network topology | local neighborhoods, paths, subgraphs, motifs, centrality, modules, regulons, upstream/shared regulators, inferred edges, differential regulation | Strong |
+| Gene lookup / atlas orientation | gene search, gene info, species, stats, provenance, citations, atlas overview | Strong |
+| Intervention design | dsRNA, dsRNA screening, perturbation, cascades, combinatorial perturbation, promoter edit / CRISPR / primer follow-up | Strong |
+| Functional interpretation | GO/pathway/trait/motif enrichment, export for downstream tools | Strong |
+| Expression context | expression, coexpression, differential expression, cell-type readiness, trajectory readiness | Moderate |
+| Cross-species reasoning | orthology, conservation, transferability | Moderate |
+| Research planning | triage, evidence audit, coverage report, validation plans, research briefs, literature review, consensus ranking, onboarding plans, messy import, phenotype-first planning boundaries | Moderate to strong |
 
 ## Multi-skill orchestration categories
 
@@ -106,6 +108,10 @@ The orchestration suite covers these categories:
 29. Strategy comparison: single vs combo perturbation
 30. Unsupported-analysis boundary quality
 31. Mixed-species import boundary
+32. Inferred target set -> enrichment
+33. Inferred edge overlap -> gene info inspection
+34. Weak-signal candidate set -> decision boundary -> minimal next step
+35. Candidate discovery -> support/readiness validation
 
 ## Representative orchestration questions
 
@@ -135,7 +141,6 @@ Well covered right now:
 
 Relatively thin right now:
 
-- literature-grounded hypothesis generation beyond first-pass ranking
 - ambiguous or underspecified researcher prompts
 - negative-result workflows beyond basic confidence-boundary handling
 - multi-step comparison among several experimental strategies with hard tradeoffs

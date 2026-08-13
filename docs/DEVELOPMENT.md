@@ -25,12 +25,17 @@ npx vite build                            # production build sanity
 npx oxlint src/...                        # lint
 venv/bin/python .agents/skills/_test_all_skills.py       # 319 direct skill-harness tests across 41 legacy skills
 venv/bin/python .agents/skills/_test_all_skills_http.py  # 83 HTTP skill-harness tests across the same 41 skills
+venv/bin/python .agents/skills/_test_llm_single_matrix.py --provider openai --model gpt-5.4
+venv/bin/python .agents/skills/_test_llm_orchestration_matrix.py --provider openai --model gpt-5.4
 ```
 
 Coverage note: the dedicated skill harnesses above currently cover the legacy 41-skill
 set. Newer milestone 2-7 skills are currently validated through `backend/tests/` API
 tests plus targeted CLI smoke checks rather than the older `_test_all_skills*.py`
-harnesses.
+harnesses. As of **Thursday, August 13, 2026**, the current broad LLM status is:
+
+- **347/347 PASS** on the GPT-5.4 single-skill matrix
+- **59/59 PASS** on the GPT-5.4 orchestration matrix
 
 ## Fetch source data, then build the database
 

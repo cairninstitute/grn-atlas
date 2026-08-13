@@ -255,9 +255,9 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 
 ### Complete skill inventory
 
-The repository currently contains **57 documented skills**:
+The repository currently contains **61 documented skills**:
 
-- **56 callable analysis/workflow skills** listed below
+- **60 callable analysis/workflow skills** listed below
 - **1 overview/router skill**: `grn-atlas-overview`
 
 | # | Skill | Description |
@@ -318,6 +318,10 @@ The repository currently contains **57 documented skills**:
 | 54 | `grn-trajectory-regulation` | Report readiness and missing layers for trajectory or time-series regulatory analysis |
 | 55 | `grn-combinatorial-perturbation` | Rank pairwise or triple perturbation combinations by predicted downstream impact |
 | 56 | `grn-species-onboarding-plan` | Generate a staged plan for onboarding a new species into the atlas architecture |
+| 57 | `grn-shared-regulators` | Find transcription factors that regulate two or more genes in common |
+| 58 | `grn-decision-boundary` | Summarize what the atlas supports, does not support, and what minimal next step reduces uncertainty |
+| 59 | `grn-input-normalization` | Normalize messy pasted inputs, infer likely structure/species, and prepare atlas-ready rows |
+| 60 | `grn-phenotype-targeting` | Start from a phenotype or design objective and produce atlas-grounded candidate targets |
 
 ## Agent skills
 
@@ -334,12 +338,16 @@ venv/bin/python .agents/skills/_test_all_skills.py       # 319 direct tests acro
 venv/bin/python .agents/skills/_test_all_skills_http.py  # 83 HTTP tests across 41 skills (server must be running)
 venv/bin/python .agents/skills/_test_integration.py      # 49 integration tests (cross-skill, adversarial, perf, idempotency)
 npx playwright test                                       # 22 browser e2e tests (server must be running)
+
+# Current LLM routing/orchestration matrices
+venv/bin/python .agents/skills/_test_llm_single_matrix.py --provider openai --model gpt-5.4
+venv/bin/python .agents/skills/_test_llm_orchestration_matrix.py --provider openai --model gpt-5.4
 ```
 
 ## LLM orchestration testing
 
-The skill suite has been tested with an external LLM (Nvidia Nemotron-3 Ultra 550B via
-OpenRouter free tier) to validate tool selection and multi-step orchestration:
+The skill suite has been tested with external LLMs to validate tool selection and multi-step
+orchestration. The current repo status as of **Thursday, August 13, 2026** is:
 
 | Test tier | Cases | Tested | Pass rate | What it tests |
 |---|---|---|---|---|
@@ -349,24 +357,24 @@ OpenRouter free tier) to validate tool selection and multi-step orchestration:
 | **E2E (Playwright)** | 22 | 22 | 100% (22/22) | Browser tests: all views, 14 analysis panels, 4 workflow chains, URL state |
 | **Backend API pytest** | 165 | 165 | 100% (165/165) | API contracts, science helpers, and milestone 1-7 workflow endpoints including the newer researcher-facing skills |
 | **Frontend Vitest** | 9 | 9 | 100% (9/9) | Frontend component / utility regression coverage |
-| **Single-skill LLM** | 306 | 306 | 92.5% (283/306) | LLM selects the correct legacy tool and extracts correct parameters from natural language |
-| **Multi-skill orchestration** | 35 | 35 | 94.3% (33/35) | LLM chains 1–7 skills across multi-step biology and workflow questions |
+| **Single-skill LLM (GPT-5.4)** | 347 | 347 | 100% (347/347) | LLM selects the correct skill and arguments across the current expanded skill inventory |
+| **Multi-skill orchestration (GPT-5.4)** | 59 | 59 | 100% (59/59) | LLM chains multiple skills across realistic multi-step biology and workflow questions |
 
-All **57 documented skills** are documented in-repo, but the repository's older
-direct/HTTP/LLM harnesses do **not** yet cover every newly added milestone 2-7 skill.
-As of **Tuesday, August 11, 2026**, the broad automated coverage boundary is:
+All **61 documented skills** are documented in-repo. The older direct/HTTP harnesses still
+cover the legacy 41-skill subset, while the current LLM matrices now exercise the expanded
+post-M16 skill inventory at the routing and orchestration layer.
+
+Current automated coverage boundary:
 
 - legacy direct skill harness: **41 callable skills**, **319/319 PASS**
 - legacy HTTP skill harness: **41 callable skills**, **83/83 PASS**
-- newer milestone 2-7 skills: covered today by dedicated backend API tests inside
-  `backend/tests/` plus targeted CLI smoke checks
+- expanded skill inventory: **347/347 PASS** single-skill GPT-5.4 matrix
+- orchestration workflows: **59/59 PASS** GPT-5.4 matrix
 
-The latest full Nemotron single-skill rerun exercised **306/306** legacy-harness cases
-with **93.1%** tool-selection accuracy (**285/306**) and **283/306** full-case passes.
-Subsequent targeted prompt/skill/harness fixes improved the previously weak RNAi-screen,
-conservation, inferred-edge, and workflow chains; the latest full orchestration rerun
-reached **33/35 PASS** on Saturday, August 8, 2026. Expanding the LLM harnesses to cover
-the milestone 2-7 skills remains open follow-up work.
+Historical note: the earlier Nemotron-3-Ultra via OpenRouter evaluation was useful for
+finding routing/frontmatter weaknesses, but it is no longer the best statement of current
+repo status. The latest fully clean published matrix results in this repo are the GPT-5.4
+results above.
 
 Integration tests (`_test_integration.py`) cover four categories:
 cross-skill consistency (regulon↔network, search↔info, inferred↔curated, orthology, expression↔coexpression),

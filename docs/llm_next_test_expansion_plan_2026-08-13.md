@@ -2,6 +2,8 @@
 
 Date: August 13, 2026
 
+Status: Partially implemented as of Thursday, August 13, 2026. Several items from this plan were folded into the expanded 347-case single-skill matrix and 59-question orchestration matrix; the remaining items should be treated as future expansion candidates rather than current gaps by default.
+
 This note proposes the next set of LLM test expansions for the GRN Atlas. The focus is on increasing realism rather than simply adding more of the same narrow routing checks. The highest-value additions are question families that stress ambiguity handling, phenotype-first reasoning, messy user input, uncertainty communication, and tradeoff-aware planning.
 
 ## Expansion goals
@@ -373,4 +375,3 @@ Recommended next implementation order:
 7. Add 5 boundary / refusal-quality prompts
 
 That would add 35 high-value orchestration cases and a smaller companion set of 10 to 15 new single-skill routing cases.
-

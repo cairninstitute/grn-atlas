@@ -2,6 +2,8 @@
 
 Date: August 13, 2026
 
+Status: Implemented in the repo as of Thursday, August 13, 2026. This document now serves as the implementation record for the M1–M8 capability pass rather than a future-only spec.
+
 This document turns the high-level capability roadmap into implementation-ready details: concrete deliverables, interfaces, validation criteria, and integration points for each milestone.
 
 ## Definition of done for the roadmap
@@ -235,4 +237,3 @@ Each milestone should also include:
 6. literature-grounded synthesis improvements
 7. readiness-plus for cell-type/trajectory
 8. artifact/report enhancements
-

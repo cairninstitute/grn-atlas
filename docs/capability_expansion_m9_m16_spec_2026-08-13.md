@@ -2,6 +2,8 @@
 
 Date: August 13, 2026
 
+Status: Implemented in the repo as of Thursday, August 13, 2026. This file now functions as the implementation record for the M9–M16 pass and its validation criteria.
+
 This document extends the capability expansion work beyond M8. The focus is the next set of weak-but-high-value workflow areas identified after the M1–M8 implementation pass.
 
 ## Objective

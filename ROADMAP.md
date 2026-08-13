@@ -6,7 +6,7 @@
 > Iteration Log. The working loop is: _build → test → document here → find gaps →
 > plan → repeat._
 
-Last updated: 2026-07-26 · Baseline: backend 78 tests, frontend 5 tests, build clean.
+Last updated: 2026-08-13 · Current broad status: 61 documented skills, GPT-5.4 single-skill matrix 347/347 PASS, GPT-5.4 orchestration matrix 59/59 PASS.
 
 ---
 

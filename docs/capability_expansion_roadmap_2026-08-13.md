@@ -2,6 +2,8 @@
 
 Date: August 13, 2026
 
+Status: Implemented through M8 as of Thursday, August 13, 2026. This file remains useful as the rationale and milestone decomposition for that completed pass.
+
 This roadmap converts the current testing and workflow-gap analysis into a concrete implementation plan for expanding what the GRN Atlas skill layer can do for researchers. The focus is not only broader test coverage, but actual capability improvements for the kinds of questions researchers ask in practice.
 
 ## Objective
@@ -16,7 +18,7 @@ to:
 
 ## Guiding principle
 
-The next phase should prioritize capability layers that reduce orchestration fragility:
+The completed pass prioritized capability layers that reduce orchestration fragility:
 
 1. Normalize messy inputs before downstream analysis
 2. Make phenotype-first targeting a first-class workflow
@@ -551,4 +553,3 @@ This roadmap succeeds if, after implementation:
 - tradeoff questions return real comparisons
 - non-model species workflows become more actionable and safer
 - researcher-facing outputs become easier to reuse directly
-

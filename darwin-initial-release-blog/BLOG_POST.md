@@ -12,7 +12,7 @@ Read time: 8–10 minutes
 
 Today we’re publicly releasing GRN Atlas for academic and non-commercial use.
 
-GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows. The current release ships with 42 documented skills, including 41 callable analysis and workflow skills plus one overview/router skill. In testing with Nvidia Nemotron-3-Ultra via OpenRouter, the latest full reruns reached 283/305 pass on single-skill natural-language cases and 33/35 pass on multi-skill orchestration questions.
+GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows. As of Thursday, August 13, 2026, the repository contains 61 documented skills: 60 callable analysis/workflow skills plus one overview/router skill. Earlier Nemotron-3-Ultra testing helped harden the routing layer, and the current clean GPT-5.4 matrices in-repo are 347/347 pass on single-skill routing and 59/59 pass on multi-skill orchestration.
 
 Repository: https://github.com/cairninstitute/grn-atlas
 
@@ -156,10 +156,12 @@ Examples of workflow panels:
 
 GRN Atlas also includes an AgentSkills-style skill library for structured tool use.
 
-The repository currently contains 42 documented skills:
+The repository currently contains 61 documented skills:
 
-- 41 callable analysis/workflow skills
+- 60 callable analysis/workflow skills
 - 1 overview/router skill
+
+The list below is grouped by family rather than serving as the exact full inventory. The current canonical inventory lives in `README.md`.
 
 ### Core gene and network skills
 
@@ -203,6 +205,15 @@ The repository currently contains 42 documented skills:
 - `grn-conservation`
 - `grn-transferability`
 
+### Input, phenotype, and workflow-orientation skills
+
+- `grn-dataset-import`
+- `grn-input-normalization`
+- `grn-user-gene-set-analysis`
+- `grn-phenotype-targeting`
+- `grn-shared-regulators`
+- `grn-decision-boundary`
+
 ### RNAi and dsRNA skills
 
 - `grn-dsrna`
@@ -245,7 +256,23 @@ In GRN Atlas, that workflow can be expressed as:
 
 That structure matters for reproducibility, testing, and failure analysis.
 
-## Testing With Nemotron-3-Ultra
+## Testing With External LLMs
+
+The repo now has two useful testing stories:
+
+- earlier Nemotron-3-Ultra runs that exposed weak routing families
+- current clean GPT-5.4 matrix runs that reflect the latest repository status
+
+### Current clean repo status: GPT-5.4
+
+As of Thursday, August 13, 2026:
+
+- single-skill matrix: 347/347 pass
+- multi-skill orchestration matrix: 59/59 pass
+
+These current matrices are the best statement of the repository’s present LLM skill-calling status.
+
+### Earlier Nemotron-3-Ultra results
 
 We tested the skill system with Nvidia Nemotron-3-Ultra through OpenRouter to evaluate two distinct behaviors:
 
@@ -299,7 +326,7 @@ The Nemotron evaluation directly shaped the skill layer. We improved:
 - RNAi-screen evaluation coverage
 - collaborator-handoff and validation-plan chaining
 
-At the end of the latest round, the system was down to two remaining failures in the full 35-question orchestration suite, both narrow cases rather than broad workflow breakdowns.
+Those Nemotron results were valuable mainly because they revealed where skill descriptions, frontmatter, and orchestration sequencing needed to be tightened. The repo status has moved forward since then.
 
 The result is not just a library of tools. It is a release candidate that has been exercised with both deterministic tests and external LLM-driven tool use.
 
@@ -359,14 +386,19 @@ Yes. The repository includes the full skill layer in `.agents/skills/`.
 
 **How many skills are included?**
 
-42 documented skills total:
+61 documented skills total:
 
-- 41 callable analysis/workflow skills
+- 60 callable analysis/workflow skills
 - 1 overview/router skill
 
-**How well does an external LLM use the skills?**
+**How well does an external LLM use the skills today?**
 
-In the latest Nemotron full reruns:
+Current clean GPT-5.4 matrix results:
+
+- single-skill routing: 347/347
+- multi-skill orchestration: 59/59
+
+Earlier Nemotron full reruns:
 
 - single-skill tool selection accuracy: 93.4%
 - orchestration pass rate: 33/35

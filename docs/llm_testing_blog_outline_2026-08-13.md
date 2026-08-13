@@ -131,7 +131,7 @@ Purpose:
 
 Current scale:
 
-- 324 total single-skill questions
+- 347 total single-skill questions
 
 What these tests cover well:
 
@@ -158,7 +158,7 @@ Purpose:
 
 Current scale:
 
-- 43 orchestration questions
+- 59 orchestration questions
 
 These tests cover workflows such as:
 
@@ -179,6 +179,15 @@ What this means:
 
 - the testing goes beyond one-shot queries
 - the LLM is being tested on whether it can complete research tasks that require sequencing several steps correctly
+
+### D. Current clean matrix status
+
+As of Thursday, August 13, 2026:
+
+- GPT-5.4 single-skill matrix: **347/347 PASS**
+- GPT-5.4 orchestration matrix: **59/59 PASS**
+
+This is the cleanest current statement of repo-level LLM routing/orchestration status.
 
 ### C. HTTP-level testing
 
@@ -337,4 +346,3 @@ Possible section headings:
 ## 9. Short conclusion draft
 
 The current GRN Atlas skill layer is already capable of supporting a meaningful set of research workflows through an LLM interface. The most mature areas are atlas navigation, network interpretation, perturbation and RNAi planning, enrichment, and cross-species support. The next testing frontier is not basic functionality but realism: open-ended biological questions, messy inputs, uncertain evidence, and decision-making under real research constraints.
-
