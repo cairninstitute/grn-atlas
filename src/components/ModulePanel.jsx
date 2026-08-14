@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { analysisAPI } from '../services/apiService';
+import React, { useState, useEffect } from 'react';
+import { analysisAPI, geneAPI } from '../services/apiService';
 
-export default function ModulePanel() {
-  const [species, setSpecies] = useState('human');
+export default function ModulePanel({ currentSpecies, currentGene }) {
+  const [species, setSpecies] = useState(currentSpecies || 'human');
   const [algorithm, setAlgorithm] = useState('louvain');
   const [geneId, setGeneId] = useState('');
   const [resolution, setResolution] = useState(0.01);
@@ -12,12 +12,36 @@ export default function ModulePanel() {
   const [result, setResult] = useState(null);
   const [expanded, setExpanded] = useState({});
 
+  useEffect(() => {
+    if (currentSpecies) setSpecies(currentSpecies);
+  }, [currentSpecies]);
+
+  useEffect(() => {
+    if (currentGene?.id) {
+      setGeneId((prev) => prev || currentGene.label || currentGene.symbol || currentGene.id);
+    }
+  }, [currentGene]);
+
+  const resolveGeneId = async (value) => {
+    const query = value.trim();
+    if (!query) return null;
+    if (currentGene && [currentGene.id, currentGene.symbol, currentGene.label].filter(Boolean).includes(query)) {
+      return currentGene.id;
+    }
+    const resp = await geneAPI.search(query, 5, species || undefined);
+    const exact = (resp.results || []).find((g) => (
+      [g.id, g.symbol, g.label].filter(Boolean).some((field) => String(field).toLowerCase() === query.toLowerCase())
+    ));
+    return (exact || resp.results?.[0])?.id || query;
+  };
+
   const run = async () => {
     setLoading(true);
     setError(null);
     try {
+      const resolvedGeneId = geneId.trim() ? await resolveGeneId(geneId) : null;
       const data = await analysisAPI.modules({
-        species, algorithm, geneId: geneId.trim() || null, resolution, topModules,
+        species, algorithm, geneId: resolvedGeneId, resolution, topModules,
       });
       if (data.error) throw new Error(data.error);
       setResult(data);
@@ -54,9 +78,9 @@ export default function ModulePanel() {
           </select>
         </div>
         <div className="field">
-          <label>Gene ID (optional)</label>
+          <label>Gene ID or symbol (optional)</label>
           <input type="text" value={geneId} onChange={e => setGeneId(e.target.value)}
-            placeholder="e.g. TP53" />
+            placeholder={currentGene?.label ? `e.g. ${currentGene.label}` : 'e.g. TP53'} />
         </div>
         <div className="field">
           <label>Resolution</label>

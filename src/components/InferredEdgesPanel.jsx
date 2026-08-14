@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { analysisAPI } from '../services/apiService';
+import { analysisAPI, geneAPI } from '../services/apiService';
 
-export default function InferredEdgesPanel({ onShareGenes: _onShareGenes, sharedGeneSet }) {
-  const [species, setSpecies] = useState('human');
+export default function InferredEdgesPanel({ onShareGenes: _onShareGenes, sharedGeneSet, currentGene, currentSpecies }) {
+  const [species, setSpecies] = useState(currentSpecies || 'human');
   const [geneId, setGeneId] = useState('');
   const [direction, setDirection] = useState('both');
   const [method, setMethod] = useState('any');
@@ -19,13 +19,37 @@ export default function InferredEdgesPanel({ onShareGenes: _onShareGenes, shared
     }
   }, [sharedGeneSet]);
 
+  useEffect(() => {
+    if (currentSpecies) setSpecies(currentSpecies);
+  }, [currentSpecies]);
+
+  useEffect(() => {
+    if (!sharedGeneSet?.genes?.length && currentGene?.id) {
+      setGeneId((prev) => prev || currentGene.label || currentGene.symbol || currentGene.id);
+    }
+  }, [currentGene, sharedGeneSet]);
+
+  const resolveGeneId = async (value) => {
+    const query = value.trim();
+    if (!query) return null;
+    if (currentGene && [currentGene.id, currentGene.symbol, currentGene.label].filter(Boolean).includes(query)) {
+      return currentGene.id;
+    }
+    const resp = await geneAPI.search(query, 5, species || undefined);
+    const exact = (resp.results || []).find((g) => (
+      [g.id, g.symbol, g.label].filter(Boolean).some((field) => String(field).toLowerCase() === query.toLowerCase())
+    ));
+    return (exact || resp.results?.[0])?.id || query;
+  };
+
   const run = async () => {
     if (!geneId.trim()) { setError('Gene ID is required'); return; }
     setLoading(true);
     setError(null);
     try {
+      const resolvedGeneId = await resolveGeneId(geneId);
       const data = await analysisAPI.inferredEdges({
-        species, geneId: geneId.trim(), direction,
+        species, geneId: resolvedGeneId, direction,
         method: method === 'any' ? null : method,
         minImportance, compareCurated, top,
       });
@@ -54,9 +78,9 @@ export default function InferredEdgesPanel({ onShareGenes: _onShareGenes, shared
           </select>
         </div>
         <div className="field">
-          <label>Gene ID</label>
+          <label>Gene ID or symbol</label>
           <input type="text" value={geneId} onChange={e => setGeneId(e.target.value)}
-            placeholder="e.g. TP53" />
+            placeholder={currentGene?.label ? `e.g. ${currentGene.label}` : 'e.g. TP53'} />
         </div>
         <div className="field">
           <label>Direction</label>

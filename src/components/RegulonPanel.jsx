@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { analysisAPI } from '../services/apiService';
+import { analysisAPI, geneAPI } from '../services/apiService';
 
-export default function RegulonPanel({ onShareGenes, sharedGeneSet }) {
+export default function RegulonPanel({ onShareGenes, sharedGeneSet, currentGene, currentSpecies }) {
   const [geneId, setGeneId] = useState('');
   const [depth, setDepth] = useState(2);
   const [minConf, setMinConf] = useState(0);
@@ -15,12 +15,32 @@ export default function RegulonPanel({ onShareGenes, sharedGeneSet }) {
     }
   }, [sharedGeneSet]);
 
+  useEffect(() => {
+    if (!sharedGeneSet?.genes?.length && currentGene?.id) {
+      setGeneId((prev) => prev || currentGene.label || currentGene.symbol || currentGene.id);
+    }
+  }, [currentGene, sharedGeneSet]);
+
+  const resolveGeneId = async (value) => {
+    const query = value.trim();
+    if (!query) return null;
+    if (currentGene && [currentGene.id, currentGene.symbol, currentGene.label].filter(Boolean).includes(query)) {
+      return currentGene.id;
+    }
+    const resp = await geneAPI.search(query, 5, currentSpecies || undefined);
+    const exact = (resp.results || []).find((g) => (
+      [g.id, g.symbol, g.label].filter(Boolean).some((field) => String(field).toLowerCase() === query.toLowerCase())
+    ));
+    return (exact || resp.results?.[0])?.id || query;
+  };
+
   const run = async () => {
     if (!geneId.trim()) return;
     setLoading(true);
     setError(null);
     try {
-      const data = await analysisAPI.regulon(geneId.trim(), { depth, minConfidence: minConf });
+      const resolvedGeneId = await resolveGeneId(geneId);
+      const data = await analysisAPI.regulon(resolvedGeneId, { depth, minConfidence: minConf });
       if (data.error) throw new Error(data.error);
       setResult(data);
     } catch (e) {
@@ -37,9 +57,9 @@ export default function RegulonPanel({ onShareGenes, sharedGeneSet }) {
     <div>
       <div className="analysis-form">
         <div className="field">
-          <label>Gene ID</label>
+          <label>Gene ID or symbol</label>
           <input type="text" value={geneId} onChange={e => setGeneId(e.target.value)}
-            placeholder="e.g. TP53" onKeyDown={e => e.key === 'Enter' && run()} />
+            placeholder={currentGene?.label ? `e.g. ${currentGene.label}` : 'e.g. TP53'} onKeyDown={e => e.key === 'Enter' && run()} />
         </div>
         <div className="field">
           <label>Depth</label>

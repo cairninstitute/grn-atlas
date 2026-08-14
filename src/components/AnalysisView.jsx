@@ -46,6 +46,7 @@ const SECTIONS = [
 export default function AnalysisView({ gene, networkData, filters, onNodeAction, onDepthChange }) {
   const [open, setOpen] = useState({ regulon: true });
   const [sharedGeneSet, setSharedGeneSet] = useState(null);
+  const currentSpecies = gene?.species || filters?.species?.[0] || '';
 
   const toggle = (id) => setOpen(prev => ({ ...prev, [id]: !prev[id] }));
 
@@ -65,14 +66,16 @@ export default function AnalysisView({ gene, networkData, filters, onNodeAction,
               <span className="analysis-card-desc"> — direct and expanded network context for the current focus gene</span>
             </div>
           </div>
-          <div className="analysis-card-body" style={{ minHeight: 520 }}>
-            <NetworkVisualization
-              gene={gene}
-              data={networkData}
-              filters={filters}
-              onNodeAction={onNodeAction}
-              onDepthChange={onDepthChange}
-            />
+          <div className="analysis-card-body">
+            <div className="analysis-network-frame">
+              <NetworkVisualization
+                gene={gene}
+                data={networkData}
+                filters={filters}
+                onNodeAction={onNodeAction}
+                onDepthChange={onDepthChange}
+              />
+            </div>
           </div>
         </div>
       ) : null}
@@ -97,6 +100,8 @@ export default function AnalysisView({ gene, networkData, filters, onNodeAction,
               {open[id] && (
                 <div className="analysis-card-body">
                   <Panel
+                    currentGene={gene}
+                    currentSpecies={currentSpecies}
                     {...(shares ? { onShareGenes: shareToPanel } : {})}
                     {...(accepts && sharedGeneSet?.target === id ? { sharedGeneSet } : {})}
                   />

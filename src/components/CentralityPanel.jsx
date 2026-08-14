@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { analysisAPI } from '../services/apiService';
 
-export default function CentralityPanel() {
-  const [species, setSpecies] = useState('human');
+export default function CentralityPanel({ currentSpecies }) {
+  const [species, setSpecies] = useState(currentSpecies || 'human');
   const [metric, setMetric] = useState('out_degree');
   const [top, setTop] = useState(25);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+
+  useEffect(() => {
+    if (currentSpecies) setSpecies(currentSpecies);
+  }, [currentSpecies]);
 
   const run = async () => {
     setLoading(true);
