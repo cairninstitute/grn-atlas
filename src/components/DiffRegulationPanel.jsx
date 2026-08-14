@@ -20,7 +20,7 @@ export default function DiffRegulationPanel() {
         minFoldChange, top,
       });
       if (data.available_tissues) setAvailableTissues(data.available_tissues);
-    } catch (_) { /* ignore */ }
+    } catch { /* ignore */ }
   };
 
   const run = async () => {

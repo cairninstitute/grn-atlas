@@ -203,26 +203,32 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
 
   // Prefill when launched from a specific gene ("Design dsRNA for this gene").
   useEffect(() => {
+    const initialTargetText = typeof initialTarget === 'string'
+      ? initialTarget
+      : (initialTarget?.label || initialTarget?.symbol || initialTarget?.id || '');
+    const initialCompareTargetText = typeof initialCompareTarget === 'string'
+      ? initialCompareTarget
+      : (initialCompareTarget?.label || initialCompareTarget?.symbol || initialCompareTarget?.id || '');
+    const initialSetText = Array.isArray(initialSet)
+      ? initialSet
+          .map((item) => (typeof item === 'string'
+            ? item
+            : (item?.label || item?.symbol || item?.id || item?.gene_id || '')))
+          .filter(Boolean)
+          .join(', ')
+      : (typeof initialSet === 'string' ? initialSet : '');
+
+    setSpecies(initialSpecies || 'petunia');
+    setTarget(initialTargetText);
+    setCompareTarget(initialCompareTargetText || '');
+    setSetText(initialSetText);
+
     if (open) {
-      setSpecies(initialSpecies || 'petunia');
-      const initialTargetText = typeof initialTarget === 'string'
-        ? initialTarget
-        : (initialTarget?.label || initialTarget?.symbol || initialTarget?.id || '');
-      const initialCompareTargetText = typeof initialCompareTarget === 'string'
-        ? initialCompareTarget
-        : (initialCompareTarget?.label || initialCompareTarget?.symbol || initialCompareTarget?.id || '');
-      const initialSetText = Array.isArray(initialSet)
-        ? initialSet
-            .map((item) => (typeof item === 'string'
-              ? item
-              : (item?.label || item?.symbol || item?.id || item?.gene_id || '')))
-            .filter(Boolean)
-            .join(', ')
-        : (typeof initialSet === 'string' ? initialSet : '');
-      setTarget(initialTargetText);
-      setCompareTarget(initialCompareTargetText || '');
-      setSetText(initialSetText);
-      setSeq(''); setRes(null); setCompareRes(null); setScreen(null); setError(null);
+      setSeq('');
+      setRes(null);
+      setCompareRes(null);
+      setScreen(null);
+      setError(null);
     }
   }, [open, initialTarget, initialCompareTarget, initialSpecies, initialSet]);
 

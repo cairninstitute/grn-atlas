@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { geneLabel } from '../utils/geneLabel';
 import { pathwayAPI } from '../services/apiService';
 import '../styles/InterventionDesigner.css';
@@ -11,8 +11,6 @@ export default function InterventionDesigner({ gene, networkData }) {
   const [selectedIntervention, setSelectedIntervention] = useState(null);
 
   const regulators = networkData?.regulators || [];
-  const targets = networkData?.targets || [];
-
   // Add an intervention
   const addIntervention = (regulator, action, strength = 1.5) => {
     const intervention = {

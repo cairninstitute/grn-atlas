@@ -47,7 +47,7 @@ export default function RegulonDiffWorkflow() {
     try {
       const data = await analysisAPI.diffRegulation({ species, groupA: [], groupB: [] });
       if (data.available_tissues) setAvailableTissues(data.available_tissues);
-    } catch (_) {}
+    } catch {}
   };
 
   return (

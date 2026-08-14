@@ -1,6 +1,26 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { geneAPI, workflowAPI } from '../services/apiService';
 import { geneLabel } from '../utils/geneLabel';
+import {
+  GeneBadge,
+  JsonPreview,
+  ResultList,
+  StatusPill,
+  buildPhenotypeRescueQueries,
+  dedupePhenotypeCandidates,
+  describeGene,
+  differentialDirectionText,
+  parseAssayText,
+  splitTokens,
+  uniqueBy,
+  uniqueSuggestedGenes,
+} from './workflow/WorkflowCommon';
+import {
+  ContextSection,
+  ImportSection,
+  PhenotypeSection,
+  PlanningSection,
+} from './workflow/WorkflowSections';
 import '../styles/WorkflowWorkspace.css';
 
 const INTENT_OPTIONS = [
@@ -36,170 +56,6 @@ const ASSAY_OPTIONS = [
   { value: 'motif', label: 'Promoter / motif analysis', description: 'Allow promoter binding and motif-oriented follow-up.' },
   { value: 'trait', label: 'Trait / phenotype evidence', description: 'Use loaded phenotype or trait associations.' },
 ];
-
-function splitTokens(text) {
-  return text.split(/[\s,;]+/).map((token) => token.trim()).filter(Boolean);
-}
-
-function parseAssayText(text) {
-  return text.split(',').map((token) => token.trim()).filter(Boolean);
-}
-
-function JsonPreview({ title, data, defaultOpen = false }) {
-  if (!data) return null;
-  return (
-    <details className="workflow-json" open={defaultOpen}>
-      <summary>{title}</summary>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </details>
-  );
-}
-
-function StatusPill({ tone = 'neutral', children }) {
-  return <span className={`workflow-pill workflow-pill-${tone}`}>{children}</span>;
-}
-
-function describeGene(item, labelOverrides = {}) {
-  if (!item) return { primary: '', secondary: '', inferred: false };
-  if (typeof item === 'string') return { primary: item, secondary: '', inferred: false };
-  const id = item.gene_id || item.id || item.symbol || '';
-  const override = id ? labelOverrides[id] : null;
-  const { label, inferred } = geneLabel({
-    ...item,
-    id,
-    symbol: item.symbol || id,
-    label: override?.label || item.label,
-    label_inferred: override?.label_inferred ?? item.label_inferred,
-  });
-  const primary = label || item.symbol || id;
-  const secondary = id && id !== primary ? id : '';
-  return { primary, secondary, inferred };
-}
-
-function GeneBadge({ item, labelOverrides }) {
-  const { primary, secondary, inferred } = describeGene(item, labelOverrides);
-  const inferredTitle = inferred
-    ? 'Inferred label from orthology or synonym context; not a native curated symbol for this species.'
-    : undefined;
-  return (
-    <span className={`workflow-gene-badge${inferred ? ' workflow-gene-badge-inferred' : ''}`} title={inferredTitle}>
-      <strong>{primary}</strong>
-      {secondary && <span className="workflow-faint"> · {secondary}</span>}
-    </span>
-  );
-}
-
-function differentialDirectionText(item, groupA, groupB) {
-  const a = groupA?.join(', ') || 'Group A';
-  const b = groupB?.join(', ') || 'Group B';
-  if ((item?.log2fc ?? 0) < 0) return `higher in ${a}`;
-  if ((item?.log2fc ?? 0) > 0) return `higher in ${b}`;
-  return 'similar in both groups';
-}
-
-function ResultList({ title, items, renderItem, emptyText = 'No results yet.' }) {
-  return (
-    <div className="workflow-result-block">
-      <div className="workflow-result-title">{title}</div>
-      {!items || items.length === 0 ? (
-        <div className="workflow-empty-inline">{emptyText}</div>
-      ) : (
-        <ul className="workflow-list">
-          {items.map((item, index) => <li key={index}>{renderItem(item)}</li>)}
-        </ul>
-      )}
-    </div>
-  );
-}
-
-function normalizeSuggestedGeneName(name) {
-  if (!name) return null;
-  return String(name).replace(/-(Centered|Mediated|Dependent|Associated|Related|Responsive|Like|Type|Induced|Module)$/i, '').trim() || null;
-}
-
-function uniqueSuggestedGenes(candidateGenes = []) {
-  const seen = new Set();
-  const out = [];
-  for (const item of candidateGenes) {
-    const normalized = normalizeSuggestedGeneName(item?.name);
-    if (!normalized) continue;
-    const key = normalized.toUpperCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(normalized);
-  }
-  return out;
-}
-
-function uniqueBy(array, keyFn) {
-  const seen = new Set();
-  const out = [];
-  for (const item of array) {
-    const key = keyFn(item);
-    if (!key || seen.has(key)) continue;
-    seen.add(key);
-    out.push(item);
-  }
-  return out;
-}
-
-function dedupePhenotypeCandidates(candidates = []) {
-  const byPrimaryLabel = new Map();
-  for (const gene of candidates) {
-    const primary = String(gene?.label || gene?.symbol || gene?.gene_id || gene?.id || '').toUpperCase();
-    if (!primary) continue;
-    const existing = byPrimaryLabel.get(primary);
-    if (!existing) {
-      byPrimaryLabel.set(primary, gene);
-      continue;
-    }
-    const existingReasons = existing.match_reasons || [];
-    const nextReasons = gene.match_reasons || [];
-    const existingQueries = existing.matched_queries || [];
-    const nextQueries = gene.matched_queries || [];
-    const existingScore = existing.rescue_score || 0;
-    const nextScore = gene.rescue_score || 0;
-    byPrimaryLabel.set(primary, {
-      ...existing,
-      match_reasons: uniqueBy([...existingReasons, ...nextReasons], (item) => item),
-      matched_queries: uniqueBy([...existingQueries, ...nextQueries], (item) => String(item).toUpperCase()),
-      rescue_score: Math.max(existingScore, nextScore),
-    });
-  }
-  return [...byPrimaryLabel.values()];
-}
-
-function buildPhenotypeRescueQueries(candidateGenes = [], mechanisms = [], phenotypeQuestion = '') {
-  const queries = [];
-  const add = (...items) => {
-    for (const item of items) {
-      if (item) queries.push(item);
-    }
-  };
-  const mechanismNames = mechanisms.map((m) => String(m?.name || '').toLowerCase());
-  const question = String(phenotypeQuestion || '').toLowerCase();
-  const candidateNames = uniqueSuggestedGenes(candidateGenes);
-
-  for (const name of candidateNames) {
-    const upper = name.toUpperCase();
-    if (/\bAN2\b/.test(upper)) add('AN2');
-    if (/\bJAF13\b|\bEGL\d\b|\bGL3\b|\bMYC\d\b/.test(upper)) add('JAF13', 'EGL3');
-    if (/\bDFR\b|\bTT3\b/.test(upper)) add('DFR');
-    if (/\bCHS\b|\bTT4\b/.test(upper)) add('CHS');
-    if (upper.includes('MYB')) add('MYB');
-    if (upper.includes('BHLH')) add('bHLH', 'JAF13');
-    if (upper.includes('WD40') || upper.includes('TTG1')) add('TTG1', 'WD40');
-  }
-
-  const anthocyaninLike = mechanismNames.some((name) => ['anthocyanin', 'flavonoid', 'pigment', 'dfr', 'chs'].includes(name))
-    || question.includes('flower color')
-    || question.includes('pigment');
-  if (anthocyaninLike) {
-    add('AN2', 'JAF13', 'DFR', 'CHS');
-  }
-
-  return uniqueBy(queries, (item) => item.toUpperCase());
-}
 
 function computeRescueReason(query, gene) {
   const q = String(query || '').toUpperCase();
@@ -254,30 +110,6 @@ async function resolvePhenotypeRescueCandidates({ candidateGenes = [], mechanism
     .slice(0, 8);
 }
 
-function LiteraturePaperItem({ item }) {
-  const snippet = item?.snippet?.trim();
-  const content = (
-    <>
-      <strong>{item.year}</strong> · {item.title}
-      <span className="workflow-faint"> · {item.classification}</span>
-    </>
-  );
-  return (
-    <span className="workflow-paper-item">
-      {item?.url ? (
-        <a href={item.url} target="_blank" rel="noreferrer" className="workflow-paper-link">
-          {content}
-        </a>
-      ) : content}
-      {snippet ? (
-        <span className="workflow-paper-tooltip" role="note">
-          <strong>Abstract</strong>
-          <span>{snippet}</span>
-        </span>
-      ) : null}
-    </span>
-  );
-}
 
 export default function WorkflowWorkspace({
   selectedGene,
@@ -289,6 +121,13 @@ export default function WorkflowWorkspace({
   onOpenGeneSetAnalysis,
   onOpenDsRna,
   onDsRnaSeedChange,
+  onSessionSync,
+  visibleSections = ['context', 'phenotype', 'import', 'analysis', 'consensus', 'planning', 'differential', 'literature', 'design', 'advanced'],
+  kicker = 'Workflow-first workspace',
+  title = 'Run the atlas like a study, not a demo.',
+  subtitle = 'Start from a focus gene, hit list, or condition contrast. Move from interpretation to ranking, validation, and assay design without switching mental models.',
+  showHero = true,
+  showExamples = true,
 }) {
   const [intent, setIntent] = useState('experiment');
   const [species, setSpecies] = useState(selectedGene?.species || filters?.species?.[0] || 'human');
@@ -472,6 +311,85 @@ export default function WorkflowWorkspace({
       species,
     });
   }, [onDsRnaSeedChange, dsRnaSeedTarget, dsRnaCompareTarget, dsRnaSeedSet, species]);
+
+  const workflowCandidateSet = useMemo(
+    () => uniqueBy([
+      ...(consensus?.ranked_candidates || []),
+      ...(geneSetAnalysis?.candidate_triage?.ranked_candidates || []),
+      ...(datasetImport?.mapped_genes || []),
+      ...phenotypeCombinedCandidates,
+      ...(selectedGene ? [selectedGene] : []),
+    ], (gene) => gene?.gene_id || gene?.id),
+    [consensus, geneSetAnalysis, datasetImport, phenotypeCombinedCandidates, selectedGene],
+  );
+
+  useEffect(() => {
+    onSessionSync?.({
+      species,
+      intent,
+      focusGene: dsRnaSeedTarget || selectedGene || null,
+      candidateSet: workflowCandidateSet,
+      mappedGeneIds,
+      phenotypeQuestion,
+      comparison: {
+        groupA: splitTokens(groupAText),
+        groupB: splitTokens(groupBText),
+      },
+      artifacts: {
+        firstPass: geneSetAnalysis ? {
+          summary: `${geneSetAnalysis.analyzed_gene_count || mappedGeneIds.length || 0} genes analyzed in ${geneSetAnalysis.species || species || 'selected species'}.`,
+          detail: JSON.stringify({
+            topCandidates: (geneSetAnalysis.candidate_triage?.ranked_candidates || []).slice(0, 3).map((g) => g.label || g.symbol || g.gene_id),
+            topRegulators: (geneSetAnalysis.upstream_regulators?.regulators || []).slice(0, 3).map((g) => g.label || g.symbol || g.gene_id),
+          }, null, 2),
+        } : null,
+        consensus: consensus ? {
+          summary: `Top candidate: ${consensus.ranked_candidates?.[0]?.label || consensus.ranked_candidates?.[0]?.symbol || consensus.ranked_candidates?.[0]?.gene_id || 'unknown'}.`,
+          detail: JSON.stringify({
+            rankedCandidates: (consensus.ranked_candidates || []).slice(0, 5).map((g) => ({
+              gene: g.label || g.symbol || g.gene_id,
+              score: g.consensus_score,
+            })),
+            overturn: (counterfactual?.overturn_conditions || []).slice(0, 2).map((item) => item.summary || item.reason || item),
+          }, null, 2),
+        } : null,
+        plan: (researchBrief || validationPlan || experimentPlan) ? {
+          summary: researchBrief?.executive_summary || `${experimentPlan?.ranked_experiments?.length || 0} optimized experiments available.`,
+          detail: JSON.stringify({
+            workflowPlan: (researchBrief?.workflow_plan || []).slice(0, 4).map((x) => x.title || x.step || x),
+            checklist: (validationPlan?.execution_checklist || []).slice(0, 4).map((x) => x.title || x.step || x),
+            experiments: (experimentPlan?.ranked_experiments || []).slice(0, 3).map((x) => ({
+              gene: x.label || x.symbol || x.gene_id,
+              experiment: x.experiment,
+              score: x.optimized_priority_score,
+            })),
+          }, null, 2),
+        } : null,
+        report: studyReport?.markdown ? {
+          summary: 'Collaborator-facing report generated.',
+          detail: studyReport.markdown.slice(0, 800),
+        } : null,
+      },
+    });
+  }, [
+    onSessionSync,
+    species,
+    intent,
+    dsRnaSeedTarget,
+    selectedGene,
+    workflowCandidateSet,
+    mappedGeneIds,
+    phenotypeQuestion,
+    groupAText,
+    groupBText,
+    geneSetAnalysis,
+    consensus,
+    counterfactual,
+    researchBrief,
+    validationPlan,
+    experimentPlan,
+    studyReport,
+  ]);
 
   useEffect(() => {
     if (literatureTargetId && literatureTargetOptions.some((g) => g.id === literatureTargetId)) return;
@@ -808,267 +726,95 @@ export default function WorkflowWorkspace({
     setter(next.join(', '));
   };
 
+  const showSection = (id) => visibleSections.includes(id);
+
   return (
     <div className="workflow-workspace">
-      <div className="workflow-hero">
-        <div>
-          <p className="workflow-kicker">Workflow-first workspace</p>
-          <h1>Run the atlas like a study, not a demo.</h1>
-          <p className="workflow-subtitle">
-            Start from a focus gene, hit list, or condition contrast. Move from interpretation
-            to ranking, validation, and assay design without switching mental models.
-          </p>
+      {showHero && (
+        <div className="workflow-hero">
+          <div>
+            <p className="workflow-kicker">{kicker}</p>
+            <h1>{title}</h1>
+            <p className="workflow-subtitle">{subtitle}</p>
+          </div>
+          <div className="workflow-hero-actions">
+            <button onClick={() => onNavigate?.('advanced:network')}>Open explorer</button>
+            <button onClick={() => onNavigate?.('advanced:organism')}>Browse organisms</button>
+            <button onClick={() => onNavigate?.('advanced:analysis')}>Open analysis lab</button>
+          </div>
         </div>
-        <div className="workflow-hero-actions">
-          <button onClick={() => onNavigate?.('network')}>Open explorer</button>
-          <button onClick={() => onNavigate?.('organism')}>Browse organisms</button>
-          <button onClick={() => onNavigate?.('analysis')}>Open analysis lab</button>
-        </div>
-      </div>
+      )}
 
       {error && <div className="workflow-error">{error}</div>}
 
-      <div className="workflow-example-grid">
-        {EXAMPLE_WORKFLOWS.map((example) => (
-          <div key={example.title} className="workflow-example-card">
-            <div className="workflow-example-title">{example.title}</div>
-            <p>{example.description}</p>
-            <StatusPill>{example.action}</StatusPill>
-          </div>
-        ))}
-      </div>
-
-      <div className="workflow-grid workflow-grid-top">
-        <section className="workflow-card workflow-card-context">
-          <div className="workflow-card-header">
-            <div>
-              <h2>1. Research context</h2>
-              <p>Keep the focus gene, species, and intent aligned across steps.</p>
+      {showExamples && (
+        <div className="workflow-example-grid">
+          {EXAMPLE_WORKFLOWS.map((example) => (
+            <div key={example.title} className="workflow-example-card">
+              <div className="workflow-example-title">{example.title}</div>
+              <p>{example.description}</p>
+              <StatusPill>{example.action}</StatusPill>
             </div>
-          </div>
+          ))}
+        </div>
+      )}
 
-          <div className="workflow-context-summary">
-            <div className="workflow-metric">
-              <span className="workflow-metric-label">Focus gene</span>
-              <strong>{selectedLabel || 'None selected yet'}</strong>
-            </div>
-            <div className="workflow-metric">
-              <span className="workflow-metric-label">Species</span>
-              <strong>{species || 'auto'}</strong>
-            </div>
-            <div className="workflow-metric">
-              <span className="workflow-metric-label">Intent</span>
-              <strong>{INTENT_OPTIONS.find((opt) => opt.value === intent)?.label}</strong>
-            </div>
-            <div className="workflow-metric">
-              <span className="workflow-metric-label">Evidence setting</span>
-              <strong>{filters?.includeInferred === false ? 'Measured only' : 'Measured + inferred'}</strong>
-            </div>
-          </div>
-
-          <div className="workflow-form-grid">
-            <label className="workflow-field">
-              <span>Intent</span>
-              <select value={intent} onChange={(e) => setIntent(e.target.value)}>
-                {INTENT_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </select>
-            </label>
-            <label className="workflow-field">
-              <span>Species</span>
-              <input value={species} onChange={(e) => handleSpeciesInputChange(e.target.value)} placeholder="human" />
-            </label>
-          </div>
-
-          {selectedGene && (
-            <div className="workflow-focus-gene">
-              <div>
-                <div className="workflow-result-title">Current focus gene</div>
-                <div className="workflow-focus-symbol">{selectedLabel}</div>
-                <div className="workflow-focus-meta">{selectedGene.name} · {selectedGene.species}</div>
-                <div className="workflow-focus-stats">
-                  <span>{networkStats.regulators?.length || networkData?.regulators?.length || 0} regulators</span>
-                  <span>{networkStats.targets?.length || networkData?.targets?.length || 0} targets</span>
-                </div>
-              </div>
-              <div className="workflow-inline-actions">
-                <button onClick={() => onNavigate?.('network')}>Network</button>
-                <button onClick={() => onNavigate?.('pathways')}>Paths</button>
-                <button onClick={() => onNavigate?.('comparison')}>Orthology</button>
-                <button onClick={() => onOpenDsRna?.({ target: dsRnaSeedTarget, compareTarget: dsRnaCompareTarget, geneSet: dsRnaSeedSet })}>dsRNA</button>
-              </div>
-            </div>
-          )}
-        </section>
-
-        <section className="workflow-card">
-          <div className="workflow-card-header">
-            <div>
-              <h2>2. Start from a phenotype question</h2>
-              <p>Ask the literature about a phenotype or intervention goal before you already know which genes to test.</p>
-            </div>
-            <button onClick={handlePhenotypeLiterature} disabled={loading.phenotypeLiterature}>
-              {loading.phenotypeLiterature ? 'Searching…' : 'Search literature first'}
-            </button>
-          </div>
-
-          <label className="workflow-field">
-            <span>Phenotype question</span>
-            <textarea
-              rows={3}
-              value={phenotypeQuestion}
-              onChange={(e) => setPhenotypeQuestion(e.target.value)}
-              placeholder="Which genes are the best targets for changing flower color in this species?"
-            />
-            <small className="workflow-help-text">This uses external literature for broad ideation before you commit to a hit list.</small>
-          </label>
-
-          {phenotypeLiterature ? (
-            <>
-              <div className="workflow-summary-box">
-                Search term used: <strong>{phenotypeLiterature.search_term}</strong>
-              </div>
-              <ResultList
-                title="Likely candidate genes mentioned in the literature"
-                items={phenotypeLiterature.candidate_summary?.candidate_genes?.slice(0, 8)}
-                renderItem={(item) => <span><strong>{item.name}</strong><span className="workflow-faint"> · mentioned in {item.mentions} paper(s)</span></span>}
-                emptyText="No candidate-like gene names were extracted from the returned papers."
-              />
-              <ResultList
-                title={`Atlas-mappable genes for ${species || 'the selected species'}`}
-                items={phenotypeAtlasMappedGenes.slice(0, 8)}
-                renderItem={(item) => <GeneBadge item={item} labelOverrides={labelOverrides} />}
-                emptyText={`None of the current literature suggestions mapped cleanly into ${species || 'the selected species'} yet.`}
-              />
-              <ResultList
-                title={`${species || 'Selected species'} homolog / family candidates inferred from the literature`}
-                items={phenotypeDisplayCandidates.slice(0, 8)}
-                renderItem={(item) => (
-                  <span>
-                    <GeneBadge item={item} labelOverrides={labelOverrides} />
-                    {item.match_reasons?.length ? <span className="workflow-faint"> · {item.match_reasons.join(' · ')}</span> : null}
-                  </span>
-                )}
-                emptyText={`No homolog or family-level rescue candidates were found for ${species || 'the selected species'}.`}
-              />
-              {!!phenotypeAtlasUnmappedRows.length && (
-                <ResultList
-                  title="Literature suggestions not mapped into the selected species"
-                  items={phenotypeAtlasUnmappedRows.slice(0, 8)}
-                  renderItem={(item) => <span>{item.input || item.gene_token || item}</span>}
-                  emptyText=""
-                />
-              )}
-              <div className="workflow-inline-actions">
-                <button onClick={() => handleLoadPhenotypeSuggestions('atlas')} disabled={!phenotypeAtlasMappedGenes.length}>
-                  Load atlas-mappable genes into hit list
-                </button>
-                <button onClick={() => handleLoadPhenotypeSuggestions('combined')} disabled={!phenotypeCombinedCandidates.length}>
-                  Load atlas candidate genes
-                </button>
-                <button onClick={() => handleLoadPhenotypeSuggestions('literature')} disabled={!phenotypeSuggestedGenes.length}>
-                  Load raw literature suggestions
-                </button>
-                {phenotypeAtlasMappedGenes.length > 0 && (
-                  <span className="workflow-faint">
-                    {phenotypeAtlasMappedGenes.length} atlas-mappable gene{phenotypeAtlasMappedGenes.length === 1 ? '' : 's'} ready for panel 3
-                  </span>
-                )}
-                {!phenotypeAtlasMappedGenes.length && phenotypeRescueCandidates.length > 0 && (
-                  <span className="workflow-faint">
-                    {phenotypeRescueCandidates.length} species-grounded candidate gene{phenotypeRescueCandidates.length === 1 ? '' : 's'} inferred from homolog/family cues
-                  </span>
-                )}
-                {phenotypeSuggestedGenes.length > 0 && phenotypeAtlasMappedGenes.length === 0 && (
-                  <span className="workflow-faint">
-                    {phenotypeSuggestedGenes.length} literature suggestion{phenotypeSuggestedGenes.length === 1 ? '' : 's'} found, but none matched by exact symbol in {species || 'the selected species'}
-                  </span>
-                )}
-              </div>
-              <ResultList
-                title="Mechanisms and pathways mentioned"
-                items={phenotypeLiterature.candidate_summary?.mechanisms?.slice(0, 8)}
-                renderItem={(item) => <span><strong>{item.name}</strong><span className="workflow-faint"> · mentioned in {item.mentions} paper(s)</span></span>}
-                emptyText="No mechanism summary was extracted from the returned papers."
-              />
-              <ResultList
-                title="Recent papers"
-                items={phenotypeLiterature.results?.slice(0, 6)}
-                renderItem={(item) => <LiteraturePaperItem item={item} />}
-                emptyText="No external literature results returned for this question yet."
-              />
-              <div className="workflow-inline-actions">
-                <StatusPill tone="success">direct {phenotypeLiterature.summary?.direct_phenotype_evidence ?? 0}</StatusPill>
-                <StatusPill tone="neutral">comparative {phenotypeLiterature.summary?.comparative_evidence ?? 0}</StatusPill>
-                <StatusPill tone="neutral">mechanistic {phenotypeLiterature.summary?.mechanistic_background ?? 0}</StatusPill>
-                <StatusPill tone="danger">low relevance {phenotypeLiterature.summary?.low_relevance ?? 0}</StatusPill>
-              </div>
-            </>
-          ) : (
-            <div className="workflow-empty-inline">No phenotype-first literature search has been run yet.</div>
-          )}
-        </section>
-      </div>
-
-      <div className="workflow-grid">
-        <section className="workflow-card workflow-card-input">
-          <div className="workflow-card-header">
-            <div>
-              <h2>3. Import a hit list</h2>
-              <p>Paste gene symbols or IDs, one per line or separated by commas/semicolons, and normalize them before downstream analysis.</p>
-            </div>
-            <div className="workflow-inline-actions">
-              <button onClick={handleImport} disabled={loading.import}>
-                {loading.import ? 'Importing…' : 'Map genes'}
-              </button>
-              <button onClick={() => onOpenGeneSetAnalysis?.()}>Legacy gene-set modal</button>
-            </div>
-          </div>
-
-          <textarea
-            className="workflow-textarea"
-            rows={8}
-            value={geneSetText}
-            onChange={(e) => setGeneSetText(e.target.value)}
-            placeholder="TP53&#10;BAX&#10;MDM2&#10;&#10;or: TP53, BAX, MDM2"
+      {(showSection('context') || showSection('phenotype')) && <div className="workflow-grid workflow-grid-top">
+        {showSection('context') && (
+          <ContextSection
+            intent={intent}
+            setIntent={setIntent}
+            species={species}
+            handleSpeciesInputChange={handleSpeciesInputChange}
+            selectedGene={selectedGene}
+            selectedLabel={selectedLabel}
+            networkStats={networkStats}
+            networkData={networkData}
+            filters={filters}
+            onNavigate={onNavigate}
+            onOpenDsRna={onOpenDsRna}
+            dsRnaSeedTarget={dsRnaSeedTarget}
+            dsRnaCompareTarget={dsRnaCompareTarget}
+            dsRnaSeedSet={dsRnaSeedSet}
+            intentOptions={INTENT_OPTIONS}
           />
+        )}
 
-          <div className="workflow-context-summary">
-            <div className="workflow-metric">
-              <span className="workflow-metric-label">Input tokens</span>
-              <strong>{geneCount}</strong>
-            </div>
-            <div className="workflow-metric">
-              <span className="workflow-metric-label">Mapped genes</span>
-              <strong>{datasetImport?.mapped_gene_ids?.length || 0}</strong>
-            </div>
-            <div className="workflow-metric">
-              <span className="workflow-metric-label">Unmapped</span>
-              <strong>{datasetImport?.unmapped_count || 0}</strong>
-            </div>
-          </div>
+        {showSection('phenotype') && (
+          <PhenotypeSection
+            handlePhenotypeLiterature={handlePhenotypeLiterature}
+            loading={loading}
+            phenotypeQuestion={phenotypeQuestion}
+            setPhenotypeQuestion={setPhenotypeQuestion}
+            phenotypeLiterature={phenotypeLiterature}
+            species={species}
+            phenotypeAtlasMappedGenes={phenotypeAtlasMappedGenes}
+            labelOverrides={labelOverrides}
+            phenotypeDisplayCandidates={phenotypeDisplayCandidates}
+            phenotypeAtlasUnmappedRows={phenotypeAtlasUnmappedRows}
+            handleLoadPhenotypeSuggestions={handleLoadPhenotypeSuggestions}
+            phenotypeCombinedCandidates={phenotypeCombinedCandidates}
+            phenotypeRescueCandidates={phenotypeRescueCandidates}
+            phenotypeSuggestedGenes={phenotypeSuggestedGenes}
+          />
+        )}
+      </div>}
 
-          {datasetImport && (
-            <>
-              <ResultList
-                title="Mapped gene IDs"
-                items={(datasetImport.mapped_genes?.length ? datasetImport.mapped_genes : datasetImport.mapped_gene_ids)?.slice(0, 8)}
-                renderItem={(item) => <GeneBadge item={item} labelOverrides={labelOverrides} />}
-              />
-              <ResultList
-                title="Ambiguous or unmapped rows"
-                items={datasetImport.unmapped_rows?.slice(0, 5)}
-                renderItem={(item) => <span>{item.input || item}</span>}
-                emptyText="No unmapped rows."
-              />
-            </>
-          )}
-        </section>
-      </div>
+      {showSection('import') && <div className="workflow-grid">
+        <ImportSection
+          handleImport={handleImport}
+          loading={loading}
+          onOpenGeneSetAnalysis={onOpenGeneSetAnalysis}
+          geneSetText={geneSetText}
+          setGeneSetText={setGeneSetText}
+          geneCount={geneCount}
+          datasetImport={datasetImport}
+          labelOverrides={labelOverrides}
+        />
+      </div>}
 
-      <div className="workflow-grid">
-        <section className="workflow-card">
+      {(showSection('analysis') || showSection('consensus')) && <div className="workflow-grid">
+        {showSection('analysis') && <section className="workflow-card">
           <div className="workflow-card-header">
             <div>
               <h2>4. First-pass interpretation</h2>
@@ -1120,9 +866,9 @@ export default function WorkflowWorkspace({
           ) : (
             <div className="workflow-empty-inline">No first-pass analysis has been run yet.</div>
           )}
-        </section>
+        </section>}
 
-        <section className="workflow-card">
+        {showSection('consensus') && <section className="workflow-card">
           <div className="workflow-card-header">
             <div>
               <h2>4. Rank candidates and ask what would change the conclusion</h2>
@@ -1156,95 +902,30 @@ export default function WorkflowWorkspace({
           ) : (
             <div className="workflow-empty-inline">Consensus ranking has not been run yet.</div>
           )}
-        </section>
-      </div>
+        </section>}
+      </div>}
 
-      <div className="workflow-grid">
-        <section className="workflow-card">
-          <div className="workflow-card-header">
-            <div>
-              <h2>5. Convert evidence into an execution plan</h2>
-              <p>Generate a research brief, validation plan, collaborator report, and constraint-aware experiment recommendations.</p>
-            </div>
-            <button onClick={handleStudyPlanning} disabled={loading.planning}>
-              {loading.planning ? 'Planning…' : 'Build study plan'}
-            </button>
-          </div>
+      {(showSection('planning') || showSection('differential')) && <div className="workflow-grid">
+        {showSection('planning') && (
+          <PlanningSection
+            handleStudyPlanning={handleStudyPlanning}
+            loading={loading}
+            budgetLevel={budgetLevel}
+            setBudgetLevel={setBudgetLevel}
+            timelineDays={timelineDays}
+            setTimelineDays={setTimelineDays}
+            selectedAssays={selectedAssays}
+            assayOptions={ASSAY_OPTIONS}
+            handleAssayToggle={handleAssayToggle}
+            researchBrief={researchBrief}
+            validationPlan={validationPlan}
+            experimentPlan={experimentPlan}
+            studyReport={studyReport}
+            labelOverrides={labelOverrides}
+          />
+        )}
 
-          <div className="workflow-form-grid">
-            <label className="workflow-field">
-              <span>Budget level</span>
-              <select value={budgetLevel} onChange={(e) => setBudgetLevel(e.target.value)}>
-                <option value="low">Low — cheapest, lightest follow-up</option>
-                <option value="medium">Medium — balanced default</option>
-                <option value="high">High — allow broader or costlier follow-up</option>
-              </select>
-              <small className="workflow-help-text">Controls how aggressively the planner favors more involved follow-up steps.</small>
-            </label>
-            <label className="workflow-field">
-              <span>Timeline to a usable next step (days)</span>
-              <input type="number" min="1" value={timelineDays} onChange={(e) => setTimelineDays(e.target.value)} />
-              <small className="workflow-help-text">Shorter timelines favor quicker analyses; longer timelines allow more involved follow-up.</small>
-            </label>
-            <div className="workflow-field workflow-field-span-2">
-              <span>Allowed follow-up types</span>
-              <small className="workflow-help-text">Choose the kinds of evidence or assay work you are willing to consider in the plan.</small>
-              <div className="workflow-checkbox-grid">
-                {ASSAY_OPTIONS.map((option) => (
-                  <label key={option.value} className="workflow-checkbox-card">
-                    <input
-                      type="checkbox"
-                      checked={selectedAssays.includes(option.value)}
-                      onChange={() => handleAssayToggle(option.value)}
-                    />
-                    <div>
-                      <div className="workflow-checkbox-title">{option.label}</div>
-                      <div className="workflow-checkbox-description">{option.description}</div>
-                    </div>
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {researchBrief && (
-            <>
-              <div className="workflow-summary-box">
-                {researchBrief.executive_summary || 'Research brief generated.'}
-              </div>
-              <ResultList
-                title="Workflow plan"
-                items={researchBrief.workflow_plan || []}
-                renderItem={(item) => <span>{item.title || item.step || JSON.stringify(item)}</span>}
-              />
-              <ResultList
-                title="Execution checklist"
-                items={validationPlan?.execution_checklist || []}
-                renderItem={(item) => <span>{item.title || item.step || JSON.stringify(item)}</span>}
-                emptyText="No validation plan yet."
-              />
-              <ResultList
-                title="Optimized experiments"
-                items={experimentPlan?.ranked_experiments?.slice(0, 5)}
-                renderItem={(item) => (
-                  <span>
-                    <GeneBadge item={item} labelOverrides={labelOverrides} />
-                    <span className="workflow-faint"> · {item.experiment} · score {item.optimized_priority_score?.toFixed?.(2) ?? item.optimized_priority_score}</span>
-                  </span>
-                )}
-                emptyText="No optimized experiment plan yet."
-              />
-              {studyReport?.markdown && (
-                <details className="workflow-markdown">
-                  <summary>Collaborator-facing report</summary>
-                  <pre>{studyReport.markdown}</pre>
-                </details>
-              )}
-            </>
-          )}
-        </section>
-
-        <section className="workflow-card">
+        {showSection('differential') && <section className="workflow-card">
           <div className="workflow-card-header">
             <div>
               <h2>6. Differential expression to follow-up queue</h2>
@@ -1347,11 +1028,11 @@ export default function WorkflowWorkspace({
               <JsonPreview title="Full differential payload" data={differential} />
             </>
           )}
-        </section>
-      </div>
+        </section>}
+      </div>}
 
-      <div className="workflow-grid">
-        <section className="workflow-card">
+      {(showSection('literature') || showSection('design')) && <div className="workflow-grid">
+        {showSection('literature') && <section className="workflow-card">
           <div className="workflow-card-header">
             <div>
               <h2>7. Check current external literature</h2>
@@ -1404,9 +1085,9 @@ export default function WorkflowWorkspace({
               <JsonPreview title="Full literature payload" data={literature} />
             </>
           )}
-        </section>
+        </section>}
 
-        <section className="workflow-card">
+        {showSection('design') && <section className="workflow-card">
           <div className="workflow-card-header">
             <div>
               <h2>8. Move from regulatory site to assay design</h2>
@@ -1468,10 +1149,10 @@ export default function WorkflowWorkspace({
               />
             </>
           )}
-        </section>
-      </div>
+        </section>}
+      </div>}
 
-      <div className="workflow-grid">
+      {showSection('advanced') && <div className="workflow-grid">
         <section className="workflow-card workflow-card-advanced">
           <div className="workflow-card-header">
             <div>
@@ -1527,7 +1208,7 @@ export default function WorkflowWorkspace({
             </>
           )}
         </section>
-      </div>
+      </div>}
     </div>
   );
 }

@@ -12,10 +12,10 @@ const TABS = [
   { id: 'analysis', label: 'Lab', icon: '🔬' }
 ];
 
-export default function ViewTabs({ viewMode, onViewChange }) {
+export default function ViewTabs({ viewMode, onViewChange, tabs = TABS }) {
   return (
     <div className="view-tabs">
-      {TABS.map((tab) => (
+      {tabs.map((tab) => (
         <button
           key={tab.id}
           className={`tab ${viewMode === tab.id ? 'active' : ''}`}

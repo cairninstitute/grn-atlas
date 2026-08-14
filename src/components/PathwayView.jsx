@@ -164,14 +164,11 @@ export default function PathwayView({ gene, filters, onCyInit, onNodeAction, ini
   }
 
   // Collect all unique source/target symbols for legend
-  const sourceSymbols = [...new Set(visibleSearches.map(s => s.sourceSymbol))];
   const targetSymbols = [...new Set(visibleSearches.map(s => s.targetSymbol))];
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') handleFindPaths();
   };
-
-  const totalPaths = searches.reduce((n, s) => n + s.paths.length, 0);
 
   return (
     <div className="pathway-view">
@@ -206,7 +203,6 @@ export default function PathwayView({ gene, filters, onCyInit, onNodeAction, ini
 
             <button className="swap-button" onClick={() => {
               const tmpGene = sourceGene;
-              const tmpResolved = resolvedSource;
               setSourceGene(targetGene);
               setTargetGene(tmpGene);
               setResolvedSource(null);
@@ -289,7 +285,7 @@ export default function PathwayView({ gene, filters, onCyInit, onNodeAction, ini
               onClick={() => setSelectedPath(null)}>
               All ({allVisiblePaths.length})
             </button>
-            {visibleSearches.map((s, sIdx) => {
+            {visibleSearches.map((s) => {
               const realIdx = searches.indexOf(s);
               return s.paths.map((_, pIdx) => (
                 <button key={`${realIdx}-${pIdx}`}
@@ -452,7 +448,7 @@ function PathCard({ path, index, selected, onClick }) {
             <div className="summary-box">
               <span className="summary-label">Sources</span>
               <span className="summary-value">
-                {new Set([...(path.sources?.flat() || [])]).size}
+                {new Set(path.sources?.flat() || []).size}
               </span>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { analysisAPI } from '../services/apiService';
 
-export default function InferredEdgesPanel({ onShareGenes, sharedGeneSet }) {
+export default function InferredEdgesPanel({ onShareGenes: _onShareGenes, sharedGeneSet }) {
   const [species, setSpecies] = useState('human');
   const [geneId, setGeneId] = useState('');
   const [direction, setDirection] = useState('both');

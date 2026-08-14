@@ -4,7 +4,6 @@ import { analysisAPI } from '../services/apiService';
 export default function ModuleMotifWorkflow() {
   const [species, setSpecies] = useState('human');
   const [algorithm, setAlgorithm] = useState('louvain');
-  const [targetModule, setTargetModule] = useState('');
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(null);
   const [error, setError] = useState(null);

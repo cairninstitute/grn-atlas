@@ -6,13 +6,12 @@ import '../styles/NetworkVisualization.css';
 // Register popper extension
 cytoscape.use(popper);
 
-export default function NetworkVisualization({ gene, data, filters, expandedNodes, onNodeExpand, onCyInit, onNodeAction }) {
+export default function NetworkVisualization({ gene, data, filters, expandedNodes: _expandedNodes, onNodeExpand: _onNodeExpand, onCyInit, onNodeAction }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [, setSelectedNode] = useState(null);
   const [tooltip, setTooltip] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
-  const tooltipRef = useRef(null);
 
   useEffect(() => {
     if (!containerRef.current || !data) return;

@@ -83,11 +83,13 @@ describe('GeneNetworkExplorer', () => {
   it('opens the dsRNA modal from the top-level button without blanking the app', async () => {
     render(<GeneNetworkExplorer />);
 
+    fireEvent.click(screen.getAllByRole('button', { name: /Start from a gene/ })[0]);
+    await waitFor(() => expect(screen.getByText('WorkflowWorkspace')).toBeInTheDocument());
     fireEvent.click(screen.getByTitle('Design a dsRNA / predict RNAi silencing + off-targets'));
 
     await waitFor(() => expect(screen.getByText('Design a dsRNA (RNAi)')).toBeInTheDocument());
-    expect(screen.getByDisplayValue('EOBI')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('JAF13')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('EOBI, JAF13, AN2')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('target gene — type a name (e.g. AN2)')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('second target — type a name (e.g. JAF13)')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('gene names/ids, space or comma separated (e.g. AN2, DFR, JAF13)')).toBeInTheDocument();
   });
 });
