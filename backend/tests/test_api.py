@@ -28,6 +28,9 @@ def _build_fixture(path):
         ("TF1", "TF1", "human TF one", "human", 1, "protein_coding", None),
         ("TG1", "TG1", "human target one", "human", 0, "protein_coding", None),
         ("TG2", "TG2", "human target two", "human", 0, "protein_coding", None),
+        ("MX1", "MX1", "mouse TF one", "mouse", 1, "protein_coding", None),
+        ("MX2", "MX2", "mouse target two", "mouse", 0, "protein_coding", None),
+        ("MX3", "MX3", "mouse target three", "mouse", 0, "protein_coding", None),
         ("SlTF", "MYB1", "tomato MYB", "tomato", 1, "protein_coding", "MYB1"),
         ("SlTGT", "SlTGT", "tomato target", "tomato", 0, "protein_coding", "CHS"),
         ("SlTGT2", "SlTGT2", "tomato target 2", "tomato", 0, "protein_coding", None),
@@ -43,6 +46,8 @@ def _build_fixture(path):
                    "VALUES (?,?,?,?,?,?)", [
         ("TF1", "TG1", "activation", 0.9, '["TRRUST"]', '["12345"]'),
         ("TF1", "TG2", "repression", 0.8, '["TRRUST"]', '["67890"]'),
+        ("MX1", "MX2", "activation", 0.9, '["TRRUST"]', '["24680"]'),
+        ("MX2", "MX3", "activation", 0.7, '["TRRUST"]', '["24681"]'),
         ("SlTF", "SlTGT", "regulation", 0.65, '["PlantRegMap"]', '[]'),
         ("SlTF", "SlTGT2", "regulation", 0.5, '["Inferred:Arabidopsis"]', '[]'),
     ])
@@ -127,6 +132,27 @@ def test_include_inferred_filter(client):
     on = client.post("/api/v1/pathways/neighborhood/SlTF", json={**body, "include_inferred": True}).json()
     off = client.post("/api/v1/pathways/neighborhood/SlTF", json={**body, "include_inferred": False}).json()
     assert len(on["targets"]) == 2 and len(off["targets"]) == 1  # inferred edge dropped
+
+
+def test_neighborhood_honors_multi_hop_depth(client):
+    depth1 = client.post("/api/v1/pathways/neighborhood/MX1", json={
+        "direction": "targets",
+        "regulation_type": ["activation", "repression"],
+        "min_confidence": 0.3,
+        "max_depth": 1,
+    }).json()
+    depth2 = client.post("/api/v1/pathways/neighborhood/MX1", json={
+        "direction": "targets",
+        "regulation_type": ["activation", "repression"],
+        "min_confidence": 0.3,
+        "max_depth": 2,
+    }).json()
+    depth1_nodes = {n["id"] for n in depth1["nodes"]}
+    depth2_nodes = {n["id"] for n in depth2["nodes"]}
+    depth2_edges = {(e["source_id"], e["target_id"]) for e in depth2["edges"]}
+    assert "MX3" not in depth1_nodes
+    assert "MX3" in depth2_nodes
+    assert ("MX2", "MX3") in depth2_edges
 
 
 def test_export_signed_edges_with_pmids(client):

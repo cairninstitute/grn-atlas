@@ -22,7 +22,6 @@ const AnalysisView = lazy(() => import('./components/AnalysisView'));
 const PathwayView = lazy(() => import('./components/PathwayView'));
 const HomeWorkspace = lazy(() => import('./components/home/HomeWorkspace'));
 const DatasetWorkflow = lazy(() => import('./components/workflows/DatasetWorkflow'));
-const PhenotypeWorkflow = lazy(() => import('./components/workflows/PhenotypeWorkflow'));
 const DecisionWorkflow = lazy(() => import('./components/workflows/DecisionWorkflow'));
 const GeneWorkflow = lazy(() => import('./components/workflows/GeneWorkflow'));
 
@@ -87,6 +86,38 @@ function ExplorerInner() {
     cyInstanceRef.current = cy;
   }, []);
 
+  const loadNeighborhood = useCallback(async (geneId, activeFilters = filters) => {
+    const networkResponse = await fetch(`/api/v1/pathways/neighborhood/${geneId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        max_depth: activeFilters.maxDepth,
+        direction: activeFilters.direction,
+        regulation_type: activeFilters.regulationType,
+        min_confidence: activeFilters.minConfidence,
+        include_inferred: activeFilters.includeInferred,
+      }),
+    });
+    setNetworkData(await networkResponse.json());
+  }, [filters]);
+
+  const syncSpeciesContext = useCallback((nextSpecies) => {
+    if (!nextSpecies) return;
+    const normalized = nextSpecies.trim().toLowerCase();
+    const nextKingdom = SPECIES_TO_KINGDOM[normalized];
+    setFilters((prev) => {
+      if (prev.species?.[0] === normalized && (!nextKingdom || prev.kingdom?.[0] === nextKingdom)) {
+        return prev;
+      }
+      return {
+        ...prev,
+        species: [normalized],
+        kingdom: nextKingdom ? [nextKingdom] : prev.kingdom,
+      };
+    });
+    dispatch({ type: 'SET_SPECIES', species: normalized });
+  }, [dispatch]);
+
   const handlePrimaryModeChange = useCallback((mode) => {
     setViewMode(mode === 'advanced' ? 'advanced' : mode);
   }, []);
@@ -120,25 +151,15 @@ function ExplorerInner() {
         return;
       }
       setSelectedGene(geneData);
+      syncSpeciesContext(geneData.species);
       dispatch({ type: 'SET_FOCUS_GENE', gene: geneData });
-      const networkResponse = await fetch(`/api/v1/pathways/neighborhood/${geneData.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          max_depth: filters.maxDepth,
-          direction: filters.direction,
-          regulation_type: filters.regulationType,
-          min_confidence: filters.minConfidence,
-          include_inferred: filters.includeInferred,
-        }),
-      });
-      setNetworkData(await networkResponse.json());
+      await loadNeighborhood(geneData.id, filters);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [dispatch, filters]);
+  }, [dispatch, filters, syncSpeciesContext]);
 
   const handleGeneSearch = useCallback(async (symbol) => {
     setLoading(true);
@@ -151,25 +172,20 @@ function ExplorerInner() {
         return;
       }
       setSelectedGene(data);
+      syncSpeciesContext(data.species);
       dispatch({ type: 'SET_FOCUS_GENE', gene: data });
-      const networkResponse = await fetch(`/api/v1/pathways/neighborhood/${data.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          max_depth: filters.maxDepth,
-          direction: filters.direction,
-          regulation_type: filters.regulationType,
-          min_confidence: filters.minConfidence,
-          include_inferred: filters.includeInferred,
-        }),
-      });
-      setNetworkData(await networkResponse.json());
+      await loadNeighborhood(data.id, filters);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [dispatch, filters]);
+  }, [dispatch, filters, loadNeighborhood, syncSpeciesContext]);
+
+  useEffect(() => {
+    if (!selectedGene?.id) return;
+    loadNeighborhood(selectedGene.id, filters).catch((err) => setError(err.message));
+  }, [filters, loadNeighborhood, selectedGene]);
 
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
@@ -207,8 +223,9 @@ function ExplorerInner() {
   }, [selectedGene, viewMode, advancedView, filters]);
 
   useEffect(() => {
-    dispatch({ type: 'SET_SPECIES', species: filters?.species?.[0] || null });
-  }, [dispatch, filters]);
+    const sessionSpecies = selectedGene?.species || filters?.species?.[0] || null;
+    dispatch({ type: 'SET_SPECIES', species: sessionSpecies });
+  }, [dispatch, filters, selectedGene]);
 
   const openCollection = useCallback((col) => {
     setCollection(col);
@@ -292,6 +309,7 @@ function ExplorerInner() {
     onFocusGeneChange: focusGeneByRecord,
     onOpenGeneSetAnalysis: () => setShowGeneSet(true),
     onDsRnaSeedChange: setWorkflowDsRnaSeed,
+    onNetworkDepthChange: (depth) => setFilters((prev) => ({ ...prev, maxDepth: depth })),
     onSessionSync: handleWorkflowSessionSync,
     onOpenDsRna: (payload) => {
       setDsRnaTarget(payload?.target || selectedGene);
@@ -302,7 +320,18 @@ function ExplorerInner() {
   };
 
   const renderAdvancedView = () => {
-    if (advancedView === 'analysis') return renderWithSuspense(<AnalysisView />, 'Loading analysis lab…');
+    if (advancedView === 'analysis') {
+      return renderWithSuspense(
+        <AnalysisView
+          gene={selectedGene}
+          networkData={networkData}
+          filters={filters}
+          onNodeAction={handleNodeAction}
+          onDepthChange={(depth) => setFilters((prev) => ({ ...prev, maxDepth: depth }))}
+        />,
+        'Loading analysis lab…',
+      );
+    }
     if (advancedView === 'genome') return renderWithSuspense(<GenomeComparisonView />, 'Loading genome view…');
     if (advancedView === 'organism') {
       return renderWithSuspense(
@@ -359,6 +388,7 @@ function ExplorerInner() {
             onNodeExpand={handleNodeExpand}
             onCyInit={handleCyInit}
             onNodeAction={handleNodeAction}
+            onDepthChange={(depth) => setFilters((prev) => ({ ...prev, maxDepth: depth }))}
           />
           <GeneDetailPanel
             gene={selectedGene}
@@ -462,8 +492,8 @@ function ExplorerInner() {
 
           {viewMode === 'home' && renderWithSuspense(<HomeWorkspace onSelectMode={handlePrimaryModeChange} />, 'Loading home…')}
           {viewMode === 'gene' && renderWithSuspense(<GeneWorkflow {...sharedWorkflowProps} />, 'Loading gene workflow…')}
-          {viewMode === 'dataset' && renderWithSuspense(<DatasetWorkflow {...sharedWorkflowProps} />, 'Loading dataset workflow…')}
-          {viewMode === 'phenotype' && renderWithSuspense(<PhenotypeWorkflow {...sharedWorkflowProps} />, 'Loading phenotype workflow…')}
+          {viewMode === 'dataset' && renderWithSuspense(<DatasetWorkflow {...sharedWorkflowProps} />, 'Loading unified workflow…')}
+          {viewMode === 'phenotype' && renderWithSuspense(<DatasetWorkflow {...sharedWorkflowProps} />, 'Loading unified workflow…')}
           {viewMode === 'decision' && renderWithSuspense(<DecisionWorkflow {...sharedWorkflowProps} />, 'Loading decision workflow…')}
           {viewMode === 'advanced' && renderAdvancedView()}
         </div>
@@ -486,6 +516,7 @@ function ExplorerInner() {
           initialCompareTarget={dsRnaCompareTarget}
           initialSpecies={dsRnaTarget?.species || filters?.species?.[0]}
           initialSet={dsRnaSet}
+          onFocusGeneChange={focusGeneByRecord}
         />
 
         <GeneSetPanel

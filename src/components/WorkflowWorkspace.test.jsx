@@ -33,6 +33,10 @@ vi.mock('../services/apiService', () => ({
   },
 }));
 
+vi.mock('./NetworkVisualization', () => ({
+  default: () => <div>NetworkVisualization</div>,
+}));
+
 describe('WorkflowWorkspace', () => {
   it('renders the workflow-first researcher entry shell', async () => {
     mocks.differentialExpressionMock.mockResolvedValue({ available_tissues: ['flower', 'petal_limb'] });
@@ -59,7 +63,7 @@ describe('WorkflowWorkspace', () => {
 
     expect(screen.getByText('Run the atlas like a study, not a demo.')).toBeInTheDocument();
     expect(screen.getByText('Start from a hit list')).toBeInTheDocument();
-    expect(screen.getByText('2. Start from a phenotype question')).toBeInTheDocument();
+    expect(screen.getByText('2. Optional: start from a phenotype question')).toBeInTheDocument();
     expect(screen.getByText('4. First-pass interpretation')).toBeInTheDocument();
     expect(screen.getByText('Current focus gene')).toBeInTheDocument();
     expect(screen.getByText('Allowed follow-up types')).toBeInTheDocument();
@@ -132,8 +136,13 @@ describe('WorkflowWorkspace', () => {
     fireEvent.click(screen.getByText('Search literature first'));
 
     await waitFor(() => expect(screen.getByText('Load atlas-mappable genes into hit list')).toBeInTheDocument());
-    expect(screen.getByText('Atlas-mappable genes for petunia')).toBeInTheDocument();
-    expect(screen.getByText('petunia homolog / family candidates inferred from the literature')).toBeInTheDocument();
+    expect(screen.getByText('Exact atlas symbol matches in petunia')).toBeInTheDocument();
+    expect(screen.getByText('petunia candidate genes inferred from homolog or family cues')).toBeInTheDocument();
+    expect(screen.getByText(/Literature papers often mention ortholog names or family labels from other species/i)).toBeInTheDocument();
+    expect(screen.getByText('How the lower list was produced')).toBeInTheDocument();
+    expect(screen.getByText(/Trust the exact atlas matches most/i)).toBeInTheDocument();
+    expect(screen.getByText('Matched by: matched via AN2')).toBeInTheDocument();
+    expect(screen.getAllByText('Why this candidate?').length).toBeGreaterThan(0);
     expect(screen.getByText('JAF13')).toBeInTheDocument();
     expect(screen.getByText('CHSJ')).toBeInTheDocument();
     expect(screen.getByText('Literature suggestions not mapped into the selected species')).toBeInTheDocument();

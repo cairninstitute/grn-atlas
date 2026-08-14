@@ -188,7 +188,15 @@ function ComparisonCard({ title, result }) {
 
 // dsRNA / RNAi design + off-target analysis. Everything is PREDICTED silencing
 // (siRNA k-mer matching), not a guarantee of knockdown.
-export default function DsRnaPanel({ open, onClose, initialTarget, initialCompareTarget, initialSpecies, initialSet }) {
+export default function DsRnaPanel({
+  open,
+  onClose,
+  initialTarget,
+  initialCompareTarget,
+  initialSpecies,
+  initialSet,
+  onFocusGeneChange,
+}) {
   const [seq, setSeq] = useState('');
   const [target, setTarget] = useState('');
   const [compareTarget, setCompareTarget] = useState('');
@@ -198,6 +206,7 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
   const [error, setError] = useState(null);
   const [res, setRes] = useState(null);
   const [compareRes, setCompareRes] = useState(null);
+  const [detailChoice, setDetailChoice] = useState('primary');
   const [screen, setScreen] = useState(null);
   const [copied, setCopied] = useState(false);
 
@@ -227,12 +236,27 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
       setSeq('');
       setRes(null);
       setCompareRes(null);
+      setDetailChoice('primary');
       setScreen(null);
       setError(null);
     }
   }, [open, initialTarget, initialCompareTarget, initialSpecies, initialSet]);
 
-  const pe = res?.predicted_effect;
+  const comparisonSummary = React.useMemo(() => compareTargets(res, compareRes), [res, compareRes]);
+  const detailResult = React.useMemo(() => {
+    if (detailChoice === 'compare' && compareRes) return compareRes;
+    if (detailChoice === 'recommended' && comparisonSummary?.winner) return comparisonSummary.winner;
+    return res;
+  }, [detailChoice, compareRes, comparisonSummary, res]);
+  const detailTitle = React.useMemo(() => {
+    if (!compareRes) return null;
+    if (detailChoice === 'compare') return compareTarget || compareRes?.on_target?.symbol || 'Target B';
+    if (detailChoice === 'recommended' && comparisonSummary?.winner) {
+      return comparisonSummary.winner?.on_target?.symbol || 'Recommended target';
+    }
+    return target || res?.on_target?.symbol || 'Target A';
+  }, [compareRes, compareTarget, comparisonSummary, detailChoice, res, target]);
+  const pe = detailResult?.predicted_effect;
   const effectSymbolCounts = React.useMemo(() => {
     const counts = {};
     for (const row of pe?.top || []) {
@@ -241,7 +265,17 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
     }
     return counts;
   }, [pe]);
-  const comparisonSummary = React.useMemo(() => compareTargets(res, compareRes), [res, compareRes]);
+
+  useEffect(() => {
+    if (!open || !detailResult?.on_target?.gene_id || !onFocusGeneChange) return;
+    onFocusGeneChange({
+      gene_id: detailResult.on_target.gene_id,
+      id: detailResult.on_target.gene_id,
+      symbol: detailResult.on_target.symbol || detailResult.on_target.gene_id,
+      label: detailResult.on_target.symbol || detailResult.on_target.gene_id,
+      species,
+    });
+  }, [detailResult, onFocusGeneChange, open, species]);
 
   if (!open) return null;
 
@@ -280,6 +314,7 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
       if (right.available === false) throw new Error(right.note || 'No transcript store for this species.');
       setRes(left);
       setCompareRes(right);
+      setDetailChoice(compareTargets(left, right)?.winner === right ? 'compare' : 'primary');
     } catch (e) {
       setError(e.message);
     } finally {
@@ -301,8 +336,8 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
   };
 
   const copySeq = () => {
-    if (res?.design?.sequence) {
-      navigator.clipboard.writeText(res.design.sequence);
+    if (detailResult?.design?.sequence) {
+      navigator.clipboard.writeText(detailResult.design.sequence);
       setCopied(true); setTimeout(() => setCopied(false), 1500);
     }
   };
@@ -358,7 +393,7 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
         </button>
         {error && <div className="gs-error">{error}</div>}
 
-        {res && (
+        {detailResult && (
           <>
             {compareRes && (
               <div className="gs-section">
@@ -381,18 +416,48 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
                   <ComparisonCard title={target || 'Target A'} result={res} />
                   <ComparisonCard title={compareTarget || 'Target B'} result={compareRes} />
                 </div>
+                <div className="gs-cons-controls" style={{ marginTop: 12 }}>
+                  <label className="gs-label">Detailed design view</label>
+                  <button
+                    type="button"
+                    className="gs-export"
+                    onClick={() => setDetailChoice('primary')}
+                  >
+                    {target || res?.on_target?.symbol || 'Target A'}
+                  </button>
+                  <button
+                    type="button"
+                    className="gs-export"
+                    onClick={() => setDetailChoice('compare')}
+                  >
+                    {compareTarget || compareRes?.on_target?.symbol || 'Target B'}
+                  </button>
+                  {comparisonSummary?.winner && (
+                    <button
+                      type="button"
+                      className="gs-export"
+                      onClick={() => setDetailChoice(comparisonSummary.winner === compareRes ? 'compare' : 'primary')}
+                      title="Jump to the currently recommended first target"
+                    >
+                      Use recommended
+                    </button>
+                  )}
+                </div>
               </div>
             )}
             <div className="gs-section">
-              <h3>{res.mode === 'design' ? 'Designed dsRNA' : 'dsRNA analysis'}</h3>
-              <p className="gs-metrics"><Verdict offCount={res.off_target_gene_count} /></p>
+              <h3>
+                {detailResult.mode === 'design' ? 'Designed dsRNA' : 'dsRNA analysis'}
+                {detailTitle ? <span className="gs-label"> · {detailTitle}</span> : null}
+              </h3>
+              <p className="gs-metrics"><Verdict offCount={detailResult.off_target_gene_count} /></p>
               <p className="gs-metrics">
-                {res.dsrna_length} bp · {res.n_sirnas} siRNAs · specificity {(res.specificity * 100).toFixed(0)}%
-                {res.on_target && <> · on-target <strong>{res.on_target.symbol}</strong> {res.on_target.sites} sites
-                  {res.on_target.mean_tpm != null && ` (${res.on_target.mean_tpm} TPM)`}</>}
+                {detailResult.dsrna_length} bp · {detailResult.n_sirnas} siRNAs · specificity {(detailResult.specificity * 100).toFixed(0)}%
+                {detailResult.on_target && <> · on-target <strong>{detailResult.on_target.symbol}</strong> {detailResult.on_target.sites} sites
+                  {detailResult.on_target.mean_tpm != null && ` (${detailResult.on_target.mean_tpm} TPM)`}</>}
               </p>
               {(() => {
-                const seqOut = res.design ? res.design.sequence : seq.replace(/\s/g, '').toUpperCase();
+                const seqOut = detailResult.design ? detailResult.design.sequence : seq.replace(/\s/g, '').toUpperCase();
                 const gc = gcPercent(seqOut);
                 const gcOk = gc != null && gc >= 30 && gc <= 65;
                 const len = seqOut ? seqOut.length : 0;
@@ -405,22 +470,22 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
                       <strong className={lenOk ? 'gs-cons-yes' : 'gs-cons-no'}>{len} bp</strong>
                       {' '}(typical 100–600 bp for a dsRNA construct)
                     </p>
-                    {res.design && <TranscriptMap design={res.design} />}
+                    {detailResult.design && <TranscriptMap design={detailResult.design} />}
                     <button className="gs-export" onClick={copySeq}>{copied ? '✓ Copied' : '⧉ Copy sequence'}</button>
                     <button className="gs-export" style={{ marginLeft: 6 }}
-                      onClick={() => downloadFasta(seqOut, res.on_target?.symbol || 'dsRNA')}>
+                      onClick={() => downloadFasta(seqOut, detailResult.on_target?.symbol || 'dsRNA')}>
                       ⤓ FASTA
                     </button>
-                    {res.design && (
-                      <textarea className="gs-input" rows={3} readOnly value={res.design.sequence}
-                        title={`transcript window ${res.design.start}-${res.design.end}`} />
+                    {detailResult.design && (
+                      <textarea className="gs-input" rows={3} readOnly value={detailResult.design.sequence}
+                        title={`transcript window ${detailResult.design.start}-${detailResult.design.end}`} />
                     )}
                   </>
                 );
               })()}
             </div>
 
-            {res.off_targets.length > 0 && (
+            {detailResult.off_targets.length > 0 && (
               <div className="gs-section">
                 <h3>Predicted off-targets <span className="gs-label">(also silenced)</span></h3>
                 <table className="gs-table">
@@ -428,7 +493,7 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
                     <th title="where the sites fall along the off-target transcript">site map</th>
                     <th>mean TPM</th></tr></thead>
                   <tbody>
-                    {res.off_targets.map((o) => (
+                    {detailResult.off_targets.map((o) => (
                       <tr key={o.gene_id}>
                         <td><GLabel symbol={o.symbol} inferred={o.label_inferred} />{o.is_tf && <span className="gs-ns"> TF</span>}</td>
                         <td className="gs-num">{o.sites}</td>
@@ -449,7 +514,7 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
                 </p>
                 {pe.top.length > 0 && (
                   <table className="gs-table">
-                    <thead><tr><th>Gene</th><th>direction</th><th title="confidence-weighted magnitude">strength</th></tr></thead>
+                    <thead><tr><th>Gene</th><th>direction</th><th>hop</th><th title="confidence-weighted magnitude">strength</th><th>path</th></tr></thead>
                     <tbody>
                       {pe.top.map((e, i) => (
                         <tr key={i}>
@@ -460,7 +525,9 @@ export default function DsRnaPanel({ open, onClose, initialTarget, initialCompar
                             ) : null}
                           </td>
                           <td>{e.predicted_direction === 'up' ? '↑ up' : e.predicted_direction === 'down' ? '↓ down' : '? unknown'}</td>
+                          <td className="gs-num">{e.level ?? '—'}</td>
                           <td className="gs-num">{e.magnitude.toFixed(2)}</td>
+                          <td className="gs-label">{Array.isArray(e.path) ? e.path.join(' → ') : '—'}</td>
                         </tr>
                       ))}
                     </tbody>

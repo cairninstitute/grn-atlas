@@ -33,11 +33,13 @@ describe('DsRnaPanel', () => {
   });
 
   it('designs a dsRNA and shows the specificity verdict + on-target', async () => {
-    render(<DsRnaPanel open onClose={() => {}} initialTarget="AN2" initialSpecies="petunia" />);
+    const onFocusGeneChange = vi.fn();
+    render(<DsRnaPanel open onClose={() => {}} initialTarget="AN2" initialSpecies="petunia" onFocusGeneChange={onFocusGeneChange} />);
     fireEvent.click(screen.getByText('Design a specific dsRNA'));
     expect(await screen.findByText(/Fully specific/)).toBeInTheDocument();
     expect(screen.getByText(/230 sites/)).toBeInTheDocument();
     expect(screen.getByText(/12 genes affected/)).toBeInTheDocument();
+    expect(onFocusGeneChange).toHaveBeenCalledWith(expect.objectContaining({ gene_id: 'GENE1', label: 'AN2', species: 'petunia' }));
   });
 
   it('accepts an object initialTarget without crashing', () => {
@@ -86,5 +88,56 @@ describe('DsRnaPanel', () => {
     expect(screen.getByText(/Recommended first target:/)).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 4, name: 'AN2' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 4, name: 'JAF13' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: /Designed dsRNA.*AN2/i })).toBeInTheDocument();
+  });
+
+  it('lets the user switch the detailed design view to the comparison target', async () => {
+    const { geneAPI } = await import('../services/apiService');
+    geneAPI.search
+      .mockResolvedValueOnce({ results: [{ id: 'GENE1', symbol: 'AN2', label: 'AN2' }] })
+      .mockResolvedValueOnce({ results: [{ id: 'GENE2', symbol: 'JAF13', label: 'JAF13' }] });
+
+    render(
+      <DsRnaPanel
+        open
+        onClose={() => {}}
+        initialTarget="AN2"
+        initialCompareTarget="JAF13"
+        initialSpecies="petunia"
+      />,
+    );
+
+    fireEvent.click(screen.getByText('Compare top 2'));
+    expect(await screen.findByText(/Recommended first target:/)).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole('button', { name: 'JAF13' }).at(-1));
+    expect(screen.getByRole('heading', { level: 3, name: /Designed dsRNA.*JAF13/i })).toBeInTheDocument();
+    expect(screen.getByText(/\(25\.3 TPM\)/i)).toBeInTheDocument();
+  });
+
+  it('updates the global focus gene when the detailed design target changes', async () => {
+    const { geneAPI } = await import('../services/apiService');
+    const onFocusGeneChange = vi.fn();
+    geneAPI.search
+      .mockResolvedValueOnce({ results: [{ id: 'GENE1', symbol: 'AN2', label: 'AN2' }] })
+      .mockResolvedValueOnce({ results: [{ id: 'GENE2', symbol: 'JAF13', label: 'JAF13' }] });
+
+    render(
+      <DsRnaPanel
+        open
+        onClose={() => {}}
+        initialTarget="AN2"
+        initialCompareTarget="JAF13"
+        initialSpecies="petunia"
+        onFocusGeneChange={onFocusGeneChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('Compare top 2'));
+    expect(await screen.findByText(/Recommended first target:/)).toBeInTheDocument();
+    expect(onFocusGeneChange).toHaveBeenCalledWith(expect.objectContaining({ gene_id: 'GENE1', label: 'AN2' }));
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'JAF13' }).at(-1));
+    expect(screen.getByRole('heading', { level: 3, name: /Designed dsRNA.*JAF13/i })).toBeInTheDocument();
+    expect(onFocusGeneChange).toHaveBeenCalledWith(expect.objectContaining({ gene_id: 'GENE2', label: 'JAF13' }));
   });
 });

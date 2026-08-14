@@ -116,10 +116,21 @@ class GeneInteraction(BaseModel):
     label_inferred: bool = False   # True when `symbol` is an inferred ortholog name
     symbol_source: Optional[str] = None
 
+class NetworkEdge(BaseModel):
+    source_id: str
+    target_id: str
+    regulation_type: str
+    confidence: float
+    source_databases: List[str]
+    pmids: List[str] = []
+    inferred: bool = False
+
 class NetworkData(BaseModel):
     gene: Gene
     regulators: List[GeneInteraction]
     targets: List[GeneInteraction]
+    nodes: List[Gene] = []
+    edges: List[NetworkEdge] = []
     stats: Dict[str, int]
 
 class PathGene(BaseModel):
@@ -412,15 +423,89 @@ async def get_neighborhood(gene_id: str, request: NeighborhoodRequest = Neighbor
     # Filter by regulation type
     regulators = [r for r in regulators if r.regulation_type in request.regulation_type]
     targets = [t for t in targets if t.regulation_type in request.regulation_type]
+
+    nodes_by_id: Dict[str, Gene] = {gene.id: gene}
+    edges_by_key: Dict[tuple, NetworkEdge] = {}
+
+    def add_node(node_id: str):
+        if node_id not in nodes_by_id:
+            node = db.get_gene(node_id)
+            if node:
+                nodes_by_id[node_id] = node
+
+    def add_edge(source_id: str, target_id: str, interaction: GeneInteraction):
+        add_node(source_id)
+        add_node(target_id)
+        key = (source_id, target_id, interaction.regulation_type, round(interaction.confidence, 6))
+        prev = edges_by_key.get(key)
+        inferred = bool(interaction.inferred)
+        edge = NetworkEdge(
+            source_id=source_id,
+            target_id=target_id,
+            regulation_type=interaction.regulation_type,
+            confidence=interaction.confidence,
+            source_databases=interaction.source_databases,
+            pmids=interaction.pmids,
+            inferred=inferred,
+        )
+        if prev is None or edge.confidence > prev.confidence:
+            edges_by_key[key] = edge
+
+    for r in regulators:
+        add_edge(r.id, gene.id, r)
+    for t in targets:
+        add_edge(gene.id, t.id, t)
+
+    max_depth = max(1, min(request.max_depth, 5))
+
+    if max_depth > 1:
+        if request.direction in ["both", "regulators"]:
+            seen_up = {gene.id: 0}
+            frontier_up = [(gene.id, 0)]
+            while frontier_up:
+                current_id, level = frontier_up.pop(0)
+                if level >= max_depth:
+                    continue
+                for reg in db.get_regulators(current_id, request.min_confidence, request.include_inferred):
+                    if reg.regulation_type not in request.regulation_type:
+                        continue
+                    add_edge(reg.id, current_id, reg)
+                    prev_level = seen_up.get(reg.id)
+                    next_level = level + 1
+                    if prev_level is None or next_level < prev_level:
+                        seen_up[reg.id] = next_level
+                        frontier_up.append((reg.id, next_level))
+
+        if request.direction in ["both", "targets"]:
+            seen_down = {gene.id: 0}
+            frontier_down = [(gene.id, 0)]
+            while frontier_down:
+                current_id, level = frontier_down.pop(0)
+                if level >= max_depth:
+                    continue
+                for tgt in db.get_targets(current_id, request.min_confidence, request.include_inferred):
+                    if tgt.regulation_type not in request.regulation_type:
+                        continue
+                    add_edge(current_id, tgt.id, tgt)
+                    prev_level = seen_down.get(tgt.id)
+                    next_level = level + 1
+                    if prev_level is None or next_level < prev_level:
+                        seen_down[tgt.id] = next_level
+                        frontier_down.append((tgt.id, next_level))
     
     return NetworkData(
         gene=gene,
         regulators=regulators,
         targets=targets,
+        nodes=list(nodes_by_id.values()),
+        edges=list(edges_by_key.values()),
         stats={
             "regulators": len(regulators),
             "targets": len(targets),
-            "paths": 0  # Can be calculated from path finding algorithm
+            "paths": 0,  # Can be calculated from path finding algorithm
+            "nodes": len(nodes_by_id),
+            "edges": len(edges_by_key),
+            "max_depth": max_depth,
         }
     )
 @app.post("/api/v1/pathways/pathfinding", response_model=Dict[str, List[Path]])

@@ -13,6 +13,7 @@ import InferredEnrichmentWorkflow from './InferredEnrichmentWorkflow';
 import ModuleMotifWorkflow from './ModuleMotifWorkflow';
 import RegulonDiffWorkflow from './RegulonDiffWorkflow';
 import InferredValidationWorkflow from './InferredValidationWorkflow';
+import NetworkVisualization from './NetworkVisualization';
 import '../styles/AnalysisView.css';
 
 const SECTIONS = [
@@ -42,7 +43,7 @@ const SECTIONS = [
   ]},
 ];
 
-export default function AnalysisView() {
+export default function AnalysisView({ gene, networkData, filters, onNodeAction, onDepthChange }) {
   const [open, setOpen] = useState({ regulon: true });
   const [sharedGeneSet, setSharedGeneSet] = useState(null);
 
@@ -56,6 +57,25 @@ export default function AnalysisView() {
   return (
     <div className="analysis-view">
       <h2 className="analysis-title">Network Analysis</h2>
+      {gene && networkData ? (
+        <div className="analysis-card open">
+          <div className="analysis-card-header">
+            <div>
+              <strong>Current neighborhood</strong>
+              <span className="analysis-card-desc"> — direct and expanded network context for the current focus gene</span>
+            </div>
+          </div>
+          <div className="analysis-card-body" style={{ minHeight: 520 }}>
+            <NetworkVisualization
+              gene={gene}
+              data={networkData}
+              filters={filters}
+              onNodeAction={onNodeAction}
+              onDepthChange={onDepthChange}
+            />
+          </div>
+        </div>
+      ) : null}
       {sharedGeneSet && (
         <div className="shared-gene-banner">
           Shared: <strong>{sharedGeneSet.label}</strong> ({sharedGeneSet.genes.length} genes)

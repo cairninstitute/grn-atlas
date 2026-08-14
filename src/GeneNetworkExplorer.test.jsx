@@ -92,4 +92,23 @@ describe('GeneNetworkExplorer', () => {
     expect(screen.getByPlaceholderText('second target — type a name (e.g. JAF13)')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('gene names/ids, space or comma separated (e.g. AN2, DFR, JAF13)')).toBeInTheDocument();
   });
+
+  it('syncs the research context species to the selected gene species', async () => {
+    window.history.replaceState({}, '', '?gene=CHSJ');
+    global.fetch = vi.fn(async (url) => {
+      const urlText = String(url);
+      if (urlText.includes('/api/v1/genes/symbol/CHSJ')) {
+        return { json: async () => ({ id: 'Peaxi162Scf00047g01225', symbol: 'CHSJ', species: 'petunia', name: 'chalcone synthase J' }) };
+      }
+      if (urlText.includes('/api/v1/pathways/neighborhood/Peaxi162Scf00047g01225')) {
+        return { json: async () => ({ regulators: [], targets: [] }) };
+      }
+      return { json: async () => ({}) };
+    });
+
+    render(<GeneNetworkExplorer />);
+
+    await waitFor(() => expect(screen.getByText('CHSJ')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('petunia')).toBeInTheDocument());
+  });
 });

@@ -3,8 +3,7 @@ import React from 'react';
 const WORKFLOW_TABS = [
   { id: 'home', label: 'Home', icon: '🏠' },
   { id: 'gene', label: 'Start from a gene', icon: '🧬' },
-  { id: 'dataset', label: 'Start from a list', icon: '📥' },
-  { id: 'phenotype', label: 'Start from a phenotype', icon: '🌸' },
+  { id: 'dataset', label: 'Unified workflow', icon: '📥' },
   { id: 'decision', label: 'Decide and hand off', icon: '🧭' },
   { id: 'advanced', label: 'Advanced tools', icon: '🔬' },
 ];

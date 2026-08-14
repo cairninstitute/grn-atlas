@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { geneAPI, workflowAPI } from '../services/apiService';
 import { geneLabel } from '../utils/geneLabel';
+import NetworkVisualization from './NetworkVisualization';
 import {
   GeneBadge,
   JsonPreview,
@@ -121,6 +122,7 @@ export default function WorkflowWorkspace({
   onOpenGeneSetAnalysis,
   onOpenDsRna,
   onDsRnaSeedChange,
+  onNetworkDepthChange,
   onSessionSync,
   visibleSections = ['context', 'phenotype', 'import', 'analysis', 'consensus', 'planning', 'differential', 'literature', 'design', 'advanced'],
   kicker = 'Workflow-first workspace',
@@ -129,6 +131,14 @@ export default function WorkflowWorkspace({
   showHero = true,
   showExamples = true,
 }) {
+  const stepNumberFor = useMemo(() => {
+    const stepMap = new Map();
+    visibleSections.forEach((section, index) => {
+      stepMap.set(section, index + 1);
+    });
+    return (section) => stepMap.get(section) || '?';
+  }, [visibleSections]);
+
   const [intent, setIntent] = useState('experiment');
   const [species, setSpecies] = useState(selectedGene?.species || filters?.species?.[0] || 'human');
   const [geneSetText, setGeneSetText] = useState('');
@@ -762,6 +772,7 @@ export default function WorkflowWorkspace({
       {(showSection('context') || showSection('phenotype')) && <div className="workflow-grid workflow-grid-top">
         {showSection('context') && (
           <ContextSection
+            stepNumber={stepNumberFor('context')}
             intent={intent}
             setIntent={setIntent}
             species={species}
@@ -782,6 +793,7 @@ export default function WorkflowWorkspace({
 
         {showSection('phenotype') && (
           <PhenotypeSection
+            stepNumber={stepNumberFor('phenotype')}
             handlePhenotypeLiterature={handlePhenotypeLiterature}
             loading={loading}
             phenotypeQuestion={phenotypeQuestion}
@@ -802,6 +814,7 @@ export default function WorkflowWorkspace({
 
       {showSection('import') && <div className="workflow-grid">
         <ImportSection
+          stepNumber={stepNumberFor('import')}
           handleImport={handleImport}
           loading={loading}
           onOpenGeneSetAnalysis={onOpenGeneSetAnalysis}
@@ -817,7 +830,7 @@ export default function WorkflowWorkspace({
         {showSection('analysis') && <section className="workflow-card">
           <div className="workflow-card-header">
             <div>
-              <h2>4. First-pass interpretation</h2>
+              <h2>{stepNumberFor('analysis')}. First-pass interpretation</h2>
               <p>Turn a mapped hit list into upstream regulators, candidate ranking, and an interpretable subgraph.</p>
             </div>
             <button onClick={handleFirstPassAnalysis} disabled={loading.analysis}>
@@ -861,6 +874,22 @@ export default function WorkflowWorkspace({
                   </span>
                 )}
               />
+              {selectedGene && networkData ? (
+                <div className="workflow-result-block">
+                  <div className="workflow-result-title">Current neighborhood graph</div>
+                  <div className="workflow-help-text" style={{ marginTop: '0.35rem', marginBottom: '0.75rem' }}>
+                    Use 1-, 2-, or 3-hop expansion to reconcile the first-pass interpretation and dsRNA downstream predictions with the network view.
+                  </div>
+                  <div style={{ minHeight: 520, borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <NetworkVisualization
+                      gene={selectedGene}
+                      data={networkData}
+                      filters={filters}
+                      onDepthChange={onNetworkDepthChange}
+                    />
+                  </div>
+                </div>
+              ) : null}
               <JsonPreview title="Full first-pass payload" data={geneSetAnalysis} />
             </>
           ) : (
@@ -871,7 +900,7 @@ export default function WorkflowWorkspace({
         {showSection('consensus') && <section className="workflow-card">
           <div className="workflow-card-header">
             <div>
-              <h2>4. Rank candidates and ask what would change the conclusion</h2>
+              <h2>{stepNumberFor('consensus')}. Rank candidates and ask what would change the conclusion</h2>
               <p>Use the consensus layer for a robust winner, then inspect what evidence would overturn it.</p>
             </div>
             <button onClick={handleConsensus} disabled={loading.consensus}>
@@ -908,6 +937,7 @@ export default function WorkflowWorkspace({
       {(showSection('planning') || showSection('differential')) && <div className="workflow-grid">
         {showSection('planning') && (
           <PlanningSection
+            stepNumber={stepNumberFor('planning')}
             handleStudyPlanning={handleStudyPlanning}
             loading={loading}
             budgetLevel={budgetLevel}
@@ -928,7 +958,7 @@ export default function WorkflowWorkspace({
         {showSection('differential') && <section className="workflow-card">
           <div className="workflow-card-header">
             <div>
-              <h2>6. Differential expression to follow-up queue</h2>
+              <h2>{stepNumberFor('differential')}. Differential expression to follow-up queue</h2>
               <p>Compare tissues or conditions, then feed the strongest hits into prioritization.</p>
             </div>
             <button onClick={handleDifferential} disabled={loading.differential}>
@@ -1035,7 +1065,7 @@ export default function WorkflowWorkspace({
         {showSection('literature') && <section className="workflow-card">
           <div className="workflow-card-header">
             <div>
-              <h2>7. Check current external literature</h2>
+              <h2>{stepNumberFor('literature')}. Check current external literature</h2>
               <p>Use external evidence only after the atlas-backed interpretation is clear.</p>
             </div>
             <button onClick={handleLiterature} disabled={loading.literature || !literatureTargetId}>
@@ -1090,8 +1120,8 @@ export default function WorkflowWorkspace({
         {showSection('design') && <section className="workflow-card">
           <div className="workflow-card-header">
             <div>
-              <h2>8. Move from regulatory site to assay design</h2>
-              <p>Variant overlap, promoter-site prioritization, and lightweight guide/primer suggestions in one place.</p>
+              <h2>{stepNumberFor('design')}. Promoter editing and assay setup</h2>
+              <p>Check promoter-site overlap, prioritize edit sites, and generate lightweight CRISPR guide and primer suggestions.</p>
             </div>
             <button onClick={handleVariantDesign} disabled={loading.design || !selectedGene}>
               {loading.design ? 'Designing…' : 'Run design workflow'}
@@ -1156,7 +1186,7 @@ export default function WorkflowWorkspace({
         <section className="workflow-card workflow-card-advanced">
           <div className="workflow-card-header">
             <div>
-              <h2>9. Advanced and future-state workflows</h2>
+              <h2>{stepNumberFor('advanced')}. Advanced and future-state workflows</h2>
               <p>Surface readiness honestly when the atlas does not yet support the requested biology directly.</p>
             </div>
             <button onClick={handleAdvanced} disabled={loading.advanced}>

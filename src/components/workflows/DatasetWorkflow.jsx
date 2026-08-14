@@ -5,10 +5,10 @@ export default function DatasetWorkflow(props) {
   return (
     <WorkflowWorkspace
       {...props}
-      kicker="Dataset-first workflow"
-      title="Normalize, map, interpret, and rank a user-provided gene set."
-      subtitle="Use this when the work starts from a hit list, DEG output, or pasted gene identifiers."
-      visibleSections={['context', 'import', 'analysis', 'consensus', 'planning']}
+      kicker="Unified workflow"
+      title="Start from a list, phenotype, or research goal."
+      subtitle="Optionally use literature-guided candidate discovery, then normalize, map, interpret, rank, and plan in one flow."
+      visibleSections={['context', 'phenotype', 'import', 'analysis', 'consensus', 'planning', 'literature']}
       showExamples={false}
     />
   );

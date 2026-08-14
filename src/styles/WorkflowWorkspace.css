@@ -84,6 +84,11 @@
   padding: 20px;
 }
 
+.workflow-card-optional {
+  background: linear-gradient(180deg, rgba(26, 22, 41, 0.92), rgba(18, 26, 38, 0.88));
+  border-color: rgba(182, 148, 255, 0.28);
+}
+
 .workflow-example-title,
 .workflow-card h2,
 .workflow-result-title,
@@ -130,10 +135,29 @@
   font-size: 20px;
 }
 
+.workflow-card-header-optional h2 {
+  color: #eadcff;
+}
+
 .workflow-card-header p {
   margin: 0;
   max-width: 760px;
   line-height: 1.5;
+}
+
+.workflow-step-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(182, 148, 255, 0.35);
+  background: rgba(182, 148, 255, 0.14);
+  color: #d7b9ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .workflow-error {
@@ -306,6 +330,19 @@
   margin-top: 8px;
 }
 
+.workflow-candidate-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.workflow-candidate-card-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .workflow-result-block {
   margin-top: 16px;
 }
@@ -394,6 +431,20 @@
   margin-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 12px;
+}
+
+.workflow-inline-details {
+  margin-top: 4px;
+}
+
+.workflow-inline-details summary {
+  cursor: pointer;
+  color: #9ec5ff;
+  font-size: 12px;
+}
+
+.workflow-inline-details[open] {
+  padding-top: 2px;
 }
 
 .workflow-json summary,

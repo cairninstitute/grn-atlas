@@ -6,7 +6,16 @@ import '../styles/NetworkVisualization.css';
 // Register popper extension
 cytoscape.use(popper);
 
-export default function NetworkVisualization({ gene, data, filters, expandedNodes: _expandedNodes, onNodeExpand: _onNodeExpand, onCyInit, onNodeAction }) {
+export default function NetworkVisualization({
+  gene,
+  data,
+  filters,
+  expandedNodes: _expandedNodes,
+  onNodeExpand: _onNodeExpand,
+  onCyInit,
+  onNodeAction,
+  onDepthChange,
+}) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
   const [, setSelectedNode] = useState(null);
@@ -100,6 +109,22 @@ export default function NetworkVisualization({ gene, data, filters, expandedNode
   return (
     <div className="network-visualization">
       <div className="network-canvas" ref={containerRef} />
+
+      <div className="network-depth-bar">
+        <span className="network-depth-label">Neighborhood depth</span>
+        <div className="network-depth-switcher">
+          {[1, 2, 3].map((depth) => (
+            <button
+              key={depth}
+              className={`depth-button ${filters?.maxDepth === depth ? 'active' : ''}`}
+              title={`Show ${depth}-hop neighborhood`}
+              onClick={() => onDepthChange?.(depth)}
+            >
+              {depth} hop{depth === 1 ? '' : 's'}
+            </button>
+          ))}
+        </div>
+      </div>
       
       {tooltip && (
         <div className="network-tooltip">
@@ -152,6 +177,11 @@ export default function NetworkVisualization({ gene, data, filters, expandedNode
 
       <div className="network-legend">
         <div className="legend-title">Legend</div>
+
+        <div className="legend-item">
+          <div className="legend-symbol node-source"></div>
+          <span>Current focus gene</span>
+        </div>
         
         <div className="legend-item">
           <div className="legend-symbol node-tf"></div>
@@ -180,12 +210,17 @@ export default function NetworkVisualization({ gene, data, filters, expandedNode
 
         <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '0.5px solid var(--border)' }}>
           <div className="legend-title" style={{ fontSize: '11px', marginBottom: '4px' }}>Confidence</div>
-          <div className="confidence-scale">
-            <div className="confidence-bar" style={{ width: '100%', height: '4px', background: 'linear-gradient(to right, #BDBDBD, #FDD835, #90CAF9)' }}></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-secondary)' }}>
-              <span>Low (0.3)</span>
-              <span>High (0.9)</span>
-            </div>
+          <div className="legend-item">
+            <div className="legend-symbol edge-confidence-high"></div>
+            <span>High: solid</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-symbol edge-confidence-medium"></div>
+            <span>Medium: dashed</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-symbol edge-confidence-low"></div>
+            <span>Low: dotted</span>
           </div>
         </div>
       </div>
@@ -221,12 +256,49 @@ export default function NetworkVisualization({ gene, data, filters, expandedNode
 function convertDataToCytoscape(data, selectedGene) {
   const elements = [];
   const processedNodes = new Set();
+  const selectedLabel = selectedGene.label || selectedGene.symbol;
+
+  if (data?.nodes?.length && data?.edges?.length) {
+    data.nodes.forEach((node) => {
+      const isSelected = node.id === selectedGene.id;
+      const isDirectRegulator = !!data.regulators?.some((reg) => reg.id === node.id);
+      const isDirectTarget = !!data.targets?.some((target) => target.id === node.id);
+      elements.push({
+        data: {
+          id: node.id,
+          label: node.label || node.symbol,
+          name: node.name,
+          is_tf: node.is_tf,
+          type: isSelected ? 'selected' : (isDirectRegulator ? 'regulator' : (isDirectTarget ? 'target' : 'intermediate')),
+          species: node.species,
+        }
+      });
+      processedNodes.add(node.id);
+    });
+
+    data.edges.forEach((edge) => {
+      elements.push({
+        data: {
+          id: `${edge.source_id}-${edge.target_id}-${edge.regulation_type}`,
+          source: edge.source_id,
+          target: edge.target_id,
+          regulation_type: edge.regulation_type || 'unknown',
+          confidence: edge.confidence || 0.5,
+          source_databases: edge.source_databases || [],
+          inferred: edge.inferred ? 1 : 0,
+          type: 'network-edge',
+        }
+      });
+    });
+
+    return elements;
+  }
 
   // Add the main selected gene
   elements.push({
     data: {
       id: selectedGene.id,
-      label: selectedGene.symbol,
+      label: selectedLabel,
       name: selectedGene.name,
       is_tf: selectedGene.is_tf,
       type: 'selected',
@@ -334,7 +406,7 @@ export function getCytoscapeStyle() {
       }
     },
     {
-      selector: 'node[is_tf=true][type!="selected"]',
+      selector: 'node[?is_tf][type!="selected"]',
       style: {
         'background-color': '#7F77DD',
         'border-color': '#534AB7',
@@ -346,7 +418,7 @@ export function getCytoscapeStyle() {
       }
     },
     {
-      selector: 'node[is_tf=false]',
+      selector: 'node[!is_tf]',
       style: {
         'background-color': '#888780',
         'border-color': '#5F5E5A',
@@ -368,7 +440,7 @@ export function getCytoscapeStyle() {
       selector: 'edge',
       style: {
         'curve-style': 'bezier',
-        'width': 'mapData(confidence, 0.3, 0.9, 1, 3)',
+        'width': 2.5,
         'line-color': 'data(edge_color)',
         'target-arrow-shape': 'triangle',
         'target-arrow-color': 'data(edge_color)',
@@ -410,10 +482,27 @@ export function getCytoscapeStyle() {
       }
     },
     {
-      // Orthology-projected (inferred) edges: dashed and faded.
+      selector: 'edge[confidence >= 0.75]',
+      style: {
+        'line-style': 'solid'
+      }
+    },
+    {
+      selector: 'edge[confidence >= 0.6][confidence < 0.75]',
+      style: {
+        'line-style': 'dashed'
+      }
+    },
+    {
+      selector: 'edge[confidence < 0.6]',
+      style: {
+        'line-style': 'dotted'
+      }
+    },
+    {
+      // Orthology-projected (inferred) edges: faded.
       selector: 'edge[inferred = 1]',
       style: {
-        'line-style': 'dashed',
         'opacity': '0.45'
       }
     },
@@ -421,7 +510,7 @@ export function getCytoscapeStyle() {
       selector: 'edge:hover',
       style: {
         'opacity': '1',
-        'width': 'mapData(confidence, 0.3, 0.9, 2, 4)'
+        'width': 3.5
       }
     }
   ];

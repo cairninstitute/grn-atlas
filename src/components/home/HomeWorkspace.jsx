@@ -8,13 +8,8 @@ const CARDS = [
   },
   {
     id: 'dataset',
-    title: 'Start from a list or dataset',
-    description: 'Paste or import genes, normalize them, map them into the atlas, and run first-pass interpretation.',
-  },
-  {
-    id: 'phenotype',
-    title: 'Start from a phenotype or goal',
-    description: 'Move from design objective to candidate genes, support/readiness checks, and intervention planning.',
+    title: 'Start from a list, phenotype, or goal',
+    description: 'Use one unified workflow: optionally begin with literature-guided candidate discovery, or skip straight to importing and mapping genes.',
   },
   {
     id: 'decision',

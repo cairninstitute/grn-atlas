@@ -177,12 +177,52 @@
   margin-top: 6px;
 }
 
-.confidence-bar {
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(to right, #BDBDBD, #FDD835, #90CAF9);
+.edge-confidence-high,
+.edge-confidence-medium,
+.edge-confidence-low {
+  width: 20px;
+  height: 3px;
   border-radius: 2px;
-  margin: 4px 0;
+  background: #9aa7bd;
+}
+
+.edge-confidence-medium {
+  background: repeating-linear-gradient(
+    to right,
+    #9aa7bd 0 6px,
+    transparent 6px 10px
+  );
+}
+
+.edge-confidence-low {
+  background: repeating-linear-gradient(
+    to right,
+    #9aa7bd 0 2px,
+    transparent 2px 5px
+  );
+}
+
+.network-depth-bar {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(10, 16, 26, 0.9);
+  border: 1px solid rgba(125, 179, 255, 0.22);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+}
+
+.network-depth-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 
 /* Network Controls */
@@ -194,6 +234,31 @@
   flex-direction: column;
   gap: 8px;
   z-index: 40;
+}
+
+.network-depth-switcher {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+
+.depth-button {
+  min-width: 62px;
+  height: 30px;
+  padding: 0 10px;
+  background-color: var(--surface-2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.depth-button.active {
+  color: white;
+  background-color: #3B8BD4;
+  border-color: #185FA5;
 }
 
 .control-button {
@@ -234,6 +299,12 @@
     top: 8px;
     padding: 8px;
     font-size: 11px;
+  }
+
+  .network-depth-bar {
+    top: 8px;
+    right: 8px;
+    padding: 8px 10px;
   }
 
   .legend-item {
