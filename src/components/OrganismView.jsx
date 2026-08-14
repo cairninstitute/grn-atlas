@@ -146,6 +146,7 @@ export default function OrganismView({ initialSpecies = 'arabidopsis', onSpecies
                 <SubgraphGraph
                   nodes={circuit.nodes}
                   edges={circuit.edges}
+                  tfStyle="circle"
                   onNodeClick={(d) => onSelectGene?.(d.symbol || d.label)}
                 />
               ) : (

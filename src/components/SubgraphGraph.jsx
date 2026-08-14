@@ -5,7 +5,7 @@ import { geneLabel } from '../utils/geneLabel';
 
 // Render an arbitrary induced subgraph ({nodes, edges} from /pathways/subgraph)
 // using the same Cytoscape styling as the main network view.
-export default function SubgraphGraph({ nodes, edges, onNodeClick }) {
+export default function SubgraphGraph({ nodes, edges, onNodeClick, tfStyle = 'default' }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
 
@@ -15,7 +15,9 @@ export default function SubgraphGraph({ nodes, edges, onNodeClick }) {
       ...nodes.map((n) => ({
         data: {
           id: n.id, label: geneLabel(n).label, symbol: n.symbol, name: n.name,
-          is_tf: !!n.is_tf, species: n.species, type: 'target',
+          is_tf: !!n.is_tf,
+          species: n.species,
+          type: tfStyle === 'circle' && n.is_tf ? 'subgraph-tf-circle' : 'target',
         },
       })),
       ...edges.map((e) => ({
@@ -30,10 +32,26 @@ export default function SubgraphGraph({ nodes, edges, onNodeClick }) {
       })),
     ];
 
+    const style = [
+      ...getCytoscapeStyle(),
+      ...(tfStyle === 'circle' ? [{
+        selector: 'node[type="subgraph-tf-circle"]',
+        style: {
+          'background-color': '#7F77DD',
+          'border-color': '#534AB7',
+          'color': 'white',
+          'width': '48px',
+          'height': '48px',
+          'shape': 'ellipse',
+          'z-index': '5'
+        }
+      }] : []),
+    ];
+
     const cy = cytoscape({
       container: containerRef.current,
       elements,
-      style: getCytoscapeStyle(),
+      style,
       layout: getLayout('cose'),
       wheelSensitivity: 0.1,
       boxSelectionEnabled: false,
@@ -42,7 +60,7 @@ export default function SubgraphGraph({ nodes, edges, onNodeClick }) {
     if (onNodeClick) cy.on('tap', 'node', (evt) => onNodeClick(evt.target.data()));
 
     return () => cy.destroy();
-  }, [nodes, edges, onNodeClick]);
+  }, [nodes, edges, onNodeClick, tfStyle]);
 
   return <div ref={containerRef} className="subgraph-canvas" />;
 }
