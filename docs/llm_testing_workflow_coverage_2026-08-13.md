@@ -1,8 +1,18 @@
 # LLM Testing Workflow Coverage Notes
 
-Date: August 13, 2026
+Date: August 14, 2026
 
 This note captures the current summary of what kinds of questions are being asked in the GRN Atlas LLM test suites, how those questions map to researcher workflows, and where the main testing gaps remain. It is intended as a durable reference for future planning, reporting, or blog-writing.
+
+Latest cross-model reference point:
+
+- GPT-5.4 orchestration matrix: **59/59 PASS** on Wednesday, August 13, 2026
+- Nemotron-3-Ultra orchestration matrix: **50/59 PASS** on Friday, August 14, 2026
+
+That comparison matters because it separates two different claims:
+
+- the repo's current clean skill-calling status
+- the portability of the skill layer to weaker external orchestrators
 
 ## Test suite structure
 
@@ -139,6 +149,11 @@ Well covered right now:
 - messy import recovery at a first-pass level
 - explicit capability/readiness boundary reporting
 
+Cross-model note:
+
+- GPT-5.4 handled the full current orchestration surface cleanly
+- Nemotron was materially weaker on abstract shared-regulator prompts, messy-import recovery, intervention tradeoff questions, and uncertainty / capability-boundary explanation
+
 Relatively thin right now:
 
 - ambiguous or underspecified researcher prompts
@@ -148,6 +163,7 @@ Relatively thin right now:
 - planning workflows under realistic lab constraints
 - user-uploaded dataset heterogeneity beyond simple pasted-list and CSV-like cases
 - phenotype-to-candidate workflows for traits other than petunia flower-color
+- portability of the hardest comparison/boundary workflows to weaker orchestrators
 
 ## Updated gaps from a researcher-usage perspective
 
@@ -155,21 +171,25 @@ Relatively thin right now:
    - Example: "What are the best genes to change petunia flower color?"
    - Current coverage: moderate first-pass coverage now exists
    - Missing: stronger support for other phenotypes, stronger multi-branch follow-up, and more deterministic phenotype-to-candidate routing
+   - Nemotron signal: still weaker than GPT-5.4 on phenotype-driven planning in petunia
 
 2. Failure / uncertainty handling
    - Example: "No strong regulator is found -- what should I do next?"
    - Current coverage: moderate first-pass coverage now exists
    - Missing: more cases with conflicting evidence, partial support, and explicit model behavior under no-signal conditions
+   - Nemotron signal: one of the clearer failure families in the 59-question run
 
 3. Real dataset ingestion
    - Example: DEG tables, malformed CSVs, aliases, mixed species IDs
    - Current coverage: improved from thin to moderate
    - Missing: larger real-world tables, extra metadata columns, duplicate rows, alias collisions, and multi-file upload-style cases
+   - Nemotron signal: mixed-species normalization/import is still fragile
 
 4. Experimental tradeoff decisions
    - Example: dsRNA vs promoter edit vs observational validation under budget/time constraints
    - Current coverage: improved from light to moderate
    - Missing: broader comparison across more than two strategies, stronger grading for explicit tradeoff reasoning, and phenotype-specific decision frameworks
+   - Nemotron signal: still weaker on dsRNA vs promoter-edit and single vs double perturbation comparisons
 
 5. Comparative phenotype workflows
    - Example: "Which intervention is most likely to alter pigment without broad pleiotropy?"
@@ -210,6 +230,11 @@ The system now covers substantially more of the "questions researchers actually 
 - messy import recovery
 - readiness and support-boundary explanation
 - simple intervention tradeoff comparisons
+
+The latest cross-model results sharpen that interpretation:
+
+- GPT-5.4 shows the expanded workflow surface can be completed cleanly end-to-end.
+- Nemotron shows which parts are still fragile when the orchestrator is weaker: abstract routing starts, messy normalization before analysis, explicit uncertainty framing, and tradeoff-heavy intervention comparisons.
 
 The main remaining limitation is not the absence of basic atlas functions. It is the gap between:
 

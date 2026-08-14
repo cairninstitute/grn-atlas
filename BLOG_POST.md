@@ -272,7 +272,7 @@ As of Thursday, August 13, 2026:
 
 These current matrices are the best statement of the repository’s present LLM skill-calling status.
 
-### Earlier Nemotron-3-Ultra results
+### Nemotron-3-Ultra comparison results
 
 We tested the skill system with Nvidia Nemotron-3-Ultra through OpenRouter to evaluate two distinct behaviors:
 
@@ -281,25 +281,24 @@ We tested the skill system with Nvidia Nemotron-3-Ultra through OpenRouter to ev
 
 ### Single-skill LLM testing
 
-The latest full single-skill rerun covered 305 cases.
+Earlier broad Nemotron single-skill reruns were useful primarily for frontmatter and routing hardening. They exposed which skill families were easy to confuse and helped tighten descriptions, overlap boundaries, and sequencing guidance.
 
-Result:
+Representative result from the wider reruns:
 
 - 305/305 tested
-- 283/305 full-case passes
 - 285/305 correct tool selections
 - 93.4% tool-selection accuracy
 
 ### Multi-skill orchestration testing
 
-The latest full orchestration rerun covered 35 questions.
+The latest full Nemotron orchestration rerun covered the complete **59-question** workflow matrix on **Friday, August 14, 2026**.
 
 Result:
 
-- 35/35 tested
-- 33/35 passes
-- 142 total tool calls
-- 2.6 average skills per question
+- 59/59 tested
+- 50/59 passes
+- 84.7% pass rate
+- 9 questions failed that GPT-5.4 passed cleanly
 
 These orchestration questions cover:
 
@@ -314,6 +313,21 @@ These orchestration questions cover:
 - evidence synthesis
 - validation planning
 - collaborator handoff and study reporting
+
+The Nemotron misses were concentrated in a few workflow families:
+
+- shared-regulator discovery from abstract prompts
+- messy mixed-species normalization and import
+- weak-signal or uncertainty-boundary explanation
+- intervention tradeoff questions such as dsRNA vs promoter editing
+- single-vs-double perturbation comparison
+- phenotype-to-experiment planning in petunia
+
+Failure shape in the final 59-question Nemotron run:
+
+- 3 zero-tool-call misses
+- 6 tool-selection or under-chaining misses
+- no provider-collapse pattern in the final run
 
 ### What improved during testing
 
@@ -398,10 +412,10 @@ Current clean GPT-5.4 matrix results:
 - single-skill routing: 347/347
 - multi-skill orchestration: 59/59
 
-Earlier Nemotron full reruns:
+Nemotron comparison results:
 
-- single-skill tool selection accuracy: 93.4%
-- orchestration pass rate: 33/35
+- single-skill tool selection accuracy in earlier broad reruns: 93.4%
+- full 59-question orchestration matrix on August 14, 2026: 50/59
 
 **Is this open source?**
 

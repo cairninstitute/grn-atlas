@@ -1,6 +1,6 @@
 # Blog Outline: GRN Atlas Skills, LLM Testing Coverage, and Remaining Gaps
 
-Date: August 13, 2026
+Date: August 14, 2026
 
 This document is a blog-oriented outline of what the GRN Atlas skills can do today, what kinds of questions have been tested against LLM orchestration, and what remains untested or only lightly tested.
 
@@ -11,7 +11,7 @@ Possible framing for a blog post:
 - The GRN Atlas is not just a database of gene regulatory interactions.
 - It is exposed through a skill layer that allows an LLM to use the atlas as an analysis environment.
 - The key question is not only whether the atlas contains useful data, but whether an LLM can reliably choose the right skill, chain multiple skills, and complete realistic research workflows.
-- Current testing shows strong coverage for core atlas operations and a growing but still incomplete coverage of open-ended research planning workflows.
+- Current testing shows strong coverage for core atlas operations, clean GPT-5.4 performance on both routing and orchestration, and a useful Nemotron comparison that exposes where weaker orchestrators still struggle.
 
 ## 2. What the skills can do
 
@@ -180,16 +180,59 @@ What this means:
 - the testing goes beyond one-shot queries
 - the LLM is being tested on whether it can complete research tasks that require sequencing several steps correctly
 
-### D. Current clean matrix status
+### C. Current clean matrix status
 
-As of Thursday, August 13, 2026:
+As of Friday, August 14, 2026:
 
 - GPT-5.4 single-skill matrix: **347/347 PASS**
 - GPT-5.4 orchestration matrix: **59/59 PASS**
 
 This is the cleanest current statement of repo-level LLM routing/orchestration status.
 
-### C. HTTP-level testing
+### D. External-orchestrator comparison: Nemotron-3-Ultra
+
+We also ran a full comparison pass with Nvidia Nemotron-3-Ultra through OpenRouter.
+
+That run answers a different question:
+
+- not "is the repo currently clean?"
+- but "how portable is the skill system to a weaker external orchestrator?"
+
+Latest Nemotron orchestration result as of Friday, August 14, 2026:
+
+- full 59-question orchestration matrix: **50/59 PASS** (**84.7%**)
+
+Direct comparison:
+
+| Model | Single-skill status | Orchestration status | Interpretation |
+|---|---|---|---|
+| GPT-5.4 | 347/347 PASS | 59/59 PASS | current clean repo status |
+| Nemotron-3-Ultra | earlier broad reruns were mainly used for routing/frontmatter hardening | 50/59 PASS | portability / robustness probe, but weaker orchestrator |
+
+Nemotron failed 9 orchestration questions that GPT-5.4 passed:
+
+- Q1: shared regulators for TP53 and MYC
+- Q24: GRNBoost2 vs GENIE3 overlap plus follow-up gene inspection
+- Q39: messy mixed-species normalization and import
+- Q41: pairwise perturbation comparison
+- Q51: weak-signal / uncertainty boundary explanation
+- Q53: dsRNA vs promoter-edit tradeoff
+- Q54: petunia phenotype candidate discovery plus RNAi readiness
+- Q56: honest petunia capability-boundary explanation
+- Q57: single vs double perturbation comparison
+
+Observed Nemotron failure shape:
+
+- 3 zero-tool-call misses
+- 6 tool-selection / under-chaining / synthesis misses
+- no provider-collapse pattern in the final 59-question run
+
+The useful interpretation for a launch blog is:
+
+- GPT-5.4 demonstrates that the current skill layer can be used cleanly across the full present workflow surface.
+- Nemotron demonstrates that the system is not overfit to one trivial prompt set, while also showing exactly where weaker orchestrators still struggle.
+
+### E. HTTP-level testing
 
 There is also HTTP/API testing to ensure that the underlying atlas endpoints and skill surfaces behave correctly outside the LLM layer.
 
@@ -209,6 +252,7 @@ The best-covered areas today are:
 - enrichment-based interpretation
 - basic cross-species reasoning
 - provenance/citation/export workflows
+- explicit capability/readiness boundary reporting with GPT-5.4
 
 If writing this for a launch-oriented audience, a defensible statement would be:
 
@@ -227,8 +271,9 @@ Examples:
 
 Current status:
 
-- partially supported
-- not yet deeply covered in the automated suites
+- materially improved
+- now represented in the current orchestration matrix, especially in petunia flower-color workflows
+- still weaker on external orchestrators than on GPT-5.4
 
 Why it matters:
 
@@ -244,7 +289,8 @@ Examples:
 
 Current status:
 
-- lightly tested
+- now directly tested
+- still one of the clearer Nemotron failure families
 
 Why it matters:
 
@@ -262,7 +308,8 @@ Examples:
 
 Current status:
 
-- only lightly represented
+- no longer absent; there is meaningful first-pass coverage now
+- still a portability weak point for weaker orchestrators
 
 Why it matters:
 
@@ -278,8 +325,8 @@ Examples:
 
 Current status:
 
-- some pieces exist
-- direct head-to-head testing is still thin
+- now directly represented in the orchestration suite
+- still a weak family for Nemotron relative to GPT-5.4
 
 Why it matters:
 
@@ -295,7 +342,8 @@ Examples:
 
 Current status:
 
-- present, but much thinner than human and Arabidopsis coverage
+- materially better covered than before, especially for petunia
+- still much thinner than human and Arabidopsis coverage
 
 Why it matters:
 
@@ -318,7 +366,7 @@ For public-facing writing, a strong but accurate framing would be:
 
 - The skills already support a broad set of gene regulatory network workflows, including candidate lookup, network interrogation, perturbation planning, RNAi design, enrichment, orthology, provenance, and research-brief generation.
 - The strongest automated testing today is around skill routing, network analysis, RNAi and perturbation workflows, and multi-step atlas-backed chains.
-- The thinner areas are the most open-ended and human-like research questions: ambiguous prompts, negative results, messy imported datasets, tradeoff-heavy planning, and phenotype-driven ideation in non-model species.
+- The thinner areas are still the most open-ended and human-like research questions: ambiguous prompts, negative results, messy imported datasets, tradeoff-heavy planning, and phenotype-driven ideation in non-model species, especially on weaker external orchestrators.
 
 That framing is accurate and does not overstate current validation.
 
@@ -341,8 +389,9 @@ Possible section headings:
 - more messy-import dataset cases
 - more negative-result and uncertainty workflows
 - more experiment tradeoff questions
+- more cross-model comparison runs to separate repo issues from orchestrator weaknesses
 - more end-to-end applied research scenarios
 
 ## 9. Short conclusion draft
 
-The current GRN Atlas skill layer is already capable of supporting a meaningful set of research workflows through an LLM interface. The most mature areas are atlas navigation, network interpretation, perturbation and RNAi planning, enrichment, and cross-species support. The next testing frontier is not basic functionality but realism: open-ended biological questions, messy inputs, uncertain evidence, and decision-making under real research constraints.
+The current GRN Atlas skill layer is already capable of supporting a meaningful set of research workflows through an LLM interface. The most mature areas are atlas navigation, network interpretation, perturbation and RNAi planning, enrichment, and cross-species support. GPT-5.4 now runs cleanly across the full current orchestration matrix, while Nemotron provides a useful external comparison that highlights the remaining weak spots: messy inputs, uncertain evidence, intervention tradeoffs, and phenotype-driven planning under real research constraints.

@@ -371,8 +371,11 @@ Current automated coverage boundary:
 - expanded skill inventory: **347/347 PASS** single-skill GPT-5.4 matrix
 - orchestration workflows: **59/59 PASS** GPT-5.4 matrix
 
-Historical note: the earlier Nemotron-3-Ultra via OpenRouter evaluation was useful for
-finding routing/frontmatter weaknesses, but it is no longer the best statement of current
+Historical note: Nemotron-3-Ultra via OpenRouter was useful for finding
+routing/frontmatter weaknesses. The latest full Nemotron orchestration comparison run on
+**Friday, August 14, 2026** completed **50/59 PASS (84.7%)**, with the main misses in
+messy-input recovery, uncertainty/boundary explanation, and multi-strategy intervention
+comparison. It is a useful robustness probe, but not the best statement of current clean
 repo status. The latest fully clean published matrix results in this repo are the GPT-5.4
 results above.
 
