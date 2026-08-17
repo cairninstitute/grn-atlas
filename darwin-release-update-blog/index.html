@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Public Release Update: GRN Atlas Skill Layer, Research Workflows, and LLM Validation</title>
+  <style>
+    :root {
+      --fg: #111827;
+      --muted: #4b5563;
+      --border: #d1d5db;
+      --bg: #ffffff;
+      --accent: #0f766e;
+      --code-bg: #f3f4f6;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+    }
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    h1, h2, h3 {
+      line-height: 1.25;
+      margin-top: 1.6em;
+      margin-bottom: 0.6em;
+    }
+    h1:first-child {
+      margin-top: 0;
+    }
+    p, ul, ol, table, blockquote {
+      margin: 0 0 1em 0;
+    }
+    .meta {
+      color: var(--muted);
+      margin-bottom: 0.4em;
+    }
+    .tags {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 1.4em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.96rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f9fafb;
+    }
+    code {
+      background: var(--code-bg);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      font-size: 0.95em;
+    }
+    blockquote {
+      border-left: 4px solid var(--border);
+      padding-left: 16px;
+      color: var(--muted);
+    }
+    .footer {
+      margin-top: 2.5em;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .hero-link {
+      display: inline-block;
+      margin: 0.4em 0 1.2em;
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .hero-link:hover {
+      text-decoration: underline;
+    }
+    figure {
+      margin: 1.25em 0 1.5em;
+    }
+    figure img {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: block;
+    }
+    figcaption {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 0.5em;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Public Release Update: GRN Atlas Skill Layer, Research Workflows, and LLM Validation</h1>
+
+    <p class="meta">Author: CAIRN Institute</p>
+    <p class="meta">Published: August 17, 2026</p>
+    <p class="meta">Read time: 10–12 minutes</p>
+    <p class="tags">#Genomics #Bioinformatics #GeneRegulation #SystemsBiology #OpenScience #AgenticAI</p>
+    <a class="hero-link" href="https://github.com/cairninstitute/grn-atlas">Explore the repository on GitHub →</a>
+
+    <h2>Quick Summary</h2>
+    <p>
+      Today we are publishing a release update for GRN Atlas focused on the skill layer,
+      the research workflows it enables, and the validation work completed across both the
+      application stack and external LLM orchestrators.
+    </p>
+    <p>
+      GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory
+      edges, promoter and motif context, expression, pathways, traits, orthology, perturbation
+      effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and
+      petunia. It includes both an interactive web UI and a structured skill layer for
+      agent-driven workflows.
+    </p>
+    <p>
+      As of Friday, August 14, 2026, the repository contains <strong>61 documented GRN Atlas skills</strong>:
+    </p>
+    <ul>
+      <li><strong>60 callable analysis and workflow skills</strong></li>
+      <li><strong>1 overview/router skill</strong></li>
+    </ul>
+    <p>The current published validation results are:</p>
+    <ul>
+      <li><strong>GPT-5.4 single-skill matrix:</strong> 347/347 pass</li>
+      <li><strong>GPT-5.4 orchestration matrix:</strong> 59/59 pass</li>
+      <li><strong>Nemotron-3-Ultra orchestration matrix:</strong> 50/59 pass</li>
+      <li><strong>Nemotron targeted single-skill diagnostic subset:</strong> 36/38 pass</li>
+    </ul>
+    <p>
+      GRN Atlas is being released free for academic and non-commercial use. For commercial use,
+      productization, deployment, or partnership discussions, contact CAIRN Institute.
+    </p>
+
+    <h2>Why We Built It</h2>
+    <p>Researchers do not usually ask one-step questions.</p>
+    <p>A real workflow looks more like this:</p>
+    <ul>
+      <li>identify the regulators of a gene</li>
+      <li>compare those regulators across species</li>
+      <li>inspect whether motif evidence supports the edge</li>
+      <li>ask whether the same story appears in expression</li>
+      <li>test what happens if the regulator is perturbed</li>
+      <li>design an intervention strategy such as dsRNA</li>
+      <li>decide whether the evidence is strong enough to justify an experiment</li>
+      <li>hand the result to a collaborator in a readable form</li>
+    </ul>
+    <p>
+      Most biological software handles only one piece of that chain. GRN Atlas was built to close
+      that gap and give researchers a single place to move from question to hypothesis to next action.
+    </p>
+
+    <h2>What GRN Atlas Is</h2>
+    <p>GRN Atlas is an integrated research workspace for gene regulatory network analysis.</p>
+    <p>It combines:</p>
+    <ul>
+      <li>curated regulatory interactions</li>
+      <li>inferred regulatory edges</li>
+      <li>promoter and motif context</li>
+      <li>plant expression panels</li>
+      <li>pathway and trait enrichment</li>
+      <li>orthology and cross-species conservation</li>
+      <li>signed perturbation analysis</li>
+      <li>RNAi-oriented dsRNA design and screening</li>
+      <li>evidence-audit and experiment-planning workflows</li>
+      <li>collaborator-facing study packet and report generation</li>
+    </ul>
+    <p>The atlas currently supports five species: human, mouse, Arabidopsis, tomato, and petunia.</p>
+    <p>
+      Some layers are measured, some are projected, and some are computationally inferred or predicted.
+      A core design rule is that these are never mixed without labeling.
+    </p>
+
+    <h2>What You Can Do With It</h2>
+
+    <h3>1. Explore a gene’s regulatory neighborhood</h3>
+    <ul>
+      <li>who regulates this gene?</li>
+      <li>what genes does this TF regulate?</li>
+      <li>is there a path from gene A to gene B?</li>
+      <li>what subgraph connects this candidate set?</li>
+    </ul>
+
+    <h3>2. Interpret a gene set biologically</h3>
+    <ul>
+      <li>what GO terms are enriched?</li>
+      <li>what pathways are overrepresented?</li>
+      <li>what traits are associated with this set?</li>
+      <li>which upstream TFs best explain the genes I care about?</li>
+    </ul>
+
+    <h3>3. Compare across species</h3>
+    <ul>
+      <li>what is the ortholog of this gene?</li>
+      <li>is this regulatory edge conserved?</li>
+      <li>does a gene-level claim transfer from one species to another?</li>
+      <li>what caveats should I keep in mind before extrapolating?</li>
+    </ul>
+
+    <h3>4. Predict interventions</h3>
+    <ul>
+      <li>what happens if I knock out or silence this regulator?</li>
+      <li>how does a cascade propagate if a regulator changes expression?</li>
+      <li>which downstream genes are predicted to change?</li>
+      <li>what biological processes are enriched among affected targets?</li>
+    </ul>
+
+    <h3>5. Design and compare RNAi strategies</h3>
+    <ul>
+      <li>can a dsRNA be designed for this target?</li>
+      <li>which of several candidate genes is the cleanest RNAi target?</li>
+      <li>which target has the lowest off-target burden?</li>
+      <li>what happens downstream if I silence the winner?</li>
+    </ul>
+
+    <h3>6. Turn analysis into decisions</h3>
+    <ul>
+      <li>is there enough atlas coverage for this analysis?</li>
+      <li>which candidates should I prioritize?</li>
+      <li>what is the confidence boundary here?</li>
+      <li>what is the smallest defensible next step?</li>
+      <li>how do I turn this into a validation plan, study packet, or report?</li>
+    </ul>
+
+    <h2>The Web UI</h2>
+    <p>
+      GRN Atlas ships with a browser-based interface for interactive exploration and
+      question-first workflows.
+    </p>
+    <ul>
+      <li>workflow-first researcher entry points</li>
+      <li>gene search and species-aware context</li>
+      <li>network, expression, perturbation, and dsRNA analysis</li>
+      <li>collaborator handoff artifacts and next-step planning</li>
+      <li>direct access to advanced analysis panels when needed</li>
+    </ul>
+
+    <figure>
+      <img src="release-ui-home-2026-08-14.png" alt="GRN Atlas workflow-first home interface" />
+      <figcaption>
+        The current workflow-first GRN Atlas interface emphasizes researcher entry modes,
+        persistent context, and direct access to analysis outputs.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="release-api-docs-2026-08-14.png" alt="GRN Atlas API documentation screenshot" />
+      <figcaption>
+        The live API surface exposes the full skill-aligned backend for programmatic use,
+        reproducible workflows, and external orchestration.
+      </figcaption>
+    </figure>
+
+    <h2>The Skill Layer</h2>
+    <p>
+      The skill layer is what turns GRN Atlas from a collection of endpoints into a research workflow system.
+      The skills are documented in-repo, callable directly, and also exposed as agent tools for orchestration.
+    </p>
+
+    <h3>1. Orientation, search, provenance, and data readiness</h3>
+    <p>
+      These skills answer: what species are available, what is loaded, what can be done,
+      and how do I find or map the genes I care about?
+    </p>
+    <p>
+      <code>grn-atlas-overview</code>, <code>grn-species</code>, <code>grn-stats</code>,
+      <code>grn-provenance</code>, <code>grn-citations</code>, <code>grn-gene-search</code>,
+      <code>grn-gene-info</code>, <code>grn-dataset-import</code>, <code>grn-input-normalization</code>,
+      <code>grn-coverage-report</code>
+    </p>
+
+    <h3>2. Core regulatory network structure and graph analysis</h3>
+    <p>
+      These skills cover local neighborhoods, paths, subgraphs, shared regulators, regulons,
+      centrality, modules, motifs, inferred networks, and structural patterns.
+    </p>
+    <p>
+      <code>grn-network</code>, <code>grn-pathfinding</code>, <code>grn-subgraph</code>,
+      <code>grn-shared-regulators</code>, <code>grn-regulon</code>, <code>grn-regulon-compare</code>,
+      <code>grn-upstream</code>, <code>grn-network-patterns</code>, <code>grn-centrality</code>,
+      <code>grn-module</code>, <code>grn-motif</code>, <code>grn-infer</code>, <code>grn-export</code>
+    </p>
+
+    <h3>3. Expression, differential context, and support boundaries</h3>
+    <p>
+      These skills provide expression context, coexpression, differential shifts, evidence audits,
+      and honest support boundaries before a researcher acts on a claim.
+    </p>
+    <p>
+      <code>grn-expression</code>, <code>grn-coexpression</code>, <code>grn-differential-expression</code>,
+      <code>grn-diff-regulation</code>, <code>grn-evidence-audit</code>, <code>grn-confidence-boundary</code>,
+      <code>grn-decision-boundary</code>
+    </p>
+
+    <h3>4. Cross-species reasoning and conservation</h3>
+    <p>
+      These skills support ortholog discovery, conservation checks, transferability analysis,
+      and staged plans for bringing new species into the atlas.
+    </p>
+    <p>
+      <code>grn-orthology</code>, <code>grn-conservation</code>, <code>grn-transferability</code>,
+      <code>grn-species-onboarding-plan</code>
+    </p>
+
+    <h3>5. Perturbation, RNAi, promoter editing, and assay-oriented design</h3>
+    <p>
+      These are the intervention-facing skills: perturbation prediction, cascade modeling,
+      dsRNA design, dsRNA screening, promoter-site analysis, CRISPR heuristics, primer heuristics,
+      and combinatorial perturbation ranking.
+    </p>
+    <p>
+      <code>grn-perturbation</code>, <code>grn-cascade</code>, <code>grn-dsrna</code>,
+      <code>grn-dsrna-screen</code>, <code>grn-variant-effect</code>,
+      <code>grn-promoter-edit-prioritization</code>, <code>grn-crispr-design</code>,
+      <code>grn-primer-design</code>, <code>grn-combinatorial-perturbation</code>
+    </p>
+
+    <h3>6. Candidate ranking, uncertainty handling, and hypothesis comparison</h3>
+    <p>
+      These skills support phenotype-first discovery, candidate triage, consensus ranking,
+      counterfactual reasoning, minimal validation, and explicit hypothesis comparison.
+    </p>
+    <p>
+      <code>grn-phenotype-targeting</code>, <code>grn-candidate-triage</code>,
+      <code>grn-consensus-ranking</code>, <code>grn-counterfactual-analysis</code>,
+      <code>grn-minimal-validation</code>, <code>grn-hypothesis-compare</code>,
+      <code>grn-user-gene-set-analysis</code>
+    </p>
+
+    <h3>7. Evidence synthesis, literature, planning, and collaborator handoff</h3>
+    <p>
+      These skills turn analysis into a concrete plan and a shareable output.
+    </p>
+    <p>
+      <code>grn-enrichment</code>, <code>grn-literature-review</code>,
+      <code>grn-evidence-synthesis</code>, <code>grn-experiment-prioritization</code>,
+      <code>grn-experiment-optimizer</code>, <code>grn-research-brief</code>,
+      <code>grn-validation-plan</code>, <code>grn-study-packet</code>,
+      <code>grn-study-report</code>, <code>grn-celltype-regulation</code>,
+      <code>grn-trajectory-regulation</code>
+    </p>
+
+    <h2>Why the Skill Layer Matters</h2>
+    <p>
+      Researchers rarely stop at “find this gene.” They ask chains of questions:
+      find a candidate, test whether the species supports a given analysis, compare alternatives,
+      check uncertainty, choose an intervention, and package the result for a collaborator.
+      The skill layer is what makes those chained workflows tractable for both humans and external agents.
+    </p>
+
+    <h2>What the Full Skill Layer Enables for Researchers</h2>
+    <ul>
+      <li>atlas navigation and species readiness checks</li>
+      <li>single-gene and gene-set regulatory interpretation</li>
+      <li>cross-species conservation and transferability analysis</li>
+      <li>perturbation and RNAi experiment planning</li>
+      <li>candidate ranking under evidence and assay constraints</li>
+      <li>literature-grounded follow-up and collaborator handoff</li>
+    </ul>
+
+    <h2>Testing With External LLMs</h2>
+
+    <h3>Current clean repository status: GPT-5.4</h3>
+    <p>The current clean published matrices in the repository are:</p>
+    <ul>
+      <li><strong>347/347 PASS</strong> on the single-skill GPT-5.4 matrix</li>
+      <li><strong>59/59 PASS</strong> on the multi-skill orchestration GPT-5.4 matrix</li>
+    </ul>
+    <p>
+      These are the best statement of the current release status because they reflect the latest
+      expanded skill inventory and the latest workflow chaining behavior.
+    </p>
+
+    <h3>Nemotron-3-Ultra comparison results</h3>
+    <p>
+      We also tested the same skill layer with Nvidia Nemotron-3-Ultra through OpenRouter as a portability
+      and robustness comparison rather than as the clean release baseline.
+    </p>
+    <ul>
+      <li><strong>50/59 PASS</strong> on the full orchestration matrix</li>
+      <li><strong>36/38 PASS</strong> on a targeted single-skill diagnostic subset</li>
+    </ul>
+    <p>
+      Those comparison runs were useful because they exposed weak routing families, ambiguous starts,
+      and under-chaining patterns that helped harden the final frontmatter and sequencing guidance.
+    </p>
+
+    <h3>Deterministic and application-level testing</h3>
+    <p>Beyond LLM orchestration, the repository also includes clean automated coverage across the stack:</p>
+    <ul>
+      <li><strong>319/319 PASS</strong> legacy direct skill harness</li>
+      <li><strong>83/83 PASS</strong> legacy HTTP skill harness</li>
+      <li><strong>49/49 PASS</strong> integration tests</li>
+      <li><strong>22/22 PASS</strong> Playwright end-to-end tests</li>
+      <li><strong>165/165 PASS</strong> backend API pytest</li>
+      <li><strong>9/9 PASS</strong> frontend Vitest</li>
+    </ul>
+
+    <h2>Data, Evidence, and Trust</h2>
+    <p>
+      GRN Atlas does not pretend every layer is equivalent. Measured, projected, inferred, and predicted
+      evidence are labeled separately. The skill layer includes dedicated support-boundary and confidence-boundary
+      workflows because honest uncertainty is a feature, not a bug.
+    </p>
+
+    <h2>Release Model</h2>
+    <p>GRN Atlas is being released publicly for academic and non-commercial use.</p>
+    <p>
+      The code is source-available under the repository’s non-commercial license. Upstream data sources retain
+      their own terms. Commercial use, productization, hosted use, or partnership discussions should be directed
+      to CAIRN Institute.
+    </p>
+    <p>
+      Repository: <a href="https://github.com/cairninstitute/grn-atlas">https://github.com/cairninstitute/grn-atlas</a><br />
+      Commercial / partnership contact: <a href="mailto:sales@cairninstitute.com">sales@cairninstitute.com</a>
+    </p>
+
+    <h2>What This Release Is For</h2>
+    <p>This release is for researchers who want:</p>
+    <ul>
+      <li>a transparent multi-species GRN workspace</li>
+      <li>a usable workflow-first UI</li>
+      <li>a skill layer that can be orchestrated by LLMs</li>
+      <li>clear evidence boundaries before committing to experiments</li>
+      <li>an academic-use release with a path to commercial partnership</li>
+    </ul>
+
+    <h2>Frequently Asked Questions</h2>
+    <p><strong>Is the project open source?</strong></p>
+    <p>No, not in the OSI sense. It is source-available for non-commercial use.</p>
+
+    <p><strong>Can I use it for academic research?</strong></p>
+    <p>Yes, subject to the repository license and the upstream terms for any data sources you use.</p>
+
+    <p><strong>What is the cleanest current LLM status?</strong></p>
+    <p>GPT-5.4 is the clean current release baseline: 347/347 single-skill pass and 59/59 orchestration pass.</p>
+
+    <p><strong>Why include Nemotron results at all?</strong></p>
+    <p>
+      Because cross-model comparison is useful. Nemotron was strong enough to validate broad portability and weak
+      enough to expose where frontmatter, overlap boundaries, and chaining guidance still needed work.
+    </p>
+
+    <h2>Further Reading</h2>
+    <ul>
+      <li><a href="https://github.com/cairninstitute/grn-atlas">GRN Atlas repository</a></li>
+      <li><a href="https://github.com/cairninstitute/grn-atlas/blob/main/README.md">README</a></li>
+      <li><a href="https://github.com/cairninstitute/grn-atlas/blob/main/ROADMAP.md">ROADMAP</a></li>
+      <li><a href="https://github.com/cairninstitute/grn-atlas/blob/main/docs/DEVELOPMENT.md">DEVELOPMENT</a></li>
+      <li><a href="https://github.com/cairninstitute/grn-atlas/blob/main/docs/llm_model_comparison_release_notes_2026-08-14.md">LLM model comparison release notes</a></li>
+    </ul>
+
+    <p class="footer">
+      GRN Atlas is available free for academic and non-commercial use. For commercial licensing,
+      productization, or potential partnerships, contact CAIRN Institute.
+    </p>
+  </main>
+</body>
+</html>
