@@ -86,6 +86,49 @@
     .hero-link:hover {
       text-decoration: underline;
     }
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 16px 24px;
+    }
+    .site-header a {
+      text-decoration: none;
+      color: var(--fg);
+    }
+    .site-header .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .site-header .logo-group img {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+    }
+    .site-header .logo-group span {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .site-header nav {
+      display: flex;
+      gap: 24px;
+      font-size: 0.95rem;
+    }
+    .site-header nav a {
+      color: var(--muted);
+    }
+    .site-header nav a:hover {
+      color: var(--accent);
+    }
+    .header-rule {
+      max-width: 920px;
+      margin: 0 auto;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
     figure {
       margin: 1.25em 0 1.5em;
     }
@@ -103,6 +146,19 @@
   </style>
 </head>
 <body>
+  <header class="site-header">
+    <a href="http://cairninstitute.com" class="logo-group">
+      <img src="cairn-logo.jpg" alt="CAIRN Institute" />
+      <span>CAIRN Institute</span>
+    </a>
+    <nav>
+      <a href="http://cairninstitute.com">Home</a>
+      <a href="http://cairninstitute.com/about">About</a>
+      <a href="http://cairninstitute.com/projects">Projects</a>
+      <a href="mailto:info@cairninstitute.com">Contact</a>
+    </nav>
+  </header>
+  <hr class="header-rule" />
   <main>
     <h1>Public Release: GRN Atlas for Multi-Species Gene Regulatory Network Research</h1>
 

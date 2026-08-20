@@ -55,13 +55,15 @@ GFF_URL = "{base}/GFF/{sp}/annotation.selected_transcript.all_features.{sp}.gff3
 DESC_URL = "{base}/Descriptions/gene_description.{sp}.csv.gz"
 
 # PLAZA 3-letter code -> our internal species name. 'ath' already exists in the
-# DB (Arabidopsis); 'sly'/'pax' are new species inserted by build_db.
+# DB (Arabidopsis); the rest are new species inserted by build_db.
 PLAZA_SPECIES = {
     "ath": "arabidopsis",
     "sly": "tomato",
     "pax": "petunia",
+    "stu": "potato",
+    "can": "pepper",
 }
-NEW_SPECIES = {"sly", "pax"}       # not already in our genes table
+NEW_SPECIES = {"sly", "pax", "stu", "can"}  # not already in our genes table
 SCAFFOLD_CAP = 25                  # fallback: max scaffolds to keep per species
 UA = {"User-Agent": "grn-atlas-build/1.0 (genome data enrichment)"}
 

@@ -78,6 +78,9 @@ Some layers are measured, some are projected, and some are computationally infer
 
 ### 1. Explore a gene’s regulatory neighborhood
 
+![JAF13 regulatory network in GRN Atlas — activations, repressions, confidence levels, expression profile, and evidence sources for a petunia transcription factor.](/blog-assets/gene_regulatory_network.png)
+*Regulatory neighborhood of JAF13 (petunia) at 3-hop depth. Green edges are activations, red are repressions; line style encodes confidence. The right panel shows gene metadata, evidence sources, and per-tissue expression.*
+
 You can ask:
 
 - who regulates this gene?
@@ -117,6 +120,12 @@ You can ask:
 
 ### 5. Design and compare RNAi strategies
 
+![Side-by-side dsRNA comparison of EOBI and JAF13 with designed sequence and predicted downstream effects.](/blog-assets/dsRNA_analysis.png)
+*Side-by-side comparison of two RNAi targets (EOBI vs JAF13). Both achieve 100% specificity with zero off-targets. The atlas recommends JAF13 based on a smaller downstream program, then shows the designed 250 bp dsRNA sequence and predicted downstream gene effects with propagation paths.*
+
+![Batch off-target screening of seven candidate genes ranked by dsRNA designability.](/blog-assets/multi_gene_offtarget_screening.png)
+*Batch screening of seven petunia anthocyanin genes ranked by off-target burden. Four candidates (JAF13, CHSB, AN2, EOBI) achieve fully specific dsRNA designs with zero off-targets in the best window.*
+
 For plant workflows, you can ask:
 
 - can a dsRNA be designed for this target?
@@ -126,6 +135,9 @@ For plant workflows, you can ask:
 - how does dsRNA compare with promoter editing for this objective?
 
 ### 6. Turn analysis into decisions
+
+![Hit list first-pass interpretation and consensus ranking with overturn conditions.](/blog-assets/hitlist_analysis.png)
+*A mapped hit list of petunia anthocyanin genes runs through first-pass interpretation (top candidates, upstream regulators, enrichment) and consensus ranking with explicit overturn conditions — what evidence would change the winner.*
 
 You can ask:
 
@@ -171,6 +183,8 @@ The repository currently contains 61 documented skills:
 
 - 60 callable analysis/workflow skills
 - 1 overview/router skill
+
+![61 skills across 7 research categories.](/blog-assets/grn-skill-categories.png)
 
 These skills are best understood by the high-level work they enable.
 
@@ -326,6 +340,10 @@ Researchers can use it to:
 This matters because typical biological questions are rarely isolated. They are chained, conditional, and decision-oriented.
 
 ## Testing With External LLMs
+
+![LLM agent testing results — GPT-5.4 and Nemotron-3-Ultra across single-skill and multi-skill orchestration.](/blog-assets/grn-llm-testing-matrix.png)
+
+To validate that the skill layer works not just in isolation but when driven by an external language model, we tested with two commercial LLMs — OpenAI's GPT-5.4 and Nvidia's Nemotron-3-Ultra (via OpenRouter) — neither fine-tuned on GRN Atlas. The models received only the skill definitions and natural-language research questions, and had to select the correct tools, extract the right parameters, and chain multi-step workflows on their own.
 
 The repository now has two useful LLM validation stories:
 
@@ -490,59 +508,22 @@ It is also for teams interested in building agent-assisted biology workflows on 
 
 ## Frequently Asked Questions
 
-**Is this a regulatory network database?**
+**Is this open source?**
 
-Yes, but it is more than that. It is a regulatory-network-centered research workspace with workflow tools layered on top.
+No, not in the OSI sense. It is source-available for non-commercial use. Academic research, education, and personal experimentation are allowed. Commercial use requires separate permission.
 
 **Does it separate curated and inferred results?**
 
-Yes. That distinction is a core design rule.
+Yes. That distinction is a core design rule. Every inferred, predicted, or computationally derived result carries an explicit label distinct from measured data.
 
-**Can I use it through the web UI only?**
+**Can I use it through the web UI, the API, or agent tools?**
 
-Yes. The UI supports direct interactive use.
-
-**Can I use it through agent tools?**
-
-Yes. The repository includes the full skill layer in `.agents/skills/`.
-
-**How many skills are included?**
-
-61 documented skills total:
-
-- 60 callable analysis/workflow skills
-- 1 overview/router skill
-
-**What types of work do the skills cover?**
-
-They cover orientation and search, network structure, expression and context, cross-species reasoning, perturbation and RNAi planning, candidate ranking, evidence synthesis, literature review, validation planning, and collaborator handoff.
-
-**How well does an external LLM use the skills today?**
-
-Current clean GPT-5.4 matrix results:
-
-- single-skill routing: 347/347
-- multi-skill orchestration: 59/59
-
-Nemotron comparison results:
-
-- broad earlier single-skill rerun: 285/305 correct tool selections
-- targeted later diagnostic subset: 36/38 pass
-- full 59-question orchestration matrix on August 14, 2026: 50/59
-
-**What are the main current limits on Nemotron?**
-
-The main weak areas were abstract shared-regulator prompts, messy mixed-species normalization, weak-signal explanation, intervention tradeoff questions, single-vs-double perturbation comparisons, and some phenotype-to-experiment chains.
-
-**Is this open source?**
-
-No, not in the OSI sense. It is source-available for non-commercial use.
+All three. The UI supports direct interactive use, the FastAPI backend supports programmatic access, and the repository includes 61 documented skills in `.agents/skills/` for LLM-driven workflows.
 
 ## Further Reading
 
-- GRN Atlas repository documentation
-- GRN Atlas provenance and citation endpoints
-- CAIRN Institute website
+- [GRN Atlas repository](https://github.com/cairninstitute/grn-atlas)
+- [CAIRN Institute](http://cairninstitute.com)
 
 Questions or Feedback?
 

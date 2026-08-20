@@ -52,9 +52,24 @@ leave that layer empty**, so the core atlas always builds. Targeted loaders
 (`load_seqctx.py`, `load_pathways.py`, `load_traits.py`, `load_curated_symbols.py`) update
 an existing DB in place without a full rebuild.
 
-Fetch tiers (`fetch_sources.py --tier`): `core` (genes/interactions/coords/orthologs/GO,
-required), `light` (+ pathways/traits/seqctx/curated symbols), `all` (also attempts the
-heavy layers below).
+Fetch tiers (`fetch_sources.py --tier`): `core` (genes/interactions/coords/orthologs/GO/
+DoRothEA/gene lists, required), `light` (+ pathways/traits/seqctx/curated symbols/
+PlantRegMap/tobacco orthologs), `all` (also attempts the heavy layers below).
+
+### Data sources by species
+
+| Species | Primary | Secondary | Projection sources |
+|---------|---------|-----------|-------------------|
+| Human | TRRUST | DoRothEA (OmniPath) | — |
+| Mouse | TRRUST | DoRothEA (OmniPath) | — |
+| Arabidopsis | PlantRegMap | ATRM (direction labels → second source) | — |
+| Tomato | PlantRegMap, Literature | — | Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco |
+| Petunia | PlantRegMap, Literature | — | Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco |
+| Pepper | — | — | Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco |
+| Potato | PlantRegMap | — | — |
+
+Hand-curated files that are committed (not fetchable): `gold_standard_{species}.tsv`,
+`regulation_petunia.tsv`, `regulation_tomato.tsv`, `curated_symbols_{species}.json`.
 
 ## Compute dependencies (only for regenerating derived data)
 
@@ -75,7 +90,44 @@ when you choose to regenerate the heavy layers:
 
 Regeneration scripts (all offline-cache-producing): `fetch_seqctx.py`, `motif_scan.py`,
 `fetch_expression.py`, `fetch_pathways.py`, `fetch_traits.py`, `fetch_curated_symbols.py`,
+`fetch_plantregmap_regulation.py`, `build_tobacco_orthologs.py`,
 `check_source_freshness.py` — driven by `backend/scripts/species_config.py`.
+
+## Tobacco ortholog projection
+
+Tobacco (*Nicotiana tabacum*) isn't in PLAZA, so we construct orthologs via reciprocal
+best-hit BLAST against petunia, tomato, and pepper CDS. This projects ~725k tobacco
+PlantRegMap edges onto the atlas species.
+
+```bash
+# Fetched automatically by fetch_sources.py --tier light, or manually:
+venv/bin/python backend/scripts/fetch_plantregmap_regulation.py tobacco
+venv/bin/python backend/scripts/build_tobacco_orthologs.py   # needs BLAST+
+venv/bin/python backend/scripts/build_db.py                  # picks up the new orthologs
+```
+
+Requires BLAST+ (`makeblastdb`, `blastn`). Skips gracefully if BLAST+ is not installed.
+Output: `backend/data/orthologs_tobacco_blast.json` (~35k pairs).
+
+## Network validation
+
+After building the DB, validate edge quality:
+
+```bash
+make validate
+# or individually:
+venv/bin/python backend/scripts/validate_regulation_quality.py   # gold-standard (94 edges)
+venv/bin/python backend/scripts/validate_network_statistics.py   # population-level (all edges)
+```
+
+**Gold-standard validation** checks recall, specificity, and precision against 94
+literature-curated edges (33 petunia + 38 tomato positive, 11 + 12 negative controls)
+from `backend/data/gold_standard_{species}.tsv`.
+
+**Population-level validation** runs 5 statistical tests across ALL edges per species:
+regulon GO coherence, permutation significance, multi-evidence quality, expression
+coherence, and motif enrichment. Reports are written to
+`backend/data/network_validation_report.md`.
 
 ## Data-source currency
 

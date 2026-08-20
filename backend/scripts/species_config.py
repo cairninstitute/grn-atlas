@@ -37,6 +37,7 @@ SPECIES = {
         "genome_url": None, "id_style": "strip_isoform", "seqctx_style": "plaza_identity",
         "promoter": (2000, 500), "chrom_norm": "identity",
         "scan_edge_sql": "source_id LIKE 'Peaxi%'",
+        "plantregmap": {"species": "Petunia_axillaris", "suffix": "Pax"},
         "expr_index": "pax.idx",
         "expr_panel": {
             "SRR1585615": ["apical_shoot", "PRJNA261953"], "SRR1585635": ["flower", "PRJNA261953"],
@@ -63,6 +64,7 @@ SPECIES = {
         "id_style": "strip_isoform", "seqctx_style": "special",
         "promoter": (2000, 500), "chrom_norm": "tomato",
         "scan_edge_sql": "sources LIKE '%PlantRegMap%' AND source_id LIKE 'Solyc%'",
+        "plantregmap": {"species": "Solanum_lycopersicum", "suffix": "Sly"},
         "expr_index": "sly.idx",
         "expr_panel": {
             "DRR016684": ["leaf", "PRJDB3892"], "DRR016687": ["leaf", "PRJDB3892"],
@@ -96,6 +98,23 @@ SPECIES = {
             "DRR070501": ["root", "PRJDB5141"], "DRR032000": ["seedling", "PRJDB3217"],
             "DRR032003": ["seedling", "PRJDB3217"], "DRR032004": ["seedling", "PRJDB3217"],
         },
+    },
+    "potato": {
+        "status": "loaded", "assembly": "SolTub_3.0", "plaza_code": "stu",
+        "gff_url": _PLAZA_GFF.format(code="stu"), "cds_url": _PLAZA_CDS.format(code="stu"),
+        "genome_url": None, "id_style": "strip_isoform", "seqctx_style": "plaza_identity",
+        "promoter": (2000, 500), "chrom_norm": "identity",
+        "scan_edge_sql": "source_id LIKE 'PGSC%'",
+        "plantregmap": {"species": "Solanum_tuberosum", "suffix": "Stu"},
+        "expr_index": None, "expr_panel": {},
+    },
+    "pepper": {
+        "status": "loaded", "assembly": "Pepper.v.1.55", "plaza_code": "can",
+        "gff_url": _PLAZA_GFF.format(code="can"), "cds_url": _PLAZA_CDS.format(code="can"),
+        "genome_url": None, "id_style": "strip_isoform", "seqctx_style": "plaza_identity",
+        "promoter": (2000, 500), "chrom_norm": "identity",
+        "scan_edge_sql": "source_id LIKE 'CA%'",
+        "expr_index": None, "expr_panel": {},
     },
     # ---- Prepared placeholder for the incoming Dahlia collaboration data ----
     # Fill assembly + URLs once the G3 / NCBI BioProject genome+annotation is released.

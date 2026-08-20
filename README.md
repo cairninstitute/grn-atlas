@@ -9,7 +9,7 @@ measured data.
 
 React + Cytoscape.js frontend · FastAPI + SQLite backend.
 
-Current species coverage: **human, mouse, arabidopsis, tomato, petunia** (with dahlia
+Current species coverage: **human, mouse, arabidopsis, tomato, petunia, pepper, potato** (with dahlia
 onboarding prepared). Data layers vary by species; see the live coverage matrix at
 `GET /api/v1/species`.
 
@@ -53,6 +53,7 @@ npm install && npm run dev
 Or with the Makefile: `make setup && make fetch && make db`, then `make backend` and
 (elsewhere) `make frontend`. To add inferred regulatory edges from expression data:
 `make infer` (runs GRNBoost2 + GENIE3, ~15 min), then `make db` again to load them.
+To run network validation after building: `make validate`.
 
 > **Data is not committed.** Third-party data (each under its own upstream licence — see
 > LICENSE) is fetched from source by `fetch_sources.py`; the ~420 MB SQLite DB is then built
@@ -109,10 +110,11 @@ confirm the build is complete.
 
 | Tier / step | Command | Provides | Auto? | Needs |
 |---|---|---|---|---|
-| core | `fetch_sources.py --tier core` | genes, **human** network (TRRUST), coords, orthologs, GO | mostly | network |
-| light | `fetch_sources.py --tier light` | + pathways, traits, sequence-context windows, curated UniProt symbols | mostly | network; BLAST+ for petunia symbols |
-| manual core | *(see below)* | **measured Arabidopsis network** + its tomato/petunia projection | **no** | manual download |
+| core | `fetch_sources.py --tier core` | genes, **human** networks (TRRUST + DoRothEA), coords, orthologs, GO | mostly | network |
+| light | `fetch_sources.py --tier light` | + pathways, traits, PlantRegMap regulation (tomato/petunia/potato/tobacco), curated symbols, tobacco BLAST orthologs | mostly | network; BLAST+ for petunia symbols + tobacco orthologs |
+| manual core | *(see below)* | **measured Arabidopsis network** + ATRM direction labels → Arabidopsis multi-evidence + tomato/petunia/pepper projection | **no** | manual download |
 | heavy | `fetch_expression.py`, `motif_scan.py` | expression + predicted binding | **no** | kallisto / BLAST+, hours, GBs |
+| validate | `make validate` | gold-standard recall/specificity + population-level statistical validation | yes | built DB |
 
 `build_db.py` glob-loads whatever caches are present and **skips missing inputs gracefully**
 (printing `(skip) …`), so a partial fetch always yields a working — if reduced — atlas.
@@ -178,10 +180,77 @@ curl -s localhost:8000/api/v1/provenance/freshness | python3 -m json.tool
 ```
 
 A **complete** build (all tiers + manual core + heavy layers) should report roughly:
-`~50,800` genes · human `~4,859` edges · arabidopsis `~91,844` edges · tomato measured
-`12,719` + inferred `~197,618`. `build_db.py`'s own summary prints these counts — compare
-them, and use `/api/v1/species` to see which layers are populated vs empty. If a layer is
-unexpectedly empty, its source file wasn't fetched (check the `(skip)` lines from `build_db`).
+`~122,000` genes · human `~20,000` edges (TRRUST + DoRothEA) · mouse `~18,000` edges
+(TRRUST + DoRothEA) · arabidopsis `~91,850` edges · tomato measured `12,739` + inferred
+`~238k` · petunia `~91,697` + inferred · pepper `~2,203` (Arabidopsis projection) · potato
+`~11,409`. `build_db.py`'s own summary prints these counts — compare them, and use
+`/api/v1/species` to see which layers are populated vs empty. If a layer is unexpectedly
+empty, its source file wasn't fetched (check the `(skip)` lines from `build_db`).
+
+### Network validation
+
+After building, run `make validate` (or the two scripts directly) to produce quality reports:
+
+```bash
+# Gold-standard spot-check: recall, specificity, precision against 94 literature-curated edges
+venv/bin/python backend/scripts/validate_regulation_quality.py
+
+# Population-level statistical validation across ALL edges (5 tests per species)
+venv/bin/python backend/scripts/validate_network_statistics.py
+```
+
+The population-level tests assess the full network (not just 94 gold-standard edges) using
+orthogonal data types:
+
+1. **Regulon GO coherence** — do a TF's targets share GO terms more than random gene sets?
+2. **Permutation test** — is the network-wide coherence significant vs shuffled TF-target
+   assignments? (effect size in sigma, p-value)
+3. **Multi-evidence quality** — do edges from 2+ independent sources score higher than
+   single-source edges? (Mann-Whitney z)
+4. **Expression coherence** — do interaction-table edges appear in GRNBoost2/GENIE3
+   coexpression more than random pairs?
+5. **Motif enrichment** — do Arabidopsis orthologs of inferred targets have the TF's binding
+   motif in their promoters more than non-targets?
+
+Results are written to `backend/data/network_validation_report.md` and per-species JSON files.
+The gold-standard reports go to `backend/data/quality_report_{species}.json`.
+
+#### Current validation results (August 2026)
+
+**Gold-standard (94 literature-curated edges):**
+
+| Species | Recall | Specificity | Precision | FP rate |
+|---------|-------:|----------:|----------:|--------:|
+| Petunia | 93.8% (30/32) | 100% (11/11) | 100% | 3.5% |
+| Tomato  | 84.2% (32/38) | 100% (12/12) | 100% | 2.0% |
+
+**Population-level (all edges, 5 orthogonal tests):**
+
+| Species | Edges | Coherence (σ) | Multi-ev. z | Motif enrichment |
+|---------|------:|-------------:|----------:|----------------:|
+| Tomato | 241,828 | 37.7 | 1.74 | 32.4× |
+| Petunia | 231,438 | 30.2 | 3.08 | 25.8× |
+| Arabidopsis | 91,850 | 7.7 | 30.8 | — |
+| Human | 19,976 | 7.8 | -4.3 | — |
+| Mouse | 18,101 | — | — | — |
+| Pepper | 2,203 | — | — | 18.3× |
+| Potato | 11,409 | — | — | 2.8× |
+
+Key: **Coherence (σ)** = permutation test effect size (higher = more significant);
+**Multi-ev. z** = Mann-Whitney z comparing multi-source vs single-source edges;
+**Motif enrichment** = fold enrichment of TF binding motifs in inferred target promoters.
+
+Data sources per species:
+
+| Species | Sources | Multi-evidence edges |
+|---------|---------|--------------------:|
+| Tomato | PlantRegMap, Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco, Literature | 27,372 |
+| Petunia | PlantRegMap, Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco, Literature | 27,372 |
+| Arabidopsis | PlantRegMap, ATRM | 1,431 |
+| Human | TRRUST, DoRothEA | 2,030 |
+| Mouse | TRRUST, DoRothEA | — |
+| Pepper | Inferred:Arabidopsis | 0 |
+| Potato | PlantRegMap | 0 |
 
 ## Analysis capabilities
 

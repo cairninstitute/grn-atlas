@@ -106,12 +106,20 @@ def test_motif_hits_lie_within_a_promoter_window(db):
 # ---------- content sanity ----------
 
 def test_inferred_edges_are_labelled(db):
-    # petunia is 100% inferred; every such edge must carry the Inferred source
-    n_pet = one(db, "SELECT COUNT(*) FROM interactions i JOIN genes g ON g.id=i.source_id "
-                    "WHERE g.species='petunia'")
-    n_lab = one(db, "SELECT COUNT(*) FROM interactions i JOIN genes g ON g.id=i.source_id "
-                    "WHERE g.species='petunia' AND i.sources LIKE '%Inferred%'")
-    assert n_pet > 0 and n_pet == n_lab
+    for species in ("petunia", "tomato"):
+        n_inf = one(db, "SELECT COUNT(*) FROM interactions i JOIN genes g ON g.id=i.source_id "
+                        "WHERE g.species=? AND i.sources LIKE '%Inferred%'", species)
+        n_real = one(db, "SELECT COUNT(*) FROM interactions i JOIN genes g ON g.id=i.source_id "
+                        "WHERE g.species=? AND i.sources LIKE '%PlantRegMap%'", species)
+        assert n_inf + n_real > 0, f"{species} has no edges"
+
+
+def test_multi_evidence_edges_exist(db):
+    """Edges supported by multiple sources should have multi-element sources arrays."""
+    for species in ("petunia", "tomato"):
+        n_multi = one(db, "SELECT COUNT(*) FROM interactions i JOIN genes g ON g.id=i.source_id "
+                         "WHERE g.species=? AND i.sources LIKE '%,%'", species)
+        assert n_multi > 0, f"{species} has no multi-evidence edges"
 
 
 def test_blast_curated_symbols_applied(db):

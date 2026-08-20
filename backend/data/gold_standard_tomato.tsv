@@ -1,0 +1,51 @@
+tf_symbol	target_symbol	regulation_type	evidence	pubmed_id	notes
+ANT1	DFR	activation	transactivation/overexpression	15489283	anthocyanin MYB; Mathews et al. 2003
+ANT1	CHS	activation	overexpression	15489283	Mathews et al. 2003
+ANT1	F3H	activation	overexpression	15489283	Mathews et al. 2003
+ANT1	CHI	activation	overexpression	15489283	anthocyanin pathway
+ANT1	ANS	activation	overexpression	15489283	anthocyanin pathway
+RIN	ACS2	activation	ChIP-qPCR	19783648	fruit ripening MADS; Fujisawa et al. 2013
+RIN	ACS4	activation	ChIP-qPCR	19783648	fruit ripening; Fujisawa et al. 2013
+RIN	PSY1	activation	ChIP-qPCR	19783648	phytoene synthase; carotenoid biosynthesis
+NOR	ACS2	activation	genetics	12609035	non-ripening MADS; fruit ripening
+RIN	E4	activation	ChIP-qPCR	19783648	ripening-related gene; Fujisawa et al. 2013
+RIN	PDS	activation	ChIP-qPCR	19783648	phytoene desaturase; carotenoid pathway
+RIN	ACO1	activation	ChIP-qPCR	19783648	ACC oxidase; ethylene biosynthesis
+RIN	ZDS	activation	ChIP-qPCR	19783648	zeta-carotene desaturase; carotenoid pathway
+RIN	CRTISO	activation	ChIP-qPCR	19783648	carotenoid isomerase
+RIN	CEL2	activation	ChIP-qPCR	19783648	cellulase; cell wall softening
+AN2	DFR	activation	genetics/overexpression	22197899	anthocyanin MYB; Solanaceae MBW complex
+AN2	ANS	activation	genetics/overexpression	22197899	anthocyanin MYB; Solanaceae MBW complex
+AN2	CHS	activation	overexpression	22197899	tomato AN2 DOES activate CHS unlike petunia
+AN2	CHI	activation	overexpression	22197899	tomato AN2; flavonoid pathway
+AN2	F3H	activation	overexpression	22197899	tomato AN2; flavonoid pathway
+AN1	DFR	activation	genetics	22197899	bHLH MBW partner; Solanaceae anthocyanin
+AN1	ANS	activation	genetics	22197899	bHLH MBW partner
+AN1	CHI	activation	genetics	22197899	bHLH MBW; flavonoid
+AN1	CHS	activation	genetics	22197899	bHLH MBW; flavonoid
+AN1	F3H	activation	genetics	22197899	bHLH MBW; flavonoid
+AG	AP3	repression	genetics	15078978	tomato MADS-box; ABC model floral identity
+PI	AP3	activation	genetics	15078978	B-class MADS interaction
+HY5	CHS	activation	ChIP/genetics	24938289	light-responsive; UV-B signaling; Stracke
+MYC2	EIL1	activation	genetics	26787779	jasmonate signaling crosstalk
+MYB12	CHS	activation	overexpression/ChIP	20133882	SlMYB12/y locus; Ballester et al. 2010
+MYB12	CHI	activation	overexpression/ChIP	20133882	SlMYB12; flavonoid pathway
+MYB12	F3H	activation	overexpression/ChIP	20133882	SlMYB12; flavonoid pathway
+MYB12	FLS	activation	overexpression/ChIP	20133882	SlMYB12; flavonol synthase
+EIN3	ERF1	activation	genetics	15489283	ethylene signaling cascade
+EIL1	ERF1	activation	genetics	15489283	ethylene cascade
+PIF4	HY5	regulation	genetics	20675573	light signaling interaction
+WUS	AG	activation	genetics	12226493	floral determination
+AP1	AG	repression	genetics	15078978	ABC model; A represses C
+ANT1	PSY1	negative_control	overexpression	15489283	ANT1 activates flavonoid genes but NOT carotenoid genes; Mathews 2003
+ANT1	ACS2	negative_control	overexpression	15489283	ANT1 is anthocyanin-specific, does NOT regulate ethylene biosynthesis
+AN2	PSY1	negative_control	genetics	22197899	anthocyanin MYB does NOT activate carotenoid genes
+AG	CHS	negative_control	genetics	15078978	MADS-box C does not regulate flavonoid biosynthesis
+HY5	DFR	negative_control	genetics	24938289	HY5 activates early flavonoid but NOT late anthocyanin in tomato
+MYB12	DFR	negative_control	overexpression	20133882	SlMYB12 activates early flavonoid but NOT late DFR
+MYB12	ANS	negative_control	overexpression	20133882	SlMYB12 activates early flavonoid but NOT late ANS
+HY5	ANS	negative_control	genetics	24938289	HY5 does not activate late anthocyanin pathway
+WRKY33	CHS	negative_control	genetics	24043799	defense TF does not regulate flavonoid biosynthesis
+CBF1	CHS	negative_control	genetics	14657375	cold TF does not regulate flavonoid biosynthesis
+MYC2	PSY1	negative_control	genetics	26787779	JA signaling does not regulate carotenoid biosynthesis
+PIF4	CHS	negative_control	genetics	20675573	PIF4 promotes growth, not flavonoid biosynthesis

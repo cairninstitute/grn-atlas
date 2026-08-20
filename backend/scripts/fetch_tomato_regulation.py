@@ -1,12 +1,10 @@
 """
+DEPRECATED — use fetch_plantregmap_regulation.py (generic, species-config driven).
+This script still works but is kept only for backward compatibility.
+
 One-time enrichment: fetch the real tomato (Solanum lycopersicum) TF-target
 regulatory network from PlantRegMap and write it as regulation_tomato.tsv, in
 the same format build_db already uses for Arabidopsis.
-
-We use PlantRegMap's FunTFBS network (functional TF binding sites) -- its
-higher-confidence predicted regulation set. PlantRegMap Solyc ids carry a
-version suffix that may differ from our gene set's, so genes are matched on the
-version-less base id (Solyc..g......).
 
 Usage: python backend/scripts/fetch_tomato_regulation.py
 """

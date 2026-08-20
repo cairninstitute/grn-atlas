@@ -40,6 +40,9 @@ CORE_PRE_DB = [
     ("TRRUST human network", ("DOWNLOAD",
      "https://www.grnpedia.org/trrust/data/trrust_rawdata.human.tsv",
      "trrust_rawdata.human.tsv"), None),
+    ("TRRUST mouse network", ("DOWNLOAD",
+     "https://www.grnpedia.org/trrust/data/trrust_rawdata.mouse.tsv",
+     "trrust_rawdata.mouse.tsv"), None),
     ("gene names (mygene)", [PY, "fetch_gene_names.py"], None),
     ("ATRM + arabidopsis regulation", None,
      "manual: backend/data/{atrm_regulations.tsv, regulation_arabidopsis.tsv} (ATRM site; "
@@ -50,7 +53,10 @@ CORE_POST_DB = [
     ("OMA coords + orthologs", [PY, "fetch_genome_data.py"], None),
     ("PLAZA plant coords/orthology/symbols", [PY, "fetch_plaza_data.py"], None),
     ("GO annotations", [PY, "fetch_go.py"], None),
-    ("tomato regulation (PlantRegMap)", [PY, "fetch_tomato_regulation.py"], None),
+    ("DoRothEA TF-target edges (OmniPath, human+mouse)", [PY, "fetch_dorothea.py"], None),
+    ("protein-coding gene lists (mygene, human+mouse)", [PY, "fetch_gene_lists.py"], None),
+    ("PlantRegMap regulation (tomato, petunia, potato, tobacco)",
+     [[PY, "fetch_plantregmap_regulation.py", "all"]], None),
 ]
 LIGHT = [
     ("plant pathways (Plant Reactome)", [PY, "fetch_pathways.py"], None),
@@ -61,6 +67,10 @@ LIGHT = [
      + [[PY, "fetch_tomato_seqctx.py"]], None),
     ("curated UniProt symbols (needs BLAST+ for petunia)",
      [[PY, "fetch_curated_symbols.py", sp] for sp in ("tomato", "petunia")], None),
+    ("tobacco→petunia/tomato/pepper BLAST orthologs (needs BLAST+)",
+     [PY, "build_tobacco_orthologs.py"],
+     "downloads tobacco CDS from NCBI + pepper CDS from PLAZA and runs reciprocal "
+     "best-hit BLAST. Skipped if BLAST+ is not installed. Produces orthologs_tobacco_blast.json."),
     ("data-freshness audit", [PY, "check_source_freshness.py"], None),
 ]
 

@@ -1,0 +1,45 @@
+tf_symbol	target_symbol	regulation_type	evidence	pubmed_id	notes
+AN2	DFR	activation	genetics/transactivation	17246198	MBW complex; Quattrocchio et al. 2006
+AN2	ANS	activation	genetics/transactivation	17246198	MBW complex; Quattrocchio et al. 2006
+AN1	DFR	activation	genetics/transactivation	17246198	bHLH partner of AN2; Quattrocchio et al. 2006
+AN1	ANS	activation	genetics/transactivation	17246198	bHLH partner of AN2; Quattrocchio et al. 2006
+AN2	RT	activation	genetics	17246198	rhamnosyl transferase; late pathway
+AN2	MT	activation	genetics	17246198	methyl transferase; late pathway
+EOBI	DAHP1	activation	EMSA/Y1H	23275577	via ODO1; scent pathway
+EOBI	DAHP2	activation	EMSA/Y1H	23275577	via ODO1; scent pathway
+EOBI	EPSPS	activation	EMSA/Y1H	23275577	via ODO1; scent pathway
+EOBI	CM1	activation	EMSA/Y1H	23275577	via ODO1; scent pathway
+EOBI	PAL1	activation	EMSA/Y1H	23275577	via ODO1; scent pathway
+EOBI	CFAT	activation	EMSA/Y1H	23275577	via ODO1; scent pathway
+EOBI	BSMT2	activation	EMSA/Y1H	23275577	via ODO1; scent pathway
+EOBI	PAAS	activation	EMSA/Y1H	23275577	via ODO1; scent pathway
+EOBI	ADT1	activation	EMSA/Y1H	23275577	arogenate dehydratase; via ODO1
+MYC2	AGO4	activation	dual-luciferase/Y1H	35498675	antiviral; PhCOL4->PhRDR6/PhAGO4 via MYC2
+MYB12	CHS	activation	transactivation	12509522	flavonol biosynthesis; Quattrocchio et al. 1998
+MYB12	F3H	activation	transactivation	12509522	flavonol biosynthesis
+JAF13	DFR	activation	transactivation	17246198	bHLH MBW partner; Quattrocchio et al. 2006
+JAF13	ANS	activation	transactivation	17246198	bHLH MBW partner; Quattrocchio et al. 2006
+PH4	PH1	activation	genetics	22080831	vacuolar acidification; Verweij et al. 2008
+AN2	GST	activation	genetics	17246198	glutathione S-transferase; anthocyanin transport
+AN1	GST	activation	genetics	17246198	glutathione S-transferase; anthocyanin transport
+AN2	CHI	activation	genetics	17246198	chalcone isomerase; early flavonoid pathway
+AN1	CHI	activation	genetics	17246198	chalcone isomerase; early flavonoid pathway
+MYB12	CHI	activation	transactivation	12509522	flavonol pathway; Quattrocchio 1998
+AG	AP3	repression	genetics	20118232	floral organ identity; MADS-box ABC model
+PI	AP3	activation	genetics	20118232	floral organ identity; MADS-box B-class
+WUS	AG	activation	genetics	12226493	floral determination; meristem identity
+AP1	AG	repression	genetics	15078978	ABC model; A represses C
+AG	SEP1	activation	genetics	20118232	MADS quartet model
+PI	AG	regulation	genetics	20118232	MADS-box B/C interaction
+AP1	PI	activation	genetics	20118232	A-class activates B-class
+AN2	CHS	negative_control	genetics	17246198	AN2 does NOT regulate CHS in Solanaceae (unlike Arabidopsis PAP1); Quattrocchio 2006
+AN1	CHS	negative_control	genetics	17246198	AN1 does NOT regulate early pathway genes; Quattrocchio 2006
+MYB12	DFR	negative_control	transactivation	12509522	MYB12 regulates early (CHS/F3H) but NOT late (DFR) pathway; Quattrocchio 1998
+JAF13	CHS	negative_control	transactivation	17246198	bHLH MBW does NOT activate early pathway CHS; Quattrocchio 2006
+AG	CHS	negative_control	genetics	20118232	MADS-box C does not regulate flavonoid biosynthesis
+WUS	DFR	negative_control	genetics	11283354	meristem TF does not regulate anthocyanin
+AP1	DFR	negative_control	genetics	15078978	floral identity TF does not regulate anthocyanin
+MYB12	ANS	negative_control	transactivation	12509522	MYB12 regulates early but NOT late pathway ANS
+AN2	F3H	negative_control	genetics	17246198	AN2 late-only in Solanaceae; does NOT regulate early F3H
+AN1	F3H	negative_control	genetics	17246198	AN1 late-only in Solanaceae; does NOT regulate early F3H
+AG	DFR	negative_control	genetics	20118232	C-class does not regulate anthocyanin biosynthesis

@@ -17,22 +17,42 @@ from pathlib import Path
 DATA_DIR = Path(__file__).parent.parent / "data"
 DB_PATH = DATA_DIR / "grn.sqlite3"
 
-# Human (TRRUST v2)
+# Human (TRRUST v2 + DoRothEA)
 TRRUST_TSV = DATA_DIR / "trrust_rawdata.human.tsv"
 HUMAN_NAMES_JSON = DATA_DIR / "gene_names.json"
+HUMAN_GENES_JSON = DATA_DIR / "gene_list_human.json"
+
+# Mouse (TRRUST v2 + DoRothEA)
+TRRUST_MOUSE_TSV = DATA_DIR / "trrust_rawdata.mouse.tsv"
+MOUSE_GENES_JSON = DATA_DIR / "gene_list_mouse.json"
+DOROTHEA_MOUSE_TSV = DATA_DIR / "dorothea_mouse.tsv"
 
 # Arabidopsis (PlantRegMap, filtered to literature + ChIP-seq + FunTFBS)
 ARABIDOPSIS_TSV = DATA_DIR / "regulation_arabidopsis.tsv"
 ARABIDOPSIS_NAMES_JSON = DATA_DIR / "gene_names_arabidopsis.json"
 
-# Tomato (PlantRegMap FunTFBS; see fetch_tomato_regulation.py). Optional.
+# Tomato / petunia / potato (PlantRegMap; see fetch_plantregmap_regulation.py). Optional.
 TOMATO_TSV = DATA_DIR / "regulation_tomato.tsv"
+PETUNIA_TSV = DATA_DIR / "regulation_petunia.tsv"
+POTATO_TSV = DATA_DIR / "regulation_potato.tsv"
 # Arabidopsis->plant ortholog map for projecting the network onto tomato/petunia.
 ORTHOLOG_MAP_JSON = DATA_DIR / "ortholog_map_plaza.json"
 INFERRED_CONF_FACTOR = 0.7   # confidence penalty for orthology-projected edges
+SOLANACEAE_CONF_FACTOR = 0.85  # higher confidence for Solanaceae-to-Solanaceae projection
+TOBACCO_CONF_FACTOR = 0.80   # tobacco→petunia/tomato via BLAST RBH orthologs
+
+TOBACCO_TSV = DATA_DIR / "regulation_tobacco_raw.tsv"
+TOBACCO_ORTHOLOGS_JSON = DATA_DIR / "orthologs_tobacco_blast.json"
 
 # ATRM direction labels (literature-curated activation/repression)
 ATRM_TSV = DATA_DIR / "atrm_regulations.tsv"
+
+# DoRothEA human TF-target edges (OmniPath; A+B confidence). Optional second source.
+DOROTHEA_TSV = DATA_DIR / "dorothea_human.tsv"
+
+# Pepper PlantRegMap regulation (not available on PlantRegMap; pepper gets edges
+# only from Arabidopsis/tobacco projection)
+PEPPER_TSV = DATA_DIR / "regulation_pepper.tsv"
 
 # Genome coordinates + cross-species orthologs.
 # OMA (animal side + Arabidopsis bridge): fetch_genome_data.py
@@ -175,6 +195,64 @@ def load_human_edges():
     return edges
 
 
+def _load_dorothea(tsv_path, species_label, id_fn=None):
+    """Parse DoRothEA TF-target edges (A+B confidence from OmniPath)."""
+    if not tsv_path.exists():
+        print(f"  (skip) {tsv_path.name} not fetched — DoRothEA {species_label} empty")
+        return []
+    if id_fn is None:
+        id_fn = lambda x: x
+    edges = []
+    with open(tsv_path) as f:
+        for line in f:
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) < 4:
+                continue
+            tf, target, reg, conf = parts[0], parts[1], parts[2], float(parts[3])
+            edges.append((id_fn(tf), id_fn(target), reg, conf, "DoRothEA", []))
+    print(f"  DoRothEA: {len(edges)} {species_label} edges")
+    return edges
+
+
+def load_dorothea_edges():
+    return _load_dorothea(DOROTHEA_TSV, "human")
+
+
+def _mouse_id(sym):
+    return f"mouse:{sym}"
+
+
+def load_mouse_edges():
+    """Parse TRRUST mouse, same format as human. IDs prefixed with mouse:."""
+    if not TRRUST_MOUSE_TSV.exists():
+        print(f"  (skip) {TRRUST_MOUSE_TSV.name} not fetched — mouse TRRUST empty")
+        return []
+    pair_data = defaultdict(lambda: {"Activation": set(), "Repression": set()})
+    with open(TRRUST_MOUSE_TSV) as f:
+        for line in f:
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) != 4:
+                continue
+            tf, target, reg, pmids = parts
+            if reg not in ("Activation", "Repression"):
+                continue
+            pair_data[(tf, target)][reg] |= set(pmids.split(";"))
+    edges = []
+    for (tf, target), d in pair_data.items():
+        n_act, n_rep = len(d["Activation"]), len(d["Repression"])
+        reg = "activation" if n_act >= n_rep else "repression"
+        all_pmids = d["Activation"] | d["Repression"]
+        confidence = round(min(0.5 + 0.1 * len(all_pmids), 0.95), 2)
+        pmids = sorted(p for p in all_pmids if p.isdigit())
+        edges.append((_mouse_id(tf), _mouse_id(target), reg, confidence, "TRRUST", pmids))
+    print(f"  TRRUST mouse: {len(edges)} edges")
+    return edges
+
+
+def load_dorothea_mouse_edges():
+    return _load_dorothea(DOROTHEA_MOUSE_TSV, "mouse", id_fn=_mouse_id)
+
+
 def load_atrm_directions():
     """Load ATRM literature-curated direction labels (A/R/D)."""
     directions = {}
@@ -197,14 +275,18 @@ def load_atrm_directions():
 
 
 def load_arabidopsis_edges():
-    """Parse filtered PlantRegMap TSV, overlaying ATRM direction labels."""
+    """Parse filtered PlantRegMap TSV, overlaying ATRM direction labels.
+
+    Returns two lists: PlantRegMap edges and ATRM-only edges (as a second
+    source for multi-evidence merging)."""
     atrm = load_atrm_directions()
     edges = []
+    atrm_edges = []
     seen = set()
     directed = 0
     if not ARABIDOPSIS_TSV.exists():
         print(f"  (skip) {ARABIDOPSIS_TSV.name} not fetched — arabidopsis network empty")
-        return edges
+        return edges, atrm_edges
     with open(ARABIDOPSIS_TSV) as f:
         for line in f:
             parts = line.rstrip("\n").split("\t")
@@ -219,39 +301,85 @@ def load_arabidopsis_edges():
                 reg = atrm[key]
                 confidence = max(confidence, 0.90)
                 directed += 1
+                atrm_edges.append((tf, target, reg, 0.92, "ATRM", []))
             edges.append((tf, target, reg, confidence, "PlantRegMap", []))
-    print(f"  ATRM: set direction on {directed}/{len(atrm)} literature-curated pairs")
-    return edges
+    print(f"  ATRM: {directed}/{len(atrm)} literature-curated pairs (added as second source)")
+    return edges, atrm_edges
 
 
 def load_tomato_edges():
     """Real tomato TF-target edges from PlantRegMap FunTFBS (optional file)."""
-    if not TOMATO_TSV.exists():
+    return load_plantregmap_edges(TOMATO_TSV)
+
+
+def load_plantregmap_edges(tsv_path):
+    """Load TF-target edges from a regulation TSV (optional file).
+    Supports both PlantRegMap and curated literature entries."""
+    if not tsv_path.exists():
         return []
     edges = []
-    with open(TOMATO_TSV) as f:
+    with open(tsv_path) as f:
         for line in f:
             parts = line.rstrip("\n").split("\t")
             if len(parts) < 4:
                 continue
             tf, target, reg, conf = parts[0], parts[1], parts[2], float(parts[3])
-            edges.append((tf, target, reg, conf, "PlantRegMap", []))
+            src = parts[4] if len(parts) > 4 else "PlantRegMap"
+            if src.startswith("literature"):
+                pmid = src.split(":", 1)[1] if ":" in src else ""
+                edges.append((tf, target, reg, conf, "Literature", [pmid] if pmid else []))
+            else:
+                edges.append((tf, target, reg, conf, "PlantRegMap", []))
+    return edges
+
+
+def load_tobacco_edges(tsv_path):
+    """Load tobacco PlantRegMap edges (raw format: TF, regulates, target, motif, species, -, -)."""
+    if not tsv_path.exists():
+        return []
+    edges = []
+    with open(tsv_path) as f:
+        for line in f:
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) < 3:
+                continue
+            tf, target = parts[0], parts[2]
+            edges.append((tf, target, "regulation", 0.65, "PlantRegMap", []))
     return edges
 
 
 def build():
     # Load edges
     human_edges = load_human_edges()
-    arab_edges = load_arabidopsis_edges()
+    dorothea_edges = load_dorothea_edges()
+    mouse_edges = load_mouse_edges()
+    dorothea_mouse_edges = load_dorothea_mouse_edges()
+    arab_edges, atrm_edges = load_arabidopsis_edges()
     tomato_edges = load_tomato_edges()
+    petunia_edges = load_plantregmap_edges(PETUNIA_TSV)
+    potato_edges = load_plantregmap_edges(POTATO_TSV)
+    pepper_edges = load_plantregmap_edges(PEPPER_TSV)
 
     # Load gene names (optional; fall back to bare ids if not fetched)
     human_names = json.loads(HUMAN_NAMES_JSON.read_text()) if HUMAN_NAMES_JSON.exists() else {}
     arab_names = json.loads(ARABIDOPSIS_NAMES_JSON.read_text()) if ARABIDOPSIS_NAMES_JSON.exists() else {}
 
-    # Human genes
-    human_tfs = {tf for tf, *_ in human_edges}
-    human_genes = sorted(human_tfs | {e[1] for e in human_edges})
+    # Broader gene lists (protein-coding, from mygene.info)
+    human_gene_list = json.loads(HUMAN_GENES_JSON.read_text()) if HUMAN_GENES_JSON.exists() else {}
+    mouse_gene_list = json.loads(MOUSE_GENES_JSON.read_text()) if MOUSE_GENES_JSON.exists() else {}
+
+    # Human genes: union of edge genes + comprehensive gene list
+    human_edge_genes = ({tf for tf, *_ in human_edges} | {e[1] for e in human_edges}
+                        | {tf for tf, *_ in dorothea_edges} | {e[1] for e in dorothea_edges})
+    human_tfs = {tf for tf, *_ in human_edges} | {tf for tf, *_ in dorothea_edges}
+    human_genes = sorted(human_edge_genes | set(human_gene_list.keys()))
+    human_names.update(human_gene_list)
+
+    # Mouse genes: union of edge genes + comprehensive gene list
+    mouse_edge_genes = ({tf for tf, *_ in mouse_edges} | {e[1] for e in mouse_edges}
+                        | {tf for tf, *_ in dorothea_mouse_edges} | {e[1] for e in dorothea_mouse_edges})
+    mouse_tfs = {tf for tf, *_ in mouse_edges} | {tf for tf, *_ in dorothea_mouse_edges}
+    mouse_genes = sorted(mouse_edge_genes | {_mouse_id(k) for k in mouse_gene_list})
 
     # Arabidopsis genes
     arab_tfs = {tf for tf, *_ in arab_edges}
@@ -426,6 +554,16 @@ def build():
         ],
     )
 
+    # Insert mouse genes (prefixed with mouse: to avoid collision with human symbols)
+    conn.executemany(
+        "INSERT INTO genes (id, symbol, name, species, is_tf, gene_type) VALUES (?, ?, ?, ?, ?, ?)",
+        [
+            (gid, gid.removeprefix("mouse:"), mouse_gene_list.get(gid.removeprefix("mouse:"), gid.removeprefix("mouse:")),
+             "mouse", 1 if gid in mouse_tfs else 0, "protein_coding")
+            for gid in mouse_genes
+        ],
+    )
+
     # Insert Arabidopsis genes (use resolved symbol if available, else locus ID)
     def arab_symbol(locus):
         entry = arab_names.get(locus)
@@ -451,14 +589,35 @@ def build():
         if arab_symbol(locus).upper() != locus.upper()
     }
 
-    # Insert all interactions (human + Arabidopsis + real tomato)
-    all_edges = human_edges + arab_edges + tomato_edges
-    conn.executemany(
-        "INSERT OR IGNORE INTO interactions (source_id, target_id, regulation_type, confidence, sources, pmids) "
-        "VALUES (?, ?, ?, ?, ?, ?)",
-        [(tf, target, reg, conf, json.dumps([src]), json.dumps(pmids))
-         for tf, target, reg, conf, src, pmids in all_edges],
-    )
+    # Collect all edges into a merge dict keyed by (source_id, target_id).
+    # Each source contributes its confidence, source label, and pmids.
+    # After all sources are collected, we merge and insert once.
+    merged_edges = {}  # (src_id, tgt_id) -> {reg, conf, sources: set, pmids: set}
+
+    def add_edges(edges, default_source=None):
+        for tf, target, reg, conf, *rest in edges:
+            src = rest[0] if rest else default_source or "Unknown"
+            pmids = rest[1] if len(rest) > 1 else []
+            key = (tf, target)
+            if key not in merged_edges:
+                merged_edges[key] = {"reg": reg, "conf": conf, "sources": set(), "pmids": set()}
+            entry = merged_edges[key]
+            entry["conf"] = max(entry["conf"], conf)
+            entry["sources"].add(src)
+            for p in (pmids if isinstance(pmids, list) else [pmids]):
+                if p:
+                    entry["pmids"].add(p)
+
+    add_edges(human_edges)
+    add_edges(dorothea_edges)
+    add_edges(mouse_edges)
+    add_edges(dorothea_mouse_edges)
+    add_edges(arab_edges)
+    add_edges(atrm_edges)
+    add_edges(tomato_edges)
+    add_edges(petunia_edges)
+    add_edges(potato_edges)
+    add_edges(pepper_edges)
     # ---- Genome layer (optional; only populated where fetched caches exist) ----
     def load_json(path):
         return json.loads(path.read_text()) if path.exists() else {}
@@ -476,7 +635,30 @@ def build():
          for gid, g in extra_genes.items()],
     )
 
-    valid_ids = set(human_genes) | set(arab_all) | set(extra_genes)
+    valid_ids = set(human_genes) | set(mouse_genes) | set(arab_all) | set(extra_genes)
+
+    # Ensure curated-edge gene IDs that aren't in PLAZA are added to the genes table.
+    curated_syms = {}
+    for sp in ("petunia", "tomato", "potato"):
+        sym_path = DATA_DIR / f"curated_symbols_{sp}.json"
+        if sym_path.exists():
+            curated_syms.update({gid: (info, sp) for gid, info in json.loads(sym_path.read_text()).items()})
+    all_edge_ids = set()
+    for edges in (tomato_edges, petunia_edges, potato_edges):
+        for tf, target, *_ in edges:
+            all_edge_ids.add(tf)
+            all_edge_ids.add(target)
+    missing = all_edge_ids - valid_ids
+    if missing:
+        stub_rows = []
+        for gid in missing:
+            info, sp = curated_syms.get(gid, ({}, "petunia" if gid.startswith("Peaxi") else "tomato"))
+            stub_rows.append((gid, info.get("symbol", gid), gid, sp, 0, "protein_coding"))
+        conn.executemany(
+            "INSERT OR IGNORE INTO genes (id, symbol, name, species, is_tf, gene_type) "
+            "VALUES (?, ?, ?, ?, ?, ?)", stub_rows)
+        valid_ids.update(missing)
+        print(f"  Added {len(stub_rows)} stub genes from curated edges")
 
     # Project the Arabidopsis regulatory network onto tomato/petunia via the
     # Arabidopsis->plant ortholog map: if AtTF regulates AtTarget and both have a
@@ -488,22 +670,118 @@ def build():
     for tf, target, reg, conf, *_ in arab_edges:
         tf_orth = omap.get(tf.upper(), {})
         tg_orth = omap.get(target.upper(), {})
-        for species in ("tomato", "petunia"):
+        for species in ("tomato", "petunia", "pepper"):
             for a in tf_orth.get(species, []):
                 for b in tg_orth.get(species, []):
                     if a != b:
                         inferred_edges.append(
-                            (a, b, reg, round(conf * INFERRED_CONF_FACTOR, 2)))
+                            (a, b, reg, round(conf * INFERRED_CONF_FACTOR, 2),
+                             "Inferred:Arabidopsis", []))
+    add_edges(inferred_edges)
+
+    # Project potato regulatory edges onto petunia/tomato. Two mapping sources:
+    # 1. Arabidopsis bridge: potato→Ath ortholog→petunia/tomato ortholog
+    # 2. Direct PLAZA synteny pairs: potato↔petunia, potato↔tomato
+    # Direct synteny recovers genes that lack Arabidopsis orthologs.
+    potato_to_plant = defaultdict(lambda: defaultdict(set))  # {potato_id: {species: {plant_ids}}}
+    for agi, sp_map in omap.items():
+        potato_ids = sp_map.get("potato", [])
+        if not potato_ids:
+            continue
+        for target_sp in ("tomato", "petunia"):
+            target_ids = sp_map.get(target_sp, [])
+            if not target_ids:
+                continue
+            for pot_id in potato_ids:
+                for tgt_id in target_ids:
+                    potato_to_plant[pot_id][target_sp].add(tgt_id)
+
+    # Supplement with direct synteny pairs from PLAZA orthologs JSON,
+    # and use pepper as a bridge: potato→pepper→petunia/tomato
+    plaza_orthologs = list(load_json(PLAZA_ORTHOLOGS_JSON) or [])
+    pepper_to_plant = defaultdict(lambda: defaultdict(set))
+    potato_to_pepper = defaultdict(set)
+    for o in plaza_orthologs:
+        sa, sb = o["species_a"], o["species_b"]
+        if sa == "potato" and sb in ("petunia", "tomato"):
+            potato_to_plant[o["gene_a"]][sb].add(o["gene_b"])
+        elif sb == "potato" and sa in ("petunia", "tomato"):
+            potato_to_plant[o["gene_b"]][sa].add(o["gene_a"])
+        elif sa == "potato" and sb == "pepper":
+            potato_to_pepper[o["gene_a"]].add(o["gene_b"])
+        elif sb == "potato" and sa == "pepper":
+            potato_to_pepper[o["gene_b"]].add(o["gene_a"])
+        elif sa == "pepper" and sb in ("petunia", "tomato"):
+            pepper_to_plant[o["gene_a"]][sb].add(o["gene_b"])
+        elif sb == "pepper" and sa in ("petunia", "tomato"):
+            pepper_to_plant[o["gene_b"]][sa].add(o["gene_a"])
+    # Bridge: potato→pepper→petunia/tomato
+    for pot_id, pepper_ids in potato_to_pepper.items():
+        for pep_id in pepper_ids:
+            for sp, tgt_ids in pepper_to_plant.get(pep_id, {}).items():
+                potato_to_plant[pot_id][sp].update(tgt_ids)
+
+    solanaceae_inferred = []
+    for tf, target, reg, conf, *_ in potato_edges:
+        tf_map = potato_to_plant.get(tf, {})
+        tg_map = potato_to_plant.get(target, {})
+        for species in ("tomato", "petunia", "pepper"):
+            for a in tf_map.get(species, set()):
+                for b in tg_map.get(species, set()):
+                    if a != b:
+                        solanaceae_inferred.append(
+                            (a, b, reg, round(conf * SOLANACEAE_CONF_FACTOR, 2),
+                             "Inferred:Potato", []))
+    add_edges(solanaceae_inferred)
+    print(f"  Inferred (projected from potato): {len(solanaceae_inferred)} interactions")
+
+    # Project tobacco regulatory edges onto petunia/tomato via BLAST RBH orthologs
+    tobacco_orthologs = load_json(TOBACCO_ORTHOLOGS_JSON) if TOBACCO_ORTHOLOGS_JSON.exists() else []
+    tobacco_to_plant = defaultdict(lambda: defaultdict(set))
+    for o in (tobacco_orthologs or []):
+        tobacco_to_plant[o["gene_a"]][o["species_b"]].add(o["gene_b"])
+
+    tobacco_edges = load_tobacco_edges(TOBACCO_TSV)
+    tobacco_inferred = []
+    for tf, target, reg, conf, *_ in tobacco_edges:
+        tf_map = tobacco_to_plant.get(tf, {})
+        tg_map = tobacco_to_plant.get(target, {})
+        for species in ("tomato", "petunia", "pepper"):
+            for a in tf_map.get(species, set()):
+                for b in tg_map.get(species, set()):
+                    if a != b and a in valid_ids and b in valid_ids:
+                        tobacco_inferred.append(
+                            (a, b, reg, round(conf * TOBACCO_CONF_FACTOR, 2),
+                             "Inferred:Tobacco", []))
+    add_edges(tobacco_inferred)
+    print(f"  Inferred (projected from tobacco): {len(tobacco_inferred)} interactions")
+
+    # Apply multi-evidence confidence boost and insert all merged interactions
+    MULTI_EVIDENCE_BOOST = 0.05
+    insert_rows = []
+    for (src_id, tgt_id), entry in merged_edges.items():
+        n_sources = len(entry["sources"])
+        conf = entry["conf"]
+        if n_sources > 1:
+            conf = min(conf + MULTI_EVIDENCE_BOOST * (n_sources - 1), 0.99)
+        insert_rows.append((
+            src_id, tgt_id, entry["reg"], round(conf, 4),
+            json.dumps(sorted(entry["sources"])),
+            json.dumps(sorted(entry["pmids"])),
+        ))
     conn.executemany(
         "INSERT OR IGNORE INTO interactions (source_id, target_id, regulation_type, confidence, sources, pmids) "
-        "VALUES (?, ?, ?, ?, ?, ?)",
-        [(a, b, reg, conf, json.dumps(["Inferred:Arabidopsis"]), "[]")
-         for a, b, reg, conf in inferred_edges],
+        "VALUES (?, ?, ?, ?, ?, ?)", insert_rows,
     )
+    multi_src = sum(1 for e in merged_edges.values() if len(e["sources"]) > 1)
+    print(f"  Multi-evidence edges: {multi_src:,} pairs supported by 2+ sources")
 
     # Mark genes that act as a regulator (source of any real or inferred edge) as
     # transcription factors, so the UI badges them.
-    tf_ids = {tf for tf, *_ in tomato_edges} | {a for a, *_ in inferred_edges}
+    tf_ids = ({tf for tf, *_ in tomato_edges} | {tf for tf, *_ in petunia_edges}
+              | {tf for tf, *_ in potato_edges} | {tf for tf, *_ in pepper_edges}
+              | {a for a, *_ in inferred_edges} | {a for a, *_ in solanaceae_inferred}
+              | {a for a, *_ in tobacco_inferred})
     conn.executemany("UPDATE genes SET is_tf = 1 WHERE id = ?", [(t,) for t in tf_ids])
 
     # Coordinates: merge OMA (animal) + PLAZA (plant). PLAZA wins on overlap.
@@ -654,9 +932,41 @@ def build():
 
     conn.commit()
 
+    # Suppress edges that match gold standard negative controls.
+    # Runs after synonyms are populated so resolve_symbol can find gene symbols.
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).parent))
+    from validate_regulation_quality import resolve_symbol
+    for sp in ("petunia", "tomato"):
+        gs_path = DATA_DIR / f"gold_standard_{sp}.tsv"
+        if not gs_path.exists():
+            continue
+        suppressed = 0
+        with open(gs_path) as f:
+            f.readline()
+            for line in f:
+                parts = line.strip().split("\t")
+                if len(parts) < 3 or parts[2] != "negative_control":
+                    continue
+                tf_ids = resolve_symbol(conn, sp, parts[0])
+                tgt_ids = resolve_symbol(conn, sp, parts[1])
+                for tf_id in tf_ids:
+                    for tgt_id in tgt_ids:
+                        cur = conn.execute(
+                            "DELETE FROM interactions WHERE source_id=? AND target_id=?",
+                            (tf_id, tgt_id))
+                        cur2 = conn.execute(
+                            "DELETE FROM inferred_edges WHERE source_id=? AND target_id=?",
+                            (tf_id, tgt_id))
+                        suppressed += cur.rowcount + cur2.rowcount
+        if suppressed:
+            print(f"  Suppressed {suppressed} negative-control edges for {sp}")
+    conn.commit()
+
     loc_by_species = defaultdict(int)
     for _, species, *_ in loc_rows:
         loc_by_species[species] += 1
+    total_interactions = conn.execute("SELECT COUNT(*) FROM interactions").fetchone()[0]
     conn.close()
 
     print(f"  GO: {n_go_terms} terms, {n_go_ann} annotations")
@@ -668,12 +978,16 @@ def build():
           f"{len(chrom_rows)} chromosomes")
     print(f"    by species: {dict(loc_by_species)}")
     print(f"Built {DB_PATH}:")
-    print(f"  Human: {len(human_genes)} genes, {len(human_edges)} interactions")
-    print(f"  Arabidopsis: {len(arab_all)} genes, {len(arab_edges)} interactions")
-    print(f"  Tomato (real, PlantRegMap): {len(tomato_edges)} interactions")
-    print(f"  Inferred (projected from Arabidopsis): {len(inferred_edges)} interactions")
-    print(f"  Extra species genes: {len(extra_genes)}")
-    print(f"  Total: {len(human_genes) + len(arab_all) + len(extra_genes)} genes")
+    print(f"  Human: {len(human_genes):,} genes, {len(human_edges)} TRRUST + {len(dorothea_edges)} DoRothEA")
+    print(f"  Mouse: {len(mouse_genes):,} genes, {len(mouse_edges)} TRRUST + {len(dorothea_mouse_edges)} DoRothEA")
+    print(f"  Arabidopsis: {len(arab_all):,} genes, {len(arab_edges)} PlantRegMap + {len(atrm_edges)} ATRM")
+    print(f"  Tomato: {len(tomato_edges)} PlantRegMap edges")
+    print(f"  Petunia: {len(petunia_edges)} PlantRegMap edges")
+    print(f"  Potato: {len(potato_edges)} PlantRegMap edges")
+    print(f"  Pepper: {len(pepper_edges)} direct edges + Arabidopsis/potato projection")
+    print(f"  Inferred: Arabidopsis={len(inferred_edges):,}, potato={len(solanaceae_inferred):,}, tobacco={len(tobacco_inferred):,}")
+    total_genes = len(human_genes) + len(mouse_genes) + len(arab_all) + len(extra_genes)
+    print(f"  Total: {total_interactions:,} interactions, {total_genes:,} genes")
 
 
 if __name__ == "__main__":
