@@ -296,6 +296,33 @@ export const analysisAPI = {
     return response.json();
   },
 
+  tfActivity: async (geneValues, species, options = {}) => {
+    const response = await fetch(`${API_BASE}/activity/tf`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_values: geneValues, species,
+        min_regulon_size: options.minRegulonSize || 5,
+        min_confidence: options.minConfidence || 0.0,
+        top: options.top || 50,
+        method: options.method || 'ulm',
+      }),
+    });
+    return response.json();
+  },
+
+  pathwayActivity: async (geneValues, species, options = {}) => {
+    const response = await fetch(`${API_BASE}/activity/pathway`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_values: geneValues, species,
+        top: options.top || 50,
+      }),
+    });
+    return response.json();
+  },
+
   edgeTissueWeights: async (sourceId, targetId) => {
     const response = await fetch(`${API_BASE}/edge/${encodeURIComponent(sourceId)}/${encodeURIComponent(targetId)}/tissues`);
     return response.json();

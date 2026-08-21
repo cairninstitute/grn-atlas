@@ -241,7 +241,134 @@ def screen(target_genes: List[str], transcripts: Dict[str, str], k: int = 21,
     return out
 
 
+def sirna_efficacy(sirna: str) -> dict:
+    """Heuristic efficacy score for a 21-nt siRNA based on published design rules.
+
+    Rules based on Reynolds et al. 2004 and Ui-Tei et al. 2004:
+    - GC content 30-52% preferred
+    - A/U at position 1 (guide 5' end) preferred
+    - G/C at position 19 (guide 3' end) preferred for thermodynamic asymmetry
+    - Low internal repeats
+    """
+    s = sirna.upper()
+    n = len(s)
+    if n < 19:
+        return {"score": 0, "gc": 0, "notes": ["too short"]}
+
+    gc = sum(1 for c in s if c in "GC") / n
+    score = 0.0
+    notes = []
+
+    if 0.30 <= gc <= 0.52:
+        score += 0.3
+    elif gc < 0.25 or gc > 0.58:
+        score -= 0.2
+        notes.append("extreme GC")
+
+    if s[0] in "AU":
+        score += 0.2
+        notes.append("A/U at 5' guide")
+    if n >= 19 and s[18] in "GC":
+        score += 0.15
+        notes.append("G/C at 3' guide")
+
+    if s[0] in "AU" and (n >= 19 and s[18] in "GC"):
+        score += 0.15
+        notes.append("favorable asymmetry")
+
+    max_run = max(len(s.split(c)[0]) for c in "ACGT" if c in s) if s else 0
+    for c in "ACGT":
+        run = 0
+        for ch in s:
+            if ch == c:
+                run += 1
+                max_run = max(max_run, run)
+            else:
+                run = 0
+    if max_run >= 4:
+        score -= 0.1
+        notes.append(f"repeat run {max_run}")
+
+    score += 0.2
+
+    return {
+        "score": round(max(0, min(score, 1.0)), 3),
+        "gc": round(gc, 3),
+        "notes": notes,
+    }
+
+
+def sirna_pool(dsrna: str, k: int = 21) -> List[dict]:
+    """Score all siRNAs in a dsRNA window for efficacy."""
+    s = dsrna.upper()
+    pool = []
+    for i, w in kmers(s, k):
+        eff = sirna_efficacy(w)
+        pool.append({
+            "position": i,
+            "sequence": w,
+            "strand": "sense",
+            "gc": eff["gc"],
+            "efficacy_score": eff["score"],
+            "notes": eff["notes"],
+        })
+    rc = revcomp(s)
+    for i, w in kmers(rc, k):
+        eff = sirna_efficacy(w)
+        pool.append({
+            "position": i,
+            "sequence": w,
+            "strand": "antisense",
+            "gc": eff["gc"],
+            "efficacy_score": eff["score"],
+            "notes": eff["notes"],
+        })
+    pool.sort(key=lambda d: d["efficacy_score"], reverse=True)
+    return pool
+
+
+def load_transcripts_isoform_aware(path: Path) -> Dict[str, List[dict]]:
+    """Load transcripts preserving individual isoforms.
+    Returns {gene_id: [{isoform_id, sequence, length}, ...]}."""
+    genes: Dict[str, List[dict]] = defaultdict(list)
+    opener = gzip.open if str(path).endswith(".gz") else open
+    isoform_id, buf = None, []
+    with opener(path, "rt") as fh:
+        for line in fh:
+            if line.startswith(">"):
+                if isoform_id:
+                    seq = "".join(buf).upper()
+                    gid = gene_of(isoform_id)
+                    genes[gid].append({"isoform_id": isoform_id, "sequence": seq, "length": len(seq)})
+                isoform_id = line[1:].split()[0]
+                buf = []
+            else:
+                buf.append(line.strip())
+        if isoform_id:
+            seq = "".join(buf).upper()
+            gid = gene_of(isoform_id)
+            genes[gid].append({"isoform_id": isoform_id, "sequence": seq, "length": len(seq)})
+    return dict(genes)
+
+
+def isoform_coverage(dsrna: str, gene_isoforms: List[dict], k: int = 21) -> List[dict]:
+    """Check which isoforms of a gene are hit by a dsRNA and how many sites."""
+    qk = query_kmers(dsrna, k)
+    results = []
+    for iso in gene_isoforms:
+        sites = sum(1 for _, w in kmers(iso["sequence"], k) if w in qk)
+        results.append({
+            "isoform_id": iso["isoform_id"],
+            "length": iso["length"],
+            "sites": sites,
+            "covered": sites > 0,
+            "coverage_pct": round(sites / max(1, len(iso["sequence"]) - k + 1) * 100, 1),
+        })
+    return results
+
+
 _cache: Dict[str, Optional[Dict[str, str]]] = {}
+_isoform_cache: Dict[str, Optional[Dict[str, List[dict]]]] = {}
 
 
 def get_transcripts(species: str, data_dir: Path) -> Optional[Dict[str, str]]:
@@ -249,3 +376,10 @@ def get_transcripts(species: str, data_dir: Path) -> Optional[Dict[str, str]]:
         path = data_dir / f"transcripts_{species}.fasta.gz"
         _cache[species] = load_transcripts(path) if path.exists() else None
     return _cache[species]
+
+
+def get_isoforms(species: str, data_dir: Path) -> Optional[Dict[str, List[dict]]]:
+    if species not in _isoform_cache:
+        path = data_dir / f"transcripts_{species}.fasta.gz"
+        _isoform_cache[species] = load_transcripts_isoform_aware(path) if path.exists() else None
+    return _isoform_cache[species]

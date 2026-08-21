@@ -862,6 +862,191 @@ async def upstream_regulators(request: UpstreamRequest):
     }
 
 
+class TFActivityRequest(BaseModel):
+    gene_values: dict  # {gene_id: float} — log2FC, z-score, or expression values
+    species: Optional[str] = None
+    min_regulon_size: int = 5
+    min_confidence: float = 0.0
+    top: int = 50
+    include_inferred: bool = True
+    method: str = "ulm"  # "ulm" (univariate linear model) or "wmean" (weighted mean)
+
+
+class PathwayActivityRequest(BaseModel):
+    gene_values: dict  # {gene_id: float}
+    species: Optional[str] = None
+    top: int = 50
+
+
+@app.post("/api/v1/activity/tf")
+async def tf_activity(request: TFActivityRequest):
+    """Infer TF activity from gene-level statistics using atlas regulons.
+
+    Accepts a dict of gene_id → value (log2FC, z-score, or expression) and
+    scores each TF by the collective behavior of its signed regulon targets.
+    Methods: 'ulm' (univariate linear model) or 'wmean' (weighted mean)."""
+    gene_vals = request.gene_values
+    if len(gene_vals) < 3:
+        raise HTTPException(status_code=400, detail="Provide at least 3 gene values")
+
+    species = request.species or _species_of(list(gene_vals.keys())[0])
+    if not species:
+        raise HTTPException(status_code=400, detail="Cannot determine species")
+
+    inferred_clause = "" if request.include_inferred else " AND i.sources NOT LIKE '%Inferred%'"
+    rows = db.conn.execute(
+        f"SELECT i.source_id, i.target_id, i.regulation_type, i.confidence "
+        f"FROM interactions i JOIN genes g ON g.id = i.source_id "
+        f"WHERE g.species = ? AND g.is_tf = 1 AND i.confidence >= ?{inferred_clause}",
+        (species, request.min_confidence)
+    ).fetchall()
+
+    tf_regulons = {}
+    for r in rows:
+        tf = r["source_id"]
+        target = r["target_id"]
+        reg = r["regulation_type"]
+        conf = r["confidence"]
+        sign = 1.0 if reg == "activation" else (-1.0 if reg == "repression" else 0.5)
+        weight = sign * conf
+        tf_regulons.setdefault(tf, []).append((target, weight))
+
+    import math
+    results = []
+    all_vals = list(gene_vals.values())
+    global_mean = sum(all_vals) / len(all_vals)
+    global_var = sum((v - global_mean) ** 2 for v in all_vals) / len(all_vals) if len(all_vals) > 1 else 1.0
+
+    for tf, targets in tf_regulons.items():
+        matched = [(w, gene_vals[t]) for t, w in targets if t in gene_vals]
+        if len(matched) < request.min_regulon_size:
+            continue
+
+        weights = [m[0] for m in matched]
+        values = [m[1] for m in matched]
+        n = len(matched)
+
+        if request.method == "wmean":
+            w_sum = sum(abs(w) for w in weights)
+            if w_sum == 0:
+                continue
+            score = sum(w * v for w, v in zip(weights, values)) / w_sum
+            se = math.sqrt(sum((w * (v - score)) ** 2 for w, v in zip(weights, values))) / (w_sum * math.sqrt(n)) if n > 1 else 1.0
+        else:
+            w_mean = sum(weights) / n
+            v_mean = sum(values) / n
+            num = sum((w - w_mean) * (v - v_mean) for w, v in zip(weights, values))
+            denom = sum((w - w_mean) ** 2 for w in weights)
+            if denom == 0:
+                continue
+            score = num / denom
+            residuals = [v - (score * w) for w, v in zip(weights, values)]
+            res_var = sum(r ** 2 for r in residuals) / (n - 2) if n > 2 else 1.0
+            se = math.sqrt(res_var / denom) if denom > 0 else 1.0
+
+        t_stat = score / se if se > 0 else 0.0
+        p_value = _t_to_p(t_stat, max(n - 2, 1))
+
+        gene_info = db.get_gene(tf)
+        results.append({
+            "gene_id": tf,
+            "symbol": gene_info.symbol if gene_info else tf,
+            "activity_score": round(score, 6),
+            "t_statistic": round(t_stat, 4),
+            "p_value": p_value,
+            "regulon_size": len(targets),
+            "matched_targets": n,
+            "method": request.method,
+        })
+
+    results.sort(key=lambda x: x["p_value"])
+    ranked = results[:request.top]
+
+    if ranked:
+        for i, r in enumerate(sorted(range(len(ranked)),
+                                       key=lambda j: ranked[j]["p_value"])):
+            rank = i + 1
+            ranked[r]["q_value"] = min(ranked[r]["p_value"] * len(ranked) / rank, 1.0)
+        for i in range(len(ranked) - 2, -1, -1):
+            ranked[i]["q_value"] = min(ranked[i]["q_value"], ranked[i + 1]["q_value"])
+
+    return {
+        "species": species,
+        "input_genes": len(gene_vals),
+        "matched_genes": sum(1 for g in gene_vals if any(g == t for tf_targets in tf_regulons.values() for t, _ in tf_targets)),
+        "method": request.method,
+        "regulators": ranked,
+    }
+
+
+@app.post("/api/v1/activity/pathway")
+async def pathway_activity(request: PathwayActivityRequest):
+    """Infer pathway activity from gene-level statistics.
+
+    Scores each pathway by the mean value of its member genes present in the input."""
+    gene_vals = request.gene_values
+    if len(gene_vals) < 3:
+        raise HTTPException(status_code=400, detail="Provide at least 3 gene values")
+
+    species = request.species or _species_of(list(gene_vals.keys())[0])
+    if not species:
+        raise HTTPException(status_code=400, detail="Cannot determine species")
+
+    rows = db.conn.execute(
+        "SELECT pa.pathway_id, p.name, pa.gene_id FROM pathway_annotations pa "
+        "JOIN pathways p ON p.pathway_id = pa.pathway_id "
+        "JOIN genes g ON g.id = pa.gene_id WHERE g.species = ?",
+        (species,)
+    ).fetchall()
+
+    pathways = {}
+    for r in rows:
+        pathways.setdefault((r[0], r[1]), []).append(r[2])
+
+    import math
+    results = []
+    all_vals = list(gene_vals.values())
+    global_mean = sum(all_vals) / len(all_vals) if all_vals else 0
+
+    for (pw_id, pw_name), members in pathways.items():
+        matched_vals = [gene_vals[g] for g in members if g in gene_vals]
+        n = len(matched_vals)
+        if n < 3:
+            continue
+        mean_val = sum(matched_vals) / n
+        std_val = math.sqrt(sum((v - mean_val) ** 2 for v in matched_vals) / n) if n > 1 else 0
+        se = std_val / math.sqrt(n) if n > 0 else 1
+        t_stat = (mean_val - global_mean) / se if se > 0 else 0
+        p_value = _t_to_p(t_stat, max(n - 1, 1))
+
+        results.append({
+            "pathway_id": pw_id,
+            "pathway_name": pw_name,
+            "activity_score": round(mean_val, 6),
+            "t_statistic": round(t_stat, 4),
+            "p_value": p_value,
+            "pathway_size": len(members),
+            "matched_genes": n,
+        })
+
+    results.sort(key=lambda x: x["p_value"])
+    ranked = results[:request.top]
+
+    if ranked:
+        for i, r in enumerate(sorted(range(len(ranked)),
+                                       key=lambda j: ranked[j]["p_value"])):
+            rank = i + 1
+            ranked[r]["q_value"] = min(ranked[r]["p_value"] * len(ranked) / rank, 1.0)
+        for i in range(len(ranked) - 2, -1, -1):
+            ranked[i]["q_value"] = min(ranked[i]["q_value"], ranked[i + 1]["q_value"])
+
+    return {
+        "species": species,
+        "input_genes": len(gene_vals),
+        "pathways": ranked,
+    }
+
+
 @app.post("/api/v1/regulon-enrichment")
 async def regulon_enrichment(request: UpstreamRequest):
     """Test which TF regulons are enriched in a gene set (decoupleR-style).
@@ -2327,6 +2512,56 @@ def _log_choose(n: int, k: int) -> float:
     return math.lgamma(n + 1) - math.lgamma(k + 1) - math.lgamma(n - k + 1)
 
 
+def _t_to_p(t: float, df: int) -> float:
+    """Two-tailed p-value from t-statistic via incomplete beta regularized function.
+    Pure-Python approximation using the continued-fraction expansion of I_x(a,b)."""
+    if df <= 0:
+        return 1.0
+    x = df / (df + t * t)
+    a, b = df / 2.0, 0.5
+    p = _reg_beta_cf(x, a, b)
+    return min(max(p, 0.0), 1.0)
+
+
+def _reg_beta_cf(x: float, a: float, b: float) -> float:
+    """Regularized incomplete beta I_x(a,b) via Lentz continued fraction."""
+    if x <= 0:
+        return 0.0
+    if x >= 1:
+        return 1.0
+    lbeta = math.lgamma(a) + math.lgamma(b) - math.lgamma(a + b)
+    front = math.exp(a * math.log(x) + b * math.log(1 - x) - lbeta) / a
+    f, c, d = 1.0, 1.0, 1.0 - (a + b) * x / (a + 1)
+    if abs(d) < 1e-30:
+        d = 1e-30
+    d = 1.0 / d
+    f = d
+    for m in range(1, 200):
+        m2 = 2 * m
+        num = m * (b - m) * x / ((a + m2 - 1) * (a + m2))
+        d = 1.0 + num * d
+        if abs(d) < 1e-30:
+            d = 1e-30
+        c = 1.0 + num / c
+        if abs(c) < 1e-30:
+            c = 1e-30
+        d = 1.0 / d
+        f *= d * c
+        num = -(a + m) * (a + b + m) * x / ((a + m2) * (a + m2 + 1))
+        d = 1.0 + num * d
+        if abs(d) < 1e-30:
+            d = 1e-30
+        c = 1.0 + num / c
+        if abs(c) < 1e-30:
+            c = 1e-30
+        d = 1.0 / d
+        delta = d * c
+        f *= delta
+        if abs(delta - 1.0) < 1e-10:
+            break
+    return front * f
+
+
 def _hypergeom_sf(k: int, n: int, K: int, N: int) -> float:
     """P(X >= k) for drawing n from N with K successes (overrepresentation)."""
     logCNn = _log_choose(N, n)
@@ -2865,6 +3100,75 @@ async def dsrna_screen(request: DsRnaScreenRequest):
             "results": ranked, "predicted_effect": effect,
             "note": "Predicted dsRNA designability (fewest off-target genes in the best "
                     "window). Verify a chosen gene with /dsrna design mode."}
+
+
+class SirnaPoolRequest(BaseModel):
+    sequence: str
+    k: int = Field(21, ge=15, le=28)
+    top: int = 20
+
+
+@app.post("/api/v1/dsrna/sirna-pool")
+async def dsrna_sirna_pool(request: SirnaPoolRequest):
+    """Score all siRNAs in a dsRNA for predicted efficacy (Reynolds/Ui-Tei rules)."""
+    seq = clean_dsrna(request.sequence, request.k)
+    pool = rnai.sirna_pool(seq, request.k)
+    summary = pool[:request.top]
+    avg_score = sum(s["efficacy_score"] for s in pool) / len(pool) if pool else 0
+    return {
+        "dsrna_length": len(seq),
+        "total_sirnas": len(pool),
+        "mean_efficacy": round(avg_score, 3),
+        "top_sirnas": summary,
+    }
+
+
+class IsoformCoverageRequest(BaseModel):
+    target_gene_id: str
+    sequence: Optional[str] = None
+    species: Optional[str] = None
+    k: int = Field(21, ge=15, le=28)
+    design_window: int = Field(250, ge=40, le=1000)
+
+
+@app.post("/api/v1/dsrna/isoform-coverage")
+async def dsrna_isoform_coverage(request: IsoformCoverageRequest):
+    """Check isoform-level coverage of a dsRNA on a target gene."""
+    species = request.species or _species_of(request.target_gene_id)
+    if not species:
+        raise HTTPException(status_code=400, detail="species required")
+
+    isoforms = rnai.get_isoforms(species, DATA_DIR)
+    if not isoforms:
+        return {"species": species, "available": False,
+                "note": f"no transcript store for {species}"}
+
+    gene_isos = isoforms.get(request.target_gene_id, [])
+    if not gene_isos:
+        raise HTTPException(status_code=404,
+                            detail=f"no transcripts for {request.target_gene_id}")
+
+    if request.sequence:
+        dsrna = clean_dsrna(request.sequence, request.k)
+    else:
+        transcripts = rnai.get_transcripts(species, DATA_DIR)
+        design = rnai.design(request.target_gene_id, transcripts, k=request.k,
+                             window=request.design_window)
+        if "error" in design:
+            raise HTTPException(status_code=404, detail=design["error"])
+        dsrna = design["sequence"]
+
+    coverage = rnai.isoform_coverage(dsrna, gene_isos, request.k)
+    all_covered = all(c["covered"] for c in coverage)
+
+    return {
+        "species": species,
+        "target_gene_id": request.target_gene_id,
+        "dsrna_length": len(dsrna),
+        "n_isoforms": len(coverage),
+        "all_isoforms_covered": all_covered,
+        "isoforms": coverage,
+    }
 
 
 # ============= Organism overview =============
@@ -3609,6 +3913,56 @@ async def shutdown_event():
     logger.info("GRN Atlas API shutting down...")
 
 # ============= Health Check Endpoint =============
+
+@app.get("/api/v1/benchmark/status")
+async def benchmark_status():
+    """Living validation dashboard — exposes all benchmark and validation reports."""
+    import glob
+    data_dir = FilePath(__file__).parent / "data"
+
+    benchmarks = []
+    bp = data_dir / "beeline_benchmark_report.json"
+    if bp.exists():
+        benchmarks = json.loads(bp.read_text())
+
+    species_stats = {}
+    for f in sorted(glob.glob(str(data_dir / "network_stats_*.json"))):
+        sp = FilePath(f).stem.replace("network_stats_", "")
+        species_stats[sp] = json.loads(FilePath(f).read_text())
+
+    quality_reports = {}
+    for f in sorted(glob.glob(str(data_dir / "quality_report_*.json"))):
+        sp = FilePath(f).stem.replace("quality_report_", "")
+        quality_reports[sp] = json.loads(FilePath(f).read_text())
+
+    validation_md = ""
+    vp = data_dir / "network_validation_report.md"
+    if vp.exists():
+        validation_md = vp.read_text()
+
+    gene_count = db.conn.execute("SELECT COUNT(*) FROM genes").fetchone()[0]
+    edge_count = db.conn.execute("SELECT COUNT(*) FROM interactions").fetchone()[0]
+    species_list = [r[0] for r in db.conn.execute(
+        "SELECT DISTINCT species FROM genes ORDER BY species").fetchall()]
+    tissue_count = 0
+    try:
+        tissue_count = db.conn.execute("SELECT COUNT(*) FROM edge_tissue_weights").fetchone()[0]
+    except Exception:
+        pass
+
+    return {
+        "atlas_summary": {
+            "genes": gene_count,
+            "interactions": edge_count,
+            "species": species_list,
+            "tissue_weight_rows": tissue_count,
+        },
+        "benchmarks": benchmarks,
+        "species_validation": species_stats,
+        "quality_reports": quality_reports,
+        "validation_report_md": validation_md,
+    }
+
 
 @app.get("/health")
 async def health_check():
