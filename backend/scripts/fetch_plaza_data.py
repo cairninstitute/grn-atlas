@@ -62,8 +62,9 @@ PLAZA_SPECIES = {
     "pax": "petunia",
     "stu": "potato",
     "can": "pepper",
+    "osa": "rice",
 }
-NEW_SPECIES = {"sly", "pax", "stu", "can"}  # not already in our genes table
+NEW_SPECIES = {"sly", "pax", "stu", "can", "osa"}  # not already in our genes table
 SCAFFOLD_CAP = 25                  # fallback: max scaffolds to keep per species
 UA = {"User-Agent": "grn-atlas-build/1.0 (genome data enrichment)"}
 

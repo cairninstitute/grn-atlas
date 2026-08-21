@@ -47,6 +47,12 @@ TOBACCO_ORTHOLOGS_JSON = DATA_DIR / "orthologs_tobacco_blast.json"
 # ATRM direction labels (literature-curated activation/repression)
 ATRM_TSV = DATA_DIR / "atrm_regulations.tsv"
 
+# DAP-seq direct binding (Plant Cistrome, O'Malley et al. 2016). Optional.
+DAPSEQ_TSV = DATA_DIR / "dapseq_arabidopsis.tsv"
+
+# Rice PlantRegMap regulation (raw format, no atlas gene mapping needed)
+RICE_TSV = DATA_DIR / "regulation_rice_raw.tsv"
+
 # DoRothEA human TF-target edges (OmniPath; A+B confidence). Optional second source.
 DOROTHEA_TSV = DATA_DIR / "dorothea_human.tsv"
 
@@ -333,6 +339,29 @@ def load_plantregmap_edges(tsv_path):
     return edges
 
 
+def load_dapseq_edges():
+    """Load DAP-seq TF-target binding edges (Plant Cistrome, O'Malley 2016)."""
+    if not DAPSEQ_TSV.exists():
+        print("  (skip) dapseq_arabidopsis.tsv not fetched — DAP-seq empty")
+        return []
+    edges = []
+    with open(DAPSEQ_TSV) as f:
+        for line in f:
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) < 5:
+                continue
+            tf, target, reg, conf, src = parts[0], parts[1], parts[2], float(parts[3]), parts[4]
+            pmids = [parts[5]] if len(parts) > 5 and parts[5] else []
+            edges.append((tf, target, reg, conf, src, pmids))
+    print(f"  DAP-seq: {len(edges):,} arabidopsis binding edges")
+    return edges
+
+
+def load_rice_edges():
+    """Load rice PlantRegMap edges (raw format with pre-stripped IDs)."""
+    return load_plantregmap_edges(RICE_TSV)
+
+
 def load_tobacco_edges(tsv_path):
     """Load tobacco PlantRegMap edges (raw format: TF, regulates, target, motif, species, -, -)."""
     if not tsv_path.exists():
@@ -355,10 +384,12 @@ def build():
     mouse_edges = load_mouse_edges()
     dorothea_mouse_edges = load_dorothea_mouse_edges()
     arab_edges, atrm_edges = load_arabidopsis_edges()
+    dapseq_edges = load_dapseq_edges()
     tomato_edges = load_tomato_edges()
     petunia_edges = load_plantregmap_edges(PETUNIA_TSV)
     potato_edges = load_plantregmap_edges(POTATO_TSV)
     pepper_edges = load_plantregmap_edges(PEPPER_TSV)
+    rice_edges = load_rice_edges()
 
     # Load gene names (optional; fall back to bare ids if not fetched)
     human_names = json.loads(HUMAN_NAMES_JSON.read_text()) if HUMAN_NAMES_JSON.exists() else {}
@@ -381,9 +412,13 @@ def build():
     mouse_tfs = {tf for tf, *_ in mouse_edges} | {tf for tf, *_ in dorothea_mouse_edges}
     mouse_genes = sorted(mouse_edge_genes | {_mouse_id(k) for k in mouse_gene_list})
 
-    # Arabidopsis genes
-    arab_tfs = {tf for tf, *_ in arab_edges}
-    arab_all = sorted(arab_tfs | {e[1] for e in arab_edges})
+    # Arabidopsis genes (PlantRegMap + ATRM + DAP-seq)
+    arab_tfs = {tf for tf, *_ in arab_edges} | {tf for tf, *_ in dapseq_edges}
+    arab_all = sorted(arab_tfs | {e[1] for e in arab_edges} | {e[1] for e in dapseq_edges})
+
+    # Rice genes
+    rice_tfs = {tf for tf, *_ in rice_edges}
+    rice_all = sorted(rice_tfs | {e[1] for e in rice_edges})
 
     DB_PATH.unlink(missing_ok=True)
     conn = sqlite3.connect(DB_PATH)
@@ -543,6 +578,17 @@ def build():
         CREATE INDEX idx_ie_source ON inferred_edges(source_id);
         CREATE INDEX idx_ie_target ON inferred_edges(target_id);
         CREATE INDEX idx_ie_species ON inferred_edges(species);
+
+        CREATE TABLE edge_tissue_weights (
+            source_id     TEXT NOT NULL,
+            target_id     TEXT NOT NULL,
+            tissue        TEXT NOT NULL,
+            coexpression  REAL NOT NULL,
+            species       TEXT NOT NULL,
+            PRIMARY KEY (source_id, target_id, tissue)
+        );
+        CREATE INDEX idx_etw_source ON edge_tissue_weights(source_id);
+        CREATE INDEX idx_etw_species ON edge_tissue_weights(species);
     """)
 
     # Insert human genes
@@ -583,6 +629,14 @@ def build():
             for locus in arab_all
         ],
     )
+    # Insert rice genes
+    if rice_all:
+        conn.executemany(
+            "INSERT INTO genes (id, symbol, name, species, is_tf, gene_type) VALUES (?, ?, ?, ?, ?, ?)",
+            [(gid, gid, gid, "rice", 1 if gid in rice_tfs else 0, "protein_coding")
+             for gid in rice_all],
+        )
+
     # Real Arabidopsis symbols (excluding bare AGI ids), for inferring synonyms.
     arab_real_symbol = {
         locus: arab_symbol(locus) for locus in arab_all
@@ -614,6 +668,8 @@ def build():
     add_edges(dorothea_mouse_edges)
     add_edges(arab_edges)
     add_edges(atrm_edges)
+    add_edges(dapseq_edges)
+    add_edges(rice_edges)
     add_edges(tomato_edges)
     add_edges(petunia_edges)
     add_edges(potato_edges)
@@ -635,7 +691,7 @@ def build():
          for gid, g in extra_genes.items()],
     )
 
-    valid_ids = set(human_genes) | set(mouse_genes) | set(arab_all) | set(extra_genes)
+    valid_ids = set(human_genes) | set(mouse_genes) | set(arab_all) | set(rice_all) | set(extra_genes)
 
     # Ensure curated-edge gene IDs that aren't in PLAZA are added to the genes table.
     curated_syms = {}
@@ -670,7 +726,7 @@ def build():
     for tf, target, reg, conf, *_ in arab_edges:
         tf_orth = omap.get(tf.upper(), {})
         tg_orth = omap.get(target.upper(), {})
-        for species in ("tomato", "petunia", "pepper"):
+        for species in ("tomato", "petunia", "pepper", "rice"):
             for a in tf_orth.get(species, []):
                 for b in tg_orth.get(species, []):
                     if a != b:
@@ -980,13 +1036,14 @@ def build():
     print(f"Built {DB_PATH}:")
     print(f"  Human: {len(human_genes):,} genes, {len(human_edges)} TRRUST + {len(dorothea_edges)} DoRothEA")
     print(f"  Mouse: {len(mouse_genes):,} genes, {len(mouse_edges)} TRRUST + {len(dorothea_mouse_edges)} DoRothEA")
-    print(f"  Arabidopsis: {len(arab_all):,} genes, {len(arab_edges)} PlantRegMap + {len(atrm_edges)} ATRM")
+    print(f"  Arabidopsis: {len(arab_all):,} genes, {len(arab_edges)} PlantRegMap + {len(atrm_edges)} ATRM + {len(dapseq_edges):,} DAP-seq")
+    print(f"  Rice: {len(rice_all):,} genes, {len(rice_edges)} PlantRegMap + Arabidopsis projection")
     print(f"  Tomato: {len(tomato_edges)} PlantRegMap edges")
     print(f"  Petunia: {len(petunia_edges)} PlantRegMap edges")
     print(f"  Potato: {len(potato_edges)} PlantRegMap edges")
     print(f"  Pepper: {len(pepper_edges)} direct edges + Arabidopsis/potato projection")
     print(f"  Inferred: Arabidopsis={len(inferred_edges):,}, potato={len(solanaceae_inferred):,}, tobacco={len(tobacco_inferred):,}")
-    total_genes = len(human_genes) + len(mouse_genes) + len(arab_all) + len(extra_genes)
+    total_genes = len(human_genes) + len(mouse_genes) + len(arab_all) + len(rice_all) + len(extra_genes)
     print(f"  Total: {total_interactions:,} interactions, {total_genes:,} genes")
 
 

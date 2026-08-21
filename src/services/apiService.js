@@ -280,6 +280,32 @@ export const analysisAPI = {
     return response.json();
   },
 
+  regulonEnrichment: async (geneIds, species, options = {}) => {
+    const response = await fetch(`${API_BASE}/regulon-enrichment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gene_ids: geneIds, species,
+        depth: options.depth || 1,
+        top: options.top || 50,
+        min_overlap: options.minOverlap || 2,
+        min_confidence: options.min_confidence || 0.0,
+        include_inferred: options.includeInferred !== false,
+      }),
+    });
+    return response.json();
+  },
+
+  edgeTissueWeights: async (sourceId, targetId) => {
+    const response = await fetch(`${API_BASE}/edge/${encodeURIComponent(sourceId)}/${encodeURIComponent(targetId)}/tissues`);
+    return response.json();
+  },
+
+  listTissues: async (species) => {
+    const response = await fetch(`${API_BASE}/tissues/${encodeURIComponent(species)}`);
+    return response.json();
+  },
+
   networkPatterns: async (options = {}) => {
     const response = await fetch(`${API_BASE}/network/patterns`, {
       method: 'POST',

@@ -196,12 +196,14 @@ class NeighborhoodRequest(BaseModel):
     regulation_type: List[str] = ["activation", "repression", "regulation"]
     min_confidence: float = 0.3
     include_inferred: bool = True
+    tissue: Optional[str] = None
 
 class RegulonRequest(BaseModel):
     gene_id: str
     depth: int = 2
     min_confidence: float = 0.0
     include_inferred: bool = True
+    tissue: Optional[str] = None
 
 class RegulonCompareRequest(BaseModel):
     tf_a: str
@@ -423,6 +425,16 @@ async def get_neighborhood(gene_id: str, request: NeighborhoodRequest = Neighbor
     # Filter by regulation type
     regulators = [r for r in regulators if r.regulation_type in request.regulation_type]
     targets = [t for t in targets if t.regulation_type in request.regulation_type]
+
+    if request.tissue:
+        tissue_edges = set()
+        for row in db.conn.execute(
+            "SELECT source_id, target_id FROM edge_tissue_weights WHERE tissue = ?",
+            (request.tissue,),
+        ):
+            tissue_edges.add((row[0], row[1]))
+        regulators = [r for r in regulators if (r.id, gene_id) in tissue_edges]
+        targets = [t for t in targets if (gene_id, t.id) in tissue_edges]
 
     nodes_by_id: Dict[str, Gene] = {gene.id: gene}
     edges_by_key: Dict[tuple, NetworkEdge] = {}
@@ -848,6 +860,77 @@ async def upstream_regulators(request: UpstreamRequest):
         "depth": request.depth,
         "regulators": ranked,
     }
+
+
+@app.post("/api/v1/regulon-enrichment")
+async def regulon_enrichment(request: UpstreamRequest):
+    """Test which TF regulons are enriched in a gene set (decoupleR-style).
+
+    Functionally equivalent to upstream-regulators but returns enrichment
+    scores and is named to match the established bioinformatics convention
+    used by decoupleR/DoRothEA for TF activity inference from gene lists."""
+    return await upstream_regulators(request)
+
+
+@app.get("/api/v1/edge/{source_id}/{target_id}/tissues")
+async def edge_tissue_weights(source_id: str, target_id: str):
+    """Get tissue coexpression weights for a specific edge."""
+    rows = db.conn.execute(
+        "SELECT tissue, coexpression FROM edge_tissue_weights "
+        "WHERE source_id = ? AND target_id = ? ORDER BY coexpression DESC",
+        (source_id, target_id),
+    ).fetchall()
+    return {"source_id": source_id, "target_id": target_id,
+            "tissues": [{"tissue": r[0], "coexpression": r[1]} for r in rows]}
+
+
+@app.get("/api/v1/edge-tissues/{gene_id}")
+async def gene_edge_tissues(gene_id: str, tissue: Optional[str] = None):
+    """Get tissue coexpression for all edges of a gene, optionally filtered to one tissue."""
+    tissue_filter = ""
+    params = [gene_id, gene_id]
+    if tissue:
+        tissue_filter = " AND etw.tissue = ?"
+        params.append(tissue)
+
+    rows = db.conn.execute(f"""
+        SELECT etw.source_id, etw.target_id, etw.tissue, etw.coexpression,
+               COALESCE(g.symbol, CASE WHEN etw.source_id = ? THEN etw.target_id ELSE etw.source_id END) as partner_symbol
+        FROM edge_tissue_weights etw
+        LEFT JOIN genes g ON g.id = CASE WHEN etw.source_id = ? THEN etw.target_id ELSE etw.source_id END
+        WHERE (etw.source_id = ? OR etw.target_id = ?){tissue_filter}
+        ORDER BY ABS(etw.coexpression) DESC
+        LIMIT 200
+    """, params + [gene_id, gene_id]).fetchall()
+
+    edges = []
+    seen = set()
+    for src, tgt, tis, coex, psym in rows:
+        partner = tgt if src == gene_id else src
+        dedup_key = partner if not tissue else (partner, tis)
+        if dedup_key in seen:
+            continue
+        seen.add(dedup_key)
+        edges.append({
+            "direction": "→ target" if src == gene_id else "← regulator",
+            "partner_id": partner,
+            "partner_symbol": psym or partner,
+            "tissue": tis,
+            "coexpression": round(coex, 4),
+        })
+
+    return {"gene_id": gene_id, "tissue": tissue, "edges": edges}
+
+
+@app.get("/api/v1/tissues/{species}")
+async def list_tissues(species: str):
+    """List available tissues with edge counts for a species."""
+    rows = db.conn.execute(
+        "SELECT tissue, COUNT(*) FROM edge_tissue_weights "
+        "WHERE species = ? GROUP BY tissue ORDER BY COUNT(*) DESC",
+        (species,),
+    ).fetchall()
+    return {"species": species, "tissues": [{"tissue": r[0], "edge_count": r[1]} for r in rows]}
 
 
 @app.post("/api/v1/network/patterns")

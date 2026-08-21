@@ -152,6 +152,48 @@ def fetch_tobacco_raw():
     print(f"  Wrote {out_path}: {len(lines)} lines (raw LOC gene IDs)")
 
 
+def fetch_raw(species):
+    """Fetch PlantRegMap edges in raw format (no atlas gene mapping).
+
+    Used for species not yet in the atlas gene set (rice, tobacco, etc.).
+    Edges are saved as-is; build_db strips isoform suffixes at load time."""
+    cfg = species_config.get(species)
+    if not cfg:
+        sys.exit(f"Unknown species '{species}' — add it to species_config.py")
+    prm = cfg.get("plantregmap")
+    if not prm:
+        sys.exit(f"Species '{species}' has no plantregmap config in species_config.py")
+
+    funtfbs_url = FUNTFBS_URL.format(species=prm["species"], suffix=prm["suffix"])
+    motif_url = MOTIF_URL.format(species=prm["species"], suffix=prm["suffix"])
+    print(f"{species}: fetching raw PlantRegMap edges")
+
+    print(f"  Trying FunTFBS: {funtfbs_url}")
+    lines = _download(funtfbs_url)
+    if lines is None:
+        print(f"  FunTFBS not available — trying motif: {motif_url}")
+        lines = _download(motif_url)
+    if lines is None:
+        print(f"  ERROR: neither FunTFBS nor motif file available for {species}")
+        return
+
+    out_path = DATA_DIR / f"regulation_{species}_raw.tsv"
+    edges = set()
+    with open(out_path, "w") as f:
+        for line in lines:
+            parts = line.split("\t")
+            if len(parts) < 3:
+                continue
+            tf = base_id(parts[0])
+            target = base_id(parts[2])
+            if tf and target and tf != target:
+                key = (tf, target)
+                if key not in edges:
+                    edges.add(key)
+                    f.write(f"{tf}\t{target}\tregulation\t0.50\tPlantRegMap\n")
+    print(f"  Wrote {out_path}: {len(edges):,} unique edges")
+
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: fetch_plantregmap_regulation.py <species|all>")
@@ -168,9 +210,12 @@ def main():
     else:
         species_list = [target]
 
+    RAW_SPECIES = {"tobacco", "rice"}
     for sp in species_list:
         if sp == "tobacco":
             fetch_tobacco_raw()
+        elif sp in RAW_SPECIES:
+            fetch_raw(sp)
         else:
             fetch_species(sp)
         print()

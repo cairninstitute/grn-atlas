@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { geneLabel } from '../utils/geneLabel';
 import ExpressionPanel from './ExpressionPanel';
 import '../styles/GeneDetailPanel.css';
@@ -138,6 +138,9 @@ export default function GeneDetailPanel({ gene, data, onDesignDsRna }) {
 
       {/* Expression (petunia; self-hides otherwise) */}
       <ExpressionPanel geneId={gene.id} />
+
+      {/* Tissue coexpression — self-hides if no data */}
+      <TissueCoexpression geneId={gene.id} />
 
       {/* Regulators Section */}
       <div className="detail-section">
@@ -294,6 +297,54 @@ export default function GeneDetailPanel({ gene, data, onDesignDsRna }) {
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+function TissueCoexpression({ geneId }) {
+  const [data, setData] = useState(null);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!geneId) return;
+    setData(null);
+    setExpanded(false);
+    fetch(`/api/v1/edge-tissues/${encodeURIComponent(geneId)}`)
+      .then(r => r.json())
+      .then(d => { if (d.edges?.length) setData(d); })
+      .catch(() => {});
+  }, [geneId]);
+
+  if (!data) return null;
+
+  const shown = expanded ? data.edges : data.edges.slice(0, 5);
+  const maxAbs = Math.max(...data.edges.map(e => Math.abs(e.coexpression)));
+
+  return (
+    <div className="detail-section">
+      <h3 className="section-title">Tissue coexpression ({data.edges.length} edges)</h3>
+      <div className="interaction-list">
+        {shown.map((e, i) => (
+          <div key={i} className="interaction-item" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: '0.7rem', color: 'var(--text-3)', width: 70 }}>{e.direction}</span>
+            <span className="interaction-symbol" style={{ minWidth: 90 }}>{e.partner_symbol}</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-2)', minWidth: 80 }}>{(e.tissue || '').replace(/_/g, ' ')}</span>
+            <span style={{
+              display: 'inline-block',
+              width: `${(Math.abs(e.coexpression) / maxAbs) * 60}px`,
+              height: 10,
+              background: e.coexpression > 0 ? 'var(--accent, #4a9eff)' : '#e05050',
+              borderRadius: 2,
+            }} />
+            <span className="mono" style={{ fontSize: '0.75rem', minWidth: 45 }}>{e.coexpression.toFixed(2)}</span>
+          </div>
+        ))}
+      </div>
+      {data.edges.length > 5 && (
+        <button className="toggle-button" onClick={() => setExpanded(!expanded)}>
+          {expanded ? '− Collapse' : `+ Show ${data.edges.length - 5} more`}
+        </button>
+      )}
     </div>
   );
 }

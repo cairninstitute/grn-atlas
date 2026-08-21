@@ -54,6 +54,7 @@ CORE_POST_DB = [
     ("PLAZA plant coords/orthology/symbols", [PY, "fetch_plaza_data.py"], None),
     ("GO annotations", [PY, "fetch_go.py"], None),
     ("DoRothEA TF-target edges (OmniPath, human+mouse)", [PY, "fetch_dorothea.py"], None),
+    ("DAP-seq TF-target binding (Plant Cistrome)", [PY, "fetch_dapseq.py"], None),
     ("protein-coding gene lists (mygene, human+mouse)", [PY, "fetch_gene_lists.py"], None),
     ("PlantRegMap regulation (tomato, petunia, potato, tobacco)",
      [[PY, "fetch_plantregmap_regulation.py", "all"]], None),

@@ -2,12 +2,14 @@ import React, { useState, useCallback } from 'react';
 import RegulonPanel from './RegulonPanel';
 import RegulonComparePanel from './RegulonComparePanel';
 import UpstreamPanel from './UpstreamPanel';
+import RegulonEnrichmentPanel from './RegulonEnrichmentPanel';
 import NetworkPatternsPanel from './NetworkPatternsPanel';
 import CentralityPanel from './CentralityPanel';
 import InferredEdgesPanel from './InferredEdgesPanel';
 import ModulePanel from './ModulePanel';
 import MotifQueryPanel from './MotifQueryPanel';
 import DiffRegulationPanel from './DiffRegulationPanel';
+import TissueWeightsPanel from './TissueWeightsPanel';
 import ExportPanel from './ExportPanel';
 import InferredEnrichmentWorkflow from './InferredEnrichmentWorkflow';
 import ModuleMotifWorkflow from './ModuleMotifWorkflow';
@@ -21,6 +23,7 @@ const SECTIONS = [
     { id: 'regulon', title: 'Regulon Extraction', desc: 'Extract the full regulon (downstream targets) of a transcription factor', component: RegulonPanel, accepts: 'sharedGeneSet', shares: true },
     { id: 'compare', title: 'Regulon Comparison', desc: 'Compare regulons of two TFs — overlap, Jaccard, significance', component: RegulonComparePanel, shares: true },
     { id: 'upstream', title: 'Upstream Regulators', desc: 'Given a gene set, predict which TFs regulate them', component: UpstreamPanel, accepts: 'sharedGeneSet' },
+    { id: 'regulon-enrichment', title: 'Regulon Enrichment', desc: 'Test which TF regulons are enriched in a gene list (decoupleR-style)', component: RegulonEnrichmentPanel, accepts: 'sharedGeneSet' },
   ]},
   { label: 'Network Structure', panels: [
     { id: 'patterns', title: 'Network Patterns', desc: 'Detect motifs: autoregulation, feed-forward loops, bi-fans', component: NetworkPatternsPanel },
@@ -31,6 +34,7 @@ const SECTIONS = [
   { label: 'Inference & Comparison', panels: [
     { id: 'inferred', title: 'Inferred Edges', desc: 'GRNBoost2/GENIE3 predicted regulatory edges from expression data', component: InferredEdgesPanel, accepts: 'sharedGeneSet', shares: true },
     { id: 'diffreg', title: 'Differential Regulation', desc: 'Compare TF regulatory activity between tissue conditions', component: DiffRegulationPanel },
+    { id: 'tissue-weights', title: 'Tissue Coexpression', desc: 'View tissue-specific coexpression weights for regulatory edges', component: TissueWeightsPanel },
   ]},
   { label: 'Export', panels: [
     { id: 'export', title: 'Edge Export', desc: 'Export regulatory edges with genomic context (JSON/TSV)', component: ExportPanel, accepts: 'sharedGeneSet' },

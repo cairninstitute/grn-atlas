@@ -116,6 +116,15 @@ SPECIES = {
         "scan_edge_sql": "source_id LIKE 'CA%'",
         "expr_index": None, "expr_panel": {},
     },
+    "rice": {
+        "status": "loaded", "assembly": "IRGSP-1.0", "plaza_code": "osa",
+        "gff_url": _PLAZA_GFF.format(code="osa"), "cds_url": _PLAZA_CDS.format(code="osa"),
+        "genome_url": None, "id_style": "strip_isoform", "seqctx_style": "plaza_identity",
+        "promoter": (2000, 500), "chrom_norm": "identity",
+        "scan_edge_sql": "source_id LIKE 'LOC_Os%'",
+        "plantregmap": {"species": "Oryza_sativa", "suffix": "Osa"},
+        "expr_index": None, "expr_panel": {},
+    },
     # ---- Prepared placeholder for the incoming Dahlia collaboration data ----
     # Fill assembly + URLs once the G3 / NCBI BioProject genome+annotation is released.
     # Dahlia (taxid 42159) fits the anthocyanin/floral-pigmentation focus.

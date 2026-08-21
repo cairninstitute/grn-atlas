@@ -215,7 +215,22 @@ orthogonal data types:
 Results are written to `backend/data/network_validation_report.md` and per-species JSON files.
 The gold-standard reports go to `backend/data/quality_report_{species}.json`.
 
-#### Current validation results (August 2026)
+#### Species gene and edge coverage (August 2026)
+
+| Species | Atlas genes | Genome genes | Gene coverage | Edges | TFs | Targets | Multi-evidence | Sources |
+|---------|----------:|------------:|--------------:|------:|----:|--------:|---------------:|---------|
+| Tomato | 19,256 | 34,075 | 56.5% | 241,828 | 849 | 17,521 | 10,458 | PlantRegMap, Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco, Literature |
+| Petunia | 14,843 | 32,928 | 45.1% | 231,438 | 691 | 14,556 | 13,041 | PlantRegMap, Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco, Literature |
+| Arabidopsis | 17,705 | 27,655 | 64.0% | 91,850 | 766 | 17,535 | 1,431 | PlantRegMap, ATRM |
+| Mouse | 29,192 | 21,926 | 100%+ | 17,692 | 820 | 5,569 | 409 | TRRUST, DoRothEA |
+| Human | 20,659 | 20,596 | 100% | 17,946 | 694 | 5,581 | 2,030 | TRRUST, DoRothEA |
+| Potato | 18,374 | 39,028 | 47.1% | 11,409 | 252 | 4,080 | 0 | PlantRegMap |
+| Pepper | 2,351 | 34,899 | 6.7% | 2,203 | 99 | 973 | 0 | Inferred:Arabidopsis |
+
+Genome gene counts: NCBI/Ensembl protein-coding annotations (TAIR10, ITAG4.1, Peaxi162, PGSC v4.03, Pepper.v.1.55).
+Mouse >100% because the mygene.info gene list includes some non-protein-coding entries.
+
+#### Edge quality validation
 
 **Gold-standard (94 literature-curated edges):**
 
@@ -231,26 +246,15 @@ The gold-standard reports go to `backend/data/quality_report_{species}.json`.
 | Tomato | 241,828 | 37.7 | 1.74 | 32.4× |
 | Petunia | 231,438 | 30.2 | 3.08 | 25.8× |
 | Arabidopsis | 91,850 | 7.7 | 30.8 | — |
-| Human | 19,976 | 7.8 | -4.3 | — |
-| Mouse | 18,101 | — | — | — |
+| Human | 17,946 | 7.8 | −4.3 | — |
+| Mouse | 17,692 | — | — | — |
 | Pepper | 2,203 | — | — | 18.3× |
 | Potato | 11,409 | — | — | 2.8× |
 
 Key: **Coherence (σ)** = permutation test effect size (higher = more significant);
 **Multi-ev. z** = Mann-Whitney z comparing multi-source vs single-source edges;
 **Motif enrichment** = fold enrichment of TF binding motifs in inferred target promoters.
-
-Data sources per species:
-
-| Species | Sources | Multi-evidence edges |
-|---------|---------|--------------------:|
-| Tomato | PlantRegMap, Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco, Literature | 27,372 |
-| Petunia | PlantRegMap, Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco, Literature | 27,372 |
-| Arabidopsis | PlantRegMap, ATRM | 1,431 |
-| Human | TRRUST, DoRothEA | 2,030 |
-| Mouse | TRRUST, DoRothEA | — |
-| Pepper | Inferred:Arabidopsis | 0 |
-| Potato | PlantRegMap | 0 |
+"—" = insufficient data for that test (no GO annotations, no expression, or no motif data).
 
 ## Analysis capabilities
 
