@@ -5409,6 +5409,756 @@ async def list_workflows():
     ]}
 
 
+# ============= Phase 1: Cis-Support, Enhancer Network, CRISPR vs dsRNA, Edit Consequence =============
+
+
+class CisSupportAuditRequest(BaseModel):
+    source_id: str
+    target_id: str
+    species: Optional[str] = None
+
+
+@app.post("/api/v1/cis-support/audit")
+async def cis_support_audit(req: CisSupportAuditRequest):
+    """Decision-ready view of whether a TF->target edge is cis-supported."""
+    conn = db.conn
+    species = _normalize_species_input(req.species) if req.species else None
+    edge = conn.execute(
+        "SELECT confidence, regulation_type, sources FROM interactions "
+        "WHERE source_id = ? AND target_id = ?",
+        (req.source_id, req.target_id)
+    ).fetchone()
+    if not edge:
+        alt = conn.execute(
+            "SELECT id, symbol FROM genes WHERE id = ? OR symbol = ?",
+            (req.source_id, req.source_id)
+        ).fetchone()
+        alt2 = conn.execute(
+            "SELECT id, symbol FROM genes WHERE id = ? OR symbol = ?",
+            (req.target_id, req.target_id)
+        ).fetchone()
+        raise HTTPException(status_code=404, detail=f"No edge found from {req.source_id} to {req.target_id}")
+
+    layers = {}
+    layers["regulatory_edge"] = {
+        "present": True, "confidence": edge["confidence"],
+        "regulation_type": edge["regulation_type"], "sources": edge["sources"],
+    }
+
+    motif_hits = conn.execute(
+        "SELECT h.motif_id, h.score, h.p_value, m.tf_gene_id "
+        "FROM motif_hits h JOIN motifs m ON h.motif_id = m.motif_id "
+        "JOIN gene_id_crosswalk x ON x.ext_gene_id = h.ext_gene_id "
+        "WHERE x.atlas_gene_id = ? AND m.tf_gene_id = ? "
+        "ORDER BY h.p_value ASC LIMIT 5",
+        (req.target_id, req.source_id)
+    ).fetchall()
+    layers["promoter_motif"] = {
+        "present": len(motif_hits) > 0,
+        "n_hits": len(motif_hits),
+        "best_pvalue": motif_hits[0]["p_value"] if motif_hits else None,
+        "hits": [{"motif_id": h["motif_id"], "score": h["score"], "pvalue": h["p_value"]}
+                 for h in motif_hits],
+    }
+
+    peak_links = conn.execute(
+        "SELECT pgl.peak_id, pgl.link_score, pgl.link_type, pgl.distance_bp, "
+        "p.score AS peak_score "
+        "FROM peak_gene_links pgl "
+        "JOIN chromatin_peaks p ON p.peak_id = pgl.peak_id "
+        "WHERE pgl.gene_id = ? ORDER BY pgl.link_score DESC LIMIT 5",
+        (req.target_id,)
+    ).fetchall()
+    layers["chromatin_peak"] = {
+        "present": len(peak_links) > 0,
+        "n_peaks": len(peak_links),
+        "peaks": [{"peak_id": r["peak_id"], "link_score": r["link_score"],
+                    "link_type": r["link_type"], "distance_bp": r["distance_bp"]}
+                   for r in peak_links],
+    }
+
+    cis_rows = conn.execute(
+        "SELECT peak_id, support_type, score FROM cis_support_edges "
+        "WHERE source_id = ? AND target_id = ?",
+        (req.source_id, req.target_id)
+    ).fetchall()
+    layers["cis_support"] = {
+        "present": len(cis_rows) > 0,
+        "entries": [{"peak_id": c["peak_id"], "support_type": c["support_type"],
+                      "score": c["score"]} for c in cis_rows],
+    }
+
+    n_present = sum(1 for v in layers.values() if v["present"])
+    if n_present >= 4:
+        tier = "strong"
+    elif n_present >= 3:
+        tier = "moderate"
+    elif n_present >= 2:
+        tier = "weak"
+    else:
+        tier = "minimal"
+
+    missing = [k for k, v in layers.items() if not v["present"]]
+
+    return {
+        "source_id": req.source_id, "target_id": req.target_id,
+        "confidence_tier": tier, "n_supporting_layers": n_present,
+        "missing_layers": missing, "layers": layers,
+    }
+
+
+class EnhancerNetworkRequest(BaseModel):
+    gene_id: str
+    species: Optional[str] = None
+    max_distance: int = 500000
+    min_link_score: float = 0.1
+    top: int = 50
+
+
+@app.post("/api/v1/enhancer/network")
+async def enhancer_network(req: EnhancerNetworkRequest):
+    """Inspect a gene's enhancer-linked regulatory neighborhood."""
+    conn = db.conn
+    gene = conn.execute("SELECT id, symbol, species FROM genes WHERE id = ? OR symbol = ?",
+                        (req.gene_id, req.gene_id)).fetchone()
+    if not gene:
+        raise HTTPException(status_code=404, detail="Gene not found")
+    gene_id = gene["id"]
+    species = gene["species"]
+
+    links = conn.execute(
+        "SELECT pgl.peak_id, pgl.link_score, pgl.link_type, pgl.distance_bp, "
+        "p.chrom, p.start_pos, p.end_pos, p.score AS peak_score, p.peak_type "
+        "FROM peak_gene_links pgl "
+        "JOIN chromatin_peaks p ON p.peak_id = pgl.peak_id "
+        "WHERE pgl.gene_id = ? AND pgl.link_score >= ? "
+        "ORDER BY pgl.link_score DESC LIMIT ?",
+        (gene_id, req.min_link_score, req.top)
+    ).fetchall()
+
+    enhancer_regulators = []
+    for lk in links:
+        motifs = conn.execute(
+            "SELECT m.tf_gene_id, m.tf_symbol, h.score, h.p_value "
+            "FROM peak_motif_hits h JOIN motifs m ON h.motif_id = m.motif_id "
+            "WHERE h.peak_id = ? ORDER BY h.score DESC LIMIT 5",
+            (lk["peak_id"],)
+        ).fetchall()
+        for mot in motifs:
+            edge = conn.execute(
+                "SELECT confidence FROM interactions WHERE source_id = ? AND target_id = ?",
+                (mot["tf_gene_id"], gene_id)
+            ).fetchone()
+            enhancer_regulators.append({
+                "tf_gene_id": mot["tf_gene_id"], "tf_symbol": mot["tf_symbol"],
+                "peak_id": lk["peak_id"], "motif_score": mot["score"],
+                "motif_pvalue": mot["p_value"],
+                "link_score": lk["link_score"], "link_type": lk["link_type"],
+                "has_regulatory_edge": edge is not None,
+                "edge_confidence": edge["confidence"] if edge else None,
+            })
+
+    linked_targets = conn.execute(
+        "SELECT DISTINCT pgl2.gene_id, g.symbol "
+        "FROM peak_gene_links pgl "
+        "JOIN peak_gene_links pgl2 ON pgl.peak_id = pgl2.peak_id AND pgl2.gene_id != ? "
+        "JOIN genes g ON g.id = pgl2.gene_id "
+        "WHERE pgl.gene_id = ? AND pgl.link_score >= ? LIMIT ?",
+        (gene_id, gene_id, req.min_link_score, req.top)
+    ).fetchall()
+
+    return {
+        "gene_id": gene_id, "symbol": gene["symbol"], "species": species,
+        "n_linked_peaks": len(links),
+        "linked_peaks": [{"peak_id": lk["peak_id"], "chrom": lk["chrom"],
+                          "start": lk["start_pos"], "end": lk["end_pos"],
+                          "peak_score": lk["peak_score"], "peak_type": lk["peak_type"],
+                          "link_score": lk["link_score"], "link_type": lk["link_type"],
+                          "distance_bp": lk["distance_bp"]} for lk in links],
+        "enhancer_regulators": enhancer_regulators,
+        "co_linked_targets": [{"gene_id": t["gene_id"], "symbol": t["symbol"]}
+                               for t in linked_targets],
+    }
+
+
+class PeakGeneLinkageRequest(BaseModel):
+    region: Optional[str] = None
+    peak_id: Optional[str] = None
+    species: Optional[str] = None
+    top: int = 20
+
+
+@app.post("/api/v1/peak-gene/linkage")
+async def peak_gene_linkage(req: PeakGeneLinkageRequest):
+    """Query which gene(s) a genomic region or peak likely regulates."""
+    conn = db.conn
+    if req.peak_id:
+        rows = conn.execute(
+            "SELECT pgl.gene_id, g.symbol, pgl.link_score, pgl.link_type, pgl.distance_bp "
+            "FROM peak_gene_links pgl JOIN genes g ON g.id = pgl.gene_id "
+            "WHERE pgl.peak_id = ? ORDER BY pgl.link_score DESC LIMIT ?",
+            (req.peak_id, req.top)
+        ).fetchall()
+        motifs = conn.execute(
+            "SELECT motif_id, tf_gene_id, score, pvalue FROM peak_motif_hits "
+            "WHERE peak_id = ?", (req.peak_id,)
+        ).fetchall()
+        return {
+            "peak_id": req.peak_id,
+            "linked_genes": [{"gene_id": r["gene_id"], "symbol": r["symbol"],
+                               "link_score": r["link_score"], "link_type": r["link_type"],
+                               "distance_bp": r["distance_bp"]} for r in rows],
+            "motif_hits": [{"motif_id": m["motif_id"], "tf_gene_id": m["tf_gene_id"],
+                            "score": m["score"], "pvalue": m["pvalue"]} for m in motifs],
+        }
+    elif req.region:
+        parts = req.region.replace("-", ":").split(":")
+        if len(parts) < 3:
+            raise HTTPException(status_code=400, detail="Region format: chr:start-end")
+        chrom, start, end = parts[0], int(parts[1]), int(parts[2])
+        sp = _normalize_species_input(req.species) if req.species else None
+        q = ("SELECT p.peak_id, p.chrom, p.start_pos, p.end_pos, p.score "
+             "FROM chromatin_peaks p "
+             "WHERE p.chrom = ? AND p.start_pos <= ? AND p.end_pos >= ?")
+        params = [chrom, end, start]
+        if sp:
+            q += " AND p.species = ?"
+            params.append(sp)
+        q += " LIMIT ?"
+        params.append(req.top)
+        peaks = conn.execute(q, params).fetchall()
+        results = []
+        for pk in peaks:
+            genes = conn.execute(
+                "SELECT pgl.gene_id, g.symbol, pgl.link_score, pgl.link_type "
+                "FROM peak_gene_links pgl JOIN genes g ON g.id = pgl.gene_id "
+                "WHERE pgl.peak_id = ? ORDER BY pgl.link_score DESC LIMIT 5",
+                (pk["peak_id"],)
+            ).fetchall()
+            results.append({
+                "peak_id": pk["peak_id"], "chrom": pk["chrom"],
+                "start": pk["start_pos"], "end": pk["end_pos"],
+                "linked_genes": [{"gene_id": g["gene_id"], "symbol": g["symbol"],
+                                   "link_score": g["link_score"]} for g in genes],
+            })
+        return {"region": req.region, "peaks": results}
+    else:
+        raise HTTPException(status_code=400, detail="Provide peak_id or region")
+
+
+class CrisprVsDsrnaRequest(BaseModel):
+    gene_ids: List[str]
+    species: Optional[str] = None
+    intent: str = "knockdown"
+
+
+@app.post("/api/v1/compare/crispr-vs-dsrna")
+async def crispr_vs_dsrna_compare(req: CrisprVsDsrnaRequest):
+    """Compare RNAi and CRISPR intervention strategies for the same candidate genes."""
+    conn = db.conn
+    data_dir = FilePath(__file__).resolve().parent / "data"
+    results = []
+    for gid in req.gene_ids[:20]:
+        gene = conn.execute("SELECT id, symbol, species, is_tf FROM genes WHERE id = ? OR symbol = ?",
+                            (gid, gid)).fetchone()
+        if not gene:
+            results.append({"gene_id": gid, "found": False})
+            continue
+        gene_id, symbol, species = gene["id"], gene["symbol"], gene["species"]
+        sp = _normalize_species_input(req.species) or species
+
+        regulon_size = conn.execute(
+            "SELECT COUNT(*) FROM interactions WHERE source_id = ? AND confidence >= 0.4",
+            (gene_id,)
+        ).fetchone()[0]
+
+        transcripts = rnai.get_transcripts(sp, data_dir) if sp else {}
+        has_transcript = gene_id in transcripts or symbol in transcripts
+        tx_seq = transcripts.get(gene_id, transcripts.get(symbol, ""))
+        dsrna_feasibility = "high" if len(tx_seq) >= 100 else ("low" if not has_transcript else "moderate")
+
+        crispr_entry = {
+            "mode": "CRISPR knockout" if req.intent == "knockdown" else "CRISPRi",
+            "feasibility": "high",
+            "specificity": "high (single locus)",
+            "reversible": req.intent != "knockdown",
+            "complexity": "moderate (requires guide design + delivery)",
+            "expected_effect": "complete loss" if req.intent == "knockdown" else "partial knockdown",
+        }
+        dsrna_entry = {
+            "mode": "dsRNA/RNAi",
+            "feasibility": dsrna_feasibility,
+            "specificity": "moderate (potential off-targets from sequence homology)",
+            "reversible": True,
+            "complexity": "low (synthesize + apply)" if sp in ("arabidopsis", "tomato", "petunia", "potato", "pepper", "tobacco") else "moderate",
+            "expected_effect": "partial knockdown (typically 50-90%)",
+        }
+
+        if req.intent == "knockdown" and dsrna_feasibility == "high":
+            recommendation = "dsRNA (simpler delivery, sufficient for knockdown)"
+        elif req.intent == "knockout":
+            recommendation = "CRISPR knockout (complete loss of function needed)"
+        else:
+            recommendation = "CRISPR (more precise for this intent)"
+
+        results.append({
+            "gene_id": gene_id, "symbol": symbol, "species": sp, "found": True,
+            "is_tf": bool(gene["is_tf"]), "regulon_size": regulon_size,
+            "crispr": crispr_entry, "dsrna": dsrna_entry,
+            "recommendation": recommendation, "intent": req.intent,
+        })
+    return {"comparisons": results, "intent": req.intent}
+
+
+class EditConsequenceRequest(BaseModel):
+    gene_id: str
+    edit_type: str = "promoter_disruption"
+    species: Optional[str] = None
+    motif_id: Optional[str] = None
+    position: Optional[int] = None
+
+
+@app.post("/api/v1/edit/consequence")
+async def edit_consequence(req: EditConsequenceRequest):
+    """Predict regulatory and network consequences of a promoter or coding edit."""
+    conn = db.conn
+    gene = conn.execute("SELECT id, symbol, species, is_tf FROM genes WHERE id = ? OR symbol = ?",
+                        (req.gene_id, req.gene_id)).fetchone()
+    if not gene:
+        raise HTTPException(status_code=404, detail="Gene not found")
+    gene_id, symbol, species = gene["id"], gene["symbol"], gene["species"]
+
+    consequences = []
+    if req.edit_type == "promoter_disruption":
+        regulators = conn.execute(
+            "SELECT source_id, confidence, regulation_type FROM interactions "
+            "WHERE target_id = ? AND confidence >= 0.3 ORDER BY confidence DESC LIMIT 20",
+            (gene_id,)
+        ).fetchall()
+        for reg in regulators:
+            src = conn.execute("SELECT symbol FROM genes WHERE id = ?",
+                               (reg["source_id"],)).fetchone()
+            consequences.append({
+                "affected_edge": f"{reg['source_id']} → {gene_id}",
+                "tf_symbol": src["symbol"] if src else reg["source_id"],
+                "direction": "loss of regulation",
+                "confidence": reg["confidence"],
+                "mechanism": "promoter binding site disrupted",
+            })
+    elif req.edit_type == "coding_disruption":
+        targets = conn.execute(
+            "SELECT target_id, confidence, regulation_type FROM interactions "
+            "WHERE source_id = ? AND confidence >= 0.3 ORDER BY confidence DESC LIMIT 20",
+            (gene_id,)
+        ).fetchall()
+        for tgt in targets:
+            tgt_gene = conn.execute("SELECT symbol FROM genes WHERE id = ?",
+                                     (tgt["target_id"],)).fetchone()
+            consequences.append({
+                "affected_edge": f"{gene_id} → {tgt['target_id']}",
+                "target_symbol": tgt_gene["symbol"] if tgt_gene else tgt["target_id"],
+                "direction": "loss of regulation" if tgt["regulation_type"] in ("activation", "regulation") else "derepression",
+                "confidence": tgt["confidence"],
+                "mechanism": "TF coding region disrupted" if gene["is_tf"] else "gene product disrupted",
+            })
+    elif req.edit_type == "motif_disruption" and req.motif_id:
+        hits = conn.execute(
+            "SELECT m.tf_gene_id, m.tf_symbol, h.score, h.p_value "
+            "FROM motif_hits h JOIN motifs m ON h.motif_id = m.motif_id "
+            "JOIN gene_id_crosswalk x ON x.ext_gene_id = h.ext_gene_id "
+            "WHERE x.atlas_gene_id = ? AND h.motif_id = ? "
+            "ORDER BY h.p_value ASC LIMIT 5",
+            (gene_id, req.motif_id)
+        ).fetchall()
+        for h in hits:
+            consequences.append({
+                "affected_edge": f"{h['tf_gene_id']} → {gene_id}",
+                "tf_symbol": h["tf_symbol"],
+                "direction": "loss of TF binding",
+                "motif_score": h["score"],
+                "mechanism": f"Motif {req.motif_id} disrupted",
+            })
+
+    downstream = conn.execute(
+        "SELECT COUNT(*) FROM interactions WHERE source_id = ? AND confidence >= 0.3",
+        (gene_id,)
+    ).fetchone()[0] if gene["is_tf"] else 0
+
+    return {
+        "gene_id": gene_id, "symbol": symbol, "species": species,
+        "edit_type": req.edit_type, "is_tf": bool(gene["is_tf"]),
+        "n_consequences": len(consequences),
+        "consequences": consequences,
+        "downstream_cascade_size": downstream,
+        "uncertainty": "Predictions based on network topology; experimental validation required.",
+    }
+
+
+# ============= Phase 2: Cell-type Regulon, Transition Drivers, Multiome Audit =============
+
+
+class CelltypeRegulonRequest(BaseModel):
+    gene_id: str
+    dataset_id: Optional[str] = None
+    cluster_id: Optional[str] = None
+    species: Optional[str] = None
+    depth: int = 1
+    min_confidence: float = 0.3
+
+
+@app.post("/api/v1/celltype/regulon")
+async def celltype_regulon(req: CelltypeRegulonRequest):
+    """Extract a TF's regulon filtered by cell-type/state expression context."""
+    conn = db.conn
+    gene = conn.execute("SELECT id, symbol, species, is_tf FROM genes WHERE id = ? OR symbol = ?",
+                        (req.gene_id, req.gene_id)).fetchone()
+    if not gene:
+        raise HTTPException(status_code=404, detail="Gene not found")
+    gene_id = gene["id"]
+
+    all_targets = conn.execute(
+        "SELECT target_id, confidence, regulation_type FROM interactions "
+        "WHERE source_id = ? AND confidence >= ? ORDER BY confidence DESC",
+        (gene_id, req.min_confidence)
+    ).fetchall()
+
+    if req.dataset_id and req.cluster_id:
+        expressed = set()
+        rows = conn.execute(
+            "SELECT gene_id FROM imported_features WHERE dataset_id = ?",
+            (req.dataset_id,)
+        ).fetchall()
+        for r in rows:
+            expressed.add(r["gene_id"])
+        state_targets = [t for t in all_targets if t["target_id"] in expressed]
+    else:
+        state_targets = list(all_targets)
+
+    global_set = {t["target_id"] for t in all_targets}
+    state_set = {t["target_id"] for t in state_targets}
+
+    return {
+        "gene_id": gene_id, "symbol": gene["symbol"], "species": gene["species"],
+        "dataset_id": req.dataset_id, "cluster_id": req.cluster_id,
+        "global_regulon_size": len(all_targets),
+        "state_regulon_size": len(state_targets),
+        "overlap_fraction": round(len(state_set) / len(global_set), 4) if global_set else 0.0,
+        "state_targets": [{"target_id": t["target_id"], "confidence": t["confidence"],
+                            "regulation_type": t["regulation_type"]} for t in state_targets[:100]],
+        "state_only": sorted(state_set - global_set)[:50],
+    }
+
+
+class TransitionDriversRequest(BaseModel):
+    dataset_id: Optional[str] = None
+    species: Optional[str] = None
+    branch_a: Optional[str] = None
+    branch_b: Optional[str] = None
+    gene_ids: Optional[List[str]] = None
+    top: int = 25
+    min_confidence: float = 0.3
+
+
+@app.post("/api/v1/transition/drivers")
+async def transition_drivers(req: TransitionDriversRequest):
+    """Identify TF drivers of a cell-state transition or developmental branch point."""
+    conn = db.conn
+    species = _normalize_species_input(req.species) if req.species else None
+    if not species and req.gene_ids:
+        row = conn.execute("SELECT species FROM genes WHERE id = ?",
+                           (req.gene_ids[0],)).fetchone()
+        species = row["species"] if row else None
+
+    if req.gene_ids and len(req.gene_ids) >= 3:
+        input_set = set(req.gene_ids)
+        tfs = conn.execute(
+            "SELECT i.source_id, g.symbol, COUNT(*) AS n_targets "
+            "FROM interactions i JOIN genes g ON g.id = i.source_id "
+            "WHERE g.is_tf = 1 AND g.species = ? AND i.confidence >= ? "
+            "GROUP BY i.source_id HAVING n_targets >= 3 "
+            "ORDER BY n_targets DESC",
+            (species, req.min_confidence)
+        ).fetchall()
+
+        bg_n = conn.execute("SELECT COUNT(*) FROM genes WHERE species = ?",
+                            (species,)).fetchone()[0]
+        n = len(input_set)
+        drivers = []
+        for tf in tfs:
+            targets = {r["target_id"] for r in conn.execute(
+                "SELECT target_id FROM interactions WHERE source_id = ? AND confidence >= ?",
+                (tf["source_id"], req.min_confidence)
+            ).fetchall()}
+            overlap = input_set & targets
+            k = len(overlap)
+            if k < 2:
+                continue
+            p = _hypergeom_sf(k, n, len(targets), bg_n) if bg_n > 0 else 1.0
+            drivers.append({
+                "tf_id": tf["source_id"], "tf_symbol": tf["symbol"],
+                "regulon_size": len(targets), "overlap_count": k,
+                "overlap_genes": sorted(overlap), "p_value": p,
+            })
+        drivers.sort(key=lambda x: x["p_value"])
+        return {
+            "species": species, "input_genes": len(input_set),
+            "branch_a": req.branch_a, "branch_b": req.branch_b,
+            "drivers": drivers[:req.top],
+        }
+    else:
+        return {
+            "species": species, "status": "ready",
+            "note": "Provide gene_ids (transition DEGs) for driver analysis",
+            "branch_a": req.branch_a, "branch_b": req.branch_b,
+        }
+
+
+class MultiomeAuditRequest(BaseModel):
+    source_id: str
+    target_id: str
+    species: Optional[str] = None
+
+
+@app.post("/api/v1/multiome/audit")
+async def multiome_support_audit(req: MultiomeAuditRequest):
+    """Multi-layer evidence triangulation for a biological claim."""
+    conn = db.conn
+    layers = {}
+
+    edge = conn.execute(
+        "SELECT confidence, regulation_type, sources FROM interactions "
+        "WHERE source_id = ? AND target_id = ?",
+        (req.source_id, req.target_id)
+    ).fetchone()
+    layers["network"] = {
+        "present": edge is not None,
+        "confidence": edge["confidence"] if edge else None,
+        "sources": edge["sources"] if edge else None,
+    }
+
+    motifs = conn.execute(
+        "SELECT COUNT(*) FROM motif_hits h "
+        "JOIN motifs m ON h.motif_id = m.motif_id "
+        "JOIN gene_id_crosswalk x ON x.ext_gene_id = h.ext_gene_id "
+        "WHERE x.atlas_gene_id = ? AND m.tf_gene_id = ?",
+        (req.target_id, req.source_id)
+    ).fetchone()[0]
+    layers["motif"] = {"present": motifs > 0, "n_hits": motifs}
+
+    peaks = conn.execute(
+        "SELECT COUNT(*) FROM peak_gene_links WHERE gene_id = ?",
+        (req.target_id,)
+    ).fetchone()[0]
+    layers["chromatin"] = {"present": peaks > 0, "n_peaks": peaks}
+
+    coexpr = None
+    try:
+        tw = conn.execute(
+            "SELECT tissue, coexpression FROM edge_tissue_weights "
+            "WHERE source_id = ? AND target_id = ? ORDER BY ABS(coexpression) DESC LIMIT 3",
+            (req.source_id, req.target_id)
+        ).fetchall()
+        if tw:
+            coexpr = [{"tissue": r["tissue"], "coexpression": r["coexpression"]} for r in tw]
+    except Exception:
+        pass
+    layers["expression"] = {"present": coexpr is not None and len(coexpr) > 0,
+                            "top_tissues": coexpr or []}
+
+    perturb = None
+    try:
+        po = conn.execute(
+            "SELECT observed_direction, log2fc FROM perturbation_observations "
+            "WHERE perturbed_gene = ? AND measured_gene = ? LIMIT 3",
+            (req.source_id, req.target_id)
+        ).fetchall()
+        if po:
+            perturb = [{"direction": r["observed_direction"], "log2fc": r["log2fc"]} for r in po]
+    except Exception:
+        pass
+    layers["perturbation"] = {"present": perturb is not None and len(perturb) > 0,
+                               "observations": perturb or []}
+
+    n_present = sum(1 for v in layers.values() if v["present"])
+    conflicting = []
+    if layers["network"]["present"] and layers["perturbation"]["present"]:
+        for obs in (perturb or []):
+            if edge and edge["regulation_type"] == "activation" and obs.get("log2fc", 0) < -0.5:
+                conflicting.append("Network says activation but perturbation shows downregulation")
+            elif edge and edge["regulation_type"] == "repression" and obs.get("log2fc", 0) > 0.5:
+                conflicting.append("Network says repression but perturbation shows upregulation")
+
+    weight = n_present / 5.0
+    return {
+        "source_id": req.source_id, "target_id": req.target_id,
+        "n_supporting_layers": n_present, "evidence_weight": round(weight, 2),
+        "layers": layers, "conflicting_evidence": conflicting,
+    }
+
+
+# ============= Phase 3: Literature Grounding, Intervention Strategy Ranker =============
+
+
+class LiteratureGroundingRequest(BaseModel):
+    terms: List[str]
+    species: Optional[str] = None
+    top: int = 20
+
+
+@app.post("/api/v1/literature/grounding")
+async def literature_grounding(req: LiteratureGroundingRequest):
+    """Score how external literature terms map to atlas-grounded candidates."""
+    conn = db.conn
+    mappings = []
+    for term in req.terms[:50]:
+        exact = conn.execute(
+            "SELECT id, symbol, species FROM genes WHERE symbol = ? OR id = ?",
+            (term, term)
+        ).fetchone()
+        if exact:
+            mappings.append({
+                "input_term": term, "match_type": "exact",
+                "gene_id": exact["id"], "symbol": exact["symbol"],
+                "species": exact["species"], "confidence": 1.0,
+            })
+            continue
+
+        try:
+            alias = conn.execute(
+                "SELECT gene_id FROM gene_aliases WHERE alias = ?", (term,)
+            ).fetchone()
+            if alias:
+                g = conn.execute("SELECT id, symbol, species FROM genes WHERE id = ?",
+                                  (alias["gene_id"],)).fetchone()
+                if g:
+                    mappings.append({
+                        "input_term": term, "match_type": "synonym",
+                        "gene_id": g["id"], "symbol": g["symbol"],
+                        "species": g["species"], "confidence": 0.9,
+                    })
+                    continue
+        except Exception:
+            pass
+
+        like = conn.execute(
+            "SELECT id, symbol, species FROM genes WHERE symbol LIKE ? LIMIT 5",
+            (f"%{term}%",)
+        ).fetchall()
+        if like:
+            for g in like:
+                mappings.append({
+                    "input_term": term, "match_type": "partial",
+                    "gene_id": g["id"], "symbol": g["symbol"],
+                    "species": g["species"], "confidence": 0.6,
+                })
+            continue
+
+        ortho = conn.execute(
+            "SELECT gene_a, gene_b, species_a, species_b, COALESCE(score, 0.8) AS score "
+            "FROM orthologs WHERE gene_a LIKE ? OR gene_b LIKE ? LIMIT 5",
+            (f"%{term}%", f"%{term}%")
+        ).fetchall()
+        if ortho:
+            for o in ortho:
+                mappings.append({
+                    "input_term": term, "match_type": "ortholog",
+                    "gene_id": o["gene_a"], "ortholog_gene": o["gene_b"],
+                    "species": o["species_a"], "confidence": round(o["score"] * 0.7, 2),
+                })
+            continue
+
+        mappings.append({
+            "input_term": term, "match_type": "unresolved",
+            "gene_id": None, "confidence": 0.0,
+        })
+
+    n_resolved = sum(1 for m in mappings if m["match_type"] != "unresolved")
+    return {
+        "n_terms": len(req.terms), "n_resolved": n_resolved,
+        "resolution_rate": round(n_resolved / len(req.terms), 3) if req.terms else 0.0,
+        "mappings": mappings[:req.top],
+    }
+
+
+class InterventionRankerRequest(BaseModel):
+    gene_ids: List[str]
+    species: Optional[str] = None
+    intent: str = "knockdown"
+    budget: str = "moderate"
+
+
+@app.post("/api/v1/intervention/rank")
+async def intervention_strategy_ranker(req: InterventionRankerRequest):
+    """Compare intervention modes across candidates: dsRNA, CRISPR, promoter editing."""
+    conn = db.conn
+    data_dir = FilePath(__file__).resolve().parent / "data"
+    candidates = []
+    for gid in req.gene_ids[:20]:
+        gene = conn.execute("SELECT id, symbol, species, is_tf FROM genes WHERE id = ? OR symbol = ?",
+                            (gid, gid)).fetchone()
+        if not gene:
+            continue
+        gene_id, symbol, species = gene["id"], gene["symbol"], gene["species"]
+        sp = _normalize_species_input(req.species) or species
+
+        regulon_size = conn.execute(
+            "SELECT COUNT(*) FROM interactions WHERE source_id = ? AND confidence >= 0.4",
+            (gene_id,)
+        ).fetchone()[0]
+
+        transcripts = rnai.get_transcripts(sp, data_dir) if sp else {}
+        has_tx = gene_id in transcripts or symbol in transcripts
+
+        strategies = []
+
+        dsrna_score = 0.8 if has_tx else 0.2
+        if sp in ("arabidopsis", "tomato", "petunia", "potato", "pepper", "tobacco"):
+            dsrna_score += 0.1
+        strategies.append({
+            "mode": "dsRNA/RNAi", "feasibility": round(dsrna_score, 2),
+            "specificity": 0.7, "complexity": "low",
+            "cost": "low", "reversible": True,
+        })
+
+        crispr_score = 0.85
+        strategies.append({
+            "mode": "CRISPR_KO", "feasibility": round(crispr_score, 2),
+            "specificity": 0.95, "complexity": "moderate",
+            "cost": "moderate", "reversible": False,
+        })
+
+        if gene["is_tf"]:
+            motif_count = conn.execute(
+                "SELECT COUNT(DISTINCT h.ext_gene_id) FROM motif_hits h "
+                "JOIN motifs m ON h.motif_id = m.motif_id "
+                "WHERE m.tf_gene_id = ?", (gene_id,)
+            ).fetchone()[0]
+            promo_score = 0.6 if motif_count > 0 else 0.3
+            strategies.append({
+                "mode": "promoter_edit", "feasibility": round(promo_score, 2),
+                "specificity": 0.5, "complexity": "high",
+                "cost": "high", "reversible": False,
+                "note": f"{motif_count} known motif targets",
+            })
+
+        strategies.sort(key=lambda s: s["feasibility"], reverse=True)
+        best = strategies[0]["mode"]
+
+        if req.budget == "low" and has_tx:
+            best = "dsRNA/RNAi"
+        elif req.intent == "knockout":
+            best = "CRISPR_KO"
+
+        candidates.append({
+            "gene_id": gene_id, "symbol": symbol, "species": sp,
+            "is_tf": bool(gene["is_tf"]), "regulon_size": regulon_size,
+            "strategies": strategies, "recommended": best,
+        })
+
+    return {"intent": req.intent, "budget": req.budget,
+            "candidates": candidates}
+
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring"""
