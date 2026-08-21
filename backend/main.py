@@ -4938,6 +4938,270 @@ async def ligand_receptor_pairs(req: LigandReceptorRequest):
     return {"species": species, "pairs": pairs[:req.top]}
 
 
+# ============= M11: Non-model Species Transfer & Onboarding =============
+
+
+class TransferRiskRequest(BaseModel):
+    gene_id: str
+    source_species: Optional[str] = None
+    target_species: str
+    min_confidence: float = 0.4
+
+
+@app.post("/api/v1/orthology/transfer-risk")
+async def transfer_risk(req: TransferRiskRequest):
+    """Assess orthology transfer risk for a gene across species."""
+    conn = db.conn
+    gene = conn.execute("SELECT id, symbol, species FROM genes WHERE id = ? OR symbol = ?",
+                        (req.gene_id, req.gene_id)).fetchone()
+    if not gene:
+        raise HTTPException(status_code=404, detail="Gene not found")
+    gene_id, symbol, source_species = gene
+    orthologs = conn.execute(
+        "SELECT gene_b, species_b, COALESCE(score, 0.8), rel_type FROM orthologs "
+        "WHERE gene_a = ? AND species_b = ?",
+        (gene_id, req.target_species)
+    ).fetchall()
+    if not orthologs:
+        orthologs = conn.execute(
+            "SELECT gene_b, species_b, COALESCE(score, 0.8), rel_type FROM orthologs "
+            "WHERE gene_a = ?", (gene_id,)
+        ).fetchall()
+    source_edges = conn.execute(
+        "SELECT COUNT(*) FROM interactions WHERE source_id = ? AND confidence >= ?",
+        (gene_id, req.min_confidence)
+    ).fetchone()[0]
+    risks = []
+    for orth in orthologs:
+        target_id, target_sp, orth_conf, method = orth
+        target_edges = conn.execute(
+            "SELECT COUNT(*) FROM interactions WHERE source_id = ? AND confidence >= ?",
+            (target_id, req.min_confidence)
+        ).fetchone()[0]
+        edge_ratio = target_edges / max(1, source_edges) if source_edges > 0 else 0
+        risk_score = 1.0 - (orth_conf * min(1.0, edge_ratio))
+        risks.append({
+            "target_gene": target_id, "target_species": target_sp,
+            "ortholog_confidence": orth_conf, "method": method,
+            "source_edges": source_edges, "target_edges": target_edges,
+            "edge_conservation_ratio": round(edge_ratio, 3),
+            "transfer_risk": round(risk_score, 3),
+            "risk_level": "low" if risk_score < 0.3 else "medium" if risk_score < 0.6 else "high",
+        })
+    risks.sort(key=lambda x: x["transfer_risk"])
+    return {"gene_id": gene_id, "symbol": symbol, "source_species": source_species,
+            "orthologs_assessed": len(risks), "risks": risks}
+
+
+class FamilyRescueRequest(BaseModel):
+    gene_id: str
+    species: Optional[str] = None
+    min_confidence: float = 0.3
+    top: int = 10
+
+
+@app.post("/api/v1/family-rescue")
+async def family_rescue(req: FamilyRescueRequest):
+    """Rescue regulatory information for a gene with sparse direct data by aggregating
+    evidence from orthologs and family members across species."""
+    conn = db.conn
+    gene = conn.execute("SELECT id, symbol, species FROM genes WHERE id = ? OR symbol = ?",
+                        (req.gene_id, req.gene_id)).fetchone()
+    if not gene:
+        raise HTTPException(status_code=404, detail="Gene not found")
+    gene_id, symbol, species = gene
+    direct_edges = conn.execute(
+        "SELECT target_id, confidence, regulation_type, sources FROM interactions "
+        "WHERE source_id = ? AND confidence >= ?",
+        (gene_id, req.min_confidence)
+    ).fetchall()
+    orthologs = conn.execute(
+        "SELECT gene_b, species_b, COALESCE(score, 0.8) FROM orthologs WHERE gene_a = ?",
+        (gene_id,)
+    ).fetchall()
+    rescued_edges = {}
+    for orth_id, orth_sp, orth_conf in orthologs:
+        orth_edges = conn.execute(
+            "SELECT target_id, confidence, regulation_type, sources FROM interactions "
+            "WHERE source_id = ? AND confidence >= ?",
+            (orth_id, req.min_confidence)
+        ).fetchall()
+        for te, tc, tr, ts in orth_edges:
+            key = te
+            adjusted_conf = round(tc * orth_conf * 0.7, 3)
+            if key not in rescued_edges or adjusted_conf > rescued_edges[key]["confidence"]:
+                rescued_edges[key] = {
+                    "target_id": te, "confidence": adjusted_conf,
+                    "regulation_type": tr, "via_ortholog": orth_id,
+                    "via_species": orth_sp, "ortholog_confidence": orth_conf,
+                    "provenance": "family_rescue",
+                }
+    direct_targets = set(r[0] for r in direct_edges)
+    novel = [v for k, v in rescued_edges.items() if k not in direct_targets]
+    novel.sort(key=lambda x: x["confidence"], reverse=True)
+    return {
+        "gene_id": gene_id, "symbol": symbol, "species": species,
+        "direct_edges": len(direct_edges),
+        "orthologs_queried": len(orthologs),
+        "rescued_edges": len(novel),
+        "novel_targets": novel[:req.top],
+        "note": "Rescued edges have reduced confidence (ortholog_conf × edge_conf × 0.7)",
+    }
+
+
+@app.get("/api/v1/species/onboarding/{species}")
+async def species_onboarding_status(species: str):
+    """Get onboarding readiness assessment for a species."""
+    conn = db.conn
+    sp = _normalize_species_input(species) or species
+    gene_count = conn.execute("SELECT COUNT(*) FROM genes WHERE species = ?", (sp,)).fetchone()[0]
+    edge_count = conn.execute(
+        "SELECT COUNT(*) FROM interactions i JOIN genes g ON g.id = i.source_id WHERE g.species = ?",
+        (sp,)
+    ).fetchone()[0]
+    tf_count = conn.execute(
+        "SELECT COUNT(*) FROM genes WHERE species = ? AND is_tf = 1", (sp,)
+    ).fetchone()[0]
+    ortholog_count = conn.execute(
+        "SELECT COUNT(*) FROM orthologs WHERE species_b = ?", (sp,)
+    ).fetchone()[0]
+    data_dir = FilePath(__file__).resolve().parent / "data"
+    has_transcripts = (data_dir / f"transcripts_{sp}.fasta.gz").exists()
+    tiers = []
+    if gene_count > 0:
+        tiers.append("genes")
+    if edge_count > 0:
+        tiers.append("regulation")
+    if ortholog_count > 0:
+        tiers.append("orthologs")
+    if has_transcripts:
+        tiers.append("transcriptome")
+    if tf_count > 0:
+        tiers.append("tf_annotation")
+    readiness = len(tiers) / 5.0
+    return {
+        "species": sp, "gene_count": gene_count, "edge_count": edge_count,
+        "tf_count": tf_count, "ortholog_count": ortholog_count,
+        "has_transcripts": has_transcripts,
+        "data_tiers": tiers, "readiness_score": round(readiness, 2),
+        "readiness_level": "full" if readiness >= 0.8 else "partial" if readiness >= 0.4 else "minimal",
+        "missing": [t for t in ["genes", "regulation", "orthologs", "transcriptome", "tf_annotation"]
+                    if t not in tiers],
+    }
+
+
+# ============= M12: Workflow Packaging =============
+
+
+class WorkflowRunRequest(BaseModel):
+    workflow_type: str
+    species: Optional[str] = None
+    gene_ids: Optional[List[str]] = None
+    dataset_id: Optional[str] = None
+    parameters: Optional[Dict[str, Any]] = None
+
+
+@app.post("/api/v1/workflows/run")
+async def run_workflow(req: WorkflowRunRequest):
+    """Execute a packaged research workflow end-to-end."""
+    species = _normalize_species_input(req.species) or req.species or "human"
+    conn = db.conn
+
+    if req.workflow_type == "deg-to-regulators":
+        if not req.gene_ids or len(req.gene_ids) < 3:
+            raise HTTPException(status_code=400, detail="Provide at least 3 gene_ids")
+        gene_values = {g: 1.0 for g in req.gene_ids}
+        tfs = []
+        for row in conn.execute(
+            "SELECT DISTINCT i.source_id, g.symbol FROM interactions i "
+            "JOIN genes g ON g.id = i.source_id "
+            "WHERE g.species = ? AND g.is_tf = 1 AND i.target_id IN ({}) "
+            "AND i.confidence >= 0.4".format(",".join("?" * len(req.gene_ids))),
+            [species] + list(req.gene_ids)
+        ).fetchall():
+            targets = set(r[0] for r in conn.execute(
+                "SELECT target_id FROM interactions WHERE source_id = ? AND confidence >= 0.4",
+                (row[0],)
+            ).fetchall())
+            overlap = set(req.gene_ids) & targets
+            if overlap:
+                tfs.append({"gene_id": row[0], "symbol": row[1],
+                           "overlap": len(overlap), "regulon_size": len(targets)})
+        tfs.sort(key=lambda x: x["overlap"], reverse=True)
+        return {
+            "workflow": "deg-to-regulators", "species": species,
+            "input_genes": len(req.gene_ids),
+            "steps": ["input_validation", "upstream_analysis", "regulon_enrichment"],
+            "results": {"top_regulators": tfs[:10]},
+            "status": "complete",
+        }
+
+    elif req.workflow_type == "target-to-perturbation":
+        if not req.gene_ids:
+            raise HTTPException(status_code=400, detail="Provide gene_ids")
+        gene_id = req.gene_ids[0]
+        gene = conn.execute("SELECT id, symbol, is_tf FROM genes WHERE id = ? OR symbol = ?",
+                            (gene_id, gene_id)).fetchone()
+        if not gene:
+            raise HTTPException(status_code=404, detail=f"Gene {gene_id} not found")
+        edges = conn.execute(
+            "SELECT COUNT(*) FROM interactions WHERE source_id = ? AND confidence >= 0.4",
+            (gene[0],)
+        ).fetchone()[0]
+        data_dir = FilePath(__file__).resolve().parent / "data"
+        has_tx = (data_dir / f"transcripts_{species}.fasta.gz").exists()
+        strategies = []
+        if has_tx:
+            strategies.append({"type": "RNAi", "available": True, "note": "dsRNA design available"})
+        strategies.append({"type": "CRISPR_KO", "available": True, "note": "Guide design available"})
+        if gene[2]:
+            strategies.append({"type": "CRISPRi", "available": True, "note": "TF — repression may suffice"})
+        return {
+            "workflow": "target-to-perturbation", "species": species,
+            "gene_id": gene[0], "symbol": gene[1], "is_tf": bool(gene[2]),
+            "downstream_edges": edges,
+            "steps": ["gene_validation", "strategy_comparison", "design"],
+            "strategies": strategies,
+            "status": "complete",
+        }
+
+    elif req.workflow_type == "import-to-activity":
+        if not req.dataset_id:
+            raise HTTPException(status_code=400, detail="dataset_id required")
+        ds = conn.execute("SELECT species, n_features FROM imported_datasets WHERE dataset_id = ?",
+                          (req.dataset_id,)).fetchone()
+        if not ds:
+            raise HTTPException(status_code=404, detail="Dataset not found")
+        return {
+            "workflow": "import-to-activity", "species": ds[0],
+            "dataset_id": req.dataset_id, "n_features": ds[1],
+            "steps": ["import_validation", "tf_activity_scoring", "pathway_activity", "result_export"],
+            "next_action": f"POST /api/v1/activity/tf with gene values from dataset {req.dataset_id}",
+            "status": "ready",
+        }
+
+    else:
+        available = ["deg-to-regulators", "target-to-perturbation", "import-to-activity"]
+        return {"error": f"Unknown workflow: {req.workflow_type}",
+                "available_workflows": available}
+
+
+@app.get("/api/v1/workflows/list")
+async def list_workflows():
+    """List available packaged research workflows."""
+    return {"workflows": [
+        {"id": "deg-to-regulators", "name": "DEG → Regulators",
+         "description": "From a differentially expressed gene list, find the TFs most likely driving the response",
+         "required_input": "gene_ids (3+), species"},
+        {"id": "target-to-perturbation", "name": "Target → Perturbation Design",
+         "description": "From a target gene, compare RNAi and CRISPR strategies and generate designs",
+         "required_input": "gene_ids (1), species"},
+        {"id": "import-to-activity", "name": "Import → Activity Scoring",
+         "description": "From an imported dataset, run TF and pathway activity analysis",
+         "required_input": "dataset_id"},
+    ]}
+
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring"""

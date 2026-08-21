@@ -479,6 +479,42 @@ export const analysisAPI = {
     return response.json();
   },
 
+  // M11: Transfer & onboarding
+  transferRisk: async (geneId, targetSpecies) => {
+    const response = await fetch(`${API_BASE}/orthology/transfer-risk`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gene_id: geneId, target_species: targetSpecies }),
+    });
+    return response.json();
+  },
+
+  familyRescue: async (geneId) => {
+    const response = await fetch(`${API_BASE}/family-rescue`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gene_id: geneId }),
+    });
+    return response.json();
+  },
+
+  speciesOnboarding: async (species) => {
+    const response = await fetch(`${API_BASE}/species/onboarding/${encodeURIComponent(species)}`);
+    return response.json();
+  },
+
+  // M12: Workflows
+  runWorkflow: async (workflowType, options = {}) => {
+    const response = await fetch(`${API_BASE}/workflows/run`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ workflow_type: workflowType, ...options }),
+    });
+    return response.json();
+  },
+
+  listWorkflows: async () => {
+    const response = await fetch(`${API_BASE}/workflows/list`);
+    return response.json();
+  },
+
   networkPatterns: async (options = {}) => {
     const response = await fetch(`${API_BASE}/network/patterns`, {
       method: 'POST',
