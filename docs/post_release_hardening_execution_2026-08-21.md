@@ -97,6 +97,18 @@ From `post_release_hardening_summary.json`:
 - PR6 species gold-standard threshold checks: pass
 - PR5 expanded activity/pathway benchmark families: pass
 
+## PR1–PR7 result matrix
+
+| Workstream | Result | Case summary | Key evidence |
+|---|---|---|---|
+| PR1 | Pass | dashboard/API degraded-state handling and artifact schema validation covered | `backend/tests/test_benchmark_status_artifacts.py`, `src/components/ValidationDashboard.test.jsx`, `backend/data/validation_runs/schema_report.json` |
+| PR2 | Pass | dsRNA comparator 2/2 pass; CRISPR comparator 1/1 pass | `benchmark_rnai_comparator.json`, `benchmark_crispr_comparator.json` |
+| PR3 | Pass | cell-type 3/3 pass; trajectory 2/2 pass | `benchmark_celltype_regulation.json`, `benchmark_trajectory_workflows.json` |
+| PR4 | Pass | signaling 2/2 pass | `benchmark_signaling_to_tf.json`; direct pairs 0, fallback pairs 10 in current human case |
+| PR5 | Pass | TF activity 12/12 pass; pathway activity 5/5 pass | `benchmark_tf_activity.json`, `benchmark_pathway_activity.json` |
+| PR6 | Pass | species threshold checks 4/4 pass | `benchmark_species_gold_standards.json` |
+| PR7 | Pass | governance artifacts generated and schema-checked | `post_release_hardening_summary.json`, `schema_report.json`, corpus manifest/version metadata |
+
 ## Known limitation
 
 The legacy full validation runner still spends a long time in `backend/scripts/validate_network_statistics.py`. That runtime issue did not block PR1–PR7 execution because the dedicated post-release hardening runner completed cleanly and produced the required artifacts.

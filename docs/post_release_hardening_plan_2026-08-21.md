@@ -32,6 +32,18 @@ This plan assumes:
 | PR6 | Species-specific biological gold standards | Medium | strengthens plant/non-model confidence where researcher trust matters most |
 | PR7 | Release-grade benchmark governance | Medium | keeps validation artifacts reproducible and interpretable over time |
 
+## PR1–PR7 execution snapshot
+
+| Workstream | Implementation status | Execution status | Evidence | Main note |
+|---|---|---|---|---|
+| PR1 | Complete | Pass | validation dashboard API/UI tests, schema validator | artifact-health warnings now surface explicitly |
+| PR2 | Complete | Pass | `benchmark_rnai_comparator`, `benchmark_crispr_comparator` | comparator-style curated expectations, not live third-party parity runs |
+| PR3 | Complete | Pass | `benchmark_celltype_regulation`, `benchmark_trajectory_workflows` | corpus-backed proxy cases now wired; real public datasets still remain a future strengthening step |
+| PR4 | Complete | Pass | `benchmark_signaling_to_tf` | workflow passes, but direct human signaling coverage is still sparse and fallback-backed |
+| PR5 | Complete | Pass | expanded TF/pathway activity benchmarks | broadened beyond TP53 to MYC, RELA, STAT1, HIF1A |
+| PR6 | Complete | Pass | `benchmark_species_gold_standards` | petunia, tomato, arabidopsis, and human threshold checks passed |
+| PR7 | Complete | Pass | manifest metadata, schema validation, post-release runner | benchmark artifacts are now versioned, traceable, and comparable across runs |
+
 ## PR1 — Validation dashboard and artifact schema hardening
 
 Current state:
