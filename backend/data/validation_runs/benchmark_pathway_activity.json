@@ -1,0 +1,61 @@
+{
+  "benchmark": "benchmark_pathway_activity",
+  "cases": [
+    {
+      "case_id": "human_p53_signature",
+      "details": {},
+      "metrics": {
+        "expected_rank": 6,
+        "top_pathways": [
+          "Endometrial cancer",
+          "Non-small cell lung cancer",
+          "Breast cancer pathway",
+          "Pancreatic adenocarcinoma pathway",
+          "ATM Signaling Pathway",
+          "p53 transcriptional gene network",
+          "Chromosomal and microsatellite instability in colorectal cancer",
+          "Small cell lung cancer"
+        ]
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Human p53 / DNA damage pathway recovery"
+    },
+    {
+      "case_id": "synthetic_member_enrichment",
+      "details": {
+        "pathway_id": "WP4963",
+        "seeded_members": 12
+      },
+      "metrics": {
+        "pathway_name": "p53 transcriptional gene network",
+        "pathway_rank": 1,
+        "top_pathways": [
+          "miRNA regulation of DNA damage response",
+          "TP53 network",
+          "VEGFA-VEGFR2 Signaling Pathway",
+          "DNA damage response",
+          "DNA damage response (only ATM dependent)"
+        ]
+      },
+      "notes": [
+        "This is a self-consistency benchmark using atlas pathway members."
+      ],
+      "status": "pass",
+      "title": "Synthetic pathway member enrichment recovery"
+    }
+  ],
+  "description": "Validate pathway activity scoring on a literal DNA-damage signature and a synthetic member-enrichment case.",
+  "milestone": "M2",
+  "notes": [
+    "The literal p53 case is the stronger biological check in this script."
+  ],
+  "run_at_utc": "2026-08-21T16:12:46.069376+00:00",
+  "status": "pass",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 0,
+    "cases_pass": 2,
+    "cases_total": 2
+  }
+}

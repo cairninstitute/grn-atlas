@@ -1,0 +1,111 @@
+{
+  "benchmark": "benchmark_tf_activity",
+  "cases": [
+    {
+      "case_id": "human_tp53_literal_ulm",
+      "details": {
+        "matched_genes": 6,
+        "method": "ulm"
+      },
+      "metrics": {
+        "expected_rank": null,
+        "top_symbols": [
+          "EGR1",
+          "ABL1",
+          "ERCC2",
+          "ING4",
+          "PAX5"
+        ]
+      },
+      "notes": [
+        "Known TP53-associated genes were used as input; this is the most decision-relevant activity sanity check."
+      ],
+      "status": "fail",
+      "title": "Human TP53-like signature recovery (ulm)"
+    },
+    {
+      "case_id": "human_tp53_literal_wmean",
+      "details": {
+        "matched_genes": 6,
+        "method": "wmean"
+      },
+      "metrics": {
+        "expected_rank": null,
+        "top_symbols": [
+          "SOX6",
+          "VDR",
+          "FOXO3",
+          "FOXO4",
+          "KLF4"
+        ]
+      },
+      "notes": [
+        "Known TP53-associated genes were used as input; this is the most decision-relevant activity sanity check."
+      ],
+      "status": "fail",
+      "title": "Human TP53-like signature recovery (wmean)"
+    },
+    {
+      "case_id": "synthetic_human",
+      "details": {
+        "n_targets_seeded": 12,
+        "species": "human"
+      },
+      "metrics": {
+        "seed_tf": "STAT1",
+        "seed_tf_id": "STAT1",
+        "seed_tf_rank": 1,
+        "top_symbols": [
+          "STAT1",
+          "RELA",
+          "IRF1",
+          "NFKB1",
+          "EGR1"
+        ]
+      },
+      "notes": [
+        "This is a self-consistency benchmark, not an external perturbation benchmark."
+      ],
+      "status": "pass",
+      "title": "Synthetic regulon self-consistency (human)"
+    },
+    {
+      "case_id": "synthetic_arabidopsis",
+      "details": {
+        "n_targets_seeded": 12,
+        "species": "arabidopsis"
+      },
+      "metrics": {
+        "seed_tf": "EPR1",
+        "seed_tf_id": "AT1G18330",
+        "seed_tf_rank": 2,
+        "top_symbols": [
+          "LHY",
+          "EPR1",
+          "AT1G19210",
+          "ABI5",
+          "PIF4"
+        ]
+      },
+      "notes": [
+        "This is a self-consistency benchmark, not an external perturbation benchmark."
+      ],
+      "status": "pass",
+      "title": "Synthetic regulon self-consistency (arabidopsis)"
+    }
+  ],
+  "description": "Validate TF activity scoring on literal known-biology and synthetic regulon-recovery cases.",
+  "milestone": "M2",
+  "notes": [
+    "Literal TP53 recovery is the most biologically relevant check in this script.",
+    "Synthetic regulon cases measure internal score consistency, not external biological truth."
+  ],
+  "run_at_utc": "2026-08-21T16:12:45.501923+00:00",
+  "status": "fail",
+  "summary": {
+    "cases_fail": 2,
+    "cases_partial": 0,
+    "cases_pass": 2,
+    "cases_total": 4
+  }
+}

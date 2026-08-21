@@ -1,0 +1,48 @@
+{
+  "benchmark": "benchmark_perturbation_calibration",
+  "cases": [
+    {
+      "case_id": "perturbation_import",
+      "details": {},
+      "metrics": {
+        "n_imported": 4
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Perturbation observations import"
+    },
+    {
+      "case_id": "perturbation_compare",
+      "details": {},
+      "metrics": {
+        "concordance_rate": 1.0,
+        "n_both": 4,
+        "status_code": 200
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Predicted vs observed perturbation concordance"
+    },
+    {
+      "case_id": "perturbation_calibration_listing",
+      "details": {},
+      "metrics": {
+        "n_datasets": 1
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Calibration dataset listing"
+    }
+  ],
+  "description": "Validate perturbation import, prediction-vs-observation comparison, and calibration listing.",
+  "milestone": "M8",
+  "notes": [],
+  "run_at_utc": "2026-08-21T16:13:45.807138+00:00",
+  "status": "pass",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 0,
+    "cases_pass": 3,
+    "cases_total": 3
+  }
+}

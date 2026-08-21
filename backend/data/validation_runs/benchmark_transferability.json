@@ -1,0 +1,50 @@
+{
+  "benchmark": "benchmark_transferability",
+  "cases": [
+    {
+      "case_id": "transfer_risk_arabidopsis_to_tomato",
+      "details": {},
+      "metrics": {
+        "gene_id": "AT1G01120",
+        "n_risks": 1,
+        "status_code": 200
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Arabidopsis to tomato transfer-risk scoring"
+    },
+    {
+      "case_id": "family_rescue",
+      "details": {},
+      "metrics": {
+        "rescued_edges": 0,
+        "status_code": 200
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Family-rescue augmentation"
+    },
+    {
+      "case_id": "species_onboarding_readiness",
+      "details": {},
+      "metrics": {
+        "arabidopsis_readiness": "full",
+        "dahlia_readiness": "minimal"
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Known vs unknown species onboarding readiness"
+    }
+  ],
+  "description": "Validate transfer-risk, family-rescue, and species onboarding readiness surfaces.",
+  "milestone": "M11",
+  "notes": [],
+  "run_at_utc": "2026-08-21T16:13:46.607640+00:00",
+  "status": "pass",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 0,
+    "cases_pass": 3,
+    "cases_total": 3
+  }
+}

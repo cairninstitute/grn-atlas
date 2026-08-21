@@ -1,0 +1,50 @@
+{
+  "benchmark": "benchmark_chromatin_support",
+  "cases": [
+    {
+      "case_id": "chromatin_import",
+      "details": {},
+      "metrics": {
+        "n_links": 1,
+        "n_peaks": 2
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Chromatin peaks and links import"
+    },
+    {
+      "case_id": "chromatin_peak_listing",
+      "details": {},
+      "metrics": {
+        "returned_peaks": 2
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Chromatin peak listing"
+    },
+    {
+      "case_id": "chromatin_gene_support",
+      "details": {},
+      "metrics": {
+        "cis_supported_edges": 48,
+        "linked_peaks": 1
+      },
+      "notes": [
+        "A linked peak proves storage/query integrity. Non-zero cis-supported edges would show stronger regulatory integration."
+      ],
+      "status": "pass",
+      "title": "Gene-level chromatin support retrieval"
+    }
+  ],
+  "description": "Validate chromatin peak import, retrieval, and cis-support integration.",
+  "milestone": "M4",
+  "notes": [],
+  "run_at_utc": "2026-08-21T16:12:47.888638+00:00",
+  "status": "pass",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 0,
+    "cases_pass": 3,
+    "cases_total": 3
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "benchmark": "benchmark_crispr_design",
+  "cases": [
+    {
+      "case_id": "crispr_offtarget_scan",
+      "details": {},
+      "metrics": {
+        "n_offtargets": 0
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "CRISPR off-target scan executes"
+    },
+    {
+      "case_id": "crispr_bad_length_rejected",
+      "details": {},
+      "metrics": {
+        "status_code": 400
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Short CRISPR guide is rejected"
+    },
+    {
+      "case_id": "crispr_strategy_compare",
+      "details": {},
+      "metrics": {
+        "n_strategies": 3,
+        "status_code": 200
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "CRISPR strategy comparison for TP53"
+    }
+  ],
+  "description": "Validate CRISPR off-target scanning and strategy comparison endpoints.",
+  "milestone": "M7",
+  "notes": [
+    "This milestone currently validates heuristic design surfaces, not external CRISPOR/CHOPCHOP concordance."
+  ],
+  "run_at_utc": "2026-08-21T16:13:45.511330+00:00",
+  "status": "pass",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 0,
+    "cases_pass": 3,
+    "cases_total": 3
+  }
+}

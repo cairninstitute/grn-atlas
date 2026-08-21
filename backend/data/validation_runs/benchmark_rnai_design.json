@@ -1,0 +1,61 @@
+{
+  "benchmark": "benchmark_rnai_design",
+  "cases": [
+    {
+      "case_id": "rnai_screen_petunia_candidates",
+      "details": {
+        "jaf13": {
+          "best_window_off_targets": 0,
+          "designable": true,
+          "gene_id": "Peaxi162Scf00119g00942",
+          "label_inferred": false,
+          "mean_tpm": 25.334,
+          "symbol": "JAF13",
+          "transcript_off_targets": 2
+        },
+        "top_gene": "JAF13"
+      },
+      "metrics": {
+        "designable": 3,
+        "jaf13_rank": 1,
+        "n_genes": 4
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Petunia candidate screen ranks clean dsRNA targets"
+    },
+    {
+      "case_id": "rnai_design_jaf13",
+      "details": {},
+      "metrics": {
+        "predicted_affected": 7,
+        "window_off_targets": 0
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Single-gene dsRNA design for JAF13"
+    },
+    {
+      "case_id": "rnai_isoform_coverage",
+      "details": {},
+      "metrics": {
+        "all_isoforms_covered": true,
+        "n_isoforms": 1
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Isoform coverage availability"
+    }
+  ],
+  "description": "Validate dsRNA screen/design consistency and isoform coverage on petunia candidate genes.",
+  "milestone": "M6",
+  "notes": [],
+  "run_at_utc": "2026-08-21T16:13:02.489728+00:00",
+  "status": "pass",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 0,
+    "cases_pass": 3,
+    "cases_total": 3
+  }
+}

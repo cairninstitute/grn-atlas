@@ -1,0 +1,64 @@
+{
+  "benchmark": "benchmark_celltype_regulation",
+  "cases": [
+    {
+      "case_id": "celltype_regulation_tp53",
+      "details": {},
+      "metrics": {
+        "top_regulators": [
+          "ABL1",
+          "AR",
+          "ATF1",
+          "ATF2",
+          "ATF5",
+          "ATM",
+          "BCL6",
+          "BRCA1"
+        ],
+        "tp53_rank": null
+      },
+      "notes": [
+        "This endpoint currently uses expressed imported features rather than true cluster-specific regulons."
+      ],
+      "status": "partial",
+      "title": "Cell-type regulation recovers TP53 from TP53-like expression context"
+    },
+    {
+      "case_id": "celltype_upstream_tp53",
+      "details": {},
+      "metrics": {
+        "top_regulators": [
+          "TP53"
+        ],
+        "tp53_rank": 1
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Cell-type upstream analysis recovers TP53 from TP53 target set"
+    },
+    {
+      "case_id": "celltype_compare_has_differential_signal",
+      "details": {},
+      "metrics": {
+        "n_deg": 5,
+        "n_differential_regulators": 25
+      },
+      "notes": [
+        "This checks that the contrast pipeline produces ranked outputs; it does not prove lineage-level correctness."
+      ],
+      "status": "pass",
+      "title": "Cell-type compare returns differential regulators"
+    }
+  ],
+  "description": "Validate cell-type / pseudobulk regulator workflows on a TP53-like imported dataset.",
+  "milestone": "M3",
+  "notes": [],
+  "run_at_utc": "2026-08-21T16:12:47.401236+00:00",
+  "status": "partial",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 1,
+    "cases_pass": 2,
+    "cases_total": 3
+  }
+}

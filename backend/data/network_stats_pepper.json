@@ -39,9 +39,9 @@
   "motif_enrichment": {
     "tfs_tested": 45,
     "mean_target_motif_rate": 0.6995,
-    "mean_nontarget_motif_rate": 0.0129,
-    "mean_enrichment": 22.29,
-    "median_enrichment": 18.07,
+    "mean_nontarget_motif_rate": 0.009,
+    "mean_enrichment": 28.5,
+    "median_enrichment": 31.77,
     "fraction_enriched": 1.0
   }
 }

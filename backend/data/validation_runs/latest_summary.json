@@ -1,0 +1,847 @@
+{
+  "benchmarks": [
+    {
+      "benchmark": "benchmark_celltype_regulation",
+      "cases": [
+        {
+          "case_id": "celltype_regulation_tp53",
+          "details": {},
+          "metrics": {
+            "top_regulators": [
+              "ABL1",
+              "AR",
+              "ATF1",
+              "ATF2",
+              "ATF5",
+              "ATM",
+              "BCL6",
+              "BRCA1"
+            ],
+            "tp53_rank": null
+          },
+          "notes": [
+            "This endpoint currently uses expressed imported features rather than true cluster-specific regulons."
+          ],
+          "status": "partial",
+          "title": "Cell-type regulation recovers TP53 from TP53-like expression context"
+        },
+        {
+          "case_id": "celltype_upstream_tp53",
+          "details": {},
+          "metrics": {
+            "top_regulators": [
+              "TP53"
+            ],
+            "tp53_rank": 1
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Cell-type upstream analysis recovers TP53 from TP53 target set"
+        },
+        {
+          "case_id": "celltype_compare_has_differential_signal",
+          "details": {},
+          "metrics": {
+            "n_deg": 5,
+            "n_differential_regulators": 25
+          },
+          "notes": [
+            "This checks that the contrast pipeline produces ranked outputs; it does not prove lineage-level correctness."
+          ],
+          "status": "pass",
+          "title": "Cell-type compare returns differential regulators"
+        }
+      ],
+      "description": "Validate cell-type / pseudobulk regulator workflows on a TP53-like imported dataset.",
+      "milestone": "M3",
+      "notes": [],
+      "run_at_utc": "2026-08-21T16:12:47.401236+00:00",
+      "status": "partial",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 1,
+        "cases_pass": 2,
+        "cases_total": 3
+      }
+    },
+    {
+      "benchmark": "benchmark_chromatin_support",
+      "cases": [
+        {
+          "case_id": "chromatin_import",
+          "details": {},
+          "metrics": {
+            "n_links": 1,
+            "n_peaks": 2
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Chromatin peaks and links import"
+        },
+        {
+          "case_id": "chromatin_peak_listing",
+          "details": {},
+          "metrics": {
+            "returned_peaks": 2
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Chromatin peak listing"
+        },
+        {
+          "case_id": "chromatin_gene_support",
+          "details": {},
+          "metrics": {
+            "cis_supported_edges": 48,
+            "linked_peaks": 1
+          },
+          "notes": [
+            "A linked peak proves storage/query integrity. Non-zero cis-supported edges would show stronger regulatory integration."
+          ],
+          "status": "pass",
+          "title": "Gene-level chromatin support retrieval"
+        }
+      ],
+      "description": "Validate chromatin peak import, retrieval, and cis-support integration.",
+      "milestone": "M4",
+      "notes": [],
+      "run_at_utc": "2026-08-21T16:12:47.888638+00:00",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 3,
+        "cases_total": 3
+      }
+    },
+    {
+      "benchmark": "benchmark_crispr_design",
+      "cases": [
+        {
+          "case_id": "crispr_offtarget_scan",
+          "details": {},
+          "metrics": {
+            "n_offtargets": 0
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "CRISPR off-target scan executes"
+        },
+        {
+          "case_id": "crispr_bad_length_rejected",
+          "details": {},
+          "metrics": {
+            "status_code": 400
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Short CRISPR guide is rejected"
+        },
+        {
+          "case_id": "crispr_strategy_compare",
+          "details": {},
+          "metrics": {
+            "n_strategies": 3,
+            "status_code": 200
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "CRISPR strategy comparison for TP53"
+        }
+      ],
+      "description": "Validate CRISPR off-target scanning and strategy comparison endpoints.",
+      "milestone": "M7",
+      "notes": [
+        "This milestone currently validates heuristic design surfaces, not external CRISPOR/CHOPCHOP concordance."
+      ],
+      "run_at_utc": "2026-08-21T16:13:45.511330+00:00",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 3,
+        "cases_total": 3
+      }
+    },
+    {
+      "benchmark": "benchmark_omics_import",
+      "cases": [
+        {
+          "case_id": "clean_human_bulk",
+          "details": {},
+          "metrics": {
+            "match_pct": 100.0,
+            "n_contrasts": 1,
+            "n_features": 4
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Clean human bulk import and validation"
+        },
+        {
+          "case_id": "mixed_quality_overlap_warning",
+          "details": {},
+          "metrics": {
+            "match_pct": 50.0,
+            "unmatched_sample": [
+              "AT1G01010",
+              "not_a_gene"
+            ]
+          },
+          "notes": [
+            "The endpoint currently reports overlap correctly but does not mark small datasets as valid."
+          ],
+          "status": "pass",
+          "title": "Mixed-species / mixed-quality overlap warning"
+        },
+        {
+          "case_id": "repeated_import_consistency",
+          "details": {},
+          "metrics": {
+            "dataset_a": "ds_b7f3c6a412ba",
+            "dataset_b": "ds_c2ecef87d95c",
+            "n_features": 4,
+            "n_samples": 3
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Repeated import consistency"
+        }
+      ],
+      "description": "Validate import correctness, overlap reporting, and repeated-import consistency.",
+      "milestone": "M1",
+      "notes": [],
+      "run_at_utc": "2026-08-21T16:12:46.701730+00:00",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 3,
+        "cases_total": 3
+      }
+    },
+    {
+      "benchmark": "benchmark_pathway_activity",
+      "cases": [
+        {
+          "case_id": "human_p53_signature",
+          "details": {},
+          "metrics": {
+            "expected_rank": 6,
+            "top_pathways": [
+              "Endometrial cancer",
+              "Non-small cell lung cancer",
+              "Breast cancer pathway",
+              "Pancreatic adenocarcinoma pathway",
+              "ATM Signaling Pathway",
+              "p53 transcriptional gene network",
+              "Chromosomal and microsatellite instability in colorectal cancer",
+              "Small cell lung cancer"
+            ]
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Human p53 / DNA damage pathway recovery"
+        },
+        {
+          "case_id": "synthetic_member_enrichment",
+          "details": {
+            "pathway_id": "WP4963",
+            "seeded_members": 12
+          },
+          "metrics": {
+            "pathway_name": "p53 transcriptional gene network",
+            "pathway_rank": 1,
+            "top_pathways": [
+              "miRNA regulation of DNA damage response",
+              "TP53 network",
+              "VEGFA-VEGFR2 Signaling Pathway",
+              "DNA damage response",
+              "DNA damage response (only ATM dependent)"
+            ]
+          },
+          "notes": [
+            "This is a self-consistency benchmark using atlas pathway members."
+          ],
+          "status": "pass",
+          "title": "Synthetic pathway member enrichment recovery"
+        }
+      ],
+      "description": "Validate pathway activity scoring on a literal DNA-damage signature and a synthetic member-enrichment case.",
+      "milestone": "M2",
+      "notes": [
+        "The literal p53 case is the stronger biological check in this script."
+      ],
+      "run_at_utc": "2026-08-21T16:12:46.069376+00:00",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 2,
+        "cases_total": 2
+      }
+    },
+    {
+      "benchmark": "benchmark_perturbation_calibration",
+      "cases": [
+        {
+          "case_id": "perturbation_import",
+          "details": {},
+          "metrics": {
+            "n_imported": 4
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Perturbation observations import"
+        },
+        {
+          "case_id": "perturbation_compare",
+          "details": {},
+          "metrics": {
+            "concordance_rate": 1.0,
+            "n_both": 4,
+            "status_code": 200
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Predicted vs observed perturbation concordance"
+        },
+        {
+          "case_id": "perturbation_calibration_listing",
+          "details": {},
+          "metrics": {
+            "n_datasets": 1
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Calibration dataset listing"
+        }
+      ],
+      "description": "Validate perturbation import, prediction-vs-observation comparison, and calibration listing.",
+      "milestone": "M8",
+      "notes": [],
+      "run_at_utc": "2026-08-21T16:13:45.807138+00:00",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 3,
+        "cases_total": 3
+      }
+    },
+    {
+      "benchmark": "benchmark_rnai_design",
+      "cases": [
+        {
+          "case_id": "rnai_screen_petunia_candidates",
+          "details": {
+            "jaf13": {
+              "best_window_off_targets": 0,
+              "designable": true,
+              "gene_id": "Peaxi162Scf00119g00942",
+              "label_inferred": false,
+              "mean_tpm": 25.334,
+              "symbol": "JAF13",
+              "transcript_off_targets": 2
+            },
+            "top_gene": "JAF13"
+          },
+          "metrics": {
+            "designable": 3,
+            "jaf13_rank": 1,
+            "n_genes": 4
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Petunia candidate screen ranks clean dsRNA targets"
+        },
+        {
+          "case_id": "rnai_design_jaf13",
+          "details": {},
+          "metrics": {
+            "predicted_affected": 7,
+            "window_off_targets": 0
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Single-gene dsRNA design for JAF13"
+        },
+        {
+          "case_id": "rnai_isoform_coverage",
+          "details": {},
+          "metrics": {
+            "all_isoforms_covered": true,
+            "n_isoforms": 1
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Isoform coverage availability"
+        }
+      ],
+      "description": "Validate dsRNA screen/design consistency and isoform coverage on petunia candidate genes.",
+      "milestone": "M6",
+      "notes": [],
+      "run_at_utc": "2026-08-21T16:13:02.489728+00:00",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 3,
+        "cases_total": 3
+      }
+    },
+    {
+      "benchmark": "benchmark_signaling_to_tf",
+      "cases": [
+        {
+          "case_id": "ligand_receptor_pair_listing",
+          "details": {},
+          "metrics": {
+            "db_non_tf_to_tf_edges": 0,
+            "reported_pairs": 0
+          },
+          "notes": [
+            "A zero result currently indicates sparse biological content in this layer, not an HTTP failure."
+          ],
+          "status": "partial",
+          "title": "Ligand/receptor-style pair listing in human"
+        },
+        {
+          "case_id": "signaling_trace_surface",
+          "details": {},
+          "metrics": {
+            "cascade_depth": 2,
+            "direct_tf_targets": 25,
+            "status_code": 200
+          },
+          "notes": [
+            "TP53 is used here as a surface-level smoke case; it is not a true receptor benchmark."
+          ],
+          "status": "pass",
+          "title": "Signaling-to-TF trace surface executes"
+        }
+      ],
+      "description": "Validate signaling-to-TF workflow availability and report current biological sparsity honestly.",
+      "milestone": "M9",
+      "notes": [],
+      "run_at_utc": "2026-08-21T16:13:46.262030+00:00",
+      "status": "partial",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 1,
+        "cases_pass": 1,
+        "cases_total": 2
+      }
+    },
+    {
+      "benchmark": "benchmark_tf_activity",
+      "cases": [
+        {
+          "case_id": "human_tp53_literal_ulm",
+          "details": {
+            "matched_genes": 6,
+            "method": "ulm"
+          },
+          "metrics": {
+            "expected_rank": null,
+            "top_symbols": [
+              "EGR1",
+              "ABL1",
+              "ERCC2",
+              "ING4",
+              "PAX5"
+            ]
+          },
+          "notes": [
+            "Known TP53-associated genes were used as input; this is the most decision-relevant activity sanity check."
+          ],
+          "status": "fail",
+          "title": "Human TP53-like signature recovery (ulm)"
+        },
+        {
+          "case_id": "human_tp53_literal_wmean",
+          "details": {
+            "matched_genes": 6,
+            "method": "wmean"
+          },
+          "metrics": {
+            "expected_rank": null,
+            "top_symbols": [
+              "SOX6",
+              "VDR",
+              "FOXO3",
+              "FOXO4",
+              "KLF4"
+            ]
+          },
+          "notes": [
+            "Known TP53-associated genes were used as input; this is the most decision-relevant activity sanity check."
+          ],
+          "status": "fail",
+          "title": "Human TP53-like signature recovery (wmean)"
+        },
+        {
+          "case_id": "synthetic_human",
+          "details": {
+            "n_targets_seeded": 12,
+            "species": "human"
+          },
+          "metrics": {
+            "seed_tf": "STAT1",
+            "seed_tf_id": "STAT1",
+            "seed_tf_rank": 1,
+            "top_symbols": [
+              "STAT1",
+              "RELA",
+              "IRF1",
+              "NFKB1",
+              "EGR1"
+            ]
+          },
+          "notes": [
+            "This is a self-consistency benchmark, not an external perturbation benchmark."
+          ],
+          "status": "pass",
+          "title": "Synthetic regulon self-consistency (human)"
+        },
+        {
+          "case_id": "synthetic_arabidopsis",
+          "details": {
+            "n_targets_seeded": 12,
+            "species": "arabidopsis"
+          },
+          "metrics": {
+            "seed_tf": "EPR1",
+            "seed_tf_id": "AT1G18330",
+            "seed_tf_rank": 2,
+            "top_symbols": [
+              "LHY",
+              "EPR1",
+              "AT1G19210",
+              "ABI5",
+              "PIF4"
+            ]
+          },
+          "notes": [
+            "This is a self-consistency benchmark, not an external perturbation benchmark."
+          ],
+          "status": "pass",
+          "title": "Synthetic regulon self-consistency (arabidopsis)"
+        }
+      ],
+      "description": "Validate TF activity scoring on literal known-biology and synthetic regulon-recovery cases.",
+      "milestone": "M2",
+      "notes": [
+        "Literal TP53 recovery is the most biologically relevant check in this script.",
+        "Synthetic regulon cases measure internal score consistency, not external biological truth."
+      ],
+      "run_at_utc": "2026-08-21T16:12:45.501923+00:00",
+      "status": "fail",
+      "summary": {
+        "cases_fail": 2,
+        "cases_partial": 0,
+        "cases_pass": 2,
+        "cases_total": 4
+      }
+    },
+    {
+      "benchmark": "benchmark_trajectory_workflows",
+      "cases": [
+        {
+          "case_id": "trajectory_drivers_tp53",
+          "details": {},
+          "metrics": {
+            "top_drivers": [
+              "ELF4",
+              "EZH2",
+              "FOS",
+              "HDAC1",
+              "HDAC9",
+              "HOXA10",
+              "IRF1",
+              "JUN"
+            ],
+            "tp53_rank": null
+          },
+          "notes": [],
+          "status": "partial",
+          "title": "Trajectory driver recovery for TP53-like contrast"
+        },
+        {
+          "case_id": "trajectory_activity_tp53",
+          "details": {},
+          "metrics": {
+            "top_tfs": [
+              "FOS",
+              "HIF1A",
+              "ING1",
+              "NR3C1",
+              "NFKB1",
+              "ABL1",
+              "EGR1",
+              "ERCC2"
+            ],
+            "tp53_rank": 20
+          },
+          "notes": [],
+          "status": "partial",
+          "title": "Trajectory TF activity recovery for TP53-like signature"
+        }
+      ],
+      "description": "Validate trajectory driver and activity workflows on a simple TP53-like pseudobulk contrast.",
+      "milestone": "M5",
+      "notes": [
+        "This is currently a contrast-level benchmark; it is not a full pseudotime trajectory benchmark with external lineage truth."
+      ],
+      "run_at_utc": "2026-08-21T16:12:48.326233+00:00",
+      "status": "partial",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 2,
+        "cases_pass": 0,
+        "cases_total": 2
+      }
+    },
+    {
+      "benchmark": "benchmark_transferability",
+      "cases": [
+        {
+          "case_id": "transfer_risk_arabidopsis_to_tomato",
+          "details": {},
+          "metrics": {
+            "gene_id": "AT1G01120",
+            "n_risks": 1,
+            "status_code": 200
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Arabidopsis to tomato transfer-risk scoring"
+        },
+        {
+          "case_id": "family_rescue",
+          "details": {},
+          "metrics": {
+            "rescued_edges": 0,
+            "status_code": 200
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Family-rescue augmentation"
+        },
+        {
+          "case_id": "species_onboarding_readiness",
+          "details": {},
+          "metrics": {
+            "arabidopsis_readiness": "full",
+            "dahlia_readiness": "minimal"
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Known vs unknown species onboarding readiness"
+        }
+      ],
+      "description": "Validate transfer-risk, family-rescue, and species onboarding readiness surfaces.",
+      "milestone": "M11",
+      "notes": [],
+      "run_at_utc": "2026-08-21T16:13:46.607640+00:00",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 3,
+        "cases_total": 3
+      }
+    },
+    {
+      "benchmark": "benchmark_workflow_packaging",
+      "cases": [
+        {
+          "case_id": "workflow_list",
+          "details": {},
+          "metrics": {
+            "workflow_ids": [
+              "deg-to-regulators",
+              "import-to-activity",
+              "target-to-perturbation"
+            ]
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Workflow list surface"
+        },
+        {
+          "case_id": "workflow_deg_to_regulators",
+          "details": {},
+          "metrics": {
+            "n_top_regulators": 10,
+            "status": "complete"
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "DEG \u2192 regulators packaged workflow"
+        },
+        {
+          "case_id": "workflow_target_to_perturbation",
+          "details": {},
+          "metrics": {
+            "n_strategies": 3,
+            "status_code": 200
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Target \u2192 perturbation packaged workflow"
+        },
+        {
+          "case_id": "workflow_import_to_activity",
+          "details": {},
+          "metrics": {
+            "next_action": "POST /api/v1/activity/tf with gene values from dataset ds_4eacd2b3d89e",
+            "status": "ready"
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Import \u2192 activity packaged workflow"
+        },
+        {
+          "case_id": "study_packet_and_report",
+          "details": {},
+          "metrics": {
+            "packet_status": 200,
+            "report_status": 200
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Collaborator packet/report generation"
+        }
+      ],
+      "description": "Validate packaged workflow execution and collaborator-facing packet/report surfaces.",
+      "milestone": "M12",
+      "notes": [],
+      "run_at_utc": "2026-08-21T16:13:54.180417+00:00",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 5,
+        "cases_total": 5
+      }
+    }
+  ],
+  "legacy_artifacts": {
+    "beeline_report": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/beeline_benchmark_report.json",
+    "network_report": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_validation_report.md",
+    "quality_reports": [
+      "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/quality_report_petunia.json",
+      "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/quality_report_tomato.json"
+    ]
+  },
+  "run_at_utc": "2026-08-21T16:13:54.357886+00:00",
+  "script_runs": [
+    {
+      "returncode": 0,
+      "script": "validate_regulation_quality.py",
+      "status": "pass",
+      "stderr": "",
+      "stdout": "============================================================\n  PETUNIA QUALITY REPORT\n============================================================\n\n--- Gold Standard ---\nPositive edges: 32 resolved of 33 (1 unresolved)\n  Unresolved symbols: MT\nNegative controls: 11 resolved of 11\n\nRecall (true positives): 30/32 = 93.8%\n  via GRNBoost2: 3\n  via Inferred:Arabidopsis: 11\n  via Literature: 15\n  via PlantRegMap: 1\n  MISSING: 2\nSpecificity (true negatives): 11/11 = 100.0%\nPrecision (gold standard): 100.0%\n\nPer-edge detail:\n  AN2          -> DFR               FOUND [Inferred:Arabidopsis]  (genetics/transactivation)\n  AN2          -> ANS               FOUND [Inferred:Arabidopsis]  (genetics/transactivation)\n  AN1          -> DFR               FOUND [Literature]  (genetics/transactivation)\n  AN1          -> ANS               FOUND [GRNBoost2]  (genetics/transactivation)\n  AN2          -> RT                FOUND [Literature]  (genetics)\n  AN2          -> MT                UNRESOLVED  (genetics) *\n  EOBI         -> DAHP1             FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> DAHP2             FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> EPSPS             FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> CM1               FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> PAL1              FOUND [GRNBoost2]  (EMSA/Y1H)\n  EOBI         -> CFAT              FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> BSMT2             FOUND [GRNBoost2]  (EMSA/Y1H)\n  EOBI         -> PAAS              FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> ADT1              FOUND [Literature]  (EMSA/Y1H)\n  MYC2         -> AGO4              FOUND [Literature]  (dual-luciferase/Y1H)\n  MYB12        -> CHS               FOUND [Inferred:Arabidopsis]  (transactivation)\n  MYB12        -> F3H               FOUND [Inferred:Arabidopsis]  (transactivation)\n  JAF13        -> DFR               MISSING  (transactivation) *\n  JAF13        -> ANS               FOUND [Inferred:Arabidopsis]  (transactivation)\n  PH4          -> PH1               MISSING  (genetics) *\n  AN2          -> GST               FOUND [Literature]  (genetics)\n  AN1          -> GST               FOUND [Literature]  (genetics)\n  AN2          -> CHI               FOUND [Literature]  (genetics)\n  AN1          -> CHI               FOUND [Literature]  (genetics)\n  MYB12        -> CHI               FOUND [Literature]  (transactivation)\n  AG           -> AP3               FOUND [Inferred:Arabidopsis]  (genetics)\n  PI           -> AP3               FOUND [Inferred:Arabidopsis]  (genetics)\n  WUS          -> AG                FOUND [Inferred:Arabidopsis]  (genetics)\n  AP1          -> AG                FOUND [Inferred:Arabidopsis]  (genetics)\n  AG           -> SEP1              FOUND [Inferred:Arabidopsis]  (genetics)\n  PI           -> AG                FOUND [PlantRegMap]  (genetics)\n  AP1          -> PI                FOUND [Inferred:Arabidopsis]  (genetics)\n  AN2          -> CHS               TRUE_NEG  (genetics)\n  AN1          -> CHS               TRUE_NEG  (genetics)\n  MYB12        -> DFR               TRUE_NEG  (transactivation)\n  JAF13        -> CHS               TRUE_NEG  (transactivation)\n  AG           -> CHS               TRUE_NEG  (genetics)\n  WUS          -> DFR               TRUE_NEG  (genetics)\n  AP1          -> DFR               TRUE_NEG  (genetics)\n  MYB12        -> ANS               TRUE_NEG  (transactivation)\n  AN2          -> F3H               TRUE_NEG  (genetics)\n  AN1          -> F3H               TRUE_NEG  (genetics)\n  AG           -> DFR               TRUE_NEG  (genetics)\n\nOrtholog gaps: 4 master regulators without Arabidopsis ortholog:\n  TT2-like (Peaxi162Scf00177g00512)\n  AN1 (Peaxi162Scf00338g00912)\n  AP3 (Peaxi162Scf01084g00119)\n  DPL (Peaxi162Scf01210g00002)\n\n--- Random Edge Sampling (100 edges) ---\nMean GO overlap (Jaccard): 0.0823\nEdges with any GO overlap: 75/100 (75%)\nBy source:\n  Inferred:Arabidopsis: n=33, mean_overlap=0.0804, any_overlap=22/33\n  Inferred:Potato: n=19, mean_overlap=0.1064, any_overlap=14/19\n  Inferred:Tobacco: n=18, mean_overlap=0.0862, any_overlap=15/18\n  PlantRegMap: n=30, mean_overlap=0.0667, any_overlap=24/30\n\n--- Pathway Coherence ---\n  anthocyanin: 20 TFs, 111 targets\n    interactions: 40/2043 to pathway (0.0196 vs expected 0.0074, enrichment=2.6x)\n    GRNBoost2: 15/4179 to pathway (0.0036 vs expected 0.0074, enrichment=0.5x)\n  carotenoid: 1 TFs, 29 targets\n  ethylene: 60 TFs, 32 targets\n    interactions: 26/8379 to pathway (0.0031 vs expected 0.0021, enrichment=1.4x)\n    GRNBoost2: 4/4511 to pathway (0.0009 vs expected 0.0021, enrichment=0.4x)\n  flavonol: 20 TFs, 10 targets\n    interactions: 5/2043 to pathway (0.0024 vs expected 0.0007, enrichment=3.7x)\n    GRNBoost2: 2/4179 to pathway (0.0005 vs expected 0.0007, enrichment=0.7x)\n  terpene: 15 targets, no TFs annotated to regulatory GO terms\n\n--- False Positive Estimation (200 random TF-gene pairs) ---\nRandom pairs tested: 200\nFound in interactions: 5 (2.5%)\nFound in GRNBoost2: 3 (1.5%)\nCombined hit rate: 4.0%\n  By source: {'Inferred:Tobacco': 1, 'Inferred:Arabidopsis': 2, 'Inferred:Potato': 1, 'PlantRegMap': 1}\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/quality_report_petunia.json\n\n============================================================\n  TOMATO QUALITY REPORT\n============================================================\n\n--- Gold Standard ---\nPositive edges: 38 resolved of 38 (0 unresolved)\nNegative controls: 12 resolved of 12\n\nRecall (true positives): 32/38 = 84.2%\n  via GRNBoost2: 1\n  via Inferred:Arabidopsis: 15\n  via Literature: 16\n  MISSING: 6\nSpecificity (true negatives): 12/12 = 100.0%\nPrecision (gold standard): 100.0%\n\nPer-edge detail:\n  ANT1         -> DFR               FOUND [Literature]  (transactivation/overexpression)\n  ANT1         -> CHS               FOUND [Literature]  (overexpression)\n  ANT1         -> F3H               FOUND [Literature]  (overexpression)\n  ANT1         -> CHI               FOUND [Literature]  (overexpression)\n  ANT1         -> ANS               FOUND [Literature]  (overexpression)\n  RIN          -> ACS2              FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> ACS4              FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> PSY1              FOUND [Literature]  (ChIP-qPCR)\n  NOR          -> ACS2              FOUND [Literature]  (genetics)\n  RIN          -> E4                FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> PDS               FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> ACO1              FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> ZDS               FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> CRTISO            FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> CEL2              FOUND [Literature]  (ChIP-qPCR)\n  AN2          -> DFR               FOUND [Inferred:Arabidopsis]  (genetics/overexpression)\n  AN2          -> ANS               FOUND [Inferred:Arabidopsis]  (genetics/overexpression)\n  AN2          -> CHS               FOUND [Inferred:Arabidopsis]  (overexpression)\n  AN2          -> CHI               FOUND [Inferred:Arabidopsis]  (overexpression)\n  AN2          -> F3H               MISSING  (overexpression) *\n  AN1          -> DFR               FOUND [Inferred:Arabidopsis]  (genetics)\n  AN1          -> ANS               MISSING  (genetics) *\n  AN1          -> CHI               MISSING  (genetics) *\n  AN1          -> CHS               MISSING  (genetics) *\n  AN1          -> F3H               MISSING  (genetics) *\n  AG           -> AP3               FOUND [Inferred:Arabidopsis]  (genetics)\n  PI           -> AP3               FOUND [Inferred:Arabidopsis]  (genetics)\n  HY5          -> CHS               FOUND [Inferred:Arabidopsis]  (ChIP/genetics)\n  MYC2         -> EIL1              MISSING  (genetics) *\n  MYB12        -> CHS               FOUND [Inferred:Arabidopsis]  (overexpression/ChIP)\n  MYB12        -> CHI               FOUND [Literature]  (overexpression/ChIP)\n  MYB12        -> F3H               FOUND [Inferred:Arabidopsis]  (overexpression/ChIP)\n  MYB12        -> FLS               FOUND [Inferred:Arabidopsis]  (overexpression/ChIP)\n  EIN3         -> ERF1              FOUND [Inferred:Arabidopsis]  (genetics)\n  EIL1         -> ERF1              FOUND [Inferred:Arabidopsis]  (genetics)\n  PIF4         -> HY5               FOUND [Inferred:Arabidopsis]  (genetics)\n  WUS          -> AG                FOUND [Inferred:Arabidopsis]  (genetics)\n  AP1          -> AG                FOUND [GRNBoost2]  (genetics)\n  ANT1         -> PSY1              TRUE_NEG  (overexpression)\n  ANT1         -> ACS2              TRUE_NEG  (overexpression)\n  AN2          -> PSY1              TRUE_NEG  (genetics)\n  AG           -> CHS               TRUE_NEG  (genetics)\n  HY5          -> DFR               TRUE_NEG  (genetics)\n  MYB12        -> DFR               TRUE_NEG  (overexpression)\n  MYB12        -> ANS               TRUE_NEG  (overexpression)\n  HY5          -> ANS               TRUE_NEG  (genetics)\n  WRKY33       -> CHS               TRUE_NEG  (genetics)\n  CBF1         -> CHS               TRUE_NEG  (genetics)\n  MYC2         -> PSY1              TRUE_NEG  (genetics)\n  PIF4         -> CHS               TRUE_NEG  (genetics)\n\nOrtholog gaps: 3 master regulators without Arabidopsis ortholog:\n  ANT1 (Solyc10g086260.1)\n  DPL (Solyc10g086270.1)\n  TT2-like (Solyc12g049300.1)\n\n--- Random Edge Sampling (100 edges) ---\nMean GO overlap (Jaccard): 0.1044\nEdges with any GO overlap: 67/100 (67%)\nBy source:\n  Inferred:Arabidopsis: n=44, mean_overlap=0.1194, any_overlap=31/44\n  Inferred:Potato: n=25, mean_overlap=0.0852, any_overlap=14/25\n  Inferred:Tobacco: n=29, mean_overlap=0.0889, any_overlap=20/29\n  PlantRegMap: n=2, mean_overlap=0.2397, any_overlap=2/2\n\n--- Pathway Coherence ---\n  anthocyanin: 24 TFs, 129 targets\n    interactions: 38/1763 to pathway (0.0216 vs expected 0.0067, enrichment=3.2x)\n    GRNBoost2: 16/2864 to pathway (0.0056 vs expected 0.0067, enrichment=0.8x)\n  carotenoid: 2 TFs, 33 targets\n  ethylene: 80 TFs, 41 targets\n    interactions: 54/14387 to pathway (0.0038 vs expected 0.0021, enrichment=1.8x)\n    GRNBoost2: 6/5455 to pathway (0.0011 vs expected 0.0021, enrichment=0.5x)\n  flavonol: 24 TFs, 8 targets\n    interactions: 2/1763 to pathway (0.0011 vs expected 0.0004, enrichment=2.7x)\n    GRNBoost2: 3/2864 to pathway (0.0010 vs expected 0.0004, enrichment=2.5x)\n  terpene: 15 targets, no TFs annotated to regulatory GO terms\n\n--- False Positive Estimation (200 random TF-gene pairs) ---\nRandom pairs tested: 200\nFound in interactions: 5 (2.5%)\nFound in GRNBoost2: 2 (1.0%)\nCombined hit rate: 3.5%\n  By source: {'Inferred:Arabidopsis': 4, 'Inferred:Tobacco': 1}\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/quality_report_tomato.json"
+    },
+    {
+      "returncode": 0,
+      "script": "validate_network_statistics.py",
+      "status": "pass",
+      "stderr": "",
+      "stdout": "======================================================================\n  ARABIDOPSIS POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 17349 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 584\n  Mean real coherence: 0.17323\n  Mean random coherence: 0.16991\n  Enrichment: 1.02x\n  Fraction of TFs above random: 0.486\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.17512\n  Permuted mean \u00b1 std: 0.17295 \u00b1 0.00127\n  Effect size: 1.71 sigma\n  p-value: 0.0396\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=1234): mean overlap=0.19956\n  Multi-source  (n=1961): mean overlap=0.20015\n  Ratio: 1.003x\n  Mann-Whitney z: 0.28\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 1.0%\n  Random pairs coexpressed: 0.8%\n  Rate ratio: 1.23x\n  Mean importance (real): 0.05067\n  Mean importance (random): 0.0502\n  Importance ratio: 1.01x\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_arabidopsis.json\n\n======================================================================\n  TOMATO POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 12939 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 730\n  Mean real coherence: 0.12968\n  Mean random coherence: 0.10795\n  Enrichment: 1.2x\n  Fraction of TFs above random: 0.881\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.12929\n  Permuted mean \u00b1 std: 0.10831 \u00b1 0.0006\n  Effect size: 35.17 sigma\n  p-value: 0.0099\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=1245): mean overlap=0.13585\n  Multi-source  (n=1547): mean overlap=0.1443\n  Ratio: 1.062x\n  Mann-Whitney z: 2.36\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.6%\n  Random pairs coexpressed: 0.6%\n  Rate ratio: 0.94x\n  Mean importance (real): 0.05797\n  Mean importance (random): 0.05757\n  Importance ratio: 1.01x\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 442\n  Target motif rate: 40.3%\n  Non-target motif rate: 0.6%\n  Mean enrichment: 38.55x\n  Median enrichment: 29.89x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_tomato.json\n\n======================================================================\n  PETUNIA POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 11667 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 610\n  Mean real coherence: 0.12611\n  Mean random coherence: 0.10779\n  Enrichment: 1.17x\n  Fraction of TFs above random: 0.826\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.12618\n  Permuted mean \u00b1 std: 0.10828 \u00b1 0.00059\n  Effect size: 30.25 sigma\n  p-value: 0.0099\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=1578): mean overlap=0.13587\n  Multi-source  (n=1661): mean overlap=0.14653\n  Ratio: 1.078x\n  Mann-Whitney z: 2.08\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 1.1%\n  Random pairs coexpressed: 0.6%\n  Rate ratio: 1.68x\n  Mean importance (real): 0.06272\n  Mean importance (random): 0.05862\n  Importance ratio: 1.07x\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 402\n  Target motif rate: 33.6%\n  Non-target motif rate: 0.6%\n  Mean enrichment: 29.53x\n  Median enrichment: 24.92x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_petunia.json\n\n======================================================================\n  HUMAN POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 2041 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 191\n  Mean real coherence: 0.06079\n  Mean random coherence: 0.05475\n  Enrichment: 1.11x\n  Fraction of TFs above random: 0.487\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.06085\n  Permuted mean \u00b1 std: 0.05032 \u00b1 0.00154\n  Effect size: 6.82 sigma\n  p-value: 0.0099\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=813): mean overlap=0.08445\n  Multi-source  (n=2000): mean overlap=0.06992\n  Ratio: 0.828x\n  Mann-Whitney z: -2.24\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_human.json\n\n======================================================================\n  MOUSE POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_mouse.json\n\n======================================================================\n  RICE POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 216\n  Target motif rate: 59.0%\n  Non-target motif rate: 0.6%\n  Mean enrichment: 27.99x\n  Median enrichment: 25.86x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_rice.json\n\n======================================================================\n  POTATO POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 167\n  Target motif rate: 4.9%\n  Non-target motif rate: 0.8%\n  Mean enrichment: 3.33x\n  Median enrichment: 2.07x\n  Fraction of TFs enriched: 0.725\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_potato.json\n\n======================================================================\n  PEPPER POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 45\n  Target motif rate: 70.0%\n  Non-target motif rate: 0.9%\n  Mean enrichment: 28.5x\n  Median enrichment: 31.77x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_pepper.json\n\nCombined report: /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_validation_report.md"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_beeline.py",
+      "status": "pass",
+      "stderr": "",
+      "stdout": "=== Arabidopsis vs ConnecTF ===\n  ConnecTF data not available \u2014 using DAP-seq overlap benchmark\n  (evaluates PlantRegMap+ATRM edges against DAP-seq as independent ground truth)\n  DAP-seq ground truth: 836,598 edges, 177 shared TFs\n  PlantRegMap/ATRM predictions: 91,850 edges\n  Evaluated: 22,015 predictions, 8,999 true positives\n  AUROC: 0.8801\n  AUPRC: 0.6990\n  Early precision @100: 0.9000\n  Early precision @500: 0.8460\n  Early precision @1000: 0.5560\n\n=== Human: DoRothEA vs TRRUST ===\n  (evaluates DoRothEA-only edges against TRRUST as independent ground truth)\n  TRRUST ground truth: 4,859 edges\n  DoRothEA predictions: 15,117 edges\n  Shared TFs: 313\n  Evaluated: 14,651 predictions, 2,030 true positives\n  AUROC: 1.0000\n  AUPRC: 1.0000\n  Early precision @100: 1.0000\n  Early precision @500: 1.0000\n\n=== Multi-evidence quality benchmark ===\n  Multi-evidence edges: 31,491, mean GO Jaccard: 0.1610\n  Single-source edges: 902,633, mean GO Jaccard: 0.1666\n  Quality ratio: 0.97\u00d7\n\n=== Comparison with published methods ===\n  (from Pratapa et al. 2020 BEELINE, Nature Methods)\n\n  Method                  AUROC    AUPRC  Notes\n  -------------------- -------- --------  ------------------------------\n  SCENIC                0.55-65  0.04-08  scRNA-seq, 10x Genomics\n  GRNBoost2             0.52-60  0.03-06  gradient boosting\n  GENIE3                0.50-58  0.03-05  random forest\n  PIDC                  0.50-55  0.03-04  partial information\n  Random                   0.50      var  baseline\n\n  Note: BEELINE benchmarks use single-cell expression data.\n  Our atlas integrates curated + projected + binding evidence,\n  which is a fundamentally different (and typically stronger) approach.\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/beeline_benchmark_report.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_tf_activity.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_tf_activity.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_pathway_activity.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/pathway \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/pathway \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_pathway_activity.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_omics_import.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/ds_8a66ca9935dd/validate \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: GET http://testserver/api/v1/import/ds_8a66ca9935dd \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/ds_2f620ecb6165/validate \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_omics_import.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_celltype_regulation.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/celltype/regulation \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/celltype/upstream \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/celltype/compare \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_celltype_regulation.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_chromatin_support.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/chromatin/import-peaks \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: GET http://testserver/api/v1/chromatin/peaks/arabidopsis \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: GET http://testserver/api/v1/chromatin/gene/AT1G01010 \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/chromatin/cis-support?gene_id=AT1G01010 \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_chromatin_support.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_trajectory_workflows.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/trajectory/drivers \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/trajectory/activity \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_trajectory_workflows.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_rnai_design.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/dsrna/screen \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/dsrna \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/dsrna/isoform-coverage \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_rnai_design.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_crispr_design.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/crispr/offtargets \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/crispr/offtargets \"HTTP/1.1 400 Bad Request\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/crispr/compare \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_crispr_design.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_perturbation_calibration.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/perturbation/import \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/perturbation/compare \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: GET http://testserver/api/v1/perturbation/calibration \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_perturbation_calibration.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_signaling_to_tf.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/signaling/ligand-receptor \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/signaling/to-tf \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_signaling_to_tf.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_transferability.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/orthology/transfer-risk \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/family-rescue \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: GET http://testserver/api/v1/species/onboarding/arabidopsis \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: GET http://testserver/api/v1/species/onboarding/dahlia \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_transferability.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_workflow_packaging.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: GET http://testserver/api/v1/workflows/list \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/workflows/run \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/workflows/run \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/workflows/run \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/research/study-packet \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/research/study-report \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_workflow_packaging.json"
+    }
+  ],
+  "suite_status": "pass"
+}

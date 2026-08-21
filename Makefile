@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: setup fetch fetch-all infer db tissue-weights validate benchmark backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: setup fetch fetch-all infer db tissue-weights validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make setup          - create venv + install backend & frontend deps"
@@ -10,6 +10,7 @@ help:
 	@echo "make tissue-weights - compute per-tissue coexpression weights (needs make db + expression data)"
 	@echo "make validate       - run gold-standard + population-level network validation"
 	@echo "make benchmark      - run BEELINE-style AUROC/AUPRC benchmarks"
+	@echo "make validate-suite - run the full roadmap validation suite and save validation_runs summaries"
 	@echo "make backend        - run the FastAPI server on :8000"
 	@echo "make frontend       - run the Vite dev server on :3001"
 	@echo "make test           - run backend + frontend tests"
@@ -42,6 +43,9 @@ validate:
 
 benchmark:
 	venv/bin/python backend/scripts/benchmark_beeline.py
+
+validate-suite:
+	venv/bin/python backend/scripts/run_validation_suite.py
 
 backend:
 	cd backend && ../venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8000

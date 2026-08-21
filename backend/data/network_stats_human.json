@@ -3,28 +3,28 @@
   "go_coverage": 2041,
   "regulon_coherence": {
     "tfs_tested": 191,
-    "mean_real_coherence": 0.06072,
-    "mean_random_coherence": 0.05485,
+    "mean_real_coherence": 0.06079,
+    "mean_random_coherence": 0.05475,
     "enrichment": 1.11,
-    "fraction_tfs_above_random": 0.471
+    "fraction_tfs_above_random": 0.487
   },
   "permutation_test": {
-    "real_coherence": 0.06111,
-    "mean_permuted": 0.05054,
-    "std_permuted": 0.00144,
+    "real_coherence": 0.06085,
+    "mean_permuted": 0.05032,
+    "std_permuted": 0.00154,
     "p_value": 0.0099,
     "n_permutations": 100,
-    "effect_size_sigma": 7.32
+    "effect_size_sigma": 6.82
   },
   "multi_evidence": {
-    "single_source_n": 837,
+    "single_source_n": 813,
     "multi_source_n": 2000,
-    "single_mean_overlap": 0.08086,
-    "multi_mean_overlap": 0.07014,
-    "ratio": 0.867,
-    "single_any_overlap": 0.969,
-    "multi_any_overlap": 0.952,
-    "mann_whitney_z": -2.25
+    "single_mean_overlap": 0.08445,
+    "multi_mean_overlap": 0.06992,
+    "ratio": 0.828,
+    "single_any_overlap": 0.958,
+    "multi_any_overlap": 0.95,
+    "mann_whitney_z": -2.24
   },
   "expression_coherence": {
     "interaction_edges_sampled": 5000,

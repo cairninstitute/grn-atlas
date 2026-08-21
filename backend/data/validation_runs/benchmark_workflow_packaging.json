@@ -1,0 +1,74 @@
+{
+  "benchmark": "benchmark_workflow_packaging",
+  "cases": [
+    {
+      "case_id": "workflow_list",
+      "details": {},
+      "metrics": {
+        "workflow_ids": [
+          "deg-to-regulators",
+          "import-to-activity",
+          "target-to-perturbation"
+        ]
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Workflow list surface"
+    },
+    {
+      "case_id": "workflow_deg_to_regulators",
+      "details": {},
+      "metrics": {
+        "n_top_regulators": 10,
+        "status": "complete"
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "DEG \u2192 regulators packaged workflow"
+    },
+    {
+      "case_id": "workflow_target_to_perturbation",
+      "details": {},
+      "metrics": {
+        "n_strategies": 3,
+        "status_code": 200
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Target \u2192 perturbation packaged workflow"
+    },
+    {
+      "case_id": "workflow_import_to_activity",
+      "details": {},
+      "metrics": {
+        "next_action": "POST /api/v1/activity/tf with gene values from dataset ds_4eacd2b3d89e",
+        "status": "ready"
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Import \u2192 activity packaged workflow"
+    },
+    {
+      "case_id": "study_packet_and_report",
+      "details": {},
+      "metrics": {
+        "packet_status": 200,
+        "report_status": 200
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Collaborator packet/report generation"
+    }
+  ],
+  "description": "Validate packaged workflow execution and collaborator-facing packet/report surfaces.",
+  "milestone": "M12",
+  "notes": [],
+  "run_at_utc": "2026-08-21T16:13:54.180417+00:00",
+  "status": "pass",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 0,
+    "cases_pass": 5,
+    "cases_total": 5
+  }
+}

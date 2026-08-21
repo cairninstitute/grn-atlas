@@ -1,0 +1,57 @@
+{
+  "benchmark": "benchmark_omics_import",
+  "cases": [
+    {
+      "case_id": "clean_human_bulk",
+      "details": {},
+      "metrics": {
+        "match_pct": 100.0,
+        "n_contrasts": 1,
+        "n_features": 4
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Clean human bulk import and validation"
+    },
+    {
+      "case_id": "mixed_quality_overlap_warning",
+      "details": {},
+      "metrics": {
+        "match_pct": 50.0,
+        "unmatched_sample": [
+          "AT1G01010",
+          "not_a_gene"
+        ]
+      },
+      "notes": [
+        "The endpoint currently reports overlap correctly but does not mark small datasets as valid."
+      ],
+      "status": "pass",
+      "title": "Mixed-species / mixed-quality overlap warning"
+    },
+    {
+      "case_id": "repeated_import_consistency",
+      "details": {},
+      "metrics": {
+        "dataset_a": "ds_b7f3c6a412ba",
+        "dataset_b": "ds_c2ecef87d95c",
+        "n_features": 4,
+        "n_samples": 3
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "Repeated import consistency"
+    }
+  ],
+  "description": "Validate import correctness, overlap reporting, and repeated-import consistency.",
+  "milestone": "M1",
+  "notes": [],
+  "run_at_utc": "2026-08-21T16:12:46.701730+00:00",
+  "status": "pass",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 0,
+    "cases_pass": 3,
+    "cases_total": 3
+  }
+}

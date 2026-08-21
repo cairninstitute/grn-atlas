@@ -1,0 +1,58 @@
+{
+  "benchmark": "benchmark_trajectory_workflows",
+  "cases": [
+    {
+      "case_id": "trajectory_drivers_tp53",
+      "details": {},
+      "metrics": {
+        "top_drivers": [
+          "ELF4",
+          "EZH2",
+          "FOS",
+          "HDAC1",
+          "HDAC9",
+          "HOXA10",
+          "IRF1",
+          "JUN"
+        ],
+        "tp53_rank": null
+      },
+      "notes": [],
+      "status": "partial",
+      "title": "Trajectory driver recovery for TP53-like contrast"
+    },
+    {
+      "case_id": "trajectory_activity_tp53",
+      "details": {},
+      "metrics": {
+        "top_tfs": [
+          "FOS",
+          "HIF1A",
+          "ING1",
+          "NR3C1",
+          "NFKB1",
+          "ABL1",
+          "EGR1",
+          "ERCC2"
+        ],
+        "tp53_rank": 20
+      },
+      "notes": [],
+      "status": "partial",
+      "title": "Trajectory TF activity recovery for TP53-like signature"
+    }
+  ],
+  "description": "Validate trajectory driver and activity workflows on a simple TP53-like pseudobulk contrast.",
+  "milestone": "M5",
+  "notes": [
+    "This is currently a contrast-level benchmark; it is not a full pseudotime trajectory benchmark with external lineage truth."
+  ],
+  "run_at_utc": "2026-08-21T16:12:48.326233+00:00",
+  "status": "partial",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 2,
+    "cases_pass": 0,
+    "cases_total": 2
+  }
+}

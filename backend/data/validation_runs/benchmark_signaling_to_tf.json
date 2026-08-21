@@ -1,0 +1,43 @@
+{
+  "benchmark": "benchmark_signaling_to_tf",
+  "cases": [
+    {
+      "case_id": "ligand_receptor_pair_listing",
+      "details": {},
+      "metrics": {
+        "db_non_tf_to_tf_edges": 0,
+        "reported_pairs": 0
+      },
+      "notes": [
+        "A zero result currently indicates sparse biological content in this layer, not an HTTP failure."
+      ],
+      "status": "partial",
+      "title": "Ligand/receptor-style pair listing in human"
+    },
+    {
+      "case_id": "signaling_trace_surface",
+      "details": {},
+      "metrics": {
+        "cascade_depth": 2,
+        "direct_tf_targets": 25,
+        "status_code": 200
+      },
+      "notes": [
+        "TP53 is used here as a surface-level smoke case; it is not a true receptor benchmark."
+      ],
+      "status": "pass",
+      "title": "Signaling-to-TF trace surface executes"
+    }
+  ],
+  "description": "Validate signaling-to-TF workflow availability and report current biological sparsity honestly.",
+  "milestone": "M9",
+  "notes": [],
+  "run_at_utc": "2026-08-21T16:13:46.262030+00:00",
+  "status": "partial",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 1,
+    "cases_pass": 1,
+    "cases_total": 2
+  }
+}
