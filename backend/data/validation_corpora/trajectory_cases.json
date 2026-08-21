@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "corpus_version": "2026-08-21",
+  "cases": [
+    {
+      "case_id": "human_tp53_transition_proxy",
+      "species": "human",
+      "expected_driver": "TP53",
+      "top_threshold": 5,
+      "dataset_payload": {
+        "name": "validation trajectory",
+        "species": "human",
+        "data_type": "pseudobulk",
+        "gene_values": {
+          "TP53": [5.2, 3.1],
+          "MDM2": [2.3, 4.5],
+          "CDKN1A": [8.1, 6.2],
+          "BAX": [1.5, 2.0],
+          "BCL2": [3.0, 1.0]
+        },
+        "contrasts": [
+          {
+            "group_a": "early",
+            "group_b": "late",
+            "deg": {
+              "TP53": 2.5,
+              "MDM2": -1.8,
+              "BAX": 1.2
+            }
+          }
+        ]
+      },
+      "activity_gene_values": {
+        "TP53": 3.0,
+        "MDM2": -2.0,
+        "CDKN1A": 2.5,
+        "BAX": 1.8,
+        "BCL2": -1.5,
+        "GADD45A": 2.1
+      }
+    }
+  ]
+}

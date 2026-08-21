@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "corpus_version": "2026-08-21",
+  "rnai_cases": [
+    {
+      "case_id": "petunia_color_candidates",
+      "species": "petunia",
+      "screen_gene_ids": [
+        "Peaxi162Scf00119g00942",
+        "Peaxi162Scf00118g00310",
+        "Peaxi162Scf00164g00313",
+        "Peaxi162Scf00238g00125"
+      ],
+      "expected_top_symbol": "JAF13",
+      "expected_designable_symbols": ["JAF13", "AN2", "CHSB"],
+      "single_design_target": "Peaxi162Scf00119g00942",
+      "single_design_expected_symbol": "JAF13"
+    }
+  ],
+  "crispr_cases": [
+    {
+      "case_id": "simple_ngg_sequence",
+      "sequence": "AAAACCCCGGGGTTTTAAAACCCCGGGGTTTTAAAAGG",
+      "pam": "NGG",
+      "expected_min_guides": 1
+    }
+  ]
+}

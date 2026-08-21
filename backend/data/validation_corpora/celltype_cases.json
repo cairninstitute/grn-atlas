@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "corpus_version": "2026-08-21",
+  "cases": [
+    {
+      "case_id": "human_tp53_state_proxy",
+      "species": "human",
+      "expected_regulator": "TP53",
+      "top_threshold": 5,
+      "dataset_payload": {
+        "name": "validation pseudo-celltype",
+        "species": "human",
+        "data_type": "pseudobulk",
+        "gene_values": {
+          "TP53": [5.0, 1.0],
+          "MDM2": [1.0, 5.0],
+          "CDKN1A": [4.0, 1.0],
+          "BAX": [3.0, 1.0],
+          "BCL2": [1.0, 4.0]
+        },
+        "sample_names": ["A", "B"],
+        "contrasts": [
+          {
+            "group_a": "treated",
+            "group_b": "control",
+            "deg": {
+              "TP53": 2.5,
+              "MDM2": -1.8,
+              "CDKN1A": 3.1,
+              "BAX": 1.2,
+              "BCL2": -1.7
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

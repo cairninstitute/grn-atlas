@@ -18,6 +18,9 @@ export default function ValidationDashboard() {
   if (!data) return null;
 
   const { atlas_summary, benchmarks, species_validation } = data;
+  const artifactHealth = data.artifact_health || {};
+  const summary = artifactHealth.summary || {};
+  const healthIsDegraded = artifactHealth.status && artifactHealth.status !== 'ok';
 
   return (
     <div>
@@ -42,6 +45,54 @@ export default function ValidationDashboard() {
           <div className="stat-value">{atlas_summary.tissue_weight_rows?.toLocaleString()}</div>
           <div className="stat-label">Tissue weights</div>
         </div>
+      </div>
+
+      <div style={{
+        marginTop: 16,
+        padding: 12,
+        borderRadius: 8,
+        border: `1px solid ${healthIsDegraded ? 'rgba(224,80,80,0.45)' : 'rgba(88,160,108,0.35)'}`,
+        background: healthIsDegraded ? 'rgba(224,80,80,0.08)' : 'rgba(88,160,108,0.08)',
+      }}>
+        <h4 style={{ fontSize: '0.9rem', marginBottom: 8 }}>Benchmark artifact health</h4>
+        <div className="analysis-table-wrap">
+          <table className="analysis-table">
+            <tbody>
+              <tr>
+                <th>Status</th>
+                <td style={{ fontWeight: 600, color: healthIsDegraded ? '#d66' : '#6c6' }}>
+                  {healthIsDegraded ? 'Degraded' : 'Healthy'}
+                </td>
+              </tr>
+              <tr>
+                <th>Validation suite</th>
+                <td className="mono">{summary.suite_status || 'unknown'}</td>
+              </tr>
+              <tr>
+                <th>Corpus version</th>
+                <td className="mono">{summary.benchmark_corpus_version || 'unknown'}</td>
+              </tr>
+              <tr>
+                <th>Commit</th>
+                <td className="mono">{summary.git_sha || 'unknown'}</td>
+              </tr>
+              <tr>
+                <th>Run timestamp</th>
+                <td className="mono">{summary.run_at_utc || 'unknown'}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        {Array.isArray(artifactHealth.warnings) && artifactHealth.warnings.length > 0 && (
+          <div style={{ marginTop: 8 }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: 4 }}>Warnings</div>
+            <ul style={{ margin: 0, paddingLeft: 18 }}>
+              {artifactHealth.warnings.map((warning, idx) => (
+                <li key={`${warning}-${idx}`} style={{ fontSize: '0.8rem', color: 'var(--text-1)' }}>{warning}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       {benchmarks.length > 0 && (

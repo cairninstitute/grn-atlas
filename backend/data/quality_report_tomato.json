@@ -1,6 +1,6 @@
 {
   "species": "tomato",
-  "timestamp": "2026-08-21T17:17:24.711293+00:00",
+  "timestamp": "2026-08-21T17:52:15.801707+00:00",
   "gold_standard": {
     "positive_total": 38,
     "positive_resolved": 38,
@@ -16,8 +16,7 @@
     "precision": 1.0,
     "by_source": {
       "Literature": 16,
-      "Inferred:Arabidopsis": 15,
-      "GRNBoost2": 1
+      "Inferred:Arabidopsis": 16
     },
     "edge_details": [
       {
@@ -268,7 +267,7 @@
         "source": "Inferred:Arabidopsis",
         "confidence": 0.63,
         "tf_id": "Solyc10g086250.1",
-        "target_id": "Solyc05g053550.2",
+        "target_id": "Solyc09g091510.2",
         "evidence": "overexpression",
         "pubmed_id": "22197899"
       },
@@ -338,7 +337,7 @@
         "source": null,
         "confidence": null,
         "tf_id": "Solyc09g065100.1",
-        "target_id": "Solyc04g072000.2",
+        "target_id": "Solyc05g010310.2",
         "evidence": "genetics",
         "pubmed_id": "22197899"
       },
@@ -352,7 +351,7 @@
         "source": null,
         "confidence": null,
         "tf_id": "Solyc09g065100.1",
-        "target_id": "Solyc12g098090.1",
+        "target_id": "Solyc09g091510.2",
         "evidence": "genetics",
         "pubmed_id": "22197899"
       },
@@ -378,9 +377,9 @@
         "expected": "positive",
         "correct": true,
         "source": "Inferred:Arabidopsis",
-        "confidence": 0.71,
+        "confidence": 0.66,
         "tf_id": "Solyc02g071730.2",
-        "target_id": "Solyc04g081000.2",
+        "target_id": "Solyc02g084630.2",
         "evidence": "genetics",
         "pubmed_id": "15078978"
       },
@@ -393,8 +392,8 @@
         "correct": true,
         "source": "Inferred:Arabidopsis",
         "confidence": 0.63,
-        "tf_id": "Solyc08g067230.2",
-        "target_id": "Solyc04g081000.2",
+        "tf_id": "Solyc06g059970.2",
+        "target_id": "Solyc02g084630.2",
         "evidence": "genetics",
         "pubmed_id": "15078978"
       },
@@ -408,7 +407,7 @@
         "source": "Inferred:Arabidopsis",
         "confidence": 0.63,
         "tf_id": "Solyc08g061130.2",
-        "target_id": "Solyc05g053550.2",
+        "target_id": "Solyc09g091510.2",
         "evidence": "ChIP/genetics",
         "pubmed_id": "24938289"
       },
@@ -434,9 +433,9 @@
         "expected": "positive",
         "correct": true,
         "source": "Inferred:Arabidopsis",
-        "confidence": 0.63,
+        "confidence": 0.95,
         "tf_id": "Solyc12g049350.1",
-        "target_id": "Solyc05g053550.2",
+        "target_id": "Solyc09g091510.2",
         "evidence": "overexpression/ChIP",
         "pubmed_id": "20133882"
       },
@@ -491,8 +490,8 @@
         "correct": true,
         "source": "Inferred:Arabidopsis",
         "confidence": 0.63,
-        "tf_id": "Solyc01g096810.2",
-        "target_id": "Solyc05g051180.1",
+        "tf_id": "Solyc01g009170.2",
+        "target_id": "Solyc04g014530.1",
         "evidence": "genetics",
         "pubmed_id": "15489283"
       },
@@ -506,7 +505,7 @@
         "source": "Inferred:Arabidopsis",
         "confidence": 0.63,
         "tf_id": "Solyc06g073720.1",
-        "target_id": "Solyc05g051180.1",
+        "target_id": "Solyc04g014530.1",
         "evidence": "genetics",
         "pubmed_id": "15489283"
       },
@@ -545,9 +544,9 @@
         "found": true,
         "expected": "positive",
         "correct": true,
-        "source": "GRNBoost2",
-        "confidence": 0.023864,
-        "tf_id": "Solyc02g089200.2",
+        "source": "Inferred:Arabidopsis",
+        "confidence": 0.63,
+        "tf_id": "Solyc02g065730.1",
         "target_id": "Solyc07g055920.2",
         "evidence": "genetics",
         "pubmed_id": "15078978"
@@ -561,7 +560,7 @@
         "correct": true,
         "source": null,
         "confidence": null,
-        "tf_id": "Solyc10g086260.1",
+        "tf_id": "Solyc00g007130.2",
         "target_id": "Solyc03g031860.2",
         "evidence": "overexpression",
         "pubmed_id": "15489283"
@@ -575,7 +574,7 @@
         "correct": true,
         "source": null,
         "confidence": null,
-        "tf_id": "Solyc10g086260.1",
+        "tf_id": "Solyc00g007130.2",
         "target_id": "Solyc01g095080.2",
         "evidence": "overexpression",
         "pubmed_id": "15489283"
@@ -603,8 +602,8 @@
         "correct": true,
         "source": null,
         "confidence": null,
-        "tf_id": "Solyc02g071730.2",
-        "target_id": "Solyc12g098090.1",
+        "tf_id": "Solyc07g055920.2",
+        "target_id": "Solyc09g091510.2",
         "evidence": "genetics",
         "pubmed_id": "15078978"
       },
@@ -673,8 +672,8 @@
         "correct": true,
         "source": null,
         "confidence": null,
-        "tf_id": "Solyc06g066370.2",
-        "target_id": "Solyc12g098090.1",
+        "tf_id": "Solyc09g014990.2",
+        "target_id": "Solyc09g091510.2",
         "evidence": "genetics",
         "pubmed_id": "24043799"
       },
@@ -688,7 +687,7 @@
         "source": null,
         "confidence": null,
         "tf_id": "Solyc03g026270.1",
-        "target_id": "Solyc12g098090.1",
+        "target_id": "Solyc09g091510.2",
         "evidence": "genetics",
         "pubmed_id": "14657375"
       },
@@ -716,7 +715,7 @@
         "source": null,
         "confidence": null,
         "tf_id": "Solyc07g043580.2",
-        "target_id": "Solyc12g098090.1",
+        "target_id": "Solyc09g091510.2",
         "evidence": "genetics",
         "pubmed_id": "20675573"
       }

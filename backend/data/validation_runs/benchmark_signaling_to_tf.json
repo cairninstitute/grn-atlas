@@ -1,11 +1,14 @@
 {
   "benchmark": "benchmark_signaling_to_tf",
+  "benchmark_corpus_version": "2026-08-21",
   "cases": [
     {
       "case_id": "ligand_receptor_pair_listing",
       "details": {},
       "metrics": {
         "db_non_tf_to_tf_edges": 0,
+        "direct_pairs": 0,
+        "fallback_pairs": 10,
         "reported_pairs": 10
       },
       "notes": [
@@ -20,6 +23,7 @@
       "metrics": {
         "cascade_depth": 2,
         "direct_tf_targets": 25,
+        "secondary_tfs": 25,
         "status_code": 200
       },
       "notes": [
@@ -29,10 +33,14 @@
       "title": "Signaling-to-TF trace surface executes"
     }
   ],
-  "description": "Validate signaling-to-TF workflow availability and report current biological sparsity honestly.",
-  "milestone": "M9",
-  "notes": [],
-  "run_at_utc": "2026-08-21T17:24:23.338901+00:00",
+  "description": "Validate signaling-to-TF workflow availability while separating direct-edge coverage from fallback coverage.",
+  "git_sha": "1fc67db",
+  "milestone": "PR4",
+  "notes": [
+    "This benchmark is explicit about current direct-content sparsity. It is designed to harden reporting until richer signaling sources are ingested."
+  ],
+  "run_at_utc": "2026-08-21T17:55:33.465349+00:00",
+  "schema_version": "1.0",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

@@ -1,0 +1,48 @@
+{
+  "benchmark": "benchmark_rnai_comparator",
+  "benchmark_corpus_version": "2026-08-21",
+  "cases": [
+    {
+      "case_id": "petunia_color_candidates_screen",
+      "details": {},
+      "metrics": {
+        "expected_top_rank": 1,
+        "n_results": 4,
+        "top_symbol": "JAF13"
+      },
+      "notes": [
+        "Comparator-style expectation uses curated reference ranking rather than a live external tool invocation."
+      ],
+      "status": "pass",
+      "title": "RNAi comparator screen: petunia_color_candidates"
+    },
+    {
+      "case_id": "petunia_color_candidates_design",
+      "details": {},
+      "metrics": {
+        "mode": "design",
+        "off_target_gene_count": 0
+      },
+      "notes": [
+        "This checks curated reference expectations analogous to external RNAi design review."
+      ],
+      "status": "pass",
+      "title": "RNAi comparator single-design: petunia_color_candidates"
+    }
+  ],
+  "description": "Comparator-style dsRNA validation against curated design expectations.",
+  "git_sha": "1fc67db",
+  "milestone": "PR2",
+  "notes": [
+    "This is comparator-ready infrastructure; it does not claim a live external-tool execution."
+  ],
+  "run_at_utc": "2026-08-21T17:55:44.472893+00:00",
+  "schema_version": "1.0",
+  "status": "pass",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 0,
+    "cases_pass": 2,
+    "cases_total": 2
+  }
+}

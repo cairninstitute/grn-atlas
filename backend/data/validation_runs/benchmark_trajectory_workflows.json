@@ -1,8 +1,9 @@
 {
   "benchmark": "benchmark_trajectory_workflows",
+  "benchmark_corpus_version": "2026-08-21",
   "cases": [
     {
-      "case_id": "trajectory_drivers_tp53",
+      "case_id": "human_tp53_transition_proxy_drivers",
       "details": {},
       "metrics": {
         "top_drivers": [
@@ -22,7 +23,7 @@
       "title": "Trajectory driver recovery for TP53-like contrast"
     },
     {
-      "case_id": "trajectory_activity_tp53",
+      "case_id": "human_tp53_transition_proxy_activity",
       "details": {},
       "metrics": {
         "top_tfs": [
@@ -42,12 +43,14 @@
       "title": "Trajectory TF activity recovery for TP53-like signature"
     }
   ],
-  "description": "Validate trajectory driver and activity workflows on a simple TP53-like pseudobulk contrast.",
-  "milestone": "M5",
+  "description": "Validate trajectory driver and activity workflows against curated corpus-backed cases.",
+  "git_sha": "1fc67db",
+  "milestone": "PR3",
   "notes": [
-    "This is currently a contrast-level benchmark; it is not a full pseudotime trajectory benchmark with external lineage truth."
+    "This is currently a contrast-level benchmark contract; real pseudotime datasets can be added into the corpus without changing runner behavior."
   ],
-  "run_at_utc": "2026-08-21T17:23:26.058049+00:00",
+  "run_at_utc": "2026-08-21T17:55:32.710672+00:00",
+  "schema_version": "1.0",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

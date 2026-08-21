@@ -1,9 +1,11 @@
 {
   "benchmark": "benchmark_tf_activity",
+  "benchmark_corpus_version": "2026-08-21",
   "cases": [
     {
       "case_id": "human_tp53_literal_ulm",
       "details": {
+        "case_id": "human_tp53_literal",
         "matched_genes": 6,
         "method": "ulm"
       },
@@ -18,14 +20,15 @@
         ]
       },
       "notes": [
-        "Known TP53-associated genes were used as input; this is the most decision-relevant activity sanity check."
+        "Curated literal signature case from the activity benchmark corpus."
       ],
       "status": "pass",
-      "title": "Human TP53-like signature recovery (ulm)"
+      "title": "TP53 literal signature recovery (ulm)"
     },
     {
       "case_id": "human_tp53_literal_wmean",
       "details": {
+        "case_id": "human_tp53_literal",
         "matched_genes": 6,
         "method": "wmean"
       },
@@ -40,10 +43,193 @@
         ]
       },
       "notes": [
-        "Known TP53-associated genes were used as input; this is the most decision-relevant activity sanity check."
+        "Curated literal signature case from the activity benchmark corpus."
       ],
       "status": "pass",
-      "title": "Human TP53-like signature recovery (wmean)"
+      "title": "TP53 literal signature recovery (wmean)"
+    },
+    {
+      "case_id": "human_myc_literal_ulm",
+      "details": {
+        "case_id": "human_myc_literal",
+        "matched_genes": 5,
+        "method": "ulm"
+      },
+      "metrics": {
+        "expected_rank": 1,
+        "top_symbols": [
+          "MYC",
+          "TP53",
+          "ETS1",
+          "SP1",
+          "STAT1"
+        ]
+      },
+      "notes": [
+        "Curated literal signature case from the activity benchmark corpus."
+      ],
+      "status": "pass",
+      "title": "MYC literal signature recovery (ulm)"
+    },
+    {
+      "case_id": "human_myc_literal_wmean",
+      "details": {
+        "case_id": "human_myc_literal",
+        "matched_genes": 5,
+        "method": "wmean"
+      },
+      "metrics": {
+        "expected_rank": 1,
+        "top_symbols": [
+          "MYC",
+          "TP53",
+          "ETS1",
+          "SP1",
+          "STAT1"
+        ]
+      },
+      "notes": [
+        "Curated literal signature case from the activity benchmark corpus."
+      ],
+      "status": "pass",
+      "title": "MYC literal signature recovery (wmean)"
+    },
+    {
+      "case_id": "human_rela_literal_ulm",
+      "details": {
+        "case_id": "human_rela_literal",
+        "matched_genes": 6,
+        "method": "ulm"
+      },
+      "metrics": {
+        "expected_rank": 2,
+        "top_symbols": [
+          "NFKB1",
+          "RELA",
+          "JUN",
+          "CEBPA",
+          "STAT1"
+        ]
+      },
+      "notes": [
+        "Curated literal signature case from the activity benchmark corpus."
+      ],
+      "status": "pass",
+      "title": "RELA literal signature recovery (ulm)"
+    },
+    {
+      "case_id": "human_rela_literal_wmean",
+      "details": {
+        "case_id": "human_rela_literal",
+        "matched_genes": 6,
+        "method": "wmean"
+      },
+      "metrics": {
+        "expected_rank": 2,
+        "top_symbols": [
+          "NFKB1",
+          "RELA",
+          "JUN",
+          "CEBPA",
+          "STAT1"
+        ]
+      },
+      "notes": [
+        "Curated literal signature case from the activity benchmark corpus."
+      ],
+      "status": "pass",
+      "title": "RELA literal signature recovery (wmean)"
+    },
+    {
+      "case_id": "human_stat1_literal_ulm",
+      "details": {
+        "case_id": "human_stat1_literal",
+        "matched_genes": 6,
+        "method": "ulm"
+      },
+      "metrics": {
+        "expected_rank": 1,
+        "top_symbols": [
+          "STAT1",
+          "STAT2",
+          "STAT3",
+          "STAT6"
+        ]
+      },
+      "notes": [
+        "Curated literal signature case from the activity benchmark corpus."
+      ],
+      "status": "pass",
+      "title": "STAT1 literal signature recovery (ulm)"
+    },
+    {
+      "case_id": "human_stat1_literal_wmean",
+      "details": {
+        "case_id": "human_stat1_literal",
+        "matched_genes": 6,
+        "method": "wmean"
+      },
+      "metrics": {
+        "expected_rank": 1,
+        "top_symbols": [
+          "STAT1",
+          "STAT2",
+          "STAT3",
+          "STAT6",
+          "NFKB1"
+        ]
+      },
+      "notes": [
+        "Curated literal signature case from the activity benchmark corpus."
+      ],
+      "status": "pass",
+      "title": "STAT1 literal signature recovery (wmean)"
+    },
+    {
+      "case_id": "human_hif1a_literal_ulm",
+      "details": {
+        "case_id": "human_hif1a_literal",
+        "matched_genes": 6,
+        "method": "ulm"
+      },
+      "metrics": {
+        "expected_rank": 1,
+        "top_symbols": [
+          "HIF1A",
+          "MYC",
+          "EPAS1",
+          "SP1",
+          "EGR1"
+        ]
+      },
+      "notes": [
+        "Curated literal signature case from the activity benchmark corpus."
+      ],
+      "status": "pass",
+      "title": "HIF1A literal signature recovery (ulm)"
+    },
+    {
+      "case_id": "human_hif1a_literal_wmean",
+      "details": {
+        "case_id": "human_hif1a_literal",
+        "matched_genes": 6,
+        "method": "wmean"
+      },
+      "metrics": {
+        "expected_rank": 1,
+        "top_symbols": [
+          "HIF1A",
+          "MYC",
+          "EPAS1",
+          "SP1",
+          "EGR1"
+        ]
+      },
+      "notes": [
+        "Curated literal signature case from the activity benchmark corpus."
+      ],
+      "status": "pass",
+      "title": "HIF1A literal signature recovery (wmean)"
     },
     {
       "case_id": "synthetic_human",
@@ -94,18 +280,20 @@
       "title": "Synthetic regulon self-consistency (arabidopsis)"
     }
   ],
-  "description": "Validate TF activity scoring on literal known-biology and synthetic regulon-recovery cases.",
+  "description": "Validate TF activity scoring on expanded literal benchmark signatures and synthetic regulon-recovery cases.",
+  "git_sha": "1fc67db",
   "milestone": "M2",
   "notes": [
-    "Literal TP53 recovery is the most biologically relevant check in this script.",
+    "Literal signature cases come from the validation corpus and broaden beyond TP53.",
     "Synthetic regulon cases measure internal score consistency, not external biological truth."
   ],
-  "run_at_utc": "2026-08-21T17:23:23.504256+00:00",
+  "run_at_utc": "2026-08-21T17:55:30.842685+00:00",
+  "schema_version": "1.0",
   "status": "pass",
   "summary": {
     "cases_fail": 0,
     "cases_partial": 0,
-    "cases_pass": 4,
-    "cases_total": 4
+    "cases_pass": 12,
+    "cases_total": 12
   }
 }

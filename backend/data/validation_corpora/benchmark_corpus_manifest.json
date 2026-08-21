@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "corpus_version": "2026-08-21",
+  "description": "Curated benchmark corpus and reference expectation manifest for post-release hardening.",
+  "datasets": {
+    "activity_cases": "activity_cases.json",
+    "celltype_cases": "celltype_cases.json",
+    "trajectory_cases": "trajectory_cases.json",
+    "sequence_design_cases": "sequence_design_cases.json",
+    "species_gold_standard_manifest": "species_gold_standard_manifest.json"
+  },
+  "notes": [
+    "This corpus mixes literal benchmark signatures, curated expectation fixtures, and governance manifests.",
+    "Not every case is a raw external dataset; some are curated reference expectations designed to stabilize regression testing."
+  ]
+}

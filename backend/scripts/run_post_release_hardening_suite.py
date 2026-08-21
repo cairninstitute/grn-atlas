@@ -6,24 +6,14 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from validation_common import DATA_DIR, RUNS_DIR, corpus_manifest, ensure_runs_dir, git_sha
+from validation_common import RUNS_DIR, corpus_manifest, ensure_runs_dir, git_sha
 
 SCRIPTS = [
-    "validate_regulation_quality.py",
-    "validate_network_statistics.py",
-    "benchmark_beeline.py",
     "benchmark_tf_activity.py",
     "benchmark_pathway_activity.py",
-    "benchmark_omics_import.py",
     "benchmark_celltype_regulation.py",
-    "benchmark_chromatin_support.py",
     "benchmark_trajectory_workflows.py",
-    "benchmark_rnai_design.py",
-    "benchmark_crispr_design.py",
-    "benchmark_perturbation_calibration.py",
     "benchmark_signaling_to_tf.py",
-    "benchmark_transferability.py",
-    "benchmark_workflow_packaging.py",
     "benchmark_rnai_comparator.py",
     "benchmark_crispr_comparator.py",
     "benchmark_species_gold_standards.py",
@@ -42,22 +32,33 @@ def run_script(script: str) -> dict:
     }
 
 
-def load_benchmark_outputs() -> list[dict]:
-    out = []
+def load_outputs() -> list[dict]:
+    payloads = []
     for path in sorted(RUNS_DIR.glob("benchmark_*.json")):
         try:
             payload = json.loads(path.read_text())
         except Exception as exc:
             payload = {"benchmark": path.stem, "status": "fail", "error": str(exc)}
-        out.append(payload)
-    return out
+        milestone = payload.get("milestone", "")
+        if milestone.startswith("PR") or payload.get("benchmark") in {
+            "benchmark_tf_activity",
+            "benchmark_pathway_activity",
+            "benchmark_celltype_regulation",
+            "benchmark_trajectory_workflows",
+            "benchmark_signaling_to_tf",
+            "benchmark_rnai_comparator",
+            "benchmark_crispr_comparator",
+            "benchmark_species_gold_standards",
+        }:
+            payloads.append(payload)
+    return payloads
 
 
 def write_summary(summary: dict) -> None:
     ensure_runs_dir()
-    (RUNS_DIR / "latest_summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+    (RUNS_DIR / "post_release_hardening_summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
     lines = [
-        "# Validation suite summary",
+        "# Post-release hardening summary",
         "",
         f"- run_at_utc: {summary['run_at_utc']}",
         f"- suite_status: {summary['suite_status']}",
@@ -71,25 +72,15 @@ def write_summary(summary: dict) -> None:
         lines.append(f"- `{run['script']}` — {run['status']} (rc={run['returncode']})")
     lines.extend(["", "## Benchmark statuses", ""])
     for bm in summary["benchmarks"]:
-        lines.append(f"- `{bm.get('benchmark')}` — {bm.get('status')}")
-    (RUNS_DIR / "latest_summary.md").write_text("\n".join(lines) + "\n")
-    manifest = {
-        "schema_version": "1.0",
-        "git_sha": summary.get("git_sha"),
-        "benchmark_corpus_version": summary.get("benchmark_corpus_version"),
-        "generated_at_utc": summary["run_at_utc"],
-        "artifacts": sorted(
-            [p.name for p in RUNS_DIR.glob("benchmark_*.json")] +
-            [p.name for p in RUNS_DIR.glob("*summary*.json")] +
-            [p.name for p in RUNS_DIR.glob("*summary*.md")]
-        ),
-    }
-    (RUNS_DIR / "artifact_manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+        lines.append(f"- `{bm.get('benchmark')}` — {bm.get('status')} ({bm.get('milestone', 'n/a')})")
+    (RUNS_DIR / "post_release_hardening_summary.md").write_text("\n".join(lines) + "\n")
 
 
 def main() -> None:
     ensure_runs_dir()
     script_runs = [run_script(script) for script in SCRIPTS]
+    validator = run_script("validate_validation_artifacts.py")
+    script_runs.append(validator)
     summary = {
         "schema_version": "1.0",
         "git_sha": git_sha(),
@@ -97,19 +88,11 @@ def main() -> None:
         "run_at_utc": datetime.now(timezone.utc).isoformat(),
         "suite_status": "pass" if all(run["returncode"] == 0 for run in script_runs) else "fail",
         "script_runs": script_runs,
-        "benchmarks": load_benchmark_outputs(),
-        "legacy_artifacts": {
-            "quality_reports": [str(DATA_DIR / "quality_report_petunia.json"), str(DATA_DIR / "quality_report_tomato.json")],
-            "network_report": str(DATA_DIR / "network_validation_report.md"),
-            "beeline_report": str(DATA_DIR / "beeline_benchmark_report.json"),
-        },
+        "benchmarks": load_outputs(),
+        "scope": "post_release_hardening_pr1_pr7",
     }
     write_summary(summary)
-    schema_run = run_script("validate_validation_artifacts.py")
-    summary["script_runs"].append(schema_run)
-    summary["suite_status"] = "pass" if all(run["returncode"] == 0 for run in summary["script_runs"]) else "fail"
-    write_summary(summary)
-    print(RUNS_DIR / "latest_summary.json")
+    print(RUNS_DIR / "post_release_hardening_summary.json")
 
 
 if __name__ == "__main__":

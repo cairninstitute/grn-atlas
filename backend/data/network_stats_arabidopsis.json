@@ -3,38 +3,38 @@
   "go_coverage": 17349,
   "regulon_coherence": {
     "tfs_tested": 584,
-    "mean_real_coherence": 0.17345,
+    "mean_real_coherence": 0.17318,
     "mean_random_coherence": 0.16991,
     "enrichment": 1.02,
-    "fraction_tfs_above_random": 0.476
+    "fraction_tfs_above_random": 0.461
   },
   "permutation_test": {
-    "real_coherence": 0.17549,
-    "mean_permuted": 0.17124,
-    "std_permuted": 0.00122,
-    "p_value": 0.0099,
+    "real_coherence": 0.17268,
+    "mean_permuted": 0.17044,
+    "std_permuted": 0.00107,
+    "p_value": 0.0198,
     "n_permutations": 100,
-    "effect_size_sigma": 3.48
+    "effect_size_sigma": 2.1
   },
   "multi_evidence": {
-    "single_source_n": 1233,
-    "multi_source_n": 1949,
-    "single_mean_overlap": 0.18271,
-    "multi_mean_overlap": 0.20314,
-    "ratio": 1.112,
+    "single_source_n": 1240,
+    "multi_source_n": 1967,
+    "single_mean_overlap": 0.18868,
+    "multi_mean_overlap": 0.2008,
+    "ratio": 1.064,
     "single_any_overlap": 1.0,
     "multi_any_overlap": 1.0,
-    "mann_whitney_z": 2.67
+    "mann_whitney_z": 0.67
   },
   "expression_coherence": {
     "interaction_edges_sampled": 5000,
-    "coexpressed_count": 34,
-    "coexpression_rate": 0.0068,
-    "random_coexpression_rate": 0.007,
-    "coexpression_rate_ratio": 0.98,
-    "mean_importance_real": 0.05455,
-    "mean_importance_random": 0.04978,
-    "importance_ratio": 1.1
+    "coexpressed_count": 32,
+    "coexpression_rate": 0.0064,
+    "random_coexpression_rate": 0.0055,
+    "coexpression_rate_ratio": 1.16,
+    "mean_importance_real": 0.04594,
+    "mean_importance_random": 0.05553,
+    "importance_ratio": 0.83
   },
   "motif_enrichment": {
     "tfs_tested": 0,

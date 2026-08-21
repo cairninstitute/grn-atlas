@@ -1,0 +1,65 @@
+{
+  "benchmark": "benchmark_species_gold_standards",
+  "benchmark_corpus_version": "2026-08-21",
+  "cases": [
+    {
+      "case_id": "petunia_gold_standard",
+      "details": {},
+      "metrics": {
+        "precision": 1.0,
+        "recall": 0.9375,
+        "specificity": 1.0
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "petunia gold-standard quality threshold check"
+    },
+    {
+      "case_id": "tomato_gold_standard",
+      "details": {},
+      "metrics": {
+        "precision": 1.0,
+        "recall": 0.8421,
+        "specificity": 1.0
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "tomato gold-standard quality threshold check"
+    },
+    {
+      "case_id": "arabidopsis_independent_benchmark",
+      "details": {},
+      "metrics": {
+        "auprc": 0.699,
+        "auroc": 0.8801
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "arabidopsis independent benchmark threshold check"
+    },
+    {
+      "case_id": "human_independent_benchmark",
+      "details": {},
+      "metrics": {
+        "auprc": 1.0,
+        "auroc": 1.0
+      },
+      "notes": [],
+      "status": "pass",
+      "title": "human independent benchmark threshold check"
+    }
+  ],
+  "description": "Species-level quality threshold aggregation over gold-standard and independent benchmark reports.",
+  "git_sha": "1fc67db",
+  "milestone": "PR6",
+  "notes": [],
+  "run_at_utc": "2026-08-21T17:55:45.560274+00:00",
+  "schema_version": "1.0",
+  "status": "pass",
+  "summary": {
+    "cases_fail": 0,
+    "cases_partial": 0,
+    "cases_pass": 4,
+    "cases_total": 4
+  }
+}

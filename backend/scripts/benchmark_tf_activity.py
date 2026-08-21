@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import json
+
 from validation_common import (
+    CORPUS_DIR,
     benchmark_payload,
     case_result,
     client,
@@ -14,38 +17,31 @@ from validation_common import (
 
 def main() -> None:
     cases = []
-
-    literal = {
-        "TP53": 3.0,
-        "MDM2": -2.0,
-        "CDKN1A": 2.5,
-        "BAX": 1.8,
-        "BCL2": -1.5,
-        "GADD45A": 2.1,
-    }
-    for method in ("ulm", "wmean"):
-        resp = client.post(
-            "/api/v1/activity/tf",
-            json={
-                "gene_values": literal,
-                "species": "human",
-                "method": method,
-                "top": 10,
-                "min_regulon_size": 2,
-            },
-        )
-        data = resp.json()
-        rank = rank_of(data.get("regulators", []), lambda r: (r.get("symbol") or "").upper() == "TP53")
-        cases.append(
-            case_result(
-                f"human_tp53_literal_{method}",
-                f"Human TP53-like signature recovery ({method})",
-                "pass" if rank and rank <= 5 else "fail",
-                metrics={"expected_rank": rank, "top_symbols": top_symbols(data.get("regulators", []))},
-                details={"matched_genes": data.get("matched_genes"), "method": method},
-                notes=["Known TP53-associated genes were used as input; this is the most decision-relevant activity sanity check."],
+    corpus = json.loads((CORPUS_DIR / "activity_cases.json").read_text())
+    for case in corpus.get("tf_activity_cases", []):
+        for method in ("ulm", "wmean"):
+            resp = client.post(
+                "/api/v1/activity/tf",
+                json={
+                    "gene_values": case["gene_values"],
+                    "species": case["species"],
+                    "method": method,
+                    "top": 10,
+                    "min_regulon_size": 2,
+                },
             )
-        )
+            data = resp.json()
+            rank = rank_of(data.get("regulators", []), lambda r, exp=case["expected_tf"]: (r.get("symbol") or "").upper() == exp.upper())
+            cases.append(
+                case_result(
+                    f"{case['case_id']}_{method}",
+                    f"{case['expected_tf']} literal signature recovery ({method})",
+                    "pass" if rank and rank <= case.get("top_threshold", 5) else "fail",
+                    metrics={"expected_rank": rank, "top_symbols": top_symbols(data.get("regulators", []))},
+                    details={"matched_genes": data.get("matched_genes"), "method": method, "case_id": case["case_id"]},
+                    notes=["Curated literal signature case from the activity benchmark corpus."],
+                )
+            )
 
     for species in ("human", "arabidopsis"):
         tf = find_tf_with_targets(species, min_targets=12)
@@ -90,10 +86,10 @@ def main() -> None:
     payload = benchmark_payload(
         "benchmark_tf_activity",
         "M2",
-        "Validate TF activity scoring on literal known-biology and synthetic regulon-recovery cases.",
+        "Validate TF activity scoring on expanded literal benchmark signatures and synthetic regulon-recovery cases.",
         cases,
         notes=[
-            "Literal TP53 recovery is the most biologically relevant check in this script.",
+            "Literal signature cases come from the validation corpus and broaden beyond TP53.",
             "Synthetic regulon cases measure internal score consistency, not external biological truth.",
         ],
     )

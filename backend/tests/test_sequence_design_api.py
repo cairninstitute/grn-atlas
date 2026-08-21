@@ -44,6 +44,7 @@ def client(tmp_path_factory):
     with TestClient(main.app) as c:
         yield c
     os.environ.pop("GRN_DB", None)
+    importlib.reload(main)
 
 
 def test_variant_effect_finds_overlapping_site(client):

@@ -4078,6 +4078,7 @@ async def benchmark_status():
     """Living validation dashboard — exposes all benchmark and validation reports."""
     import glob
     data_dir = FilePath(__file__).parent / "data"
+    runs_dir = data_dir / "validation_runs"
 
     benchmarks = []
     bp = data_dir / "beeline_benchmark_report.json"
@@ -4109,6 +4110,49 @@ async def benchmark_status():
     except Exception:
         pass
 
+    artifact_health = {
+        "status": "ok",
+        "warnings": [],
+        "summary": None,
+        "artifact_manifest": None,
+        "schema_report": None,
+    }
+    latest_summary_path = runs_dir / "latest_summary.json"
+    if latest_summary_path.exists():
+        try:
+            artifact_health["summary"] = json.loads(latest_summary_path.read_text())
+        except Exception as exc:
+            artifact_health["status"] = "degraded"
+            artifact_health["warnings"].append(f"Could not parse latest_summary.json: {exc}")
+    else:
+        artifact_health["status"] = "degraded"
+        artifact_health["warnings"].append("Missing validation_runs/latest_summary.json")
+
+    manifest_path = runs_dir / "artifact_manifest.json"
+    if manifest_path.exists():
+        try:
+            artifact_health["artifact_manifest"] = json.loads(manifest_path.read_text())
+        except Exception as exc:
+            artifact_health["status"] = "degraded"
+            artifact_health["warnings"].append(f"Could not parse artifact_manifest.json: {exc}")
+    else:
+        artifact_health["status"] = "degraded"
+        artifact_health["warnings"].append("Missing validation_runs/artifact_manifest.json")
+
+    schema_report_path = runs_dir / "schema_report.json"
+    if schema_report_path.exists():
+        try:
+            artifact_health["schema_report"] = json.loads(schema_report_path.read_text())
+            if artifact_health["schema_report"].get("status") != "pass":
+                artifact_health["status"] = "degraded"
+                artifact_health["warnings"].append("Schema validation reported failed checks.")
+        except Exception as exc:
+            artifact_health["status"] = "degraded"
+            artifact_health["warnings"].append(f"Could not parse schema_report.json: {exc}")
+    else:
+        artifact_health["status"] = "degraded"
+        artifact_health["warnings"].append("Missing validation_runs/schema_report.json")
+
     return {
         "atlas_summary": {
             "genes": gene_count,
@@ -4120,6 +4164,7 @@ async def benchmark_status():
         "species_validation": species_stats,
         "quality_reports": quality_reports,
         "validation_report_md": validation_md,
+        "artifact_health": artifact_health,
     }
 
 

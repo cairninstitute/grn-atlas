@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "corpus_version": "2026-08-21",
+  "species_targets": [
+    {
+      "species": "petunia",
+      "report_file": "quality_report_petunia.json",
+      "required_metrics": {
+        "recall_min": 0.9,
+        "specificity_min": 0.99,
+        "precision_min": 0.99
+      }
+    },
+    {
+      "species": "tomato",
+      "report_file": "quality_report_tomato.json",
+      "required_metrics": {
+        "recall_min": 0.8,
+        "specificity_min": 0.99,
+        "precision_min": 0.99
+      }
+    }
+  ],
+  "independent_network_benchmarks": [
+    {
+      "species": "arabidopsis",
+      "benchmark": "DAP-seq overlap",
+      "report_file": "beeline_benchmark_report.json",
+      "required_metrics": {
+        "auroc_min": 0.8,
+        "auprc_min": 0.6
+      }
+    },
+    {
+      "species": "human",
+      "benchmark": "DoRothEA vs TRRUST",
+      "report_file": "beeline_benchmark_report.json",
+      "required_metrics": {
+        "auroc_min": 0.9,
+        "auprc_min": 0.9
+      }
+    }
+  ]
+}

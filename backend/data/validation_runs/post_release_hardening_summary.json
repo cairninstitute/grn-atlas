@@ -1,0 +1,827 @@
+{
+  "benchmark_corpus_version": "2026-08-21",
+  "benchmarks": [
+    {
+      "benchmark": "benchmark_celltype_regulation",
+      "benchmark_corpus_version": "2026-08-21",
+      "cases": [
+        {
+          "case_id": "human_tp53_state_proxy_regulation",
+          "details": {},
+          "metrics": {
+            "top_regulators": [
+              "TP53",
+              "MYC",
+              "ETS1",
+              "SP1",
+              "E2F1",
+              "ESR1",
+              "RELA",
+              "EGR1"
+            ],
+            "tp53_rank": 1
+          },
+          "notes": [
+            "This endpoint currently uses expressed imported features rather than true cluster-specific regulons."
+          ],
+          "status": "pass",
+          "title": "Cell-type regulation recovers TP53"
+        },
+        {
+          "case_id": "human_tp53_state_proxy_upstream",
+          "details": {},
+          "metrics": {
+            "top_regulators": [
+              "TP53"
+            ],
+            "tp53_rank": 1
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Cell-type upstream analysis recovers TP53"
+        },
+        {
+          "case_id": "human_tp53_state_proxy_compare",
+          "details": {},
+          "metrics": {
+            "n_deg": 5,
+            "n_differential_regulators": 25
+          },
+          "notes": [
+            "This checks that the contrast pipeline produces ranked outputs; it does not prove lineage-level correctness."
+          ],
+          "status": "pass",
+          "title": "Cell-type compare returns differential regulators"
+        }
+      ],
+      "description": "Validate cell-type / pseudobulk regulator workflows against curated corpus-backed cases.",
+      "git_sha": "1fc67db",
+      "milestone": "PR3",
+      "notes": [
+        "The current corpus includes curated proxy cases. Real external single-cell datasets can be added without changing the benchmark contract."
+      ],
+      "run_at_utc": "2026-08-21T17:55:32.064464+00:00",
+      "schema_version": "1.0",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 3,
+        "cases_total": 3
+      }
+    },
+    {
+      "benchmark": "benchmark_crispr_comparator",
+      "benchmark_corpus_version": "2026-08-21",
+      "cases": [
+        {
+          "case_id": "simple_ngg_sequence",
+          "details": {},
+          "metrics": {
+            "n_guides": 4,
+            "top_priority_score": 0.55
+          },
+          "notes": [
+            "Comparator-style expectation uses curated sequence-level guide availability rather than a live external tool invocation."
+          ],
+          "status": "pass",
+          "title": "CRISPR comparator case: simple_ngg_sequence"
+        }
+      ],
+      "description": "Comparator-style CRISPR validation against curated design expectations.",
+      "git_sha": "1fc67db",
+      "milestone": "PR2",
+      "notes": [
+        "This is comparator-ready infrastructure; it does not claim a live external-tool execution."
+      ],
+      "run_at_utc": "2026-08-21T17:55:45.072627+00:00",
+      "schema_version": "1.0",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 1,
+        "cases_total": 1
+      }
+    },
+    {
+      "benchmark": "benchmark_pathway_activity",
+      "benchmark_corpus_version": "2026-08-21",
+      "cases": [
+        {
+          "case_id": "human_p53_pathway",
+          "details": {},
+          "metrics": {
+            "expected_rank": 5,
+            "top_pathways": [
+              "Endometrial cancer",
+              "Non-small cell lung cancer",
+              "Breast cancer pathway",
+              "Pancreatic adenocarcinoma pathway",
+              "ATM Signaling Pathway",
+              "p53 transcriptional gene network",
+              "Chromosomal and microsatellite instability in colorectal cancer",
+              "Small cell lung cancer"
+            ]
+          },
+          "notes": [
+            "Curated pathway-activity case from the validation corpus."
+          ],
+          "status": "pass",
+          "title": "Pathway recovery for human_p53_pathway"
+        },
+        {
+          "case_id": "human_inflammation_pathway",
+          "details": {},
+          "metrics": {
+            "expected_rank": 2,
+            "top_pathways": [
+              "Spinal Cord Injury",
+              "Photodynamic therapy-induced NF-kB survival signaling",
+              "miRNAs involvement in the immune response in sepsis",
+              "Cells and molecules involved in local acute inflammatory response",
+              "Novel intracellular components of RIG-I-like receptor (RLR) pathway",
+              "Ebstein-Barr virus LMP1 signaling",
+              "Acute viral myocarditis",
+              "Selenium Micronutrient Network"
+            ]
+          },
+          "notes": [
+            "Curated pathway-activity case from the validation corpus."
+          ],
+          "status": "pass",
+          "title": "Pathway recovery for human_inflammation_pathway"
+        },
+        {
+          "case_id": "human_interferon_pathway",
+          "details": {},
+          "metrics": {
+            "expected_rank": 2,
+            "top_pathways": [
+              "Immune response to tuberculosis",
+              "Type II interferon signaling (IFNG)"
+            ]
+          },
+          "notes": [
+            "Curated pathway-activity case from the validation corpus."
+          ],
+          "status": "pass",
+          "title": "Pathway recovery for human_interferon_pathway"
+        },
+        {
+          "case_id": "human_hypoxia_pathway",
+          "details": {},
+          "metrics": {
+            "expected_rank": 4,
+            "top_pathways": [
+              "Metabolic reprogramming in colon cancer",
+              "Computational Model of Aerobic Glycolysis",
+              "Glycolysis and Gluconeogenesis",
+              "VEGFA-VEGFR2 Signaling Pathway",
+              "Pathways in clear cell renal cell carcinoma",
+              "Photodynamic therapy-induced HIF-1 survival signaling",
+              "Cori Cycle"
+            ]
+          },
+          "notes": [
+            "Curated pathway-activity case from the validation corpus."
+          ],
+          "status": "pass",
+          "title": "Pathway recovery for human_hypoxia_pathway"
+        },
+        {
+          "case_id": "synthetic_member_enrichment",
+          "details": {
+            "pathway_id": "WP4963",
+            "seeded_members": 12
+          },
+          "metrics": {
+            "pathway_name": "p53 transcriptional gene network",
+            "pathway_rank": 1,
+            "top_pathways": [
+              "miRNA regulation of DNA damage response",
+              "TP53 network",
+              "VEGFA-VEGFR2 Signaling Pathway",
+              "DNA damage response",
+              "DNA damage response (only ATM dependent)"
+            ]
+          },
+          "notes": [
+            "This is a self-consistency benchmark using atlas pathway members."
+          ],
+          "status": "pass",
+          "title": "Synthetic pathway member enrichment recovery"
+        }
+      ],
+      "description": "Validate pathway activity scoring on expanded literal signatures and a synthetic member-enrichment case.",
+      "git_sha": "1fc67db",
+      "milestone": "M2",
+      "notes": [
+        "Literal pathway cases come from the validation corpus."
+      ],
+      "run_at_utc": "2026-08-21T17:55:31.578798+00:00",
+      "schema_version": "1.0",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 5,
+        "cases_total": 5
+      }
+    },
+    {
+      "benchmark": "benchmark_rnai_comparator",
+      "benchmark_corpus_version": "2026-08-21",
+      "cases": [
+        {
+          "case_id": "petunia_color_candidates_screen",
+          "details": {},
+          "metrics": {
+            "expected_top_rank": 1,
+            "n_results": 4,
+            "top_symbol": "JAF13"
+          },
+          "notes": [
+            "Comparator-style expectation uses curated reference ranking rather than a live external tool invocation."
+          ],
+          "status": "pass",
+          "title": "RNAi comparator screen: petunia_color_candidates"
+        },
+        {
+          "case_id": "petunia_color_candidates_design",
+          "details": {},
+          "metrics": {
+            "mode": "design",
+            "off_target_gene_count": 0
+          },
+          "notes": [
+            "This checks curated reference expectations analogous to external RNAi design review."
+          ],
+          "status": "pass",
+          "title": "RNAi comparator single-design: petunia_color_candidates"
+        }
+      ],
+      "description": "Comparator-style dsRNA validation against curated design expectations.",
+      "git_sha": "1fc67db",
+      "milestone": "PR2",
+      "notes": [
+        "This is comparator-ready infrastructure; it does not claim a live external-tool execution."
+      ],
+      "run_at_utc": "2026-08-21T17:55:44.472893+00:00",
+      "schema_version": "1.0",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 2,
+        "cases_total": 2
+      }
+    },
+    {
+      "benchmark": "benchmark_signaling_to_tf",
+      "benchmark_corpus_version": "2026-08-21",
+      "cases": [
+        {
+          "case_id": "ligand_receptor_pair_listing",
+          "details": {},
+          "metrics": {
+            "db_non_tf_to_tf_edges": 0,
+            "direct_pairs": 0,
+            "fallback_pairs": 10,
+            "reported_pairs": 10
+          },
+          "notes": [
+            "A zero result currently indicates sparse biological content in this layer, not an HTTP failure."
+          ],
+          "status": "pass",
+          "title": "Ligand/receptor-style pair listing in human"
+        },
+        {
+          "case_id": "signaling_trace_surface",
+          "details": {},
+          "metrics": {
+            "cascade_depth": 2,
+            "direct_tf_targets": 25,
+            "secondary_tfs": 25,
+            "status_code": 200
+          },
+          "notes": [
+            "TP53 is used here as a surface-level smoke case; it is not a true receptor benchmark."
+          ],
+          "status": "pass",
+          "title": "Signaling-to-TF trace surface executes"
+        }
+      ],
+      "description": "Validate signaling-to-TF workflow availability while separating direct-edge coverage from fallback coverage.",
+      "git_sha": "1fc67db",
+      "milestone": "PR4",
+      "notes": [
+        "This benchmark is explicit about current direct-content sparsity. It is designed to harden reporting until richer signaling sources are ingested."
+      ],
+      "run_at_utc": "2026-08-21T17:55:33.465349+00:00",
+      "schema_version": "1.0",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 2,
+        "cases_total": 2
+      }
+    },
+    {
+      "benchmark": "benchmark_species_gold_standards",
+      "benchmark_corpus_version": "2026-08-21",
+      "cases": [
+        {
+          "case_id": "petunia_gold_standard",
+          "details": {},
+          "metrics": {
+            "precision": 1.0,
+            "recall": 0.9375,
+            "specificity": 1.0
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "petunia gold-standard quality threshold check"
+        },
+        {
+          "case_id": "tomato_gold_standard",
+          "details": {},
+          "metrics": {
+            "precision": 1.0,
+            "recall": 0.8421,
+            "specificity": 1.0
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "tomato gold-standard quality threshold check"
+        },
+        {
+          "case_id": "arabidopsis_independent_benchmark",
+          "details": {},
+          "metrics": {
+            "auprc": 0.699,
+            "auroc": 0.8801
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "arabidopsis independent benchmark threshold check"
+        },
+        {
+          "case_id": "human_independent_benchmark",
+          "details": {},
+          "metrics": {
+            "auprc": 1.0,
+            "auroc": 1.0
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "human independent benchmark threshold check"
+        }
+      ],
+      "description": "Species-level quality threshold aggregation over gold-standard and independent benchmark reports.",
+      "git_sha": "1fc67db",
+      "milestone": "PR6",
+      "notes": [],
+      "run_at_utc": "2026-08-21T17:55:45.560274+00:00",
+      "schema_version": "1.0",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 4,
+        "cases_total": 4
+      }
+    },
+    {
+      "benchmark": "benchmark_tf_activity",
+      "benchmark_corpus_version": "2026-08-21",
+      "cases": [
+        {
+          "case_id": "human_tp53_literal_ulm",
+          "details": {
+            "case_id": "human_tp53_literal",
+            "matched_genes": 6,
+            "method": "ulm"
+          },
+          "metrics": {
+            "expected_rank": 1,
+            "top_symbols": [
+              "TP53",
+              "MYC",
+              "ETS1",
+              "EGR1",
+              "E2F1"
+            ]
+          },
+          "notes": [
+            "Curated literal signature case from the activity benchmark corpus."
+          ],
+          "status": "pass",
+          "title": "TP53 literal signature recovery (ulm)"
+        },
+        {
+          "case_id": "human_tp53_literal_wmean",
+          "details": {
+            "case_id": "human_tp53_literal",
+            "matched_genes": 6,
+            "method": "wmean"
+          },
+          "metrics": {
+            "expected_rank": 1,
+            "top_symbols": [
+              "TP53",
+              "MYC",
+              "ETS1",
+              "EGR1",
+              "E2F1"
+            ]
+          },
+          "notes": [
+            "Curated literal signature case from the activity benchmark corpus."
+          ],
+          "status": "pass",
+          "title": "TP53 literal signature recovery (wmean)"
+        },
+        {
+          "case_id": "human_myc_literal_ulm",
+          "details": {
+            "case_id": "human_myc_literal",
+            "matched_genes": 5,
+            "method": "ulm"
+          },
+          "metrics": {
+            "expected_rank": 1,
+            "top_symbols": [
+              "MYC",
+              "TP53",
+              "ETS1",
+              "SP1",
+              "STAT1"
+            ]
+          },
+          "notes": [
+            "Curated literal signature case from the activity benchmark corpus."
+          ],
+          "status": "pass",
+          "title": "MYC literal signature recovery (ulm)"
+        },
+        {
+          "case_id": "human_myc_literal_wmean",
+          "details": {
+            "case_id": "human_myc_literal",
+            "matched_genes": 5,
+            "method": "wmean"
+          },
+          "metrics": {
+            "expected_rank": 1,
+            "top_symbols": [
+              "MYC",
+              "TP53",
+              "ETS1",
+              "SP1",
+              "STAT1"
+            ]
+          },
+          "notes": [
+            "Curated literal signature case from the activity benchmark corpus."
+          ],
+          "status": "pass",
+          "title": "MYC literal signature recovery (wmean)"
+        },
+        {
+          "case_id": "human_rela_literal_ulm",
+          "details": {
+            "case_id": "human_rela_literal",
+            "matched_genes": 6,
+            "method": "ulm"
+          },
+          "metrics": {
+            "expected_rank": 2,
+            "top_symbols": [
+              "NFKB1",
+              "RELA",
+              "JUN",
+              "CEBPA",
+              "STAT1"
+            ]
+          },
+          "notes": [
+            "Curated literal signature case from the activity benchmark corpus."
+          ],
+          "status": "pass",
+          "title": "RELA literal signature recovery (ulm)"
+        },
+        {
+          "case_id": "human_rela_literal_wmean",
+          "details": {
+            "case_id": "human_rela_literal",
+            "matched_genes": 6,
+            "method": "wmean"
+          },
+          "metrics": {
+            "expected_rank": 2,
+            "top_symbols": [
+              "NFKB1",
+              "RELA",
+              "JUN",
+              "CEBPA",
+              "STAT1"
+            ]
+          },
+          "notes": [
+            "Curated literal signature case from the activity benchmark corpus."
+          ],
+          "status": "pass",
+          "title": "RELA literal signature recovery (wmean)"
+        },
+        {
+          "case_id": "human_stat1_literal_ulm",
+          "details": {
+            "case_id": "human_stat1_literal",
+            "matched_genes": 6,
+            "method": "ulm"
+          },
+          "metrics": {
+            "expected_rank": 1,
+            "top_symbols": [
+              "STAT1",
+              "STAT2",
+              "STAT3",
+              "STAT6"
+            ]
+          },
+          "notes": [
+            "Curated literal signature case from the activity benchmark corpus."
+          ],
+          "status": "pass",
+          "title": "STAT1 literal signature recovery (ulm)"
+        },
+        {
+          "case_id": "human_stat1_literal_wmean",
+          "details": {
+            "case_id": "human_stat1_literal",
+            "matched_genes": 6,
+            "method": "wmean"
+          },
+          "metrics": {
+            "expected_rank": 1,
+            "top_symbols": [
+              "STAT1",
+              "STAT2",
+              "STAT3",
+              "STAT6",
+              "NFKB1"
+            ]
+          },
+          "notes": [
+            "Curated literal signature case from the activity benchmark corpus."
+          ],
+          "status": "pass",
+          "title": "STAT1 literal signature recovery (wmean)"
+        },
+        {
+          "case_id": "human_hif1a_literal_ulm",
+          "details": {
+            "case_id": "human_hif1a_literal",
+            "matched_genes": 6,
+            "method": "ulm"
+          },
+          "metrics": {
+            "expected_rank": 1,
+            "top_symbols": [
+              "HIF1A",
+              "MYC",
+              "EPAS1",
+              "SP1",
+              "EGR1"
+            ]
+          },
+          "notes": [
+            "Curated literal signature case from the activity benchmark corpus."
+          ],
+          "status": "pass",
+          "title": "HIF1A literal signature recovery (ulm)"
+        },
+        {
+          "case_id": "human_hif1a_literal_wmean",
+          "details": {
+            "case_id": "human_hif1a_literal",
+            "matched_genes": 6,
+            "method": "wmean"
+          },
+          "metrics": {
+            "expected_rank": 1,
+            "top_symbols": [
+              "HIF1A",
+              "MYC",
+              "EPAS1",
+              "SP1",
+              "EGR1"
+            ]
+          },
+          "notes": [
+            "Curated literal signature case from the activity benchmark corpus."
+          ],
+          "status": "pass",
+          "title": "HIF1A literal signature recovery (wmean)"
+        },
+        {
+          "case_id": "synthetic_human",
+          "details": {
+            "n_targets_seeded": 12,
+            "species": "human"
+          },
+          "metrics": {
+            "seed_tf": "STAT1",
+            "seed_tf_id": "STAT1",
+            "seed_tf_rank": 1,
+            "top_symbols": [
+              "STAT1",
+              "RELA",
+              "NFKB1",
+              "HIF1A",
+              "IRF1"
+            ]
+          },
+          "notes": [
+            "This is a self-consistency benchmark, not an external perturbation benchmark."
+          ],
+          "status": "pass",
+          "title": "Synthetic regulon self-consistency (human)"
+        },
+        {
+          "case_id": "synthetic_arabidopsis",
+          "details": {
+            "n_targets_seeded": 12,
+            "species": "arabidopsis"
+          },
+          "metrics": {
+            "seed_tf": "EPR1",
+            "seed_tf_id": "AT1G18330",
+            "seed_tf_rank": 1,
+            "top_symbols": [
+              "EPR1",
+              "RVE8",
+              "RVE1",
+              "AT4G01280",
+              "LHY"
+            ]
+          },
+          "notes": [
+            "This is a self-consistency benchmark, not an external perturbation benchmark."
+          ],
+          "status": "pass",
+          "title": "Synthetic regulon self-consistency (arabidopsis)"
+        }
+      ],
+      "description": "Validate TF activity scoring on expanded literal benchmark signatures and synthetic regulon-recovery cases.",
+      "git_sha": "1fc67db",
+      "milestone": "M2",
+      "notes": [
+        "Literal signature cases come from the validation corpus and broaden beyond TP53.",
+        "Synthetic regulon cases measure internal score consistency, not external biological truth."
+      ],
+      "run_at_utc": "2026-08-21T17:55:30.842685+00:00",
+      "schema_version": "1.0",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 12,
+        "cases_total": 12
+      }
+    },
+    {
+      "benchmark": "benchmark_trajectory_workflows",
+      "benchmark_corpus_version": "2026-08-21",
+      "cases": [
+        {
+          "case_id": "human_tp53_transition_proxy_drivers",
+          "details": {},
+          "metrics": {
+            "top_drivers": [
+              "TP53",
+              "ETS1",
+              "MYC",
+              "SP1",
+              "MYCN",
+              "E2F1",
+              "ETS2",
+              "ESR1"
+            ],
+            "tp53_rank": 1
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Trajectory driver recovery for TP53-like contrast"
+        },
+        {
+          "case_id": "human_tp53_transition_proxy_activity",
+          "details": {},
+          "metrics": {
+            "top_tfs": [
+              "TP53",
+              "MYC",
+              "ETS1",
+              "SP1",
+              "E2F1",
+              "EGR1",
+              "STAT1",
+              "NFKB1"
+            ],
+            "tp53_rank": 1
+          },
+          "notes": [],
+          "status": "pass",
+          "title": "Trajectory TF activity recovery for TP53-like signature"
+        }
+      ],
+      "description": "Validate trajectory driver and activity workflows against curated corpus-backed cases.",
+      "git_sha": "1fc67db",
+      "milestone": "PR3",
+      "notes": [
+        "This is currently a contrast-level benchmark contract; real pseudotime datasets can be added into the corpus without changing runner behavior."
+      ],
+      "run_at_utc": "2026-08-21T17:55:32.710672+00:00",
+      "schema_version": "1.0",
+      "status": "pass",
+      "summary": {
+        "cases_fail": 0,
+        "cases_partial": 0,
+        "cases_pass": 2,
+        "cases_total": 2
+      }
+    }
+  ],
+  "git_sha": "1fc67db",
+  "run_at_utc": "2026-08-21T17:55:46.050130+00:00",
+  "schema_version": "1.0",
+  "scope": "post_release_hardening_pr1_pr7",
+  "script_runs": [
+    {
+      "returncode": 0,
+      "script": "benchmark_tf_activity.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:22: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/tf \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_tf_activity.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_pathway_activity.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:22: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/pathway \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/pathway \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/pathway \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/pathway \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/activity/pathway \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_pathway_activity.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_celltype_regulation.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:22: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/celltype/regulation \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/celltype/upstream \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/celltype/compare \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_celltype_regulation.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_trajectory_workflows.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:22: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/trajectory/drivers \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/trajectory/activity \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_trajectory_workflows.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_signaling_to_tf.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:22: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/signaling/ligand-receptor \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/signaling/to-tf \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_signaling_to_tf.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_rnai_comparator.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:22: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/dsrna/screen \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/dsrna \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_rnai_comparator.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_crispr_comparator.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:22: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/crispr/design \"HTTP/1.1 200 OK\"",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_crispr_comparator.json"
+    },
+    {
+      "returncode": 0,
+      "script": "benchmark_species_gold_standards.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:22: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_species_gold_standards.json"
+    },
+    {
+      "returncode": 0,
+      "script": "validate_validation_artifacts.py",
+      "status": "pass",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:22: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402",
+      "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/schema_report.json"
+    }
+  ],
+  "suite_status": "pass"
+}

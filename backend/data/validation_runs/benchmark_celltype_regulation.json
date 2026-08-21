@@ -1,8 +1,9 @@
 {
   "benchmark": "benchmark_celltype_regulation",
+  "benchmark_corpus_version": "2026-08-21",
   "cases": [
     {
-      "case_id": "celltype_regulation_tp53",
+      "case_id": "human_tp53_state_proxy_regulation",
       "details": {},
       "metrics": {
         "top_regulators": [
@@ -21,10 +22,10 @@
         "This endpoint currently uses expressed imported features rather than true cluster-specific regulons."
       ],
       "status": "pass",
-      "title": "Cell-type regulation recovers TP53 from TP53-like expression context"
+      "title": "Cell-type regulation recovers TP53"
     },
     {
-      "case_id": "celltype_upstream_tp53",
+      "case_id": "human_tp53_state_proxy_upstream",
       "details": {},
       "metrics": {
         "top_regulators": [
@@ -34,10 +35,10 @@
       },
       "notes": [],
       "status": "pass",
-      "title": "Cell-type upstream analysis recovers TP53 from TP53 target set"
+      "title": "Cell-type upstream analysis recovers TP53"
     },
     {
-      "case_id": "celltype_compare_has_differential_signal",
+      "case_id": "human_tp53_state_proxy_compare",
       "details": {},
       "metrics": {
         "n_deg": 5,
@@ -50,10 +51,14 @@
       "title": "Cell-type compare returns differential regulators"
     }
   ],
-  "description": "Validate cell-type / pseudobulk regulator workflows on a TP53-like imported dataset.",
-  "milestone": "M3",
-  "notes": [],
-  "run_at_utc": "2026-08-21T17:23:24.881004+00:00",
+  "description": "Validate cell-type / pseudobulk regulator workflows against curated corpus-backed cases.",
+  "git_sha": "1fc67db",
+  "milestone": "PR3",
+  "notes": [
+    "The current corpus includes curated proxy cases. Real external single-cell datasets can be added without changing the benchmark contract."
+  ],
+  "run_at_utc": "2026-08-21T17:55:32.064464+00:00",
+  "schema_version": "1.0",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

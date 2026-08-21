@@ -1,0 +1,108 @@
+{
+  "checks": [
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_celltype_regulation.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_chromatin_support.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_crispr_comparator.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_crispr_design.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_omics_import.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_pathway_activity.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_perturbation_calibration.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_rnai_comparator.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_rnai_design.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_signaling_to_tf.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_species_gold_standards.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_tf_activity.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_trajectory_workflows.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_transferability.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_workflow_packaging.json",
+      "status": "pass",
+      "type": "benchmark"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/latest_summary.json",
+      "status": "pass",
+      "type": "summary"
+    },
+    {
+      "errors": [],
+      "file": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_corpora/benchmark_corpus_manifest.json",
+      "status": "pass",
+      "type": "corpus_manifest"
+    }
+  ],
+  "schema_version": "1.0",
+  "status": "pass"
+}

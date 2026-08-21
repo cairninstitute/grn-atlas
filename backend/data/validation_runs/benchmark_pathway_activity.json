@@ -1,11 +1,12 @@
 {
   "benchmark": "benchmark_pathway_activity",
+  "benchmark_corpus_version": "2026-08-21",
   "cases": [
     {
-      "case_id": "human_p53_signature",
+      "case_id": "human_p53_pathway",
       "details": {},
       "metrics": {
-        "expected_rank": 6,
+        "expected_rank": 5,
         "top_pathways": [
           "Endometrial cancer",
           "Non-small cell lung cancer",
@@ -17,9 +18,70 @@
           "Small cell lung cancer"
         ]
       },
-      "notes": [],
+      "notes": [
+        "Curated pathway-activity case from the validation corpus."
+      ],
       "status": "pass",
-      "title": "Human p53 / DNA damage pathway recovery"
+      "title": "Pathway recovery for human_p53_pathway"
+    },
+    {
+      "case_id": "human_inflammation_pathway",
+      "details": {},
+      "metrics": {
+        "expected_rank": 2,
+        "top_pathways": [
+          "Spinal Cord Injury",
+          "Photodynamic therapy-induced NF-kB survival signaling",
+          "miRNAs involvement in the immune response in sepsis",
+          "Cells and molecules involved in local acute inflammatory response",
+          "Novel intracellular components of RIG-I-like receptor (RLR) pathway",
+          "Ebstein-Barr virus LMP1 signaling",
+          "Acute viral myocarditis",
+          "Selenium Micronutrient Network"
+        ]
+      },
+      "notes": [
+        "Curated pathway-activity case from the validation corpus."
+      ],
+      "status": "pass",
+      "title": "Pathway recovery for human_inflammation_pathway"
+    },
+    {
+      "case_id": "human_interferon_pathway",
+      "details": {},
+      "metrics": {
+        "expected_rank": 2,
+        "top_pathways": [
+          "Immune response to tuberculosis",
+          "Type II interferon signaling (IFNG)"
+        ]
+      },
+      "notes": [
+        "Curated pathway-activity case from the validation corpus."
+      ],
+      "status": "pass",
+      "title": "Pathway recovery for human_interferon_pathway"
+    },
+    {
+      "case_id": "human_hypoxia_pathway",
+      "details": {},
+      "metrics": {
+        "expected_rank": 4,
+        "top_pathways": [
+          "Metabolic reprogramming in colon cancer",
+          "Computational Model of Aerobic Glycolysis",
+          "Glycolysis and Gluconeogenesis",
+          "VEGFA-VEGFR2 Signaling Pathway",
+          "Pathways in clear cell renal cell carcinoma",
+          "Photodynamic therapy-induced HIF-1 survival signaling",
+          "Cori Cycle"
+        ]
+      },
+      "notes": [
+        "Curated pathway-activity case from the validation corpus."
+      ],
+      "status": "pass",
+      "title": "Pathway recovery for human_hypoxia_pathway"
     },
     {
       "case_id": "synthetic_member_enrichment",
@@ -45,17 +107,19 @@
       "title": "Synthetic pathway member enrichment recovery"
     }
   ],
-  "description": "Validate pathway activity scoring on a literal DNA-damage signature and a synthetic member-enrichment case.",
+  "description": "Validate pathway activity scoring on expanded literal signatures and a synthetic member-enrichment case.",
+  "git_sha": "1fc67db",
   "milestone": "M2",
   "notes": [
-    "The literal p53 case is the stronger biological check in this script."
+    "Literal pathway cases come from the validation corpus."
   ],
-  "run_at_utc": "2026-08-21T17:23:23.835367+00:00",
+  "run_at_utc": "2026-08-21T17:55:31.578798+00:00",
+  "schema_version": "1.0",
   "status": "pass",
   "summary": {
     "cases_fail": 0,
     "cases_partial": 0,
-    "cases_pass": 2,
-    "cases_total": 2
+    "cases_pass": 5,
+    "cases_total": 5
   }
 }

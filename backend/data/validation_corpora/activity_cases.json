@@ -1,0 +1,133 @@
+{
+  "schema_version": "1.0",
+  "corpus_version": "2026-08-21",
+  "tf_activity_cases": [
+    {
+      "case_id": "human_tp53_literal",
+      "species": "human",
+      "expected_tf": "TP53",
+      "top_threshold": 5,
+      "gene_values": {
+        "TP53": 3.0,
+        "MDM2": -2.0,
+        "CDKN1A": 2.5,
+        "BAX": 1.8,
+        "BCL2": -1.5,
+        "GADD45A": 2.1
+      }
+    },
+    {
+      "case_id": "human_myc_literal",
+      "species": "human",
+      "expected_tf": "MYC",
+      "top_threshold": 5,
+      "gene_values": {
+        "TP53": 1.8,
+        "MDM2": 1.7,
+        "BAX": 1.5,
+        "BCL2": 2.2,
+        "CDKN1A": -2.6
+      }
+    },
+    {
+      "case_id": "human_rela_literal",
+      "species": "human",
+      "expected_tf": "RELA",
+      "top_threshold": 5,
+      "gene_values": {
+        "NFKBIA": 2.4,
+        "BCL2": 1.9,
+        "ICAM1": 2.8,
+        "TNF": 2.6,
+        "IL6": 2.3,
+        "CXCL8": 2.7
+      }
+    },
+    {
+      "case_id": "human_stat1_literal",
+      "species": "human",
+      "expected_tf": "STAT1",
+      "top_threshold": 5,
+      "gene_values": {
+        "IRF1": 2.6,
+        "CXCL10": -1.8,
+        "ISG15": 2.4,
+        "IFI6": 2.1,
+        "OAS1": 2.2,
+        "SOCS1": 1.9
+      }
+    },
+    {
+      "case_id": "human_hif1a_literal",
+      "species": "human",
+      "expected_tf": "HIF1A",
+      "top_threshold": 5,
+      "gene_values": {
+        "VEGFA": 2.8,
+        "LDHA": 2.2,
+        "SLC2A1": 2.4,
+        "ENO1": 2.1,
+        "BNIP3": 2.0,
+        "PGK1": 2.3
+      }
+    }
+  ],
+  "pathway_activity_cases": [
+    {
+      "case_id": "human_p53_pathway",
+      "species": "human",
+      "expected_keywords": ["p53", "dna damage", "atm"],
+      "top_threshold": 10,
+      "gene_values": {
+        "TP53": 3.0,
+        "MDM2": -2.0,
+        "CDKN1A": 2.5,
+        "BAX": 1.8,
+        "BCL2": -1.5,
+        "GADD45A": 2.1
+      }
+    },
+    {
+      "case_id": "human_inflammation_pathway",
+      "species": "human",
+      "expected_keywords": ["tnf", "nf", "interleukin"],
+      "top_threshold": 10,
+      "gene_values": {
+        "NFKBIA": 2.4,
+        "BCL2": 1.9,
+        "ICAM1": 2.8,
+        "TNF": 2.6,
+        "IL6": 2.3,
+        "CXCL8": 2.7
+      }
+    },
+    {
+      "case_id": "human_interferon_pathway",
+      "species": "human",
+      "expected_keywords": ["interferon", "jak", "cytokine"],
+      "top_threshold": 10,
+      "gene_values": {
+        "IRF1": 2.6,
+        "CXCL10": -1.8,
+        "ISG15": 2.4,
+        "IFI6": 2.1,
+        "OAS1": 2.2,
+        "SOCS1": 1.9
+      }
+    },
+    {
+      "case_id": "human_hypoxia_pathway",
+      "species": "human",
+      "expected_keywords": ["hypoxia", "hif", "vegf"],
+      "top_threshold": 10,
+      "gene_values": {
+        "VEGFA": 2.8,
+        "LDHA": 2.2,
+        "SLC2A1": 2.4,
+        "ENO1": 2.1,
+        "BNIP3": 2.0,
+        "PGK1": 2.3
+      }
+    }
+  ]
+}

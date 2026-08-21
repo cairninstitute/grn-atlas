@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -13,6 +14,7 @@ REPO_ROOT = BACKEND_DIR.parent
 DATA_DIR = BACKEND_DIR / "data"
 RUNS_DIR = DATA_DIR / "validation_runs"
 DB_PATH = DATA_DIR / "grn.sqlite3"
+CORPUS_DIR = DATA_DIR / "validation_corpora"
 
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
@@ -25,6 +27,24 @@ client = TestClient(app)
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def git_sha() -> str | None:
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=REPO_ROOT,
+            text=True,
+        ).strip()
+    except Exception:
+        return None
+
+
+def corpus_manifest() -> dict[str, Any]:
+    path = CORPUS_DIR / "benchmark_corpus_manifest.json"
+    if path.exists():
+        return json.loads(path.read_text())
+    return {"schema_version": "1.0", "corpus_version": "unknown"}
 
 
 def ensure_runs_dir() -> None:
@@ -83,6 +103,9 @@ def benchmark_payload(
     elif status_counts["partial"]:
         overall = "partial"
     return {
+        "schema_version": "1.0",
+        "git_sha": git_sha(),
+        "benchmark_corpus_version": corpus_manifest().get("corpus_version", "unknown"),
         "benchmark": name,
         "milestone": milestone,
         "description": description,

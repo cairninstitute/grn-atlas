@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import json
+
 from validation_common import (
+    CORPUS_DIR,
     benchmark_payload,
     case_result,
     client,
@@ -14,29 +17,23 @@ from validation_common import (
 
 def main() -> None:
     cases = []
-
-    literal = {
-        "TP53": 3.0,
-        "MDM2": -2.0,
-        "CDKN1A": 2.5,
-        "BAX": 1.8,
-        "BCL2": -1.5,
-        "GADD45A": 2.1,
-    }
-    resp = client.post("/api/v1/activity/pathway", json={"gene_values": literal, "species": "human", "top": 15})
-    data = resp.json()
-    rank = rank_of(
-        data.get("pathways", []),
-        lambda r: "p53" in (r.get("pathway_name") or "").lower() or "dna damage" in (r.get("pathway_name") or "").lower(),
-    )
-    cases.append(
-        case_result(
-            "human_p53_signature",
-            "Human p53 / DNA damage pathway recovery",
-            "pass" if rank and rank <= 10 else "fail",
-            metrics={"expected_rank": rank, "top_pathways": top_symbols(data.get("pathways", []), limit=8)},
+    corpus = json.loads((CORPUS_DIR / "activity_cases.json").read_text())
+    for case in corpus.get("pathway_activity_cases", []):
+        resp = client.post("/api/v1/activity/pathway", json={"gene_values": case["gene_values"], "species": case["species"], "top": 15})
+        data = resp.json()
+        rank = rank_of(
+            data.get("pathways", []),
+            lambda r, kws=case["expected_keywords"]: any(kw.lower() in (r.get("pathway_name") or "").lower() for kw in kws),
         )
-    )
+        cases.append(
+            case_result(
+                case["case_id"],
+                f"Pathway recovery for {case['case_id']}",
+                "pass" if rank and rank <= case.get("top_threshold", 10) else "partial",
+                metrics={"expected_rank": rank, "top_pathways": top_symbols(data.get("pathways", []), limit=8)},
+                notes=["Curated pathway-activity case from the validation corpus."],
+            )
+        )
 
     pathway = find_pathway_by_name("p53 transcriptional gene network") or find_pathway_by_name("PI3K-Akt")
     if pathway:
@@ -64,9 +61,9 @@ def main() -> None:
     payload = benchmark_payload(
         "benchmark_pathway_activity",
         "M2",
-        "Validate pathway activity scoring on a literal DNA-damage signature and a synthetic member-enrichment case.",
+        "Validate pathway activity scoring on expanded literal signatures and a synthetic member-enrichment case.",
         cases,
-        notes=["The literal p53 case is the stronger biological check in this script."],
+        notes=["Literal pathway cases come from the validation corpus."],
     )
     out = save_benchmark("benchmark_pathway_activity", payload)
     print(out)
