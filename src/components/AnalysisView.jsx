@@ -12,6 +12,9 @@ import MotifQueryPanel from './MotifQueryPanel';
 import DiffRegulationPanel from './DiffRegulationPanel';
 import TissueWeightsPanel from './TissueWeightsPanel';
 import ValidationDashboard from './ValidationDashboard';
+import OmicsImportPanel from './OmicsImportPanel';
+import CelltypePanel from './CelltypePanel';
+import ChromatinPanel from './ChromatinPanel';
 import ExportPanel from './ExportPanel';
 import InferredEnrichmentWorkflow from './InferredEnrichmentWorkflow';
 import ModuleMotifWorkflow from './ModuleMotifWorkflow';
@@ -21,6 +24,9 @@ import NetworkVisualization from './NetworkVisualization';
 import '../styles/AnalysisView.css';
 
 const SECTIONS = [
+  { label: 'Data Import', panels: [
+    { id: 'omics-import', title: 'Omics Import', desc: 'Import gene expression matrices, DEG lists, and cluster definitions', component: OmicsImportPanel },
+  ]},
   { label: 'Regulon & Upstream', panels: [
     { id: 'regulon', title: 'Regulon Extraction', desc: 'Extract the full regulon (downstream targets) of a transcription factor', component: RegulonPanel, accepts: 'sharedGeneSet', shares: true },
     { id: 'compare', title: 'Regulon Comparison', desc: 'Compare regulons of two TFs — overlap, Jaccard, significance', component: RegulonComparePanel, shares: true },
@@ -33,6 +39,10 @@ const SECTIONS = [
     { id: 'centrality', title: 'Centrality Metrics', desc: 'Rank genes by network centrality (degree, betweenness, closeness, eigenvector)', component: CentralityPanel },
     { id: 'modules', title: 'Module Detection', desc: 'Detect co-regulated gene communities (louvain, leiden, infomap)', component: ModulePanel },
     { id: 'motif', title: 'Motif Query', desc: 'Query TF binding motif hits in gene promoters (JASPAR 2024)', component: MotifQueryPanel },
+  ]},
+  { label: 'Cell-type & Chromatin', panels: [
+    { id: 'celltype', title: 'Cell-type Regulation', desc: 'Find TF regulators active in specific cell types/clusters from imported data', component: CelltypePanel, accepts: 'sharedGeneSet' },
+    { id: 'chromatin', title: 'Chromatin / Enhancer Support', desc: 'View and import chromatin peaks, enhancer-gene links, motif hits', component: ChromatinPanel },
   ]},
   { label: 'Inference & Comparison', panels: [
     { id: 'inferred', title: 'Inferred Edges', desc: 'GRNBoost2/GENIE3 predicted regulatory edges from expression data', component: InferredEdgesPanel, accepts: 'sharedGeneSet', shares: true },

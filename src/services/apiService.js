@@ -333,6 +333,78 @@ export const analysisAPI = {
     return response.json();
   },
 
+  // M1: Omics import
+  importOmics: async (data) => {
+    const response = await fetch(`${API_BASE}/import/omics`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  getImportedDataset: async (datasetId) => {
+    const response = await fetch(`${API_BASE}/import/${encodeURIComponent(datasetId)}`);
+    return response.json();
+  },
+
+  validateImport: async (datasetId) => {
+    const response = await fetch(`${API_BASE}/import/${encodeURIComponent(datasetId)}/validate`, { method: 'POST' });
+    return response.json();
+  },
+
+  listImportedDatasets: async () => {
+    const response = await fetch(`${API_BASE}/import/list/all`);
+    return response.json();
+  },
+
+  // M3: Cell-type workflows
+  celltypeRegulation: async (datasetId, clusterId, species, options = {}) => {
+    const response = await fetch(`${API_BASE}/celltype/regulation`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dataset_id: datasetId, cluster_id: clusterId, species, ...options }),
+    });
+    return response.json();
+  },
+
+  celltypeUpstream: async (datasetId, clusterId, geneIds, species, options = {}) => {
+    const response = await fetch(`${API_BASE}/celltype/upstream`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dataset_id: datasetId, cluster_id: clusterId, gene_ids: geneIds, species, ...options }),
+    });
+    return response.json();
+  },
+
+  celltypeCompare: async (datasetId, clusterA, clusterB, species, options = {}) => {
+    const response = await fetch(`${API_BASE}/celltype/compare`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dataset_id: datasetId, cluster_a: clusterA, cluster_b: clusterB, species, ...options }),
+    });
+    return response.json();
+  },
+
+  // M4: Chromatin support
+  importPeaks: async (data) => {
+    const response = await fetch(`${API_BASE}/chromatin/import-peaks`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  chromatinPeaks: async (species, options = {}) => {
+    const params = new URLSearchParams();
+    if (options.chrom) params.append('chrom', options.chrom);
+    if (options.peak_type) params.append('peak_type', options.peak_type);
+    if (options.limit) params.append('limit', options.limit);
+    const response = await fetch(`${API_BASE}/chromatin/peaks/${encodeURIComponent(species)}?${params}`);
+    return response.json();
+  },
+
+  chromatinGeneSupport: async (geneId) => {
+    const response = await fetch(`${API_BASE}/chromatin/gene/${encodeURIComponent(geneId)}`);
+    return response.json();
+  },
+
   networkPatterns: async (options = {}) => {
     const response = await fetch(`${API_BASE}/network/patterns`, {
       method: 'POST',

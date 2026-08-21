@@ -589,6 +589,117 @@ def build():
         );
         CREATE INDEX idx_etw_source ON edge_tissue_weights(source_id);
         CREATE INDEX idx_etw_species ON edge_tissue_weights(species);
+
+        -- M1: imported omics datasets
+        CREATE TABLE imported_datasets (
+            dataset_id    TEXT PRIMARY KEY,
+            name          TEXT NOT NULL,
+            species       TEXT NOT NULL,
+            data_type     TEXT NOT NULL,  -- 'bulk', 'pseudobulk', 'scRNA', 'scATAC'
+            n_features    INTEGER NOT NULL DEFAULT 0,
+            n_samples     INTEGER NOT NULL DEFAULT 0,
+            n_clusters    INTEGER NOT NULL DEFAULT 0,
+            metadata      TEXT,           -- JSON blob
+            created_at    TEXT NOT NULL,
+            provenance    TEXT            -- JSON: source, method, version
+        );
+
+        CREATE TABLE imported_features (
+            dataset_id  TEXT NOT NULL,
+            gene_id     TEXT NOT NULL,
+            mean_expr   REAL,
+            pct_cells   REAL,
+            PRIMARY KEY (dataset_id, gene_id),
+            FOREIGN KEY (dataset_id) REFERENCES imported_datasets(dataset_id)
+        );
+
+        CREATE TABLE imported_clusters (
+            dataset_id   TEXT NOT NULL,
+            cluster_id   TEXT NOT NULL,
+            cluster_name TEXT,
+            n_cells      INTEGER NOT NULL DEFAULT 0,
+            metadata     TEXT,
+            PRIMARY KEY (dataset_id, cluster_id),
+            FOREIGN KEY (dataset_id) REFERENCES imported_datasets(dataset_id)
+        );
+
+        CREATE TABLE imported_contrasts (
+            dataset_id    TEXT NOT NULL,
+            contrast_id   TEXT PRIMARY KEY,
+            group_a       TEXT NOT NULL,
+            group_b       TEXT NOT NULL,
+            n_deg_up      INTEGER NOT NULL DEFAULT 0,
+            n_deg_down    INTEGER NOT NULL DEFAULT 0,
+            metadata      TEXT,
+            FOREIGN KEY (dataset_id) REFERENCES imported_datasets(dataset_id)
+        );
+
+        CREATE TABLE imported_deg (
+            contrast_id   TEXT NOT NULL,
+            gene_id       TEXT NOT NULL,
+            log2fc        REAL NOT NULL,
+            pvalue        REAL,
+            padj          REAL,
+            PRIMARY KEY (contrast_id, gene_id),
+            FOREIGN KEY (contrast_id) REFERENCES imported_contrasts(contrast_id)
+        );
+        CREATE INDEX idx_ideg_contrast ON imported_deg(contrast_id);
+
+        -- M4: chromatin / enhancer regulatory layer
+        CREATE TABLE chromatin_peaks (
+            peak_id     TEXT PRIMARY KEY,
+            species     TEXT NOT NULL,
+            chrom       TEXT NOT NULL,
+            start_pos   INTEGER NOT NULL,
+            end_pos     INTEGER NOT NULL,
+            summit      INTEGER,
+            score       REAL,
+            peak_type   TEXT,          -- 'promoter', 'enhancer', 'distal'
+            dataset_id  TEXT,
+            FOREIGN KEY (dataset_id) REFERENCES imported_datasets(dataset_id)
+        );
+        CREATE INDEX idx_peaks_species ON chromatin_peaks(species);
+        CREATE INDEX idx_peaks_chrom ON chromatin_peaks(chrom);
+
+        CREATE TABLE peak_gene_links (
+            peak_id       TEXT NOT NULL,
+            gene_id       TEXT NOT NULL,
+            link_score    REAL NOT NULL,
+            link_type     TEXT NOT NULL,  -- 'correlation', 'proximity', 'activity'
+            distance_bp   INTEGER,
+            species       TEXT NOT NULL,
+            dataset_id    TEXT,
+            PRIMARY KEY (peak_id, gene_id),
+            FOREIGN KEY (peak_id) REFERENCES chromatin_peaks(peak_id)
+        );
+        CREATE INDEX idx_pgl_gene ON peak_gene_links(gene_id);
+        CREATE INDEX idx_pgl_species ON peak_gene_links(species);
+
+        CREATE TABLE peak_motif_hits (
+            peak_id     TEXT NOT NULL,
+            motif_id    TEXT NOT NULL,
+            tf_gene_id  TEXT,
+            score       REAL NOT NULL,
+            pvalue      REAL,
+            position    INTEGER,
+            strand      TEXT,
+            PRIMARY KEY (peak_id, motif_id, position),
+            FOREIGN KEY (peak_id) REFERENCES chromatin_peaks(peak_id)
+        );
+        CREATE INDEX idx_pmh_tf ON peak_motif_hits(tf_gene_id);
+
+        CREATE TABLE cis_support_edges (
+            source_id   TEXT NOT NULL,
+            target_id   TEXT NOT NULL,
+            peak_id     TEXT,
+            support_type TEXT NOT NULL,  -- 'motif_in_peak', 'peak_gene_link', 'enhancer'
+            score       REAL NOT NULL,
+            species     TEXT NOT NULL,
+            PRIMARY KEY (source_id, target_id, peak_id),
+            FOREIGN KEY (peak_id) REFERENCES chromatin_peaks(peak_id)
+        );
+        CREATE INDEX idx_cse_source ON cis_support_edges(source_id);
+        CREATE INDEX idx_cse_target ON cis_support_edges(target_id);
     """)
 
     # Insert human genes

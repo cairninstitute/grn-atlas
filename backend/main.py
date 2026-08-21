@@ -1923,14 +1923,64 @@ async def primer_design(request: PrimerDesignRequest):
 
 
 class CelltypeRegulationRequest(BaseModel):
-    species: str
+    species: Optional[str] = None
     gene_ids: Optional[List[str]] = None
+    dataset_id: Optional[str] = None
+    cluster_id: Optional[str] = None
+    min_confidence: float = 0.4
+    top: int = 25
 
 
 @app.post("/api/v1/celltype/regulation")
 async def celltype_regulation(request: CelltypeRegulationRequest):
-    """Report readiness for cell-type / single-cell regulatory analysis."""
-    return advanced.celltype_regulation(db, request.species, gene_ids=request.gene_ids)
+    """Find TF regulators active in a specific cell type/cluster, or report readiness."""
+    if not request.dataset_id:
+        return advanced.celltype_regulation(db, request.species, gene_ids=request.gene_ids)
+    conn = db.conn
+    ds = conn.execute("SELECT species FROM imported_datasets WHERE dataset_id = ?",
+                      (request.dataset_id,)).fetchone()
+    if not ds:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    species = request.species or ds[0]
+    cluster_genes = [r[0] for r in conn.execute(
+        "SELECT gene_id FROM imported_features WHERE dataset_id = ? AND mean_expr > 0",
+        (request.dataset_id,)
+    ).fetchall()]
+    if not cluster_genes:
+        return {"cluster_id": request.cluster_id, "species": species, "regulators": [],
+                "n_expressed_genes": 0, "note": "No expressed genes in cluster"}
+    gene_set = set(cluster_genes)
+    tfs = conn.execute(
+        "SELECT DISTINCT i.source_id, g.symbol FROM interactions i "
+        "JOIN genes g ON g.id = i.source_id "
+        "WHERE g.species = ? AND i.confidence >= ? AND i.target_id IN ({}) "
+        .format(",".join("?" * min(len(cluster_genes), 500))),
+        [species, request.min_confidence] + cluster_genes[:500]
+    ).fetchall()
+    tf_scores = {}
+    for tf_id, tf_symbol in tfs:
+        targets = [r[0] for r in conn.execute(
+            "SELECT target_id FROM interactions WHERE source_id = ? AND confidence >= ?",
+            (tf_id, request.min_confidence)
+        ).fetchall()]
+        overlap = [t for t in targets if t in gene_set]
+        if overlap:
+            regulon_size = len(targets)
+            enrichment = len(overlap) / max(1, regulon_size)
+            bg_n = len(gene_set)
+            pval = _hypergeom_sf(len(overlap) - 1, len(overlap) + regulon_size,
+                                 regulon_size, bg_n) if regulon_size > 0 and bg_n > 0 else 1.0
+            tf_scores[tf_id] = {
+                "gene_id": tf_id, "symbol": tf_symbol, "regulon_size": regulon_size,
+                "overlap": len(overlap), "enrichment": round(enrichment, 4),
+                "p_value": pval, "overlap_genes": overlap[:20],
+                "expressed": tf_id in gene_set,
+            }
+    regulators = sorted(tf_scores.values(), key=lambda x: x["p_value"])[:request.top]
+    for i, r in enumerate(regulators):
+        r["rank"] = i + 1
+    return {"cluster_id": request.cluster_id, "species": species,
+            "n_expressed_genes": len(cluster_genes), "regulators": regulators}
 
 
 class TrajectoryRegulationRequest(BaseModel):
@@ -3902,6 +3952,77 @@ async def inferred_edges(request: InferredEdgesRequest):
 
 # ============= Startup Events =============
 
+def _ensure_phase2_tables():
+    """Create M1/M3/M4 tables if they don't exist yet (avoids full DB rebuild)."""
+    conn = db.conn
+    existing = set(r[0] for r in conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table'"
+    ).fetchall())
+    stmts = []
+    if "imported_datasets" not in existing:
+        stmts.append("""CREATE TABLE imported_datasets (
+            dataset_id TEXT PRIMARY KEY, name TEXT NOT NULL, species TEXT NOT NULL,
+            data_type TEXT NOT NULL, n_features INTEGER NOT NULL DEFAULT 0,
+            n_samples INTEGER NOT NULL DEFAULT 0, n_clusters INTEGER NOT NULL DEFAULT 0,
+            metadata TEXT, created_at TEXT NOT NULL, provenance TEXT)""")
+    if "imported_features" not in existing:
+        stmts.append("""CREATE TABLE imported_features (
+            dataset_id TEXT NOT NULL, gene_id TEXT NOT NULL, mean_expr REAL, pct_cells REAL,
+            PRIMARY KEY (dataset_id, gene_id))""")
+    if "imported_clusters" not in existing:
+        stmts.append("""CREATE TABLE imported_clusters (
+            dataset_id TEXT NOT NULL, cluster_id TEXT NOT NULL, cluster_name TEXT,
+            n_cells INTEGER NOT NULL DEFAULT 0, metadata TEXT,
+            PRIMARY KEY (dataset_id, cluster_id))""")
+    if "imported_contrasts" not in existing:
+        stmts.append("""CREATE TABLE imported_contrasts (
+            dataset_id TEXT NOT NULL, contrast_id TEXT PRIMARY KEY,
+            group_a TEXT NOT NULL, group_b TEXT NOT NULL,
+            n_deg_up INTEGER NOT NULL DEFAULT 0, n_deg_down INTEGER NOT NULL DEFAULT 0, metadata TEXT)""")
+    if "imported_deg" not in existing:
+        stmts.append("""CREATE TABLE imported_deg (
+            contrast_id TEXT NOT NULL, gene_id TEXT NOT NULL,
+            log2fc REAL NOT NULL, pvalue REAL, padj REAL,
+            PRIMARY KEY (contrast_id, gene_id))""")
+        stmts.append("CREATE INDEX idx_ideg_contrast ON imported_deg(contrast_id)")
+    if "chromatin_peaks" not in existing:
+        stmts.append("""CREATE TABLE chromatin_peaks (
+            peak_id TEXT PRIMARY KEY, species TEXT NOT NULL, chrom TEXT NOT NULL,
+            start_pos INTEGER NOT NULL, end_pos INTEGER NOT NULL,
+            summit INTEGER, score REAL, peak_type TEXT, dataset_id TEXT)""")
+        stmts.append("CREATE INDEX idx_peaks_species ON chromatin_peaks(species)")
+        stmts.append("CREATE INDEX idx_peaks_chrom ON chromatin_peaks(chrom)")
+    if "peak_gene_links" not in existing:
+        stmts.append("""CREATE TABLE peak_gene_links (
+            peak_id TEXT NOT NULL, gene_id TEXT NOT NULL,
+            link_score REAL NOT NULL, link_type TEXT NOT NULL,
+            distance_bp INTEGER, species TEXT NOT NULL, dataset_id TEXT,
+            PRIMARY KEY (peak_id, gene_id))""")
+        stmts.append("CREATE INDEX idx_pgl_gene ON peak_gene_links(gene_id)")
+        stmts.append("CREATE INDEX idx_pgl_species ON peak_gene_links(species)")
+    if "peak_motif_hits" not in existing:
+        stmts.append("""CREATE TABLE peak_motif_hits (
+            peak_id TEXT NOT NULL, motif_id TEXT NOT NULL, tf_gene_id TEXT,
+            score REAL NOT NULL, pvalue REAL, position INTEGER, strand TEXT,
+            PRIMARY KEY (peak_id, motif_id, position))""")
+        stmts.append("CREATE INDEX idx_pmh_tf ON peak_motif_hits(tf_gene_id)")
+    if "cis_support_edges" not in existing:
+        stmts.append("""CREATE TABLE cis_support_edges (
+            source_id TEXT NOT NULL, target_id TEXT NOT NULL, peak_id TEXT,
+            support_type TEXT NOT NULL, score REAL NOT NULL, species TEXT NOT NULL,
+            PRIMARY KEY (source_id, target_id, peak_id))""")
+        stmts.append("CREATE INDEX idx_cse_source ON cis_support_edges(source_id)")
+        stmts.append("CREATE INDEX idx_cse_target ON cis_support_edges(target_id)")
+    for s in stmts:
+        conn.execute(s)
+    if stmts:
+        conn.commit()
+        logger.info(f"Created {len(stmts)} Phase 2 tables/indexes")
+
+
+_ensure_phase2_tables()
+
+
 @app.on_event("startup")
 async def startup_event():
     logger.info("GRN Atlas API starting up...")
@@ -3962,6 +4083,415 @@ async def benchmark_status():
         "quality_reports": quality_reports,
         "validation_report_md": validation_md,
     }
+
+
+# ============= M1: Omics Import Foundation =============
+
+
+class OmicsImportRequest(BaseModel):
+    name: str
+    species: str
+    data_type: str = "bulk"
+    gene_values: Dict[str, List[float]] = Field(default_factory=dict)
+    sample_names: Optional[List[str]] = None
+    clusters: Optional[Dict[str, List[str]]] = None
+    contrasts: Optional[List[Dict[str, Any]]] = None
+    metadata: Optional[Dict[str, Any]] = None
+    provenance: Optional[Dict[str, Any]] = None
+
+
+@app.post("/api/v1/import/omics")
+async def import_omics(req: OmicsImportRequest):
+    """Import a gene expression matrix with optional cluster and contrast definitions."""
+    import uuid
+    species = _normalize_species_input(req.species) or req.species
+    dataset_id = f"ds_{uuid.uuid4().hex[:12]}"
+    n_features = len(req.gene_values)
+    n_samples = len(req.sample_names) if req.sample_names else (
+        max((len(v) for v in req.gene_values.values()), default=0)
+    )
+    n_clusters = len(req.clusters) if req.clusters else 0
+    now = datetime.utcnow().isoformat()
+    conn = db.conn
+    try:
+        conn.execute(
+            "INSERT INTO imported_datasets (dataset_id, name, species, data_type, "
+            "n_features, n_samples, n_clusters, metadata, created_at, provenance) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (dataset_id, req.name, species, req.data_type, n_features, n_samples,
+             n_clusters, json.dumps(req.metadata) if req.metadata else None,
+             now, json.dumps(req.provenance) if req.provenance else None)
+        )
+        for gene_id, values in req.gene_values.items():
+            mean_expr = sum(values) / len(values) if values else 0
+            pct_cells = sum(1 for v in values if v > 0) / len(values) * 100 if values else 0
+            conn.execute(
+                "INSERT OR IGNORE INTO imported_features (dataset_id, gene_id, mean_expr, pct_cells) "
+                "VALUES (?, ?, ?, ?)", (dataset_id, gene_id, mean_expr, pct_cells)
+            )
+        if req.clusters:
+            for cid, cell_ids in req.clusters.items():
+                conn.execute(
+                    "INSERT INTO imported_clusters (dataset_id, cluster_id, cluster_name, n_cells) "
+                    "VALUES (?, ?, ?, ?)", (dataset_id, cid, cid, len(cell_ids))
+                )
+        contrast_results = []
+        if req.contrasts:
+            for c in req.contrasts:
+                cid = f"ct_{uuid.uuid4().hex[:8]}"
+                group_a = c.get("group_a", "A")
+                group_b = c.get("group_b", "B")
+                degs = c.get("deg", {})
+                n_up = sum(1 for v in degs.values() if v > 0)
+                n_down = sum(1 for v in degs.values() if v < 0)
+                conn.execute(
+                    "INSERT INTO imported_contrasts (dataset_id, contrast_id, group_a, group_b, "
+                    "n_deg_up, n_deg_down) VALUES (?, ?, ?, ?, ?, ?)",
+                    (dataset_id, cid, group_a, group_b, n_up, n_down)
+                )
+                for gene_id, lfc in degs.items():
+                    conn.execute(
+                        "INSERT OR IGNORE INTO imported_deg (contrast_id, gene_id, log2fc) "
+                        "VALUES (?, ?, ?)", (cid, gene_id, lfc)
+                    )
+                contrast_results.append({"contrast_id": cid, "group_a": group_a,
+                                         "group_b": group_b, "n_deg": len(degs)})
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    return {
+        "dataset_id": dataset_id,
+        "name": req.name,
+        "species": species,
+        "data_type": req.data_type,
+        "n_features": n_features,
+        "n_samples": n_samples,
+        "n_clusters": n_clusters,
+        "contrasts": contrast_results,
+        "created_at": now,
+    }
+
+
+@app.get("/api/v1/import/{dataset_id}")
+async def get_imported_dataset(dataset_id: str):
+    """Retrieve metadata and summary for an imported dataset."""
+    conn = db.conn
+    row = conn.execute("SELECT * FROM imported_datasets WHERE dataset_id = ?", (dataset_id,)).fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    cols = [d[0] for d in conn.execute("SELECT * FROM imported_datasets LIMIT 0").description]
+    ds = dict(zip(cols, row))
+    ds["metadata"] = json.loads(ds["metadata"]) if ds["metadata"] else None
+    ds["provenance"] = json.loads(ds["provenance"]) if ds["provenance"] else None
+    clusters = conn.execute(
+        "SELECT cluster_id, cluster_name, n_cells FROM imported_clusters WHERE dataset_id = ?",
+        (dataset_id,)
+    ).fetchall()
+    ds["clusters"] = [{"cluster_id": c[0], "cluster_name": c[1], "n_cells": c[2]} for c in clusters]
+    contrasts = conn.execute(
+        "SELECT contrast_id, group_a, group_b, n_deg_up, n_deg_down FROM imported_contrasts WHERE dataset_id = ?",
+        (dataset_id,)
+    ).fetchall()
+    ds["contrasts"] = [{"contrast_id": c[0], "group_a": c[1], "group_b": c[2],
+                        "n_deg_up": c[3], "n_deg_down": c[4]} for c in contrasts]
+    return ds
+
+
+@app.post("/api/v1/import/{dataset_id}/validate")
+async def validate_imported_dataset(dataset_id: str):
+    """Validate an imported dataset against atlas gene coverage."""
+    conn = db.conn
+    row = conn.execute("SELECT species, n_features FROM imported_datasets WHERE dataset_id = ?",
+                       (dataset_id,)).fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    species, n_features = row
+    imported_genes = [r[0] for r in conn.execute(
+        "SELECT gene_id FROM imported_features WHERE dataset_id = ?", (dataset_id,)
+    ).fetchall()]
+    atlas_genes = set(r[0] for r in conn.execute(
+        "SELECT id FROM genes WHERE species = ?", (species,)
+    ).fetchall())
+    matched = [g for g in imported_genes if g in atlas_genes]
+    return {
+        "dataset_id": dataset_id,
+        "species": species,
+        "imported_features": len(imported_genes),
+        "atlas_genes": len(atlas_genes),
+        "matched": len(matched),
+        "match_pct": round(len(matched) / max(1, len(imported_genes)) * 100, 1),
+        "unmatched_sample": [g for g in imported_genes if g not in atlas_genes][:20],
+        "valid": len(matched) >= 10,
+    }
+
+
+@app.get("/api/v1/import/list/all")
+async def list_imported_datasets():
+    """List all imported datasets."""
+    conn = db.conn
+    rows = conn.execute(
+        "SELECT dataset_id, name, species, data_type, n_features, n_samples, n_clusters, created_at "
+        "FROM imported_datasets ORDER BY created_at DESC"
+    ).fetchall()
+    return {"datasets": [
+        {"dataset_id": r[0], "name": r[1], "species": r[2], "data_type": r[3],
+         "n_features": r[4], "n_samples": r[5], "n_clusters": r[6], "created_at": r[7]}
+        for r in rows
+    ]}
+
+
+# ============= M3: Cell-type upstream & compare =============
+
+
+class CelltypeUpstreamRequest(BaseModel):
+    dataset_id: str
+    cluster_id: str
+    gene_ids: List[str]
+    species: Optional[str] = None
+    min_confidence: float = 0.4
+    top: int = 25
+
+
+@app.post("/api/v1/celltype/upstream")
+async def celltype_upstream(req: CelltypeUpstreamRequest):
+    """Find upstream TFs for a gene set, constrained to those expressed in a cluster."""
+    conn = db.conn
+    ds = conn.execute("SELECT species FROM imported_datasets WHERE dataset_id = ?",
+                      (req.dataset_id,)).fetchone()
+    if not ds:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    species = req.species or ds[0]
+    expressed = set(r[0] for r in conn.execute(
+        "SELECT gene_id FROM imported_features WHERE dataset_id = ? AND mean_expr > 0",
+        (req.dataset_id,)
+    ).fetchall())
+    query_set = set(req.gene_ids)
+    tfs = conn.execute(
+        "SELECT DISTINCT source_id FROM interactions WHERE target_id IN ({}) AND confidence >= ?"
+        .format(",".join("?" * len(req.gene_ids))),
+        list(req.gene_ids) + [req.min_confidence]
+    ).fetchall()
+    results = []
+    for (tf_id,) in tfs:
+        if tf_id not in expressed:
+            continue
+        targets = set(r[0] for r in conn.execute(
+            "SELECT target_id FROM interactions WHERE source_id = ? AND confidence >= ?",
+            (tf_id, req.min_confidence)
+        ).fetchall())
+        overlap = query_set & targets
+        if not overlap:
+            continue
+        info = conn.execute("SELECT symbol FROM genes WHERE id = ?", (tf_id,)).fetchone()
+        results.append({
+            "gene_id": tf_id, "symbol": info[0] if info else tf_id,
+            "overlap": len(overlap), "regulon_size": len(targets),
+            "expressed_in_cluster": True,
+            "overlap_genes": sorted(overlap)[:20],
+        })
+    results.sort(key=lambda x: x["overlap"], reverse=True)
+    return {"cluster_id": req.cluster_id, "species": species,
+            "query_genes": len(req.gene_ids), "regulators": results[:req.top]}
+
+
+class CelltypeCompareRequest(BaseModel):
+    dataset_id: str
+    cluster_a: str
+    cluster_b: str
+    species: Optional[str] = None
+    min_confidence: float = 0.4
+    top: int = 25
+
+
+@app.post("/api/v1/celltype/compare")
+async def celltype_compare(req: CelltypeCompareRequest):
+    """Compare TF regulatory activity between two cell types/clusters using imported DEG data."""
+    conn = db.conn
+    ds = conn.execute("SELECT species FROM imported_datasets WHERE dataset_id = ?",
+                      (req.dataset_id,)).fetchone()
+    if not ds:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    species = req.species or ds[0]
+    contrast = conn.execute(
+        "SELECT contrast_id FROM imported_contrasts WHERE dataset_id = ? AND "
+        "((group_a = ? AND group_b = ?) OR (group_a = ? AND group_b = ?))",
+        (req.dataset_id, req.cluster_a, req.cluster_b, req.cluster_b, req.cluster_a)
+    ).fetchone()
+    if not contrast:
+        return {"error": "No contrast found between these clusters. Import a contrast first.",
+                "cluster_a": req.cluster_a, "cluster_b": req.cluster_b}
+    degs = conn.execute(
+        "SELECT gene_id, log2fc FROM imported_deg WHERE contrast_id = ?",
+        (contrast[0],)
+    ).fetchall()
+    deg_map = {r[0]: r[1] for r in degs}
+    up_genes = {g for g, lfc in deg_map.items() if lfc > 0.5}
+    down_genes = {g for g, lfc in deg_map.items() if lfc < -0.5}
+    tfs = conn.execute(
+        "SELECT DISTINCT i.source_id, g.symbol FROM interactions i "
+        "JOIN genes g ON g.id = i.source_id "
+        "WHERE g.species = ? AND g.is_tf = 1 AND i.confidence >= ?",
+        (species, req.min_confidence)
+    ).fetchall()
+    results = []
+    for tf_id, tf_symbol in tfs:
+        targets = set(r[0] for r in conn.execute(
+            "SELECT target_id FROM interactions WHERE source_id = ? AND confidence >= ?",
+            (tf_id, req.min_confidence)
+        ).fetchall())
+        up_overlap = targets & up_genes
+        down_overlap = targets & down_genes
+        if not up_overlap and not down_overlap:
+            continue
+        activity = (len(up_overlap) - len(down_overlap)) / max(1, len(targets))
+        results.append({
+            "gene_id": tf_id, "symbol": tf_symbol,
+            "regulon_size": len(targets),
+            "targets_up": len(up_overlap), "targets_down": len(down_overlap),
+            "differential_activity": round(activity, 4),
+            "direction": "up_in_A" if activity > 0 else "up_in_B",
+            "tf_log2fc": deg_map.get(tf_id, None),
+        })
+    results.sort(key=lambda x: abs(x["differential_activity"]), reverse=True)
+    return {
+        "cluster_a": req.cluster_a, "cluster_b": req.cluster_b,
+        "species": species, "n_deg": len(deg_map),
+        "n_up": len(up_genes), "n_down": len(down_genes),
+        "differential_regulators": results[:req.top],
+    }
+
+
+# ============= M4: Chromatin / Enhancer Regulatory Layer =============
+
+
+class PeakGeneImportRequest(BaseModel):
+    species: str
+    peaks: List[Dict[str, Any]]
+    links: Optional[List[Dict[str, Any]]] = None
+    dataset_id: Optional[str] = None
+    provenance: Optional[Dict[str, Any]] = None
+
+
+@app.post("/api/v1/chromatin/import-peaks")
+async def import_peaks(req: PeakGeneImportRequest):
+    """Import chromatin peaks and optional peak-gene linkages."""
+    conn = db.conn
+    species = _normalize_species_input(req.species) or req.species
+    n_peaks = 0
+    n_links = 0
+    try:
+        for p in req.peaks:
+            peak_id = p.get("peak_id", f"{p.get('chrom', 'chr')}:{p.get('start', 0)}-{p.get('end', 0)}")
+            conn.execute(
+                "INSERT OR REPLACE INTO chromatin_peaks "
+                "(peak_id, species, chrom, start_pos, end_pos, summit, score, peak_type, dataset_id) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (peak_id, species, p.get("chrom", ""), p.get("start", 0), p.get("end", 0),
+                 p.get("summit"), p.get("score"), p.get("peak_type"), req.dataset_id)
+            )
+            n_peaks += 1
+        if req.links:
+            for lk in req.links:
+                conn.execute(
+                    "INSERT OR REPLACE INTO peak_gene_links "
+                    "(peak_id, gene_id, link_score, link_type, distance_bp, species, dataset_id) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    (lk["peak_id"], lk["gene_id"], lk.get("score", 0.5),
+                     lk.get("link_type", "proximity"), lk.get("distance_bp"),
+                     species, req.dataset_id)
+                )
+                n_links += 1
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    return {"species": species, "n_peaks": n_peaks, "n_links": n_links, "dataset_id": req.dataset_id}
+
+
+@app.get("/api/v1/chromatin/peaks/{species}")
+async def list_chromatin_peaks(species: str, chrom: Optional[str] = None,
+                                peak_type: Optional[str] = None, limit: int = 100):
+    """List chromatin peaks for a species, optionally filtered by chromosome or type."""
+    conn = db.conn
+    sp = _normalize_species_input(species) or species
+    q = "SELECT peak_id, chrom, start_pos, end_pos, summit, score, peak_type FROM chromatin_peaks WHERE species = ?"
+    params: list = [sp]
+    if chrom:
+        q += " AND chrom = ?"
+        params.append(chrom)
+    if peak_type:
+        q += " AND peak_type = ?"
+        params.append(peak_type)
+    q += " ORDER BY score DESC LIMIT ?"
+    params.append(limit)
+    rows = conn.execute(q, params).fetchall()
+    return {"species": sp, "peaks": [
+        {"peak_id": r[0], "chrom": r[1], "start": r[2], "end": r[3],
+         "summit": r[4], "score": r[5], "peak_type": r[6]}
+        for r in rows
+    ]}
+
+
+@app.get("/api/v1/chromatin/gene/{gene_id}")
+async def chromatin_gene_support(gene_id: str):
+    """Get all chromatin/enhancer support for a gene's regulatory edges."""
+    conn = db.conn
+    peaks = conn.execute(
+        "SELECT p.peak_id, p.chrom, p.start_pos, p.end_pos, p.score, p.peak_type, "
+        "pgl.link_score, pgl.link_type, pgl.distance_bp "
+        "FROM peak_gene_links pgl JOIN chromatin_peaks p ON p.peak_id = pgl.peak_id "
+        "WHERE pgl.gene_id = ? ORDER BY pgl.link_score DESC", (gene_id,)
+    ).fetchall()
+    cis = conn.execute(
+        "SELECT source_id, target_id, peak_id, support_type, score "
+        "FROM cis_support_edges WHERE target_id = ? OR source_id = ?",
+        (gene_id, gene_id)
+    ).fetchall()
+    motifs = []
+    for p in peaks:
+        hits = conn.execute(
+            "SELECT motif_id, tf_gene_id, score, pvalue FROM peak_motif_hits WHERE peak_id = ?",
+            (p[0],)
+        ).fetchall()
+        motifs.extend([{"peak_id": p[0], "motif_id": h[0], "tf_gene_id": h[1],
+                        "score": h[2], "pvalue": h[3]} for h in hits])
+    return {
+        "gene_id": gene_id,
+        "linked_peaks": [{"peak_id": p[0], "chrom": p[1], "start": p[2], "end": p[3],
+                          "score": p[4], "peak_type": p[5], "link_score": p[6],
+                          "link_type": p[7], "distance_bp": p[8]} for p in peaks],
+        "cis_support": [{"source_id": c[0], "target_id": c[1], "peak_id": c[2],
+                         "support_type": c[3], "score": c[4]} for c in cis],
+        "motif_hits": motifs,
+    }
+
+
+@app.post("/api/v1/chromatin/cis-support")
+async def compute_cis_support(gene_id: str = "", species: Optional[str] = None):
+    """Query cis-regulatory support for edges involving a gene."""
+    conn = db.conn
+    if not gene_id:
+        raise HTTPException(status_code=400, detail="gene_id required")
+    edges = conn.execute(
+        "SELECT source_id, target_id, confidence, regulation_type, sources "
+        "FROM interactions WHERE source_id = ? OR target_id = ?",
+        (gene_id, gene_id)
+    ).fetchall()
+    results = []
+    for e in edges:
+        cis = conn.execute(
+            "SELECT peak_id, support_type, score FROM cis_support_edges "
+            "WHERE source_id = ? AND target_id = ?", (e[0], e[1])
+        ).fetchall()
+        results.append({
+            "source_id": e[0], "target_id": e[1], "confidence": e[2],
+            "regulation_type": e[3], "sources": e[4],
+            "cis_support": [{"peak_id": c[0], "support_type": c[1], "score": c[2]} for c in cis],
+            "has_chromatin_support": len(cis) > 0,
+        })
+    return {"gene_id": gene_id, "edges": results,
+            "n_with_support": sum(1 for r in results if r["has_chromatin_support"])}
 
 
 @app.get("/health")
