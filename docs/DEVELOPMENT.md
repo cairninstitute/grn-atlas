@@ -44,7 +44,10 @@ Third-party data is **not committed** (see LICENSE). Fetch it, then build:
 ```bash
 venv/bin/python backend/scripts/fetch_sources.py --tier light   # sources -> backend/data/; bootstraps an intermediate DB on fresh clones
 venv/bin/python backend/scripts/build_db.py                     # final rebuild of grn.sqlite3 (~10 s)
+venv/bin/python backend/scripts/compute_tissue_weights.py       # per-tissue coexpression (needs expression data)
 ```
+
+Or equivalently: `make fetch && make db && make tissue-weights`.
 
 `build_db.py` is stdlib-only and glob-loads whatever caches are present in `backend/data/`
 (sequence context, motif hits, pathways, traits, curated symbols) — **missing caches just
@@ -53,8 +56,8 @@ leave that layer empty**, so the core atlas always builds. Targeted loaders
 an existing DB in place without a full rebuild.
 
 Fetch tiers (`fetch_sources.py --tier`): `core` (genes/interactions/coords/orthologs/GO/
-DoRothEA/gene lists, required), `light` (+ pathways/traits/seqctx/curated symbols/
-PlantRegMap/tobacco orthologs), `all` (also attempts the heavy layers below).
+DoRothEA/DAP-seq/gene lists, required), `light` (+ pathways/traits/seqctx/curated symbols/
+PlantRegMap including rice/tobacco orthologs), `all` (also attempts the heavy layers below).
 
 ### Data sources by species
 
@@ -62,9 +65,10 @@ PlantRegMap/tobacco orthologs), `all` (also attempts the heavy layers below).
 |---------|---------|-----------|-------------------|
 | Human | TRRUST | DoRothEA (OmniPath) | — |
 | Mouse | TRRUST | DoRothEA (OmniPath) | — |
-| Arabidopsis | PlantRegMap | ATRM (direction labels → second source) | — |
+| Arabidopsis | PlantRegMap | ATRM, DAP-seq (Plant Cistrome) | — |
 | Tomato | PlantRegMap, Literature | — | Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco |
 | Petunia | PlantRegMap, Literature | — | Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco |
+| Rice | — | — | Inferred:Arabidopsis (PLAZA orthologs) |
 | Pepper | — | — | Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco |
 | Potato | PlantRegMap | — | — |
 
@@ -128,6 +132,32 @@ from `backend/data/gold_standard_{species}.tsv`.
 regulon GO coherence, permutation significance, multi-evidence quality, expression
 coherence, and motif enrichment. Reports are written to
 `backend/data/network_validation_report.md`.
+
+## Benchmarking
+
+AUROC/AUPRC evaluation against independent ground truth:
+
+```bash
+make benchmark
+# or: venv/bin/python backend/scripts/benchmark_beeline.py
+```
+
+Evaluates Arabidopsis PlantRegMap+ATRM edges against DAP-seq (AUROC=0.88) and human
+DoRothEA against TRRUST. Report written to `backend/data/beeline_benchmark_report.json`.
+
+## Tissue coexpression weights
+
+Computes Pearson correlation between TF and target expression across tissue groups
+(petunia, tomato, arabidopsis — requires expression data from the heavy tier):
+
+```bash
+make tissue-weights
+# or: venv/bin/python backend/scripts/compute_tissue_weights.py
+```
+
+Populates the `edge_tissue_weights` table (~4.18M rows). Edges with |r| ≥ 0.3 are stored.
+The gene detail panel shows these inline; API endpoints: `GET /api/v1/edge-tissues/{gene_id}`
+and `GET /api/v1/tissues/{species}`.
 
 ## Data-source currency
 

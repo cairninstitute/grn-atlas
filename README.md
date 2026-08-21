@@ -50,10 +50,11 @@ cd backend && ../venv/bin/python -m uvicorn main:app --port 8000
 npm install && npm run dev
 ```
 
-Or with the Makefile: `make setup && make fetch && make db`, then `make backend` and
-(elsewhere) `make frontend`. To add inferred regulatory edges from expression data:
-`make infer` (runs GRNBoost2 + GENIE3, ~15 min), then `make db` again to load them.
-To run network validation after building: `make validate`.
+Or with the Makefile: `make setup && make fetch && make db && make tissue-weights`, then
+`make backend` and (elsewhere) `make frontend`. To add inferred regulatory edges from
+expression data: `make infer` (runs GRNBoost2 + GENIE3, ~15 min), then `make db` again to
+load them. After building: `make validate` (network validation) and `make benchmark`
+(AUROC/AUPRC benchmarks).
 
 > **Data is not committed.** Third-party data (each under its own upstream licence — see
 > LICENSE) is fetched from source by `fetch_sources.py`; the ~420 MB SQLite DB is then built
@@ -110,11 +111,13 @@ confirm the build is complete.
 
 | Tier / step | Command | Provides | Auto? | Needs |
 |---|---|---|---|---|
-| core | `fetch_sources.py --tier core` | genes, **human** networks (TRRUST + DoRothEA), coords, orthologs, GO | mostly | network |
-| light | `fetch_sources.py --tier light` | + pathways, traits, PlantRegMap regulation (tomato/petunia/potato/tobacco), curated symbols, tobacco BLAST orthologs | mostly | network; BLAST+ for petunia symbols + tobacco orthologs |
-| manual core | *(see below)* | **measured Arabidopsis network** + ATRM direction labels → Arabidopsis multi-evidence + tomato/petunia/pepper projection | **no** | manual download |
+| core | `fetch_sources.py --tier core` | genes, **human** networks (TRRUST + DoRothEA), coords, orthologs, GO, DAP-seq binding, gene lists | mostly | network |
+| light | `fetch_sources.py --tier light` | + pathways, traits, PlantRegMap regulation (tomato/petunia/potato/tobacco/rice), curated symbols, tobacco BLAST orthologs | mostly | network; BLAST+ for petunia symbols + tobacco orthologs |
+| manual core | *(see below)* | **measured Arabidopsis network** + ATRM direction labels → Arabidopsis multi-evidence + tomato/petunia/pepper/rice projection | **no** | manual download |
 | heavy | `fetch_expression.py`, `motif_scan.py` | expression + predicted binding | **no** | kallisto / BLAST+, hours, GBs |
+| tissue-weights | `make tissue-weights` | per-tissue coexpression weights for edges (petunia, tomato, arabidopsis) | yes | built DB + expression data |
 | validate | `make validate` | gold-standard recall/specificity + population-level statistical validation | yes | built DB |
+| benchmark | `make benchmark` | BEELINE-style AUROC/AUPRC against independent ground truth | yes | built DB |
 
 `build_db.py` glob-loads whatever caches are present and **skips missing inputs gracefully**
 (printing `(skip) …`), so a partial fetch always yields a working — if reduced — atlas.
@@ -180,10 +183,11 @@ curl -s localhost:8000/api/v1/provenance/freshness | python3 -m json.tool
 ```
 
 A **complete** build (all tiers + manual core + heavy layers) should report roughly:
-`~122,000` genes · human `~20,000` edges (TRRUST + DoRothEA) · mouse `~18,000` edges
-(TRRUST + DoRothEA) · arabidopsis `~91,850` edges · tomato measured `12,739` + inferred
-`~238k` · petunia `~91,697` + inferred · pepper `~2,203` (Arabidopsis projection) · potato
-`~11,409`. `build_db.py`'s own summary prints these counts — compare them, and use
+`~142,000` genes · `~1,470,000` interactions · human `~18,000` edges (TRRUST + DoRothEA) ·
+mouse `~18,000` edges (TRRUST + DoRothEA) · arabidopsis `~919,000` edges (PlantRegMap +
+DAP-seq) · tomato `~248,000` · petunia `~237,000` · rice `~17,000` (Arabidopsis projection) ·
+pepper `~2,200` · potato `~11,400`. Tissue coexpression: `~4.18M` weight rows across petunia,
+tomato, arabidopsis. `build_db.py`'s own summary prints these counts — compare them, and use
 `/api/v1/species` to see which layers are populated vs empty. If a layer is unexpectedly
 empty, its source file wasn't fetched (check the `(skip)` lines from `build_db`).
 
