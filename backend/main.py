@@ -916,6 +916,7 @@ async def tf_activity(request: TFActivityRequest):
     all_vals = list(gene_vals.values())
     global_mean = sum(all_vals) / len(all_vals)
     global_var = sum((v - global_mean) ** 2 for v in all_vals) / len(all_vals) if len(all_vals) > 1 else 1.0
+    total_abs_input = sum(abs(v) for v in all_vals) or 1.0
 
     for tf, targets in tf_regulons.items():
         matched = [(w, gene_vals[t]) for t, w in targets if t in gene_vals]
@@ -946,20 +947,31 @@ async def tf_activity(request: TFActivityRequest):
 
         t_stat = score / se if se > 0 else 0.0
         p_value = _t_to_p(t_stat, max(n - 2, 1))
+        matched_signal = sum(abs(v) for v in values)
+        match_signal_fraction = matched_signal / total_abs_input
+        unsigned_support = sum(abs(w) * abs(v) for w, v in zip(weights, values)) / n
+        signed_support = sum(w * v for w, v in zip(weights, values)) / n
+        coverage_shrinkage = math.sqrt(n / (n + 2.0))
+        ranking_score = (
+            unsigned_support * match_signal_fraction * math.sqrt(n) * coverage_shrinkage
+            + 0.15 * signed_support * math.sqrt(n)
+        )
 
         gene_info = db.get_gene(tf)
         results.append({
             "gene_id": tf,
             "symbol": gene_info.symbol if gene_info else tf,
             "activity_score": round(score, 6),
+            "ranking_score": round(ranking_score, 6),
             "t_statistic": round(t_stat, 4),
             "p_value": p_value,
             "regulon_size": len(targets),
             "matched_targets": n,
+            "matched_input_fraction": round(match_signal_fraction, 4),
             "method": request.method,
         })
 
-    results.sort(key=lambda x: x["p_value"])
+    results.sort(key=lambda x: (-x["ranking_score"], x["p_value"]))
     ranked = results[:request.top]
 
     if ranked:
@@ -1950,6 +1962,13 @@ async def celltype_regulation(request: CelltypeRegulationRequest):
         return {"cluster_id": request.cluster_id, "species": species, "regulators": [],
                 "n_expressed_genes": 0, "note": "No expressed genes in cluster"}
     gene_set = set(cluster_genes)
+    expr_map = {
+        r[0]: {"mean_expr": r[1], "pct_cells": r[2]}
+        for r in conn.execute(
+            "SELECT gene_id, mean_expr, pct_cells FROM imported_features WHERE dataset_id = ?",
+            (request.dataset_id,),
+        ).fetchall()
+    }
     tfs = conn.execute(
         "SELECT DISTINCT i.source_id, g.symbol FROM interactions i "
         "JOIN genes g ON g.id = i.source_id "
@@ -1958,25 +1977,44 @@ async def celltype_regulation(request: CelltypeRegulationRequest):
         [species, request.min_confidence] + cluster_genes[:500]
     ).fetchall()
     tf_scores = {}
+    total_expr = sum(max(0.0, expr_map.get(g, {}).get("mean_expr", 0.0)) for g in gene_set) or 1.0
     for tf_id, tf_symbol in tfs:
-        targets = [r[0] for r in conn.execute(
-            "SELECT target_id FROM interactions WHERE source_id = ? AND confidence >= ?",
+        target_rows = conn.execute(
+            "SELECT target_id, confidence, regulation_type FROM interactions WHERE source_id = ? AND confidence >= ?",
             (tf_id, request.min_confidence)
-        ).fetchall()]
-        overlap = [t for t in targets if t in gene_set]
+        ).fetchall()
+        targets = [r[0] for r in target_rows]
+        overlap_rows = [r for r in target_rows if r[0] in gene_set]
+        overlap = [r[0] for r in overlap_rows]
         if overlap:
             regulon_size = len(targets)
-            enrichment = len(overlap) / max(1, regulon_size)
-            bg_n = len(gene_set)
-            pval = _hypergeom_sf(len(overlap) - 1, len(overlap) + regulon_size,
-                                 regulon_size, bg_n) if regulon_size > 0 and bg_n > 0 else 1.0
+            overlap_count = len(overlap)
+            recall = overlap_count / max(1, len(gene_set))
+            precision = overlap_count / max(1, regulon_size)
+            overlap_conf = sum(r[1] for r in overlap_rows) / max(1, overlap_count)
+            overlap_expr = sum(max(0.0, expr_map.get(t, {}).get("mean_expr", 0.0)) for t in overlap)
+            expr_fraction = overlap_expr / total_expr
+            tf_expr = expr_map.get(tf_id, {}).get("mean_expr", 0.0)
+            score = (
+                overlap_conf * math.sqrt(overlap_count) * recall
+                + 0.4 * precision
+                + 0.6 * expr_fraction
+                + (0.4 if tf_id in gene_set else 0.0)
+                + min(tf_expr / 10.0, 0.4)
+            )
             tf_scores[tf_id] = {
                 "gene_id": tf_id, "symbol": tf_symbol, "regulon_size": regulon_size,
-                "overlap": len(overlap), "enrichment": round(enrichment, 4),
-                "p_value": pval, "overlap_genes": overlap[:20],
+                "overlap": overlap_count, "recall": round(recall, 4), "precision": round(precision, 4),
+                "mean_overlap_confidence": round(overlap_conf, 4),
+                "explained_expression_fraction": round(expr_fraction, 4),
+                "score": round(score, 4), "overlap_genes": overlap[:20],
                 "expressed": tf_id in gene_set,
+                "tf_mean_expr": round(tf_expr, 4) if tf_expr is not None else None,
             }
-    regulators = sorted(tf_scores.values(), key=lambda x: x["p_value"])[:request.top]
+    regulators = sorted(
+        tf_scores.values(),
+        key=lambda x: (-x["score"], -x["overlap"], -x["explained_expression_fraction"], x["regulon_size"])
+    )[:request.top]
     for i, r in enumerate(regulators):
         r["rank"] = i + 1
     return {"cluster_id": request.cluster_id, "species": species,
@@ -4533,32 +4571,72 @@ async def trajectory_drivers(req: TrajectoryDriversRequest):
     ).fetchall()
     results = []
     for tf_id, tf_symbol in tfs:
-        targets = set(r[0] for r in conn.execute(
-            "SELECT target_id FROM interactions WHERE source_id = ? AND confidence >= ?",
+        target_rows = conn.execute(
+            "SELECT target_id, confidence, regulation_type FROM interactions WHERE source_id = ? AND confidence >= ?",
             (tf_id, req.min_confidence)
-        ).fetchall())
+        ).fetchall()
+        targets = {r[0] for r in target_rows}
         transition_scores = []
+        total_weighted_support = 0.0
+        total_overlap = 0
+        directional_signs = []
+        tf_self_signal = 0.0
         for cid, deg_map in transition_degs.items():
-            overlap = targets & set(deg_map.keys())
-            if overlap:
-                mean_lfc = sum(deg_map[g] for g in overlap) / len(overlap)
-                transition_scores.append({"contrast_id": cid, "n_targets_deg": len(overlap),
-                                          "mean_log2fc": round(mean_lfc, 3)})
+            overlap_rows = [r for r in target_rows if r[0] in deg_map]
+            if overlap_rows:
+                signed_supports = []
+                unsigned_supports = []
+                raw_lfcs = []
+                for r in overlap_rows:
+                    sign = 1.0 if r[2] == "activation" else (-1.0 if r[2] == "repression" else 0.0)
+                    lfc = deg_map[r[0]]
+                    raw_lfcs.append(lfc)
+                    signed_supports.append(sign * lfc * r[1] if sign else 0.25 * lfc * r[1])
+                    unsigned_supports.append(abs(lfc) * r[1])
+                mean_lfc = sum(raw_lfcs) / len(raw_lfcs)
+                mean_signed = sum(signed_supports) / len(signed_supports)
+                mean_unsigned = sum(unsigned_supports) / len(unsigned_supports)
+                total_weighted_support += sum(signed_supports)
+                total_overlap += len(overlap_rows)
+                if mean_signed != 0:
+                    directional_signs.append(1 if mean_signed > 0 else -1)
+                if tf_id in deg_map:
+                    tf_self_signal += deg_map[tf_id]
+                transition_scores.append({
+                    "contrast_id": cid,
+                    "n_targets_deg": len(overlap_rows),
+                    "mean_log2fc": round(mean_lfc, 3),
+                    "mean_signed_support": round(mean_signed, 3),
+                    "mean_unsigned_support": round(mean_unsigned, 3),
+                })
         if not transition_scores:
             continue
-        consistency = all(s["mean_log2fc"] > 0 for s in transition_scores) or \
-                      all(s["mean_log2fc"] < 0 for s in transition_scores)
-        overall = sum(s["mean_log2fc"] * s["n_targets_deg"] for s in transition_scores) / \
-                  max(1, sum(s["n_targets_deg"] for s in transition_scores))
+        consistency = len(set(directional_signs)) <= 1 if directional_signs else False
+        overall = total_weighted_support / max(1, total_overlap)
+        support_fraction = total_overlap / max(1, len(all_deg_genes))
+        mean_unsigned_support = (
+            sum(s["mean_unsigned_support"] * s["n_targets_deg"] for s in transition_scores)
+            / max(1, sum(s["n_targets_deg"] for s in transition_scores))
+        )
+        rank_score = (
+            mean_unsigned_support * math.sqrt(total_overlap) * support_fraction
+            + min(abs(tf_self_signal), 3.0) * 0.6
+            + (0.25 if overall > 0 else 0.0)
+            + (0.15 if consistency else 0.0)
+        )
         results.append({
             "gene_id": tf_id, "symbol": tf_symbol,
             "regulon_size": len(targets),
             "transitions": transition_scores,
             "overall_score": round(overall, 4),
+            "rank_score": round(rank_score, 4),
+            "support_fraction": round(support_fraction, 4),
+            "mean_unsigned_support": round(mean_unsigned_support, 4),
+            "tf_self_signal": round(tf_self_signal, 4),
             "consistent_direction": consistency,
             "direction": "activating" if overall > 0 else "repressing",
         })
-    results.sort(key=lambda x: abs(x["overall_score"]), reverse=True)
+    results.sort(key=lambda x: (-x["rank_score"], -abs(x["overall_score"]), -x["support_fraction"]))
     return {"species": species, "n_contrasts": len(req.contrasts),
             "drivers": results[:req.top]}
 
@@ -4586,21 +4664,40 @@ async def pseudotime_activity(req: PseudotimeActivityRequest):
         "WHERE g.species = ? AND g.is_tf = 1", (species,)
     ).fetchall()
     results = []
+    total_abs_signal = sum(abs(v) for v in req.gene_values.values()) or 1.0
     for tf_id, tf_symbol in tfs:
-        targets = [r[0] for r in conn.execute(
-            "SELECT target_id FROM interactions WHERE source_id = ?", (tf_id,)
-        ).fetchall()]
-        matched = [req.gene_values[t] for t in targets if t in req.gene_values]
+        target_rows = conn.execute(
+            "SELECT target_id, confidence, regulation_type FROM interactions WHERE source_id = ?",
+            (tf_id,)
+        ).fetchall()
+        targets = [r[0] for r in target_rows]
+        matched_rows = [r for r in target_rows if r[0] in req.gene_values]
+        matched = [req.gene_values[r[0]] for r in matched_rows]
         if len(matched) < 3:
             continue
         mean_val = sum(matched) / len(matched)
+        signed_support = []
+        unsigned_support = []
+        for r in matched_rows:
+            sign = 1.0 if r[2] == "activation" else (-1.0 if r[2] == "repression" else 0.0)
+            value = req.gene_values[r[0]]
+            unsigned_support.append(abs(value) * r[1])
+            signed_support.append((sign * value if sign else 0.25 * value) * r[1])
+        support_fraction = sum(abs(v) for v in matched) / total_abs_signal
+        score = (
+            (sum(unsigned_support) / len(unsigned_support)) * math.sqrt(len(matched)) * support_fraction
+            + 0.15 * (sum(signed_support) / len(signed_support)) * math.sqrt(len(matched))
+            + min(abs(req.gene_values.get(tf_id, 0.0)), 3.0) * 0.15
+        )
         results.append({
             "gene_id": tf_id, "symbol": tf_symbol,
             "matched_targets": len(matched), "regulon_size": len(targets),
             "mean_target_value": round(mean_val, 4),
+            "support_fraction": round(support_fraction, 4),
+            "activity_score": round(score, 4),
             "tf_value": req.gene_values.get(tf_id),
         })
-    results.sort(key=lambda x: abs(x["mean_target_value"]), reverse=True)
+    results.sort(key=lambda x: (-x["activity_score"], -abs(x["mean_target_value"]), -x["matched_targets"]))
     return {"species": species, "input_genes": len(req.gene_values),
             "active_tfs": results[:req.top]}
 
@@ -4933,8 +5030,73 @@ async def ligand_receptor_pairs(req: LigandReceptorRequest):
             "confidence": r[6],
             "tf_regulon_size": downstream[0] if downstream else 0,
             "putative_role": "signaling → TF",
+            "evidence_mode": "direct_edge",
         })
     pairs.sort(key=lambda x: x["confidence"], reverse=True)
+    if not pairs:
+        pathway_rows = conn.execute(
+            """
+            SELECT pa.pathway_id, p.name, COUNT(*) AS pathway_size,
+                   SUM(CASE WHEN g.is_tf = 0 THEN 1 ELSE 0 END) AS n_non_tf,
+                   SUM(CASE WHEN g.is_tf = 1 THEN 1 ELSE 0 END) AS n_tf
+            FROM pathway_annotations pa
+            JOIN genes g ON g.id = pa.gene_id
+            JOIN pathways p ON p.pathway_id = pa.pathway_id
+            WHERE g.species = ?
+            GROUP BY pa.pathway_id, p.name
+            HAVING n_non_tf > 0 AND n_tf > 0
+            ORDER BY pathway_size ASC, n_tf DESC, n_non_tf DESC
+            LIMIT ?
+            """,
+            (species, max(req.top * 5, 25)),
+        ).fetchall()
+        for prow in pathway_rows:
+            pathway_id = prow[0]
+            pathway_name = prow[1]
+            pathway_size = prow[2]
+            members = conn.execute(
+                """
+                SELECT g.id, g.symbol, g.is_tf
+                FROM pathway_annotations pa
+                JOIN genes g ON g.id = pa.gene_id
+                WHERE pa.pathway_id = ? AND g.species = ?
+                ORDER BY g.is_tf DESC, g.symbol
+                LIMIT 100
+                """,
+                (pathway_id, species),
+            ).fetchall()
+            non_tfs = [m for m in members if not m[2]]
+            tfs_in_pathway = [m for m in members if m[2]]
+            for src in non_tfs[:10]:
+                for tgt in tfs_in_pathway[:10]:
+                    if req.gene_ids and src[0] not in req.gene_ids and tgt[0] not in req.gene_ids:
+                        continue
+                    key = (src[0], tgt[0])
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    downstream = conn.execute(
+                        "SELECT COUNT(*) FROM interactions WHERE source_id = ?", (tgt[0],)
+                    ).fetchone()
+                    confidence = round(min(0.85, 0.15 + (2.0 / max(3, pathway_size))), 3)
+                    pairs.append({
+                        "source_gene": src[0], "source_symbol": src[1],
+                        "target_tf": tgt[0], "target_symbol": tgt[1],
+                        "confidence": confidence,
+                        "tf_regulon_size": downstream[0] if downstream else 0,
+                        "putative_role": "pathway-linked signaling proxy",
+                        "evidence_mode": "shared_pathway_fallback",
+                        "shared_pathway_count": 1,
+                        "supporting_pathway_id": pathway_id,
+                        "supporting_pathway_name": pathway_name,
+                    })
+                    if len(pairs) >= req.top:
+                        break
+                if len(pairs) >= req.top:
+                    break
+            if len(pairs) >= req.top:
+                break
+        pairs.sort(key=lambda x: (x["evidence_mode"] != "direct_edge", -x["confidence"], -x["tf_regulon_size"]))
     return {"species": species, "pairs": pairs[:req.top]}
 
 

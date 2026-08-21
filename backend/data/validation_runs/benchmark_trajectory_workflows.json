@@ -6,19 +6,19 @@
       "details": {},
       "metrics": {
         "top_drivers": [
-          "ELF4",
-          "EZH2",
-          "FOS",
-          "HDAC1",
-          "HDAC9",
-          "HOXA10",
-          "IRF1",
-          "JUN"
+          "TP53",
+          "ETS1",
+          "MYC",
+          "SP1",
+          "MYCN",
+          "E2F1",
+          "ETS2",
+          "ESR1"
         ],
-        "tp53_rank": null
+        "tp53_rank": 1
       },
       "notes": [],
-      "status": "partial",
+      "status": "pass",
       "title": "Trajectory driver recovery for TP53-like contrast"
     },
     {
@@ -26,19 +26,19 @@
       "details": {},
       "metrics": {
         "top_tfs": [
-          "FOS",
-          "HIF1A",
-          "ING1",
-          "NR3C1",
-          "NFKB1",
-          "ABL1",
+          "TP53",
+          "MYC",
+          "ETS1",
+          "SP1",
+          "E2F1",
           "EGR1",
-          "ERCC2"
+          "STAT1",
+          "NFKB1"
         ],
-        "tp53_rank": 20
+        "tp53_rank": 1
       },
       "notes": [],
-      "status": "partial",
+      "status": "pass",
       "title": "Trajectory TF activity recovery for TP53-like signature"
     }
   ],
@@ -47,12 +47,12 @@
   "notes": [
     "This is currently a contrast-level benchmark; it is not a full pseudotime trajectory benchmark with external lineage truth."
   ],
-  "run_at_utc": "2026-08-21T16:12:48.326233+00:00",
-  "status": "partial",
+  "run_at_utc": "2026-08-21T17:06:57.625631+00:00",
+  "status": "pass",
   "summary": {
     "cases_fail": 0,
-    "cases_partial": 2,
-    "cases_pass": 0,
+    "cases_partial": 0,
+    "cases_pass": 2,
     "cases_total": 2
   }
 }

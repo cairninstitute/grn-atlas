@@ -8,19 +8,19 @@
         "method": "ulm"
       },
       "metrics": {
-        "expected_rank": null,
+        "expected_rank": 1,
         "top_symbols": [
+          "TP53",
+          "MYC",
+          "ETS1",
           "EGR1",
-          "ABL1",
-          "ERCC2",
-          "ING4",
-          "PAX5"
+          "E2F1"
         ]
       },
       "notes": [
         "Known TP53-associated genes were used as input; this is the most decision-relevant activity sanity check."
       ],
-      "status": "fail",
+      "status": "pass",
       "title": "Human TP53-like signature recovery (ulm)"
     },
     {
@@ -30,19 +30,19 @@
         "method": "wmean"
       },
       "metrics": {
-        "expected_rank": null,
+        "expected_rank": 1,
         "top_symbols": [
-          "SOX6",
-          "VDR",
-          "FOXO3",
-          "FOXO4",
-          "KLF4"
+          "TP53",
+          "MYC",
+          "ETS1",
+          "EGR1",
+          "E2F1"
         ]
       },
       "notes": [
         "Known TP53-associated genes were used as input; this is the most decision-relevant activity sanity check."
       ],
-      "status": "fail",
+      "status": "pass",
       "title": "Human TP53-like signature recovery (wmean)"
     },
     {
@@ -58,9 +58,9 @@
         "top_symbols": [
           "STAT1",
           "RELA",
-          "IRF1",
           "NFKB1",
-          "EGR1"
+          "HIF1A",
+          "IRF1"
         ]
       },
       "notes": [
@@ -78,13 +78,13 @@
       "metrics": {
         "seed_tf": "EPR1",
         "seed_tf_id": "AT1G18330",
-        "seed_tf_rank": 2,
+        "seed_tf_rank": 1,
         "top_symbols": [
-          "LHY",
           "EPR1",
-          "AT1G19210",
-          "ABI5",
-          "PIF4"
+          "RVE8",
+          "RVE1",
+          "AT4G01280",
+          "LHY"
         ]
       },
       "notes": [
@@ -100,12 +100,12 @@
     "Literal TP53 recovery is the most biologically relevant check in this script.",
     "Synthetic regulon cases measure internal score consistency, not external biological truth."
   ],
-  "run_at_utc": "2026-08-21T16:12:45.501923+00:00",
-  "status": "fail",
+  "run_at_utc": "2026-08-21T16:22:19.699876+00:00",
+  "status": "pass",
   "summary": {
-    "cases_fail": 2,
+    "cases_fail": 0,
     "cases_partial": 0,
-    "cases_pass": 2,
+    "cases_pass": 4,
     "cases_total": 4
   }
 }

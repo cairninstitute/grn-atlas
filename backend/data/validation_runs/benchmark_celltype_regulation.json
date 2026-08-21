@@ -6,21 +6,21 @@
       "details": {},
       "metrics": {
         "top_regulators": [
-          "ABL1",
-          "AR",
-          "ATF1",
-          "ATF2",
-          "ATF5",
-          "ATM",
-          "BCL6",
-          "BRCA1"
+          "TP53",
+          "MYC",
+          "ETS1",
+          "SP1",
+          "E2F1",
+          "ESR1",
+          "RELA",
+          "EGR1"
         ],
-        "tp53_rank": null
+        "tp53_rank": 1
       },
       "notes": [
         "This endpoint currently uses expressed imported features rather than true cluster-specific regulons."
       ],
-      "status": "partial",
+      "status": "pass",
       "title": "Cell-type regulation recovers TP53 from TP53-like expression context"
     },
     {
@@ -53,12 +53,12 @@
   "description": "Validate cell-type / pseudobulk regulator workflows on a TP53-like imported dataset.",
   "milestone": "M3",
   "notes": [],
-  "run_at_utc": "2026-08-21T16:12:47.401236+00:00",
-  "status": "partial",
+  "run_at_utc": "2026-08-21T17:08:57.991117+00:00",
+  "status": "pass",
   "summary": {
     "cases_fail": 0,
-    "cases_partial": 1,
-    "cases_pass": 2,
+    "cases_partial": 0,
+    "cases_pass": 3,
     "cases_total": 3
   }
 }

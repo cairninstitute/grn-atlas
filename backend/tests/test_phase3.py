@@ -36,6 +36,20 @@ def test_trajectory_drivers():
     assert data["n_contrasts"] == 1
 
 
+def test_trajectory_tp53_regression():
+    ds_id, ct_id = _create_dataset_with_contrast()
+    resp = client.post("/api/v1/trajectory/drivers", json={
+        "dataset_id": ds_id,
+        "contrasts": [ct_id],
+        "species": "human",
+        "top": 10,
+    })
+    assert resp.status_code == 200
+    data = resp.json()
+    top_symbols = [r["symbol"] for r in data["drivers"][:10]]
+    assert "TP53" in top_symbols
+
+
 def test_pseudotime_activity():
     ds_id, _ = _create_dataset_with_contrast()
     resp = client.post("/api/v1/trajectory/activity", json={
@@ -47,6 +61,21 @@ def test_pseudotime_activity():
     assert resp.status_code == 200
     data = resp.json()
     assert "active_tfs" in data
+
+
+def test_pseudotime_activity_tp53_regression():
+    ds_id, _ = _create_dataset_with_contrast()
+    resp = client.post("/api/v1/trajectory/activity", json={
+        "dataset_id": ds_id,
+        "gene_values": {"TP53": 3.0, "MDM2": -2.0, "CDKN1A": 2.5,
+                        "BAX": 1.8, "BCL2": -1.5, "GADD45A": 2.1},
+        "species": "human",
+        "top": 10,
+    })
+    assert resp.status_code == 200
+    data = resp.json()
+    top_symbols = [r["symbol"] for r in data["active_tfs"][:10]]
+    assert "TP53" in top_symbols
 
 
 def test_crispr_offtargets():
@@ -137,3 +166,14 @@ def test_ligand_receptor_pairs():
     assert resp.status_code == 200
     data = resp.json()
     assert "pairs" in data
+
+
+def test_ligand_receptor_pairs_fallback():
+    resp = client.post("/api/v1/signaling/ligand-receptor", json={
+        "species": "human",
+        "top": 5,
+    })
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data["pairs"]) >= 1
+    assert data["pairs"][0]["evidence_mode"] in ("direct_edge", "shared_pathway_fallback")

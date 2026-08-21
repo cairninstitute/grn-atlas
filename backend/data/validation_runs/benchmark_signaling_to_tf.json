@@ -6,12 +6,12 @@
       "details": {},
       "metrics": {
         "db_non_tf_to_tf_edges": 0,
-        "reported_pairs": 0
+        "reported_pairs": 10
       },
       "notes": [
         "A zero result currently indicates sparse biological content in this layer, not an HTTP failure."
       ],
-      "status": "partial",
+      "status": "pass",
       "title": "Ligand/receptor-style pair listing in human"
     },
     {
@@ -32,12 +32,12 @@
   "description": "Validate signaling-to-TF workflow availability and report current biological sparsity honestly.",
   "milestone": "M9",
   "notes": [],
-  "run_at_utc": "2026-08-21T16:13:46.262030+00:00",
-  "status": "partial",
+  "run_at_utc": "2026-08-21T17:10:11.683350+00:00",
+  "status": "pass",
   "summary": {
     "cases_fail": 0,
-    "cases_partial": 1,
-    "cases_pass": 1,
+    "cases_partial": 0,
+    "cases_pass": 2,
     "cases_total": 2
   }
 }

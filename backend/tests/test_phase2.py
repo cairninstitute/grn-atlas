@@ -67,6 +67,33 @@ def test_celltype_regulation():
     assert "regulators" in data or "n_expressed_genes" in data
 
 
+def test_celltype_regulation_tp53_regression():
+    resp = client.post("/api/v1/import/omics", json={
+        "name": "TP53 context",
+        "species": "human",
+        "data_type": "bulk",
+        "gene_values": {
+            "TP53": [5.0, 1.0],
+            "MDM2": [1.0, 5.0],
+            "CDKN1A": [4.0, 1.0],
+            "BAX": [3.0, 1.0],
+            "BCL2": [1.0, 4.0],
+        },
+        "sample_names": ["A", "B"],
+    })
+    ds_id = resp.json()["dataset_id"]
+    resp = client.post("/api/v1/celltype/regulation", json={
+        "dataset_id": ds_id,
+        "cluster_id": "default",
+        "species": "human",
+        "top": 10,
+    })
+    assert resp.status_code == 200
+    data = resp.json()
+    top_symbols = [r["symbol"] for r in data["regulators"][:5]]
+    assert "TP53" in top_symbols
+
+
 def test_celltype_upstream():
     ds_id = test_import_omics()
     resp = client.post("/api/v1/celltype/upstream", json={

@@ -33,6 +33,23 @@ def test_tf_activity_wmean():
     assert data["method"] == "wmean"
 
 
+def test_tf_activity_tp53_rank_regression():
+    gene_values = {"TP53": 3.0, "MDM2": -2.0, "CDKN1A": 2.5,
+                   "BAX": 1.8, "BCL2": -1.5, "GADD45A": 2.1}
+    for method in ("ulm", "wmean"):
+        resp = client.post("/api/v1/activity/tf", json={
+            "gene_values": gene_values,
+            "species": "human",
+            "method": method,
+            "top": 10,
+            "min_regulon_size": 2,
+        })
+        assert resp.status_code == 200
+        data = resp.json()
+        top_symbols = [r["symbol"] for r in data["regulators"][:5]]
+        assert "TP53" in top_symbols
+
+
 def test_tf_activity_too_few_genes():
     resp = client.post("/api/v1/activity/tf", json={
         "gene_values": {"TP53": 1.0},
