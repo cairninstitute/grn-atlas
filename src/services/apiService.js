@@ -405,6 +405,80 @@ export const analysisAPI = {
     return response.json();
   },
 
+  // M5: Trajectory
+  trajectoryDrivers: async (datasetId, contrasts, species, options = {}) => {
+    const response = await fetch(`${API_BASE}/trajectory/drivers`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dataset_id: datasetId, contrasts, species, ...options }),
+    });
+    return response.json();
+  },
+
+  pseudotimeActivity: async (datasetId, geneValues, species, options = {}) => {
+    const response = await fetch(`${API_BASE}/trajectory/activity`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dataset_id: datasetId, gene_values: geneValues, species, ...options }),
+    });
+    return response.json();
+  },
+
+  // M7: CRISPR
+  crisprOfftargets: async (guideSequence, species, options = {}) => {
+    const response = await fetch(`${API_BASE}/crispr/offtargets`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guide_sequence: guideSequence, species, ...options }),
+    });
+    return response.json();
+  },
+
+  crisprCompare: async (geneId, species, modes) => {
+    const response = await fetch(`${API_BASE}/crispr/compare`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gene_id: geneId, species, modes }),
+    });
+    return response.json();
+  },
+
+  // M8: Perturbation
+  perturbationImport: async (data) => {
+    const response = await fetch(`${API_BASE}/perturbation/import`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  perturbationCompare: async (perturbedGene, species) => {
+    const response = await fetch(`${API_BASE}/perturbation/compare`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ perturbed_gene: perturbedGene, species }),
+    });
+    return response.json();
+  },
+
+  perturbationCalibration: async (species) => {
+    const params = species ? `?species=${encodeURIComponent(species)}` : '';
+    const response = await fetch(`${API_BASE}/perturbation/calibration${params}`);
+    return response.json();
+  },
+
+  // M9: Signaling
+  signalingToTf: async (species, options = {}) => {
+    const response = await fetch(`${API_BASE}/signaling/to-tf`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ species, ...options }),
+    });
+    return response.json();
+  },
+
+  ligandReceptorPairs: async (species, geneIds) => {
+    const response = await fetch(`${API_BASE}/signaling/ligand-receptor`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ species, gene_ids: geneIds }),
+    });
+    return response.json();
+  },
+
   networkPatterns: async (options = {}) => {
     const response = await fetch(`${API_BASE}/network/patterns`, {
       method: 'POST',

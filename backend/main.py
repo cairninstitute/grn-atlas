@@ -4494,6 +4494,450 @@ async def compute_cis_support(gene_id: str = "", species: Optional[str] = None):
             "n_with_support": sum(1 for r in results if r["has_chromatin_support"])}
 
 
+# ============= M5: Trajectory & State-Transition Workflows =============
+
+
+class TrajectoryDriversRequest(BaseModel):
+    dataset_id: str
+    contrasts: List[str]
+    species: Optional[str] = None
+    min_confidence: float = 0.4
+    top: int = 25
+
+
+@app.post("/api/v1/trajectory/drivers")
+async def trajectory_drivers(req: TrajectoryDriversRequest):
+    """Identify TF drivers of state transitions using sequential DEG contrasts."""
+    conn = db.conn
+    ds = conn.execute("SELECT species FROM imported_datasets WHERE dataset_id = ?",
+                      (req.dataset_id,)).fetchone()
+    if not ds:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    species = req.species or ds[0]
+    transition_degs = {}
+    for cid in req.contrasts:
+        degs = conn.execute(
+            "SELECT gene_id, log2fc FROM imported_deg WHERE contrast_id = ?", (cid,)
+        ).fetchall()
+        transition_degs[cid] = {r[0]: r[1] for r in degs}
+    if not transition_degs:
+        return {"error": "No contrasts found", "species": species}
+    all_deg_genes = set()
+    for d in transition_degs.values():
+        all_deg_genes |= set(d.keys())
+    tfs = conn.execute(
+        "SELECT DISTINCT i.source_id, g.symbol FROM interactions i "
+        "JOIN genes g ON g.id = i.source_id "
+        "WHERE g.species = ? AND g.is_tf = 1 AND i.confidence >= ?",
+        (species, req.min_confidence)
+    ).fetchall()
+    results = []
+    for tf_id, tf_symbol in tfs:
+        targets = set(r[0] for r in conn.execute(
+            "SELECT target_id FROM interactions WHERE source_id = ? AND confidence >= ?",
+            (tf_id, req.min_confidence)
+        ).fetchall())
+        transition_scores = []
+        for cid, deg_map in transition_degs.items():
+            overlap = targets & set(deg_map.keys())
+            if overlap:
+                mean_lfc = sum(deg_map[g] for g in overlap) / len(overlap)
+                transition_scores.append({"contrast_id": cid, "n_targets_deg": len(overlap),
+                                          "mean_log2fc": round(mean_lfc, 3)})
+        if not transition_scores:
+            continue
+        consistency = all(s["mean_log2fc"] > 0 for s in transition_scores) or \
+                      all(s["mean_log2fc"] < 0 for s in transition_scores)
+        overall = sum(s["mean_log2fc"] * s["n_targets_deg"] for s in transition_scores) / \
+                  max(1, sum(s["n_targets_deg"] for s in transition_scores))
+        results.append({
+            "gene_id": tf_id, "symbol": tf_symbol,
+            "regulon_size": len(targets),
+            "transitions": transition_scores,
+            "overall_score": round(overall, 4),
+            "consistent_direction": consistency,
+            "direction": "activating" if overall > 0 else "repressing",
+        })
+    results.sort(key=lambda x: abs(x["overall_score"]), reverse=True)
+    return {"species": species, "n_contrasts": len(req.contrasts),
+            "drivers": results[:req.top]}
+
+
+class PseudotimeActivityRequest(BaseModel):
+    dataset_id: str
+    gene_values: Dict[str, float]
+    bins: int = Field(5, ge=2, le=20)
+    species: Optional[str] = None
+    top: int = 25
+
+
+@app.post("/api/v1/trajectory/activity")
+async def pseudotime_activity(req: PseudotimeActivityRequest):
+    """Score TF activity along a pseudotime-ordered gene expression gradient."""
+    conn = db.conn
+    ds = conn.execute("SELECT species FROM imported_datasets WHERE dataset_id = ?",
+                      (req.dataset_id,)).fetchone()
+    if not ds:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    species = req.species or ds[0]
+    tfs = conn.execute(
+        "SELECT DISTINCT i.source_id, g.symbol FROM interactions i "
+        "JOIN genes g ON g.id = i.source_id "
+        "WHERE g.species = ? AND g.is_tf = 1", (species,)
+    ).fetchall()
+    results = []
+    for tf_id, tf_symbol in tfs:
+        targets = [r[0] for r in conn.execute(
+            "SELECT target_id FROM interactions WHERE source_id = ?", (tf_id,)
+        ).fetchall()]
+        matched = [req.gene_values[t] for t in targets if t in req.gene_values]
+        if len(matched) < 3:
+            continue
+        mean_val = sum(matched) / len(matched)
+        results.append({
+            "gene_id": tf_id, "symbol": tf_symbol,
+            "matched_targets": len(matched), "regulon_size": len(targets),
+            "mean_target_value": round(mean_val, 4),
+            "tf_value": req.gene_values.get(tf_id),
+        })
+    results.sort(key=lambda x: abs(x["mean_target_value"]), reverse=True)
+    return {"species": species, "input_genes": len(req.gene_values),
+            "active_tfs": results[:req.top]}
+
+
+# ============= M7: Enhanced CRISPR Design Engine =============
+
+
+class CrisprOfftargetRequest(BaseModel):
+    guide_sequence: str
+    species: Optional[str] = None
+    max_mismatches: int = Field(3, ge=0, le=5)
+    pam: str = "NGG"
+
+
+@app.post("/api/v1/crispr/offtargets")
+async def crispr_offtargets(req: CrisprOfftargetRequest):
+    """Scan for CRISPR guide off-targets in the transcriptome."""
+    guide = req.guide_sequence.upper().replace(" ", "")
+    if len(guide) != 20:
+        raise HTTPException(status_code=400, detail="Guide must be 20 nt")
+    species = _normalize_species_input(req.species)
+    if not species:
+        return {"guide": guide, "offtargets": [], "note": "Species required for off-target scan"}
+    data_dir = FilePath(__file__).resolve().parent / "data"
+    transcripts = rnai.get_transcripts(species, data_dir)
+    if not transcripts:
+        return {"guide": guide, "species": species, "offtargets": [],
+                "note": f"No transcriptome data for {species}"}
+    offtargets = []
+    guide_rc = rnai.revcomp(guide)
+    for gene_id, seq in transcripts.items():
+        seq_upper = seq.upper()
+        for i in range(len(seq_upper) - len(guide) + 1):
+            window = seq_upper[i:i + len(guide)]
+            if "N" in window:
+                continue
+            mm = sum(1 for a, b in zip(guide, window) if a != b)
+            if mm <= req.max_mismatches:
+                offtargets.append({"gene_id": gene_id, "position": i,
+                                   "mismatches": mm, "strand": "+", "sequence": window})
+            mm_rc = sum(1 for a, b in zip(guide_rc, window) if a != b)
+            if mm_rc <= req.max_mismatches:
+                offtargets.append({"gene_id": gene_id, "position": i,
+                                   "mismatches": mm_rc, "strand": "-", "sequence": window})
+    offtargets.sort(key=lambda x: (x["mismatches"], x["gene_id"]))
+    return {"guide": guide, "species": species, "pam": req.pam,
+            "n_offtargets": len(offtargets), "offtargets": offtargets[:100]}
+
+
+class CrisprCompareRequest(BaseModel):
+    gene_id: str
+    species: Optional[str] = None
+    modes: List[str] = Field(default_factory=lambda: ["knockout", "CRISPRi", "CRISPRa"])
+    top: int = 5
+
+
+@app.post("/api/v1/crispr/compare")
+async def crispr_compare(req: CrisprCompareRequest):
+    """Compare editing strategies (knockout, CRISPRi, CRISPRa) for a target gene."""
+    conn = db.conn
+    gene = conn.execute("SELECT id, symbol, species FROM genes WHERE id = ? OR symbol = ?",
+                        (req.gene_id, req.gene_id)).fetchone()
+    if not gene:
+        raise HTTPException(status_code=404, detail="Gene not found")
+    gene_id, symbol, species = gene
+    targets = conn.execute(
+        "SELECT target_id FROM interactions WHERE source_id = ? AND confidence >= 0.4",
+        (gene_id,)
+    ).fetchall()
+    regulon_size = len(targets)
+    is_tf = conn.execute("SELECT is_tf FROM genes WHERE id = ?", (gene_id,)).fetchone()
+    strategies = []
+    for mode in req.modes:
+        if mode == "knockout":
+            strategies.append({
+                "mode": "knockout", "mechanism": "Cas9 double-strand break → NHEJ/indel",
+                "effect": "complete loss of function",
+                "suitability": "high" if regulon_size > 5 else "moderate",
+                "notes": f"Disrupts all {regulon_size} downstream targets" if is_tf and is_tf[0] else "Direct gene disruption",
+                "reversible": False,
+            })
+        elif mode == "CRISPRi":
+            strategies.append({
+                "mode": "CRISPRi", "mechanism": "dCas9-KRAB → transcriptional repression",
+                "effect": "partial knockdown (typically 70-95%)",
+                "suitability": "high",
+                "notes": "Reversible; targets promoter region; dose-dependent",
+                "reversible": True,
+            })
+        elif mode == "CRISPRa":
+            strategies.append({
+                "mode": "CRISPRa", "mechanism": "dCas9-VP64/p65/Rta → transcriptional activation",
+                "effect": "overexpression (2-100x depending on system)",
+                "suitability": "high" if is_tf and is_tf[0] else "moderate",
+                "notes": "Gain-of-function; useful for testing TF sufficiency" if is_tf and is_tf[0] else "Overexpression of non-TF target",
+                "reversible": True,
+            })
+    return {"gene_id": gene_id, "symbol": symbol, "species": species,
+            "is_tf": bool(is_tf[0]) if is_tf else False,
+            "regulon_size": regulon_size, "strategies": strategies}
+
+
+# ============= M8: Perturbation Evidence Calibration =============
+
+
+class PerturbationImportRequest(BaseModel):
+    species: str
+    perturbation_type: str = "CRISPR_KO"
+    observations: List[Dict[str, Any]]
+    metadata: Optional[Dict[str, Any]] = None
+
+
+@app.post("/api/v1/perturbation/import")
+async def perturbation_import(req: PerturbationImportRequest):
+    """Import observed perturbation results for calibration."""
+    conn = db.conn
+    species = _normalize_species_input(req.species) or req.species
+    existing = set(r[0] for r in conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table'"
+    ).fetchall())
+    if "perturbation_observations" not in existing:
+        conn.execute("""CREATE TABLE perturbation_observations (
+            obs_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            species TEXT NOT NULL, perturbed_gene TEXT NOT NULL,
+            perturbation_type TEXT NOT NULL, affected_gene TEXT NOT NULL,
+            observed_log2fc REAL, observed_significant INTEGER DEFAULT 0,
+            dataset_label TEXT, metadata TEXT)""")
+        conn.execute("CREATE INDEX idx_po_species ON perturbation_observations(species)")
+        conn.execute("CREATE INDEX idx_po_gene ON perturbation_observations(perturbed_gene)")
+        conn.commit()
+    n = 0
+    for obs in req.observations:
+        conn.execute(
+            "INSERT INTO perturbation_observations "
+            "(species, perturbed_gene, perturbation_type, affected_gene, "
+            "observed_log2fc, observed_significant, dataset_label) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (species, obs["perturbed_gene"], req.perturbation_type,
+             obs["affected_gene"], obs.get("log2fc", 0),
+             1 if obs.get("significant", False) else 0,
+             obs.get("dataset_label"))
+        )
+        n += 1
+    conn.commit()
+    return {"species": species, "perturbation_type": req.perturbation_type,
+            "n_imported": n}
+
+
+class PerturbationCompareRequest(BaseModel):
+    perturbed_gene: str
+    species: Optional[str] = None
+    min_confidence: float = 0.4
+
+
+@app.post("/api/v1/perturbation/compare")
+async def perturbation_compare(req: PerturbationCompareRequest):
+    """Compare predicted downstream effects with observed perturbation data."""
+    conn = db.conn
+    gene = conn.execute("SELECT id, symbol, species FROM genes WHERE id = ? OR symbol = ?",
+                        (req.perturbed_gene, req.perturbed_gene)).fetchone()
+    if not gene:
+        raise HTTPException(status_code=404, detail="Gene not found")
+    gene_id, symbol, species = gene
+    predicted = conn.execute(
+        "SELECT target_id, confidence, regulation_type FROM interactions "
+        "WHERE source_id = ? AND confidence >= ?", (gene_id, req.min_confidence)
+    ).fetchall()
+    predicted_targets = {r[0]: {"confidence": r[1], "regulation_type": r[2]} for r in predicted}
+    existing = set(r[0] for r in conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table'"
+    ).fetchall())
+    observed = {}
+    if "perturbation_observations" in existing:
+        obs_rows = conn.execute(
+            "SELECT affected_gene, observed_log2fc, observed_significant "
+            "FROM perturbation_observations WHERE perturbed_gene = ? AND species = ?",
+            (gene_id, species)
+        ).fetchall()
+        observed = {r[0]: {"log2fc": r[1], "significant": bool(r[2])} for r in obs_rows}
+    both = set(predicted_targets.keys()) & set(observed.keys())
+    pred_only = set(predicted_targets.keys()) - set(observed.keys())
+    obs_only = set(observed.keys()) - set(predicted_targets.keys())
+    concordant = 0
+    discordant = 0
+    comparisons = []
+    for g in both:
+        pred = predicted_targets[g]
+        obs = observed[g]
+        pred_dir = "down" if pred["regulation_type"] == "activation" else "up" if pred["regulation_type"] == "repression" else "unknown"
+        obs_dir = "down" if obs["log2fc"] < -0.5 else "up" if obs["log2fc"] > 0.5 else "unchanged"
+        match = (pred_dir == "down" and obs_dir == "down") or (pred_dir == "up" and obs_dir == "up")
+        if match:
+            concordant += 1
+        elif obs_dir != "unchanged":
+            discordant += 1
+        comparisons.append({
+            "gene_id": g, "predicted_regulation": pred["regulation_type"],
+            "predicted_confidence": pred["confidence"],
+            "observed_log2fc": obs["log2fc"], "observed_significant": obs["significant"],
+            "concordant": match,
+        })
+    n_total = concordant + discordant
+    return {
+        "perturbed_gene": gene_id, "symbol": symbol, "species": species,
+        "n_predicted": len(predicted_targets), "n_observed": len(observed),
+        "n_both": len(both), "n_pred_only": len(pred_only), "n_obs_only": len(obs_only),
+        "concordant": concordant, "discordant": discordant,
+        "concordance_rate": round(concordant / max(1, n_total), 3),
+        "comparisons": comparisons[:50],
+    }
+
+
+@app.get("/api/v1/perturbation/calibration")
+async def perturbation_calibration(species: Optional[str] = None):
+    """Get calibration summary across all imported perturbation datasets."""
+    conn = db.conn
+    existing = set(r[0] for r in conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table'"
+    ).fetchall())
+    if "perturbation_observations" not in existing:
+        return {"species": species, "datasets": [], "note": "No perturbation data imported yet"}
+    q = "SELECT species, perturbation_type, COUNT(*) as n, dataset_label FROM perturbation_observations"
+    params = []
+    if species:
+        q += " WHERE species = ?"
+        params.append(_normalize_species_input(species) or species)
+    q += " GROUP BY species, perturbation_type, dataset_label"
+    rows = conn.execute(q, params).fetchall()
+    return {"species": species, "datasets": [
+        {"species": r[0], "perturbation_type": r[1], "n_observations": r[2], "dataset_label": r[3]}
+        for r in rows
+    ]}
+
+
+# ============= M9: Intercellular Signaling → TF Workflows =============
+
+
+class SignalingRequest(BaseModel):
+    species: str
+    receptor_gene: Optional[str] = None
+    ligand_gene: Optional[str] = None
+    min_confidence: float = 0.4
+    top: int = 25
+
+
+@app.post("/api/v1/signaling/to-tf")
+async def signaling_to_tf(req: SignalingRequest):
+    """Trace receptor/ligand → downstream TF regulatory cascade."""
+    conn = db.conn
+    species = _normalize_species_input(req.species) or req.species
+    start_gene = req.receptor_gene or req.ligand_gene
+    if not start_gene:
+        raise HTTPException(status_code=400, detail="Provide receptor_gene or ligand_gene")
+    gene = conn.execute("SELECT id, symbol, is_tf FROM genes WHERE (id = ? OR symbol = ?) AND species = ?",
+                        (start_gene, start_gene, species)).fetchone()
+    if not gene:
+        raise HTTPException(status_code=404, detail=f"Gene {start_gene} not found in {species}")
+    gene_id, symbol, is_tf = gene
+    direct_targets = conn.execute(
+        "SELECT i.target_id, g.symbol, g.is_tf, i.confidence, i.regulation_type "
+        "FROM interactions i JOIN genes g ON g.id = i.target_id "
+        "WHERE i.source_id = ? AND i.confidence >= ?",
+        (gene_id, req.min_confidence)
+    ).fetchall()
+    tf_targets = [{"gene_id": r[0], "symbol": r[1], "is_tf": bool(r[2]),
+                   "confidence": r[3], "regulation_type": r[4]} for r in direct_targets if r[2]]
+    non_tf_targets = [{"gene_id": r[0], "symbol": r[1], "confidence": r[3]}
+                      for r in direct_targets if not r[2]]
+    secondary_tfs = []
+    for tf in tf_targets:
+        downstream = conn.execute(
+            "SELECT COUNT(*) FROM interactions WHERE source_id = ? AND confidence >= ?",
+            (tf["gene_id"], req.min_confidence)
+        ).fetchone()
+        tf["regulon_size"] = downstream[0] if downstream else 0
+        sub_targets = conn.execute(
+            "SELECT i.target_id, g.symbol, g.is_tf FROM interactions i "
+            "JOIN genes g ON g.id = i.target_id "
+            "WHERE i.source_id = ? AND i.confidence >= ? AND g.is_tf = 1",
+            (tf["gene_id"], req.min_confidence)
+        ).fetchall()
+        for st in sub_targets:
+            if st[0] != gene_id:
+                secondary_tfs.append({"gene_id": st[0], "symbol": st[1],
+                                      "via_tf": tf["symbol"], "depth": 2})
+    return {
+        "start_gene": gene_id, "symbol": symbol, "species": species,
+        "is_tf": bool(is_tf), "role": "receptor" if req.receptor_gene else "ligand",
+        "direct_tf_targets": tf_targets[:req.top],
+        "direct_non_tf_targets": len(non_tf_targets),
+        "secondary_tfs": secondary_tfs[:req.top],
+        "cascade_depth": 2 if secondary_tfs else 1,
+    }
+
+
+class LigandReceptorRequest(BaseModel):
+    species: str
+    gene_ids: Optional[List[str]] = None
+    top: int = 25
+
+
+@app.post("/api/v1/signaling/ligand-receptor")
+async def ligand_receptor_pairs(req: LigandReceptorRequest):
+    """Find potential ligand-receptor pairs from the network (genes that regulate TFs)."""
+    conn = db.conn
+    species = _normalize_species_input(req.species) or req.species
+    q = """SELECT DISTINCT i.source_id, gs.symbol as source_sym, gs.is_tf as source_tf,
+           i.target_id, gt.symbol as target_sym, gt.is_tf as target_tf, i.confidence
+           FROM interactions i
+           JOIN genes gs ON gs.id = i.source_id
+           JOIN genes gt ON gt.id = i.target_id
+           WHERE gs.species = ? AND gs.is_tf = 0 AND gt.is_tf = 1 AND i.confidence >= ?
+           ORDER BY i.confidence DESC LIMIT ?"""
+    rows = conn.execute(q, (species, 0.4, req.top * 2)).fetchall()
+    pairs = []
+    seen = set()
+    for r in rows:
+        if req.gene_ids and r[0] not in req.gene_ids and r[3] not in req.gene_ids:
+            continue
+        key = (r[0], r[3])
+        if key in seen:
+            continue
+        seen.add(key)
+        downstream = conn.execute(
+            "SELECT COUNT(*) FROM interactions WHERE source_id = ?", (r[3],)
+        ).fetchone()
+        pairs.append({
+            "source_gene": r[0], "source_symbol": r[1],
+            "target_tf": r[3], "target_symbol": r[4],
+            "confidence": r[6],
+            "tf_regulon_size": downstream[0] if downstream else 0,
+            "putative_role": "signaling → TF",
+        })
+    pairs.sort(key=lambda x: x["confidence"], reverse=True)
+    return {"species": species, "pairs": pairs[:req.top]}
+
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring"""
