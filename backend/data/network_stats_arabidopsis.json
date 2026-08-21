@@ -1,0 +1,43 @@
+{
+  "species": "arabidopsis",
+  "go_coverage": 17349,
+  "regulon_coherence": {
+    "tfs_tested": 584,
+    "mean_real_coherence": 0.17329,
+    "mean_random_coherence": 0.16991,
+    "enrichment": 1.02,
+    "fraction_tfs_above_random": 0.452
+  },
+  "permutation_test": {
+    "real_coherence": 0.17281,
+    "mean_permuted": 0.16741,
+    "std_permuted": 0.00106,
+    "p_value": 0.0099,
+    "n_permutations": 100,
+    "effect_size_sigma": 5.08
+  },
+  "multi_evidence": {
+    "single_source_n": 1242,
+    "multi_source_n": 1962,
+    "single_mean_overlap": 0.18005,
+    "multi_mean_overlap": 0.20036,
+    "ratio": 1.113,
+    "single_any_overlap": 1.0,
+    "multi_any_overlap": 1.0,
+    "mann_whitney_z": 4.13
+  },
+  "expression_coherence": {
+    "interaction_edges_sampled": 5000,
+    "coexpressed_count": 38,
+    "coexpression_rate": 0.0076,
+    "random_coexpression_rate": 0.0091,
+    "coexpression_rate_ratio": 0.84,
+    "mean_importance_real": 0.05202,
+    "mean_importance_random": 0.05058,
+    "importance_ratio": 1.03
+  },
+  "motif_enrichment": {
+    "tfs_tested": 0,
+    "note": "no TFs with both motifs and inferred targets"
+  }
+}

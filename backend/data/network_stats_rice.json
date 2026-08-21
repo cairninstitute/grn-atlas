@@ -1,0 +1,47 @@
+{
+  "species": "rice",
+  "go_coverage": 0,
+  "regulon_coherence": {
+    "tfs_tested": 0,
+    "mean_real_coherence": 0,
+    "mean_random_coherence": 0,
+    "enrichment": null,
+    "fraction_tfs_above_random": 0
+  },
+  "permutation_test": {
+    "real_coherence": 0,
+    "mean_permuted": 0.0,
+    "std_permuted": 0.0,
+    "p_value": 1.0,
+    "n_permutations": 100,
+    "effect_size_sigma": 0.0
+  },
+  "multi_evidence": {
+    "single_source_n": 0,
+    "multi_source_n": 0,
+    "single_mean_overlap": 0,
+    "multi_mean_overlap": 0,
+    "ratio": null,
+    "single_any_overlap": 0,
+    "multi_any_overlap": 0,
+    "mann_whitney_z": 0
+  },
+  "expression_coherence": {
+    "interaction_edges_sampled": 5000,
+    "coexpressed_count": 0,
+    "coexpression_rate": 0.0,
+    "random_coexpression_rate": 0,
+    "coexpression_rate_ratio": null,
+    "mean_importance_real": 0,
+    "mean_importance_random": 0,
+    "importance_ratio": null
+  },
+  "motif_enrichment": {
+    "tfs_tested": 214,
+    "mean_target_motif_rate": 0.5859,
+    "mean_nontarget_motif_rate": 0.0059,
+    "mean_enrichment": 29.19,
+    "median_enrichment": 24.85,
+    "fraction_enriched": 1.0
+  }
+}
