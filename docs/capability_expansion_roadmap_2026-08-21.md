@@ -20,22 +20,31 @@ Guiding principles:
 
 | Milestone | Theme | Research value | Difficulty | Depends on |
 |---|---|---:|---:|---|
+| M10 | Living validation / benchmark dashboard | High | Low | none (bootstrap from existing reports) |
+| M2 | TF activity scoring layer | High | Medium | none (absorbs minimal import) |
+| M6 | Stronger plant RNAi engine | Very high | Medium | none |
 | M1 | Standardized omics import foundation | High | Medium | none |
-| M2 | TF activity scoring layer | High | Medium | M1 |
 | M3 | Cell-type / single-cell regulatory workflows | Very high | High | M1, M2 |
 | M4 | Enhancer / chromatin regulatory layer | Very high | High | M1 |
 | M5 | Trajectory and state-transition workflows | High | High | M3 |
-| M6 | Stronger plant RNAi engine | Very high | Medium | none |
 | M7 | Stronger CRISPR design engine | High | High | M4 for best version |
 | M8 | Perturbation evidence ingestion and calibration | Very high | High | M2, M3, M5 |
 | M9 | Intercellular signaling → TF workflows | Medium-high | High | M2, M3 |
-| M10 | Living validation / benchmark dashboard | High | Medium | M2–M8 partial |
 | M11 | Non-model species transfer and onboarding hardening | High | Medium | M4, M6 |
 | M12 | Researcher-facing workflow packaging | High | Medium | M1–M11 incremental |
+
+Note: M10 is listed first because it starts immediately as a continuous practice, not a
+late-stage milestone. Every subsequent milestone adds to the validation surface as it ships.
 
 ## Milestone detail
 
 ## M1. Standardized omics import foundation
+
+Note: M1 is no longer a gate for M2 or M6. M2 ships first with a minimal import surface
+(TSV/JSON matrix + DEG lists). The full M1 infrastructure (AnnData, session model, import
+wizard) is built when M3 (cell-type workflows) and M4 (chromatin layer) need structured
+multi-modal imports. This avoids building import infrastructure before there are workflows
+that require it.
 
 Goal: make GRN Atlas accept the data structures researchers actually have, rather than only atlas-native inputs.
 
@@ -70,9 +79,16 @@ Success criteria:
 
 Goal: add a robust activity-inference layer similar in practical value to decoupler/DoRothEA-style workflows, but atlas-native.
 
+Note: M2 no longer depends on M1. It absorbs a minimal import surface (accept a
+gene×sample matrix as TSV/JSON/CSV plus a DEG list) so researchers can use TF activity
+scoring immediately without the full AnnData/session infrastructure. The existing regulon
+enrichment endpoint (`POST /api/v1/regulon-enrichment`) and tissue coexpression weights
+(`edge_tissue_weights` table) provide a foundation to build on.
+
 Scope:
 
 - infer TF activity from expression using signed regulons
+- accept gene×sample matrix input (TSV/JSON/CSV) and DEG lists without full omics import
 - support bulk, pseudobulk, and single-cell cluster/state summaries
 - support pathway activity alongside TF activity
 - keep resource provenance explicit: atlas regulons vs imported prior resources
@@ -81,6 +97,7 @@ Likely deliverables:
 
 - `grn-tf-activity`
 - `grn-pathway-activity`
+- lightweight matrix/DEG import endpoint (upgraded to full M1 import later)
 - support for signed and weighted regulons
 - activity comparison across contrasts and tissues
 - rank + effect-size + confidence output
@@ -251,11 +268,16 @@ Success criteria:
 
 Goal: tie predictions to observed perturbation evidence and reduce purely correlative behavior.
 
+Note: public perturbation datasets (Perturb-seq, CRISPR screens) are abundant for human
+and mouse but sparse for plants. This milestone should follow a human-first strategy —
+build and validate the calibration framework on well-characterized human/mouse perturbation
+data, then extend to plant species via ortholog-projected calibration as a stretch goal.
+
 Scope:
 
 - ingest CRISPR screen / Perturb-seq / knockdown result tables
 - compare predicted downstream effects against observed effects
-- calibrate perturbation confidence by species/context
+- calibrate perturbation confidence by species/context (human/mouse first, plant via transfer)
 - capture disagreement explicitly
 
 Likely deliverables:
@@ -305,17 +327,27 @@ Success criteria:
 
 Goal: make trust and coverage visible, current, and measurable.
 
+Note: M10 starts immediately, not after M2–M8. The foundation already exists — benchmark
+reports (`beeline_benchmark_report.json`), per-species validation reports
+(`network_stats_*.json`, `network_validation_report.md`), and quality reports
+(`quality_report_*.json`) are tracked in git. The initial M10 deliverable is an API
+endpoint and UI surface that exposes these existing reports. As each subsequent milestone
+ships, it adds its own benchmarks to the dashboard. This ensures validation grows
+alongside capabilities rather than being bolted on afterward.
+
 Scope:
 
-- benchmark dashboard across species, layers, and tasks
+- bootstrap: expose existing benchmark/validation reports via API and UI (immediate)
+- benchmark dashboard across species, layers, and tasks (grows with each milestone)
 - confidence calibration summaries
 - coverage maps for capabilities
 - dataset/version drift tracking
 
 Likely deliverables:
 
+- `GET /api/v1/benchmark/status` endpoint exposing existing reports (immediate)
+- UI validation dashboard card on the main view
 - benchmark JSON + HTML artifacts
-- UI validation dashboard
 - per-skill and per-layer quality summaries
 - release-ready validation snapshots
 
@@ -386,55 +418,74 @@ Success criteria:
 
 ## Recommended implementation phases
 
-## Phase 1: highest immediate research value
+## Continuous: validation dashboard (M10)
+
+M10 starts immediately and runs alongside all other phases. Bootstrap the dashboard from
+existing benchmark and validation reports, then extend it as each milestone ships. This
+ensures every new capability is validated from day one.
+
+## Phase 1: immediate researcher value (no new infrastructure)
 
 Milestones:
 
-- M1 omics import foundation
-- M2 TF activity scoring
+- M2 TF activity scoring (with minimal matrix/DEG import — no full M1 needed)
 - M6 stronger plant RNAi engine
 
 Why:
 
-- these directly improve day-to-day researcher utility
-- they fit the current product identity
-- they unlock downstream milestones
+- M2 gives researchers the #1 missing workflow ("which TFs drive my DEG list?") using the
+  atlas's own regulons, existing tissue coexpression, and a simple input format
+- M6 deepens an existing strength where GRN Atlas already has working product and users
+- neither requires the heavy import/session infrastructure of M1
+- both ship value before any foundational investment
 
-## Phase 2: biggest strategic gap closure
-
-Milestones:
-
-- M3 cell-type workflows
-- M4 enhancer/chromatin layer
-- M5 trajectory workflows
-
-Why:
-
-- this closes the largest gap versus SCENIC+, CellOracle, ArchR, and Inferelator
-
-## Phase 3: experiment-facing causal platform
+## Phase 2: import foundation + strategic gap closure
 
 Milestones:
 
-- M7 stronger CRISPR design
-- M8 perturbation calibration
-- M9 signaling-to-TF workflows
+- M1 omics import foundation (full AnnData/session model)
+- M3 cell-type / single-cell regulatory workflows
+- M4 enhancer / chromatin regulatory layer
 
 Why:
 
-- this moves GRN Atlas from a strong atlas into a stronger causal experiment planning platform
+- M3 and M4 are the capabilities that close the biggest gap versus SCENIC+, CellOracle,
+  ArchR, and Inferelator — but they genuinely need structured multi-modal import
+- building M1 here (not earlier) means the import infrastructure is shaped by real
+  requirements from M3/M4 rather than speculative ones
+- M2's minimal import surface evolves naturally into the full M1 spec
 
-## Phase 4: trust, transfer, packaging
+## Phase 3: transitions + causal experiment platform
 
 Milestones:
 
-- M10 living validation dashboard
-- M11 non-model species hardening
-- M12 workflow packaging
+- M5 trajectory and state-transition workflows
+- M7 stronger CRISPR design engine
+- M8 perturbation calibration (human/mouse first, plant transfer as stretch)
+- M9 intercellular signaling → TF workflows
 
 Why:
 
-- these make the new capabilities credible and broadly usable
+- M5 builds on M3's cell-state infrastructure
+- M7 benefits from M4's chromatin/enhancer layer for regulatory-site-aware editing
+- M8 requires enough structured predictions (from M2/M3/M5) to be worth calibrating
+- M9 extends the regulatory model to tissue-level reasoning
+- M8 follows a human-first strategy — plant perturbation data is sparse, so calibration
+  starts where evidence is richest and transfers via orthologs
+
+## Phase 4: transfer, hardening, packaging
+
+Milestones:
+
+- M11 non-model species transfer and onboarding hardening
+- M12 researcher-facing workflow packaging
+
+Why:
+
+- M11 benefits from M4 (chromatin) and M6 (RNAi) being mature before hardening
+  cross-species transfer
+- M12 wraps the full analytical stack into coherent guided workflows — premature packaging
+  would require rework as underlying surfaces change
 
 ## Cross-cutting engineering requirements
 
@@ -455,14 +506,22 @@ These should be treated as non-optional for all milestones:
 5. Validation
    - do not add a major biology-facing feature without an explicit benchmark or correctness check
 
+6. API stability
+   - once an endpoint ships and external researchers depend on it, breaking changes require
+     versioning (e.g. `/api/v2/`) rather than silent modification
+   - document endpoint contracts alongside implementation; response shapes are part of the API
+
 ## Suggested execution order inside the repo
 
-1. Build M1 and M2 first.
-2. In parallel, deepen M6 because it is already a product strength.
-3. Use M1/M2 as the base for M3.
-4. Build M4 before the more ambitious version of M7.
-5. Build M8 only after M2/M3/M5 can generate structured perturbation predictions worth calibrating.
-6. Keep M10 running continuously as soon as enough new benchmarks exist.
+1. Start M10 immediately — expose existing reports via API + UI.
+2. Build M2 and M6 in parallel (Phase 1). M2 includes its own minimal import surface.
+3. Build M1 (full import) when starting M3 — let M3/M4 requirements shape the import model.
+4. Build M3 and M4 in parallel once M1 is in place (Phase 2).
+5. Build M5 after M3 (it extends the cell-state infrastructure).
+6. Build M4 before the full version of M7 (chromatin-aware editing design).
+7. Build M8 only after M2/M3/M5 produce enough structured predictions to calibrate. Start with human/mouse.
+8. Extend M10's dashboard as each milestone ships — validation grows with capabilities.
+9. Save M11 and M12 for after the analytical surfaces are stable.
 
 ## What success looks like after this roadmap
 
