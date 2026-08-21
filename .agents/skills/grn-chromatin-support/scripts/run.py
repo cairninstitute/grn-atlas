@@ -21,7 +21,7 @@ def main():
         sys.path.insert(0, str(common.BACKEND_DIR))
         db = common.init_db()
         import main as backend
-        data = common.run_async(backend.{gene_id}())
+        data = common.run_async(backend.chromatin_gene_support(args.gene_id))
 
     common.output(data)
 
