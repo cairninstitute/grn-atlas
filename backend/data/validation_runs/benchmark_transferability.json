@@ -39,7 +39,7 @@
   "description": "Validate transfer-risk, family-rescue, and species onboarding readiness surfaces.",
   "milestone": "M11",
   "notes": [],
-  "run_at_utc": "2026-08-21T16:13:46.607640+00:00",
+  "run_at_utc": "2026-08-21T17:24:23.966457+00:00",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

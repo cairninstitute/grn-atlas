@@ -1,6 +1,6 @@
 # Validation suite summary
 
-- run_at_utc: 2026-08-21T16:13:54.357886+00:00
+- run_at_utc: 2026-08-21T17:24:32.143819+00:00
 - suite_status: pass
 - scripts_run: 15
 - benchmark_files: 12
@@ -25,15 +25,15 @@
 
 ## Benchmark statuses
 
-- `benchmark_celltype_regulation` — partial
+- `benchmark_celltype_regulation` — pass
 - `benchmark_chromatin_support` — pass
 - `benchmark_crispr_design` — pass
 - `benchmark_omics_import` — pass
 - `benchmark_pathway_activity` — pass
 - `benchmark_perturbation_calibration` — pass
 - `benchmark_rnai_design` — pass
-- `benchmark_signaling_to_tf` — partial
-- `benchmark_tf_activity` — fail
-- `benchmark_trajectory_workflows` — partial
+- `benchmark_signaling_to_tf` — pass
+- `benchmark_tf_activity` — pass
+- `benchmark_trajectory_workflows` — pass
 - `benchmark_transferability` — pass
 - `benchmark_workflow_packaging` — pass

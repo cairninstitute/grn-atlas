@@ -32,7 +32,7 @@
   "description": "Validate signaling-to-TF workflow availability and report current biological sparsity honestly.",
   "milestone": "M9",
   "notes": [],
-  "run_at_utc": "2026-08-21T17:10:11.683350+00:00",
+  "run_at_utc": "2026-08-21T17:24:23.338901+00:00",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

@@ -47,7 +47,7 @@
   "notes": [
     "This is currently a contrast-level benchmark; it is not a full pseudotime trajectory benchmark with external lineage truth."
   ],
-  "run_at_utc": "2026-08-21T17:06:57.625631+00:00",
+  "run_at_utc": "2026-08-21T17:23:26.058049+00:00",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

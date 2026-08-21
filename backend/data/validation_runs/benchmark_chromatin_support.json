@@ -39,7 +39,7 @@
   "description": "Validate chromatin peak import, retrieval, and cis-support integration.",
   "milestone": "M4",
   "notes": [],
-  "run_at_utc": "2026-08-21T16:12:47.888638+00:00",
+  "run_at_utc": "2026-08-21T17:23:25.407316+00:00",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

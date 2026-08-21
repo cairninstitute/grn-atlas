@@ -37,7 +37,7 @@
   "description": "Validate perturbation import, prediction-vs-observation comparison, and calibration listing.",
   "milestone": "M8",
   "notes": [],
-  "run_at_utc": "2026-08-21T16:13:45.807138+00:00",
+  "run_at_utc": "2026-08-21T17:24:22.752884+00:00",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

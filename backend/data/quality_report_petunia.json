@@ -1,6 +1,6 @@
 {
   "species": "petunia",
-  "timestamp": "2026-08-21T16:06:45.289487+00:00",
+  "timestamp": "2026-08-21T17:17:23.943305+00:00",
   "gold_standard": {
     "positive_total": 33,
     "positive_resolved": 32,
@@ -17,9 +17,9 @@
     "specificity": 1.0,
     "precision": 1.0,
     "by_source": {
-      "Inferred:Arabidopsis": 11,
+      "Inferred:Arabidopsis": 10,
       "Literature": 15,
-      "GRNBoost2": 3,
+      "GRNBoost2": 4,
       "PlantRegMap": 1
     },
     "edge_details": [
@@ -117,7 +117,7 @@
         "source": "Literature",
         "confidence": 0.85,
         "tf_id": "Peaxi162Scf00129g01231",
-        "target_id": "Peaxi162Scf00030g01715",
+        "target_id": "Peaxi162Scf00381g00086",
         "evidence": "EMSA/Y1H",
         "pubmed_id": "23275577"
       },
@@ -131,7 +131,7 @@
         "source": "Literature",
         "confidence": 0.85,
         "tf_id": "Peaxi162Scf00129g01231",
-        "target_id": "Peaxi162Scf01060g00145",
+        "target_id": "Peaxi162Scf00030g01715",
         "evidence": "EMSA/Y1H",
         "pubmed_id": "23275577"
       },
@@ -242,7 +242,7 @@
         "correct": true,
         "source": "Literature",
         "confidence": 0.8,
-        "tf_id": "Peaxi162Scf00460g00011",
+        "tf_id": "Peaxi162Scf00045g00011",
         "target_id": "Peaxi162Scf00220g00110",
         "evidence": "dual-luciferase/Y1H",
         "pubmed_id": "35498675"
@@ -256,8 +256,8 @@
         "correct": true,
         "source": "Inferred:Arabidopsis",
         "confidence": 0.63,
-        "tf_id": "Peaxi162Scf00001g00231",
-        "target_id": "Peaxi162Scf00164g00313",
+        "tf_id": "Peaxi162Scf00147g00136",
+        "target_id": "Peaxi162Scf00047g01225",
         "evidence": "transactivation",
         "pubmed_id": "12509522"
       },
@@ -270,7 +270,7 @@
         "correct": true,
         "source": "Inferred:Arabidopsis",
         "confidence": 0.66,
-        "tf_id": "Peaxi162Scf00001g00231",
+        "tf_id": "Peaxi162Scf00147g00136",
         "target_id": "Peaxi162Scf00328g01214",
         "evidence": "transactivation",
         "pubmed_id": "12509522"
@@ -408,10 +408,10 @@
         "found": true,
         "expected": "positive",
         "correct": true,
-        "source": "Inferred:Arabidopsis",
-        "confidence": 0.63,
+        "source": "GRNBoost2",
+        "confidence": 0.026255,
         "tf_id": "Peaxi162Scf00922g00026",
-        "target_id": "Peaxi162Scf00083g01812",
+        "target_id": "Peaxi162Scf01084g00119",
         "evidence": "genetics",
         "pubmed_id": "20118232"
       },
@@ -438,7 +438,7 @@
         "correct": true,
         "source": "Inferred:Arabidopsis",
         "confidence": 0.63,
-        "tf_id": "Peaxi162Scf00017g03265",
+        "tf_id": "Peaxi162Scf00020g02337",
         "target_id": "Peaxi162Scf00022g00098",
         "evidence": "genetics",
         "pubmed_id": "15078978"
@@ -480,7 +480,7 @@
         "correct": true,
         "source": "Inferred:Arabidopsis",
         "confidence": 0.63,
-        "tf_id": "Peaxi162Scf00017g03265",
+        "tf_id": "Peaxi162Scf00020g02337",
         "target_id": "Peaxi162Scf00922g00026",
         "evidence": "genetics",
         "pubmed_id": "20118232"
@@ -495,7 +495,7 @@
         "source": null,
         "confidence": null,
         "tf_id": "Peaxi162Scf00118g00310",
-        "target_id": "Peaxi162Scf00164g00313",
+        "target_id": "Peaxi162Scf00047g01225",
         "evidence": "genetics",
         "pubmed_id": "17246198"
       },
@@ -509,7 +509,7 @@
         "source": null,
         "confidence": null,
         "tf_id": "Peaxi162Scf00338g00912",
-        "target_id": "Peaxi162Scf00164g00313",
+        "target_id": "Peaxi162Scf00047g01225",
         "evidence": "genetics",
         "pubmed_id": "17246198"
       },
@@ -522,7 +522,7 @@
         "correct": true,
         "source": null,
         "confidence": null,
-        "tf_id": "Peaxi162Scf00001g00231",
+        "tf_id": "Peaxi162Scf00147g00136",
         "target_id": "Peaxi162Scf00238g00125",
         "evidence": "transactivation",
         "pubmed_id": "12509522"
@@ -537,7 +537,7 @@
         "source": null,
         "confidence": null,
         "tf_id": "Peaxi162Scf00119g00942",
-        "target_id": "Peaxi162Scf00164g00313",
+        "target_id": "Peaxi162Scf00047g01225",
         "evidence": "transactivation",
         "pubmed_id": "17246198"
       },
@@ -551,7 +551,7 @@
         "source": null,
         "confidence": null,
         "tf_id": "Peaxi162Scf00022g00098",
-        "target_id": "Peaxi162Scf00164g00313",
+        "target_id": "Peaxi162Scf00047g01225",
         "evidence": "genetics",
         "pubmed_id": "20118232"
       },
@@ -578,7 +578,7 @@
         "correct": true,
         "source": null,
         "confidence": null,
-        "tf_id": "Peaxi162Scf00017g03265",
+        "tf_id": "Peaxi162Scf00020g02337",
         "target_id": "Peaxi162Scf00238g00125",
         "evidence": "genetics",
         "pubmed_id": "15078978"
@@ -592,7 +592,7 @@
         "correct": true,
         "source": null,
         "confidence": null,
-        "tf_id": "Peaxi162Scf00001g00231",
+        "tf_id": "Peaxi162Scf00147g00136",
         "target_id": "Peaxi162Scf00620g00533",
         "evidence": "transactivation",
         "pubmed_id": "12509522"
@@ -1914,10 +1914,10 @@
     "inferred_hit_rate": 0.015,
     "combined_hit_rate": 0.04,
     "by_source": {
-      "Inferred:Tobacco": 1,
       "Inferred:Arabidopsis": 2,
+      "PlantRegMap": 1,
       "Inferred:Potato": 1,
-      "PlantRegMap": 1
+      "Inferred:Tobacco": 1
     }
   },
   "ortholog_gaps": [

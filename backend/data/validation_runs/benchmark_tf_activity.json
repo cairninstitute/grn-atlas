@@ -100,7 +100,7 @@
     "Literal TP53 recovery is the most biologically relevant check in this script.",
     "Synthetic regulon cases measure internal score consistency, not external biological truth."
   ],
-  "run_at_utc": "2026-08-21T16:22:19.699876+00:00",
+  "run_at_utc": "2026-08-21T17:23:23.504256+00:00",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

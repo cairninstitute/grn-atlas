@@ -53,7 +53,7 @@
   "description": "Validate cell-type / pseudobulk regulator workflows on a TP53-like imported dataset.",
   "milestone": "M3",
   "notes": [],
-  "run_at_utc": "2026-08-21T17:08:57.991117+00:00",
+  "run_at_utc": "2026-08-21T17:23:24.881004+00:00",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

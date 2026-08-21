@@ -41,7 +41,7 @@
       "case_id": "workflow_import_to_activity",
       "details": {},
       "metrics": {
-        "next_action": "POST /api/v1/activity/tf with gene values from dataset ds_4eacd2b3d89e",
+        "next_action": "POST /api/v1/activity/tf with gene values from dataset ds_fac5239d39d5",
         "status": "ready"
       },
       "notes": [],
@@ -63,7 +63,7 @@
   "description": "Validate packaged workflow execution and collaborator-facing packet/report surfaces.",
   "milestone": "M12",
   "notes": [],
-  "run_at_utc": "2026-08-21T16:13:54.180417+00:00",
+  "run_at_utc": "2026-08-21T17:24:31.967954+00:00",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

@@ -50,7 +50,7 @@
   "description": "Validate dsRNA screen/design consistency and isoform coverage on petunia candidate genes.",
   "milestone": "M6",
   "notes": [],
-  "run_at_utc": "2026-08-21T16:13:02.489728+00:00",
+  "run_at_utc": "2026-08-21T17:23:40.273546+00:00",
   "status": "pass",
   "summary": {
     "cases_fail": 0,

@@ -3,28 +3,28 @@
   "go_coverage": 2041,
   "regulon_coherence": {
     "tfs_tested": 191,
-    "mean_real_coherence": 0.06079,
-    "mean_random_coherence": 0.05475,
+    "mean_real_coherence": 0.06084,
+    "mean_random_coherence": 0.0546,
     "enrichment": 1.11,
-    "fraction_tfs_above_random": 0.487
+    "fraction_tfs_above_random": 0.503
   },
   "permutation_test": {
-    "real_coherence": 0.06085,
-    "mean_permuted": 0.05032,
-    "std_permuted": 0.00154,
+    "real_coherence": 0.06055,
+    "mean_permuted": 0.05067,
+    "std_permuted": 0.0014,
     "p_value": 0.0099,
     "n_permutations": 100,
-    "effect_size_sigma": 6.82
+    "effect_size_sigma": 7.07
   },
   "multi_evidence": {
-    "single_source_n": 813,
+    "single_source_n": 809,
     "multi_source_n": 2000,
-    "single_mean_overlap": 0.08445,
-    "multi_mean_overlap": 0.06992,
-    "ratio": 0.828,
-    "single_any_overlap": 0.958,
+    "single_mean_overlap": 0.07787,
+    "multi_mean_overlap": 0.07005,
+    "ratio": 0.9,
+    "single_any_overlap": 0.975,
     "multi_any_overlap": 0.95,
-    "mann_whitney_z": -2.24
+    "mann_whitney_z": -2.97
   },
   "expression_coherence": {
     "interaction_edges_sampled": 5000,

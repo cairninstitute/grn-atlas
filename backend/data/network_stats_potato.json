@@ -37,11 +37,11 @@
     "importance_ratio": null
   },
   "motif_enrichment": {
-    "tfs_tested": 167,
-    "mean_target_motif_rate": 0.0494,
-    "mean_nontarget_motif_rate": 0.008,
-    "mean_enrichment": 3.33,
-    "median_enrichment": 2.07,
-    "fraction_enriched": 0.725
+    "tfs_tested": 168,
+    "mean_target_motif_rate": 0.0503,
+    "mean_nontarget_motif_rate": 0.0045,
+    "mean_enrichment": 3.85,
+    "median_enrichment": 2.78,
+    "fraction_enriched": 0.964
   }
 }

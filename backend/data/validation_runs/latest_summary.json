@@ -8,21 +8,21 @@
           "details": {},
           "metrics": {
             "top_regulators": [
-              "ABL1",
-              "AR",
-              "ATF1",
-              "ATF2",
-              "ATF5",
-              "ATM",
-              "BCL6",
-              "BRCA1"
+              "TP53",
+              "MYC",
+              "ETS1",
+              "SP1",
+              "E2F1",
+              "ESR1",
+              "RELA",
+              "EGR1"
             ],
-            "tp53_rank": null
+            "tp53_rank": 1
           },
           "notes": [
             "This endpoint currently uses expressed imported features rather than true cluster-specific regulons."
           ],
-          "status": "partial",
+          "status": "pass",
           "title": "Cell-type regulation recovers TP53 from TP53-like expression context"
         },
         {
@@ -55,12 +55,12 @@
       "description": "Validate cell-type / pseudobulk regulator workflows on a TP53-like imported dataset.",
       "milestone": "M3",
       "notes": [],
-      "run_at_utc": "2026-08-21T16:12:47.401236+00:00",
-      "status": "partial",
+      "run_at_utc": "2026-08-21T17:23:24.881004+00:00",
+      "status": "pass",
       "summary": {
         "cases_fail": 0,
-        "cases_partial": 1,
-        "cases_pass": 2,
+        "cases_partial": 0,
+        "cases_pass": 3,
         "cases_total": 3
       }
     },
@@ -105,7 +105,7 @@
       "description": "Validate chromatin peak import, retrieval, and cis-support integration.",
       "milestone": "M4",
       "notes": [],
-      "run_at_utc": "2026-08-21T16:12:47.888638+00:00",
+      "run_at_utc": "2026-08-21T17:23:25.407316+00:00",
       "status": "pass",
       "summary": {
         "cases_fail": 0,
@@ -154,7 +154,7 @@
       "notes": [
         "This milestone currently validates heuristic design surfaces, not external CRISPOR/CHOPCHOP concordance."
       ],
-      "run_at_utc": "2026-08-21T16:13:45.511330+00:00",
+      "run_at_utc": "2026-08-21T17:24:22.365470+00:00",
       "status": "pass",
       "summary": {
         "cases_fail": 0,
@@ -198,8 +198,8 @@
           "case_id": "repeated_import_consistency",
           "details": {},
           "metrics": {
-            "dataset_a": "ds_b7f3c6a412ba",
-            "dataset_b": "ds_c2ecef87d95c",
+            "dataset_a": "ds_ad0a580f58c8",
+            "dataset_b": "ds_0677b697e7ac",
             "n_features": 4,
             "n_samples": 3
           },
@@ -211,7 +211,7 @@
       "description": "Validate import correctness, overlap reporting, and repeated-import consistency.",
       "milestone": "M1",
       "notes": [],
-      "run_at_utc": "2026-08-21T16:12:46.701730+00:00",
+      "run_at_utc": "2026-08-21T17:23:24.243876+00:00",
       "status": "pass",
       "summary": {
         "cases_fail": 0,
@@ -272,7 +272,7 @@
       "notes": [
         "The literal p53 case is the stronger biological check in this script."
       ],
-      "run_at_utc": "2026-08-21T16:12:46.069376+00:00",
+      "run_at_utc": "2026-08-21T17:23:23.835367+00:00",
       "status": "pass",
       "summary": {
         "cases_fail": 0,
@@ -320,7 +320,7 @@
       "description": "Validate perturbation import, prediction-vs-observation comparison, and calibration listing.",
       "milestone": "M8",
       "notes": [],
-      "run_at_utc": "2026-08-21T16:13:45.807138+00:00",
+      "run_at_utc": "2026-08-21T17:24:22.752884+00:00",
       "status": "pass",
       "summary": {
         "cases_fail": 0,
@@ -381,7 +381,7 @@
       "description": "Validate dsRNA screen/design consistency and isoform coverage on petunia candidate genes.",
       "milestone": "M6",
       "notes": [],
-      "run_at_utc": "2026-08-21T16:13:02.489728+00:00",
+      "run_at_utc": "2026-08-21T17:23:40.273546+00:00",
       "status": "pass",
       "summary": {
         "cases_fail": 0,
@@ -398,12 +398,12 @@
           "details": {},
           "metrics": {
             "db_non_tf_to_tf_edges": 0,
-            "reported_pairs": 0
+            "reported_pairs": 10
           },
           "notes": [
             "A zero result currently indicates sparse biological content in this layer, not an HTTP failure."
           ],
-          "status": "partial",
+          "status": "pass",
           "title": "Ligand/receptor-style pair listing in human"
         },
         {
@@ -424,12 +424,12 @@
       "description": "Validate signaling-to-TF workflow availability and report current biological sparsity honestly.",
       "milestone": "M9",
       "notes": [],
-      "run_at_utc": "2026-08-21T16:13:46.262030+00:00",
-      "status": "partial",
+      "run_at_utc": "2026-08-21T17:24:23.338901+00:00",
+      "status": "pass",
       "summary": {
         "cases_fail": 0,
-        "cases_partial": 1,
-        "cases_pass": 1,
+        "cases_partial": 0,
+        "cases_pass": 2,
         "cases_total": 2
       }
     },
@@ -443,19 +443,19 @@
             "method": "ulm"
           },
           "metrics": {
-            "expected_rank": null,
+            "expected_rank": 1,
             "top_symbols": [
+              "TP53",
+              "MYC",
+              "ETS1",
               "EGR1",
-              "ABL1",
-              "ERCC2",
-              "ING4",
-              "PAX5"
+              "E2F1"
             ]
           },
           "notes": [
             "Known TP53-associated genes were used as input; this is the most decision-relevant activity sanity check."
           ],
-          "status": "fail",
+          "status": "pass",
           "title": "Human TP53-like signature recovery (ulm)"
         },
         {
@@ -465,19 +465,19 @@
             "method": "wmean"
           },
           "metrics": {
-            "expected_rank": null,
+            "expected_rank": 1,
             "top_symbols": [
-              "SOX6",
-              "VDR",
-              "FOXO3",
-              "FOXO4",
-              "KLF4"
+              "TP53",
+              "MYC",
+              "ETS1",
+              "EGR1",
+              "E2F1"
             ]
           },
           "notes": [
             "Known TP53-associated genes were used as input; this is the most decision-relevant activity sanity check."
           ],
-          "status": "fail",
+          "status": "pass",
           "title": "Human TP53-like signature recovery (wmean)"
         },
         {
@@ -493,9 +493,9 @@
             "top_symbols": [
               "STAT1",
               "RELA",
-              "IRF1",
               "NFKB1",
-              "EGR1"
+              "HIF1A",
+              "IRF1"
             ]
           },
           "notes": [
@@ -513,13 +513,13 @@
           "metrics": {
             "seed_tf": "EPR1",
             "seed_tf_id": "AT1G18330",
-            "seed_tf_rank": 2,
+            "seed_tf_rank": 1,
             "top_symbols": [
-              "LHY",
               "EPR1",
-              "AT1G19210",
-              "ABI5",
-              "PIF4"
+              "RVE8",
+              "RVE1",
+              "AT4G01280",
+              "LHY"
             ]
           },
           "notes": [
@@ -535,12 +535,12 @@
         "Literal TP53 recovery is the most biologically relevant check in this script.",
         "Synthetic regulon cases measure internal score consistency, not external biological truth."
       ],
-      "run_at_utc": "2026-08-21T16:12:45.501923+00:00",
-      "status": "fail",
+      "run_at_utc": "2026-08-21T17:23:23.504256+00:00",
+      "status": "pass",
       "summary": {
-        "cases_fail": 2,
+        "cases_fail": 0,
         "cases_partial": 0,
-        "cases_pass": 2,
+        "cases_pass": 4,
         "cases_total": 4
       }
     },
@@ -552,19 +552,19 @@
           "details": {},
           "metrics": {
             "top_drivers": [
-              "ELF4",
-              "EZH2",
-              "FOS",
-              "HDAC1",
-              "HDAC9",
-              "HOXA10",
-              "IRF1",
-              "JUN"
+              "TP53",
+              "ETS1",
+              "MYC",
+              "SP1",
+              "MYCN",
+              "E2F1",
+              "ETS2",
+              "ESR1"
             ],
-            "tp53_rank": null
+            "tp53_rank": 1
           },
           "notes": [],
-          "status": "partial",
+          "status": "pass",
           "title": "Trajectory driver recovery for TP53-like contrast"
         },
         {
@@ -572,19 +572,19 @@
           "details": {},
           "metrics": {
             "top_tfs": [
-              "FOS",
-              "HIF1A",
-              "ING1",
-              "NR3C1",
-              "NFKB1",
-              "ABL1",
+              "TP53",
+              "MYC",
+              "ETS1",
+              "SP1",
+              "E2F1",
               "EGR1",
-              "ERCC2"
+              "STAT1",
+              "NFKB1"
             ],
-            "tp53_rank": 20
+            "tp53_rank": 1
           },
           "notes": [],
-          "status": "partial",
+          "status": "pass",
           "title": "Trajectory TF activity recovery for TP53-like signature"
         }
       ],
@@ -593,12 +593,12 @@
       "notes": [
         "This is currently a contrast-level benchmark; it is not a full pseudotime trajectory benchmark with external lineage truth."
       ],
-      "run_at_utc": "2026-08-21T16:12:48.326233+00:00",
-      "status": "partial",
+      "run_at_utc": "2026-08-21T17:23:26.058049+00:00",
+      "status": "pass",
       "summary": {
         "cases_fail": 0,
-        "cases_partial": 2,
-        "cases_pass": 0,
+        "cases_partial": 0,
+        "cases_pass": 2,
         "cases_total": 2
       }
     },
@@ -643,7 +643,7 @@
       "description": "Validate transfer-risk, family-rescue, and species onboarding readiness surfaces.",
       "milestone": "M11",
       "notes": [],
-      "run_at_utc": "2026-08-21T16:13:46.607640+00:00",
+      "run_at_utc": "2026-08-21T17:24:23.966457+00:00",
       "status": "pass",
       "summary": {
         "cases_fail": 0,
@@ -695,7 +695,7 @@
           "case_id": "workflow_import_to_activity",
           "details": {},
           "metrics": {
-            "next_action": "POST /api/v1/activity/tf with gene values from dataset ds_4eacd2b3d89e",
+            "next_action": "POST /api/v1/activity/tf with gene values from dataset ds_fac5239d39d5",
             "status": "ready"
           },
           "notes": [],
@@ -717,7 +717,7 @@
       "description": "Validate packaged workflow execution and collaborator-facing packet/report surfaces.",
       "milestone": "M12",
       "notes": [],
-      "run_at_utc": "2026-08-21T16:13:54.180417+00:00",
+      "run_at_utc": "2026-08-21T17:24:31.967954+00:00",
       "status": "pass",
       "summary": {
         "cases_fail": 0,
@@ -735,21 +735,21 @@
       "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/quality_report_tomato.json"
     ]
   },
-  "run_at_utc": "2026-08-21T16:13:54.357886+00:00",
+  "run_at_utc": "2026-08-21T17:24:32.143819+00:00",
   "script_runs": [
     {
       "returncode": 0,
       "script": "validate_regulation_quality.py",
       "status": "pass",
       "stderr": "",
-      "stdout": "============================================================\n  PETUNIA QUALITY REPORT\n============================================================\n\n--- Gold Standard ---\nPositive edges: 32 resolved of 33 (1 unresolved)\n  Unresolved symbols: MT\nNegative controls: 11 resolved of 11\n\nRecall (true positives): 30/32 = 93.8%\n  via GRNBoost2: 3\n  via Inferred:Arabidopsis: 11\n  via Literature: 15\n  via PlantRegMap: 1\n  MISSING: 2\nSpecificity (true negatives): 11/11 = 100.0%\nPrecision (gold standard): 100.0%\n\nPer-edge detail:\n  AN2          -> DFR               FOUND [Inferred:Arabidopsis]  (genetics/transactivation)\n  AN2          -> ANS               FOUND [Inferred:Arabidopsis]  (genetics/transactivation)\n  AN1          -> DFR               FOUND [Literature]  (genetics/transactivation)\n  AN1          -> ANS               FOUND [GRNBoost2]  (genetics/transactivation)\n  AN2          -> RT                FOUND [Literature]  (genetics)\n  AN2          -> MT                UNRESOLVED  (genetics) *\n  EOBI         -> DAHP1             FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> DAHP2             FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> EPSPS             FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> CM1               FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> PAL1              FOUND [GRNBoost2]  (EMSA/Y1H)\n  EOBI         -> CFAT              FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> BSMT2             FOUND [GRNBoost2]  (EMSA/Y1H)\n  EOBI         -> PAAS              FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> ADT1              FOUND [Literature]  (EMSA/Y1H)\n  MYC2         -> AGO4              FOUND [Literature]  (dual-luciferase/Y1H)\n  MYB12        -> CHS               FOUND [Inferred:Arabidopsis]  (transactivation)\n  MYB12        -> F3H               FOUND [Inferred:Arabidopsis]  (transactivation)\n  JAF13        -> DFR               MISSING  (transactivation) *\n  JAF13        -> ANS               FOUND [Inferred:Arabidopsis]  (transactivation)\n  PH4          -> PH1               MISSING  (genetics) *\n  AN2          -> GST               FOUND [Literature]  (genetics)\n  AN1          -> GST               FOUND [Literature]  (genetics)\n  AN2          -> CHI               FOUND [Literature]  (genetics)\n  AN1          -> CHI               FOUND [Literature]  (genetics)\n  MYB12        -> CHI               FOUND [Literature]  (transactivation)\n  AG           -> AP3               FOUND [Inferred:Arabidopsis]  (genetics)\n  PI           -> AP3               FOUND [Inferred:Arabidopsis]  (genetics)\n  WUS          -> AG                FOUND [Inferred:Arabidopsis]  (genetics)\n  AP1          -> AG                FOUND [Inferred:Arabidopsis]  (genetics)\n  AG           -> SEP1              FOUND [Inferred:Arabidopsis]  (genetics)\n  PI           -> AG                FOUND [PlantRegMap]  (genetics)\n  AP1          -> PI                FOUND [Inferred:Arabidopsis]  (genetics)\n  AN2          -> CHS               TRUE_NEG  (genetics)\n  AN1          -> CHS               TRUE_NEG  (genetics)\n  MYB12        -> DFR               TRUE_NEG  (transactivation)\n  JAF13        -> CHS               TRUE_NEG  (transactivation)\n  AG           -> CHS               TRUE_NEG  (genetics)\n  WUS          -> DFR               TRUE_NEG  (genetics)\n  AP1          -> DFR               TRUE_NEG  (genetics)\n  MYB12        -> ANS               TRUE_NEG  (transactivation)\n  AN2          -> F3H               TRUE_NEG  (genetics)\n  AN1          -> F3H               TRUE_NEG  (genetics)\n  AG           -> DFR               TRUE_NEG  (genetics)\n\nOrtholog gaps: 4 master regulators without Arabidopsis ortholog:\n  TT2-like (Peaxi162Scf00177g00512)\n  AN1 (Peaxi162Scf00338g00912)\n  AP3 (Peaxi162Scf01084g00119)\n  DPL (Peaxi162Scf01210g00002)\n\n--- Random Edge Sampling (100 edges) ---\nMean GO overlap (Jaccard): 0.0823\nEdges with any GO overlap: 75/100 (75%)\nBy source:\n  Inferred:Arabidopsis: n=33, mean_overlap=0.0804, any_overlap=22/33\n  Inferred:Potato: n=19, mean_overlap=0.1064, any_overlap=14/19\n  Inferred:Tobacco: n=18, mean_overlap=0.0862, any_overlap=15/18\n  PlantRegMap: n=30, mean_overlap=0.0667, any_overlap=24/30\n\n--- Pathway Coherence ---\n  anthocyanin: 20 TFs, 111 targets\n    interactions: 40/2043 to pathway (0.0196 vs expected 0.0074, enrichment=2.6x)\n    GRNBoost2: 15/4179 to pathway (0.0036 vs expected 0.0074, enrichment=0.5x)\n  carotenoid: 1 TFs, 29 targets\n  ethylene: 60 TFs, 32 targets\n    interactions: 26/8379 to pathway (0.0031 vs expected 0.0021, enrichment=1.4x)\n    GRNBoost2: 4/4511 to pathway (0.0009 vs expected 0.0021, enrichment=0.4x)\n  flavonol: 20 TFs, 10 targets\n    interactions: 5/2043 to pathway (0.0024 vs expected 0.0007, enrichment=3.7x)\n    GRNBoost2: 2/4179 to pathway (0.0005 vs expected 0.0007, enrichment=0.7x)\n  terpene: 15 targets, no TFs annotated to regulatory GO terms\n\n--- False Positive Estimation (200 random TF-gene pairs) ---\nRandom pairs tested: 200\nFound in interactions: 5 (2.5%)\nFound in GRNBoost2: 3 (1.5%)\nCombined hit rate: 4.0%\n  By source: {'Inferred:Tobacco': 1, 'Inferred:Arabidopsis': 2, 'Inferred:Potato': 1, 'PlantRegMap': 1}\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/quality_report_petunia.json\n\n============================================================\n  TOMATO QUALITY REPORT\n============================================================\n\n--- Gold Standard ---\nPositive edges: 38 resolved of 38 (0 unresolved)\nNegative controls: 12 resolved of 12\n\nRecall (true positives): 32/38 = 84.2%\n  via GRNBoost2: 1\n  via Inferred:Arabidopsis: 15\n  via Literature: 16\n  MISSING: 6\nSpecificity (true negatives): 12/12 = 100.0%\nPrecision (gold standard): 100.0%\n\nPer-edge detail:\n  ANT1         -> DFR               FOUND [Literature]  (transactivation/overexpression)\n  ANT1         -> CHS               FOUND [Literature]  (overexpression)\n  ANT1         -> F3H               FOUND [Literature]  (overexpression)\n  ANT1         -> CHI               FOUND [Literature]  (overexpression)\n  ANT1         -> ANS               FOUND [Literature]  (overexpression)\n  RIN          -> ACS2              FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> ACS4              FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> PSY1              FOUND [Literature]  (ChIP-qPCR)\n  NOR          -> ACS2              FOUND [Literature]  (genetics)\n  RIN          -> E4                FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> PDS               FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> ACO1              FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> ZDS               FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> CRTISO            FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> CEL2              FOUND [Literature]  (ChIP-qPCR)\n  AN2          -> DFR               FOUND [Inferred:Arabidopsis]  (genetics/overexpression)\n  AN2          -> ANS               FOUND [Inferred:Arabidopsis]  (genetics/overexpression)\n  AN2          -> CHS               FOUND [Inferred:Arabidopsis]  (overexpression)\n  AN2          -> CHI               FOUND [Inferred:Arabidopsis]  (overexpression)\n  AN2          -> F3H               MISSING  (overexpression) *\n  AN1          -> DFR               FOUND [Inferred:Arabidopsis]  (genetics)\n  AN1          -> ANS               MISSING  (genetics) *\n  AN1          -> CHI               MISSING  (genetics) *\n  AN1          -> CHS               MISSING  (genetics) *\n  AN1          -> F3H               MISSING  (genetics) *\n  AG           -> AP3               FOUND [Inferred:Arabidopsis]  (genetics)\n  PI           -> AP3               FOUND [Inferred:Arabidopsis]  (genetics)\n  HY5          -> CHS               FOUND [Inferred:Arabidopsis]  (ChIP/genetics)\n  MYC2         -> EIL1              MISSING  (genetics) *\n  MYB12        -> CHS               FOUND [Inferred:Arabidopsis]  (overexpression/ChIP)\n  MYB12        -> CHI               FOUND [Literature]  (overexpression/ChIP)\n  MYB12        -> F3H               FOUND [Inferred:Arabidopsis]  (overexpression/ChIP)\n  MYB12        -> FLS               FOUND [Inferred:Arabidopsis]  (overexpression/ChIP)\n  EIN3         -> ERF1              FOUND [Inferred:Arabidopsis]  (genetics)\n  EIL1         -> ERF1              FOUND [Inferred:Arabidopsis]  (genetics)\n  PIF4         -> HY5               FOUND [Inferred:Arabidopsis]  (genetics)\n  WUS          -> AG                FOUND [Inferred:Arabidopsis]  (genetics)\n  AP1          -> AG                FOUND [GRNBoost2]  (genetics)\n  ANT1         -> PSY1              TRUE_NEG  (overexpression)\n  ANT1         -> ACS2              TRUE_NEG  (overexpression)\n  AN2          -> PSY1              TRUE_NEG  (genetics)\n  AG           -> CHS               TRUE_NEG  (genetics)\n  HY5          -> DFR               TRUE_NEG  (genetics)\n  MYB12        -> DFR               TRUE_NEG  (overexpression)\n  MYB12        -> ANS               TRUE_NEG  (overexpression)\n  HY5          -> ANS               TRUE_NEG  (genetics)\n  WRKY33       -> CHS               TRUE_NEG  (genetics)\n  CBF1         -> CHS               TRUE_NEG  (genetics)\n  MYC2         -> PSY1              TRUE_NEG  (genetics)\n  PIF4         -> CHS               TRUE_NEG  (genetics)\n\nOrtholog gaps: 3 master regulators without Arabidopsis ortholog:\n  ANT1 (Solyc10g086260.1)\n  DPL (Solyc10g086270.1)\n  TT2-like (Solyc12g049300.1)\n\n--- Random Edge Sampling (100 edges) ---\nMean GO overlap (Jaccard): 0.1044\nEdges with any GO overlap: 67/100 (67%)\nBy source:\n  Inferred:Arabidopsis: n=44, mean_overlap=0.1194, any_overlap=31/44\n  Inferred:Potato: n=25, mean_overlap=0.0852, any_overlap=14/25\n  Inferred:Tobacco: n=29, mean_overlap=0.0889, any_overlap=20/29\n  PlantRegMap: n=2, mean_overlap=0.2397, any_overlap=2/2\n\n--- Pathway Coherence ---\n  anthocyanin: 24 TFs, 129 targets\n    interactions: 38/1763 to pathway (0.0216 vs expected 0.0067, enrichment=3.2x)\n    GRNBoost2: 16/2864 to pathway (0.0056 vs expected 0.0067, enrichment=0.8x)\n  carotenoid: 2 TFs, 33 targets\n  ethylene: 80 TFs, 41 targets\n    interactions: 54/14387 to pathway (0.0038 vs expected 0.0021, enrichment=1.8x)\n    GRNBoost2: 6/5455 to pathway (0.0011 vs expected 0.0021, enrichment=0.5x)\n  flavonol: 24 TFs, 8 targets\n    interactions: 2/1763 to pathway (0.0011 vs expected 0.0004, enrichment=2.7x)\n    GRNBoost2: 3/2864 to pathway (0.0010 vs expected 0.0004, enrichment=2.5x)\n  terpene: 15 targets, no TFs annotated to regulatory GO terms\n\n--- False Positive Estimation (200 random TF-gene pairs) ---\nRandom pairs tested: 200\nFound in interactions: 5 (2.5%)\nFound in GRNBoost2: 2 (1.0%)\nCombined hit rate: 3.5%\n  By source: {'Inferred:Arabidopsis': 4, 'Inferred:Tobacco': 1}\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/quality_report_tomato.json"
+      "stdout": "============================================================\n  PETUNIA QUALITY REPORT\n============================================================\n\n--- Gold Standard ---\nPositive edges: 32 resolved of 33 (1 unresolved)\n  Unresolved symbols: MT\nNegative controls: 11 resolved of 11\n\nRecall (true positives): 30/32 = 93.8%\n  via GRNBoost2: 4\n  via Inferred:Arabidopsis: 10\n  via Literature: 15\n  via PlantRegMap: 1\n  MISSING: 2\nSpecificity (true negatives): 11/11 = 100.0%\nPrecision (gold standard): 100.0%\n\nPer-edge detail:\n  AN2          -> DFR               FOUND [Inferred:Arabidopsis]  (genetics/transactivation)\n  AN2          -> ANS               FOUND [Inferred:Arabidopsis]  (genetics/transactivation)\n  AN1          -> DFR               FOUND [Literature]  (genetics/transactivation)\n  AN1          -> ANS               FOUND [GRNBoost2]  (genetics/transactivation)\n  AN2          -> RT                FOUND [Literature]  (genetics)\n  AN2          -> MT                UNRESOLVED  (genetics) *\n  EOBI         -> DAHP1             FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> DAHP2             FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> EPSPS             FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> CM1               FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> PAL1              FOUND [GRNBoost2]  (EMSA/Y1H)\n  EOBI         -> CFAT              FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> BSMT2             FOUND [GRNBoost2]  (EMSA/Y1H)\n  EOBI         -> PAAS              FOUND [Literature]  (EMSA/Y1H)\n  EOBI         -> ADT1              FOUND [Literature]  (EMSA/Y1H)\n  MYC2         -> AGO4              FOUND [Literature]  (dual-luciferase/Y1H)\n  MYB12        -> CHS               FOUND [Inferred:Arabidopsis]  (transactivation)\n  MYB12        -> F3H               FOUND [Inferred:Arabidopsis]  (transactivation)\n  JAF13        -> DFR               MISSING  (transactivation) *\n  JAF13        -> ANS               FOUND [Inferred:Arabidopsis]  (transactivation)\n  PH4          -> PH1               MISSING  (genetics) *\n  AN2          -> GST               FOUND [Literature]  (genetics)\n  AN1          -> GST               FOUND [Literature]  (genetics)\n  AN2          -> CHI               FOUND [Literature]  (genetics)\n  AN1          -> CHI               FOUND [Literature]  (genetics)\n  MYB12        -> CHI               FOUND [Literature]  (transactivation)\n  AG           -> AP3               FOUND [Inferred:Arabidopsis]  (genetics)\n  PI           -> AP3               FOUND [GRNBoost2]  (genetics)\n  WUS          -> AG                FOUND [Inferred:Arabidopsis]  (genetics)\n  AP1          -> AG                FOUND [Inferred:Arabidopsis]  (genetics)\n  AG           -> SEP1              FOUND [Inferred:Arabidopsis]  (genetics)\n  PI           -> AG                FOUND [PlantRegMap]  (genetics)\n  AP1          -> PI                FOUND [Inferred:Arabidopsis]  (genetics)\n  AN2          -> CHS               TRUE_NEG  (genetics)\n  AN1          -> CHS               TRUE_NEG  (genetics)\n  MYB12        -> DFR               TRUE_NEG  (transactivation)\n  JAF13        -> CHS               TRUE_NEG  (transactivation)\n  AG           -> CHS               TRUE_NEG  (genetics)\n  WUS          -> DFR               TRUE_NEG  (genetics)\n  AP1          -> DFR               TRUE_NEG  (genetics)\n  MYB12        -> ANS               TRUE_NEG  (transactivation)\n  AN2          -> F3H               TRUE_NEG  (genetics)\n  AN1          -> F3H               TRUE_NEG  (genetics)\n  AG           -> DFR               TRUE_NEG  (genetics)\n\nOrtholog gaps: 4 master regulators without Arabidopsis ortholog:\n  TT2-like (Peaxi162Scf00177g00512)\n  AN1 (Peaxi162Scf00338g00912)\n  AP3 (Peaxi162Scf01084g00119)\n  DPL (Peaxi162Scf01210g00002)\n\n--- Random Edge Sampling (100 edges) ---\nMean GO overlap (Jaccard): 0.0823\nEdges with any GO overlap: 75/100 (75%)\nBy source:\n  Inferred:Arabidopsis: n=33, mean_overlap=0.0804, any_overlap=22/33\n  Inferred:Potato: n=19, mean_overlap=0.1064, any_overlap=14/19\n  Inferred:Tobacco: n=18, mean_overlap=0.0862, any_overlap=15/18\n  PlantRegMap: n=30, mean_overlap=0.0667, any_overlap=24/30\n\n--- Pathway Coherence ---\n  anthocyanin: 20 TFs, 111 targets\n    interactions: 40/2043 to pathway (0.0196 vs expected 0.0074, enrichment=2.6x)\n    GRNBoost2: 15/4179 to pathway (0.0036 vs expected 0.0074, enrichment=0.5x)\n  carotenoid: 1 TFs, 29 targets\n  ethylene: 60 TFs, 32 targets\n    interactions: 26/8379 to pathway (0.0031 vs expected 0.0021, enrichment=1.4x)\n    GRNBoost2: 4/4511 to pathway (0.0009 vs expected 0.0021, enrichment=0.4x)\n  flavonol: 20 TFs, 10 targets\n    interactions: 5/2043 to pathway (0.0024 vs expected 0.0007, enrichment=3.7x)\n    GRNBoost2: 2/4179 to pathway (0.0005 vs expected 0.0007, enrichment=0.7x)\n  terpene: 15 targets, no TFs annotated to regulatory GO terms\n\n--- False Positive Estimation (200 random TF-gene pairs) ---\nRandom pairs tested: 200\nFound in interactions: 5 (2.5%)\nFound in GRNBoost2: 3 (1.5%)\nCombined hit rate: 4.0%\n  By source: {'Inferred:Arabidopsis': 2, 'PlantRegMap': 1, 'Inferred:Potato': 1, 'Inferred:Tobacco': 1}\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/quality_report_petunia.json\n\n============================================================\n  TOMATO QUALITY REPORT\n============================================================\n\n--- Gold Standard ---\nPositive edges: 38 resolved of 38 (0 unresolved)\nNegative controls: 12 resolved of 12\n\nRecall (true positives): 32/38 = 84.2%\n  via GRNBoost2: 1\n  via Inferred:Arabidopsis: 15\n  via Literature: 16\n  MISSING: 6\nSpecificity (true negatives): 12/12 = 100.0%\nPrecision (gold standard): 100.0%\n\nPer-edge detail:\n  ANT1         -> DFR               FOUND [Literature]  (transactivation/overexpression)\n  ANT1         -> CHS               FOUND [Literature]  (overexpression)\n  ANT1         -> F3H               FOUND [Literature]  (overexpression)\n  ANT1         -> CHI               FOUND [Literature]  (overexpression)\n  ANT1         -> ANS               FOUND [Literature]  (overexpression)\n  RIN          -> ACS2              FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> ACS4              FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> PSY1              FOUND [Literature]  (ChIP-qPCR)\n  NOR          -> ACS2              FOUND [Literature]  (genetics)\n  RIN          -> E4                FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> PDS               FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> ACO1              FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> ZDS               FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> CRTISO            FOUND [Literature]  (ChIP-qPCR)\n  RIN          -> CEL2              FOUND [Literature]  (ChIP-qPCR)\n  AN2          -> DFR               FOUND [Inferred:Arabidopsis]  (genetics/overexpression)\n  AN2          -> ANS               FOUND [Inferred:Arabidopsis]  (genetics/overexpression)\n  AN2          -> CHS               FOUND [Inferred:Arabidopsis]  (overexpression)\n  AN2          -> CHI               FOUND [Inferred:Arabidopsis]  (overexpression)\n  AN2          -> F3H               MISSING  (overexpression) *\n  AN1          -> DFR               FOUND [Inferred:Arabidopsis]  (genetics)\n  AN1          -> ANS               MISSING  (genetics) *\n  AN1          -> CHI               MISSING  (genetics) *\n  AN1          -> CHS               MISSING  (genetics) *\n  AN1          -> F3H               MISSING  (genetics) *\n  AG           -> AP3               FOUND [Inferred:Arabidopsis]  (genetics)\n  PI           -> AP3               FOUND [Inferred:Arabidopsis]  (genetics)\n  HY5          -> CHS               FOUND [Inferred:Arabidopsis]  (ChIP/genetics)\n  MYC2         -> EIL1              MISSING  (genetics) *\n  MYB12        -> CHS               FOUND [Inferred:Arabidopsis]  (overexpression/ChIP)\n  MYB12        -> CHI               FOUND [Literature]  (overexpression/ChIP)\n  MYB12        -> F3H               FOUND [Inferred:Arabidopsis]  (overexpression/ChIP)\n  MYB12        -> FLS               FOUND [Inferred:Arabidopsis]  (overexpression/ChIP)\n  EIN3         -> ERF1              FOUND [Inferred:Arabidopsis]  (genetics)\n  EIL1         -> ERF1              FOUND [Inferred:Arabidopsis]  (genetics)\n  PIF4         -> HY5               FOUND [Inferred:Arabidopsis]  (genetics)\n  WUS          -> AG                FOUND [Inferred:Arabidopsis]  (genetics)\n  AP1          -> AG                FOUND [GRNBoost2]  (genetics)\n  ANT1         -> PSY1              TRUE_NEG  (overexpression)\n  ANT1         -> ACS2              TRUE_NEG  (overexpression)\n  AN2          -> PSY1              TRUE_NEG  (genetics)\n  AG           -> CHS               TRUE_NEG  (genetics)\n  HY5          -> DFR               TRUE_NEG  (genetics)\n  MYB12        -> DFR               TRUE_NEG  (overexpression)\n  MYB12        -> ANS               TRUE_NEG  (overexpression)\n  HY5          -> ANS               TRUE_NEG  (genetics)\n  WRKY33       -> CHS               TRUE_NEG  (genetics)\n  CBF1         -> CHS               TRUE_NEG  (genetics)\n  MYC2         -> PSY1              TRUE_NEG  (genetics)\n  PIF4         -> CHS               TRUE_NEG  (genetics)\n\nOrtholog gaps: 3 master regulators without Arabidopsis ortholog:\n  ANT1 (Solyc10g086260.1)\n  DPL (Solyc10g086270.1)\n  TT2-like (Solyc12g049300.1)\n\n--- Random Edge Sampling (100 edges) ---\nMean GO overlap (Jaccard): 0.1044\nEdges with any GO overlap: 67/100 (67%)\nBy source:\n  Inferred:Arabidopsis: n=44, mean_overlap=0.1194, any_overlap=31/44\n  Inferred:Potato: n=25, mean_overlap=0.0852, any_overlap=14/25\n  Inferred:Tobacco: n=29, mean_overlap=0.0889, any_overlap=20/29\n  PlantRegMap: n=2, mean_overlap=0.2397, any_overlap=2/2\n\n--- Pathway Coherence ---\n  anthocyanin: 24 TFs, 129 targets\n    interactions: 38/1763 to pathway (0.0216 vs expected 0.0067, enrichment=3.2x)\n    GRNBoost2: 16/2864 to pathway (0.0056 vs expected 0.0067, enrichment=0.8x)\n  carotenoid: 2 TFs, 33 targets\n  ethylene: 80 TFs, 41 targets\n    interactions: 54/14387 to pathway (0.0038 vs expected 0.0021, enrichment=1.8x)\n    GRNBoost2: 6/5455 to pathway (0.0011 vs expected 0.0021, enrichment=0.5x)\n  flavonol: 24 TFs, 8 targets\n    interactions: 2/1763 to pathway (0.0011 vs expected 0.0004, enrichment=2.7x)\n    GRNBoost2: 3/2864 to pathway (0.0010 vs expected 0.0004, enrichment=2.5x)\n  terpene: 15 targets, no TFs annotated to regulatory GO terms\n\n--- False Positive Estimation (200 random TF-gene pairs) ---\nRandom pairs tested: 200\nFound in interactions: 5 (2.5%)\nFound in GRNBoost2: 2 (1.0%)\nCombined hit rate: 3.5%\n  By source: {'Inferred:Arabidopsis': 4, 'Inferred:Tobacco': 1}\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/quality_report_tomato.json"
     },
     {
       "returncode": 0,
       "script": "validate_network_statistics.py",
       "status": "pass",
       "stderr": "",
-      "stdout": "======================================================================\n  ARABIDOPSIS POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 17349 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 584\n  Mean real coherence: 0.17323\n  Mean random coherence: 0.16991\n  Enrichment: 1.02x\n  Fraction of TFs above random: 0.486\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.17512\n  Permuted mean \u00b1 std: 0.17295 \u00b1 0.00127\n  Effect size: 1.71 sigma\n  p-value: 0.0396\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=1234): mean overlap=0.19956\n  Multi-source  (n=1961): mean overlap=0.20015\n  Ratio: 1.003x\n  Mann-Whitney z: 0.28\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 1.0%\n  Random pairs coexpressed: 0.8%\n  Rate ratio: 1.23x\n  Mean importance (real): 0.05067\n  Mean importance (random): 0.0502\n  Importance ratio: 1.01x\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_arabidopsis.json\n\n======================================================================\n  TOMATO POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 12939 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 730\n  Mean real coherence: 0.12968\n  Mean random coherence: 0.10795\n  Enrichment: 1.2x\n  Fraction of TFs above random: 0.881\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.12929\n  Permuted mean \u00b1 std: 0.10831 \u00b1 0.0006\n  Effect size: 35.17 sigma\n  p-value: 0.0099\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=1245): mean overlap=0.13585\n  Multi-source  (n=1547): mean overlap=0.1443\n  Ratio: 1.062x\n  Mann-Whitney z: 2.36\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.6%\n  Random pairs coexpressed: 0.6%\n  Rate ratio: 0.94x\n  Mean importance (real): 0.05797\n  Mean importance (random): 0.05757\n  Importance ratio: 1.01x\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 442\n  Target motif rate: 40.3%\n  Non-target motif rate: 0.6%\n  Mean enrichment: 38.55x\n  Median enrichment: 29.89x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_tomato.json\n\n======================================================================\n  PETUNIA POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 11667 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 610\n  Mean real coherence: 0.12611\n  Mean random coherence: 0.10779\n  Enrichment: 1.17x\n  Fraction of TFs above random: 0.826\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.12618\n  Permuted mean \u00b1 std: 0.10828 \u00b1 0.00059\n  Effect size: 30.25 sigma\n  p-value: 0.0099\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=1578): mean overlap=0.13587\n  Multi-source  (n=1661): mean overlap=0.14653\n  Ratio: 1.078x\n  Mann-Whitney z: 2.08\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 1.1%\n  Random pairs coexpressed: 0.6%\n  Rate ratio: 1.68x\n  Mean importance (real): 0.06272\n  Mean importance (random): 0.05862\n  Importance ratio: 1.07x\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 402\n  Target motif rate: 33.6%\n  Non-target motif rate: 0.6%\n  Mean enrichment: 29.53x\n  Median enrichment: 24.92x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_petunia.json\n\n======================================================================\n  HUMAN POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 2041 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 191\n  Mean real coherence: 0.06079\n  Mean random coherence: 0.05475\n  Enrichment: 1.11x\n  Fraction of TFs above random: 0.487\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.06085\n  Permuted mean \u00b1 std: 0.05032 \u00b1 0.00154\n  Effect size: 6.82 sigma\n  p-value: 0.0099\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=813): mean overlap=0.08445\n  Multi-source  (n=2000): mean overlap=0.06992\n  Ratio: 0.828x\n  Mann-Whitney z: -2.24\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_human.json\n\n======================================================================\n  MOUSE POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_mouse.json\n\n======================================================================\n  RICE POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 216\n  Target motif rate: 59.0%\n  Non-target motif rate: 0.6%\n  Mean enrichment: 27.99x\n  Median enrichment: 25.86x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_rice.json\n\n======================================================================\n  POTATO POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 167\n  Target motif rate: 4.9%\n  Non-target motif rate: 0.8%\n  Mean enrichment: 3.33x\n  Median enrichment: 2.07x\n  Fraction of TFs enriched: 0.725\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_potato.json\n\n======================================================================\n  PEPPER POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 45\n  Target motif rate: 70.0%\n  Non-target motif rate: 0.9%\n  Mean enrichment: 28.5x\n  Median enrichment: 31.77x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_pepper.json\n\nCombined report: /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_validation_report.md"
+      "stdout": "======================================================================\n  ARABIDOPSIS POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 17349 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 584\n  Mean real coherence: 0.17345\n  Mean random coherence: 0.16991\n  Enrichment: 1.02x\n  Fraction of TFs above random: 0.476\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.17549\n  Permuted mean \u00b1 std: 0.17124 \u00b1 0.00122\n  Effect size: 3.48 sigma\n  p-value: 0.0099\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=1233): mean overlap=0.18271\n  Multi-source  (n=1949): mean overlap=0.20314\n  Ratio: 1.112x\n  Mann-Whitney z: 2.67\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.7%\n  Random pairs coexpressed: 0.7%\n  Rate ratio: 0.98x\n  Mean importance (real): 0.05455\n  Mean importance (random): 0.04978\n  Importance ratio: 1.1x\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_arabidopsis.json\n\n======================================================================\n  TOMATO POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 12939 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 730\n  Mean real coherence: 0.12984\n  Mean random coherence: 0.10809\n  Enrichment: 1.2x\n  Fraction of TFs above random: 0.89\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.12966\n  Permuted mean \u00b1 std: 0.10922 \u00b1 0.00043\n  Effect size: 47.37 sigma\n  p-value: 0.0099\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=1315): mean overlap=0.14026\n  Multi-source  (n=1558): mean overlap=0.14731\n  Ratio: 1.05x\n  Mann-Whitney z: 2.21\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.7%\n  Random pairs coexpressed: 0.7%\n  Rate ratio: 1.02x\n  Mean importance (real): 0.06422\n  Mean importance (random): 0.05342\n  Importance ratio: 1.2x\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 442\n  Target motif rate: 40.3%\n  Non-target motif rate: 0.6%\n  Mean enrichment: 38.2x\n  Median enrichment: 28.45x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_tomato.json\n\n======================================================================\n  PETUNIA POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 11667 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 610\n  Mean real coherence: 0.12587\n  Mean random coherence: 0.10812\n  Enrichment: 1.16x\n  Fraction of TFs above random: 0.826\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.1239\n  Permuted mean \u00b1 std: 0.10778 \u00b1 0.00057\n  Effect size: 28.48 sigma\n  p-value: 0.0099\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=1556): mean overlap=0.13558\n  Multi-source  (n=1655): mean overlap=0.148\n  Ratio: 1.092x\n  Mann-Whitney z: 4.34\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.9%\n  Random pairs coexpressed: 0.8%\n  Rate ratio: 1.13x\n  Mean importance (real): 0.06985\n  Mean importance (random): 0.06424\n  Importance ratio: 1.09x\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 403\n  Target motif rate: 33.6%\n  Non-target motif rate: 0.7%\n  Mean enrichment: 30.65x\n  Median enrichment: 25.26x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_petunia.json\n\n======================================================================\n  HUMAN POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 2041 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 191\n  Mean real coherence: 0.06084\n  Mean random coherence: 0.0546\n  Enrichment: 1.11x\n  Fraction of TFs above random: 0.503\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0.06055\n  Permuted mean \u00b1 std: 0.05067 \u00b1 0.0014\n  Effect size: 7.07 sigma\n  p-value: 0.0099\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=809): mean overlap=0.07787\n  Multi-source  (n=2000): mean overlap=0.07005\n  Ratio: 0.9x\n  Mann-Whitney z: -2.97\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_human.json\n\n======================================================================\n  MOUSE POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_mouse.json\n\n======================================================================\n  RICE POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 215\n  Target motif rate: 59.2%\n  Non-target motif rate: 0.7%\n  Mean enrichment: 25.46x\n  Median enrichment: 18.9x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_rice.json\n\n======================================================================\n  POTATO POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 168\n  Target motif rate: 5.0%\n  Non-target motif rate: 0.4%\n  Mean enrichment: 3.85x\n  Median enrichment: 2.78x\n  Fraction of TFs enriched: 0.964\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_potato.json\n\n======================================================================\n  PEPPER POPULATION-LEVEL VALIDATION\n======================================================================\n\nGO coverage: 0 genes with annotations\n\n--- Test 1: Regulon-wide GO Coherence ---\n  TFs tested: 0\n  Mean real coherence: 0\n  Mean random coherence: 0\n  Enrichment: Nonex\n  Fraction of TFs above random: 0\n\n--- Test 2: Permutation Test (network-wide significance) ---\n  Real coherence: 0\n  Permuted mean \u00b1 std: 0.0 \u00b1 0.0\n  Effect size: 0.0 sigma\n  p-value: 1.0\n\n--- Test 3: Multi-evidence vs Single-source Quality ---\n  Single-source (n=0): mean overlap=0\n  Multi-source  (n=0): mean overlap=0\n  Ratio: Nonex\n  Mann-Whitney z: 0\n\n--- Test 4: Expression Coherence ---\n  Interaction edges coexpressed: 0.0%\n  Random pairs coexpressed: 0.0%\n  Rate ratio: Nonex\n  Mean importance (real): 0\n  Mean importance (random): 0\n  Importance ratio: Nonex\n\n--- Test 5: Motif Enrichment in Inferred Targets ---\n  TFs tested: 45\n  Target motif rate: 70.0%\n  Non-target motif rate: 0.5%\n  Mean enrichment: 17.84x\n  Median enrichment: 16.48x\n  Fraction of TFs enriched: 1.0\n\nReport written to /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_stats_pepper.json\n\nCombined report: /home/kjanik/grn-atlas-codex/grn-atlas/backend/data/network_validation_report.md"
     },
     {
       "returncode": 0,
@@ -776,7 +776,7 @@
       "returncode": 0,
       "script": "benchmark_omics_import.py",
       "status": "pass",
-      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/ds_8a66ca9935dd/validate \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: GET http://testserver/api/v1/import/ds_8a66ca9935dd \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/ds_2f620ecb6165/validate \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"",
+      "stderr": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/scripts/validation_common.py:20: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient  # noqa: E402\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/ds_60fbd2008491/validate \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: GET http://testserver/api/v1/import/ds_60fbd2008491 \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/ds_bb5105e64657/validate \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"\nINFO:httpx:HTTP Request: POST http://testserver/api/v1/import/omics \"HTTP/1.1 200 OK\"",
       "stdout": "/home/kjanik/grn-atlas-codex/grn-atlas/backend/data/validation_runs/benchmark_omics_import.json"
     },
     {

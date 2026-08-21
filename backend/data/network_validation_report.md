@@ -6,14 +6,14 @@ captures real biological signal.
 ## Summary
 | Species | Edges | GO genes | Coherence (σ) | Multi-ev. z | Motif enrichment |
 |---------|------:|--------:|-------------:|----------:|----------------:|
-| arabidopsis | 919,449 | 17,349 | 1.71 | 0.28 | — |
-| tomato | 248,288 | 12,939 | 35.17 | 2.36 | 38.55x |
-| petunia | 236,727 | 11,667 | 30.25 | 2.08 | 29.53x |
-| human | 17,946 | 2,041 | 6.82 | -2.24 | — |
+| arabidopsis | 919,449 | 17,349 | 3.48 | 2.67 | — |
+| tomato | 248,288 | 12,939 | 47.37 | 2.21 | 38.2x |
+| petunia | 236,727 | 11,667 | 28.48 | 4.34 | 30.65x |
+| human | 17,946 | 2,041 | 7.07 | -2.97 | — |
 | mouse | 17,692 | 0 | — | 0 | — |
-| rice | 16,933 | 0 | — | 0 | 27.99x |
-| potato | 11,409 | 0 | — | 0 | 3.33x |
-| pepper | 2,212 | 0 | — | 0 | 28.5x |
+| rice | 16,933 | 0 | — | 0 | 25.46x |
+| potato | 11,409 | 0 | — | 0 | 3.85x |
+| pepper | 2,212 | 0 | — | 0 | 17.84x |
 
 ## Arabidopsis
 
@@ -22,36 +22,36 @@ For each TF with ≥10 targets, measure pairwise GO term overlap among targets
 vs. size-matched random gene sets.
 
 - **TFs tested:** 584
-- **Mean real coherence:** 0.17323
+- **Mean real coherence:** 0.17345
 - **Mean random coherence:** 0.16991
 - **Enrichment:** 1.02×
-- **Fraction of TFs above random:** 0.486
+- **Fraction of TFs above random:** 0.476
 
 ### Test 2 — Permutation Test
 Shuffle all TF→target assignments 100 times, recompute network-wide coherence.
 
-- **Real coherence:** 0.17512
-- **Permuted mean ± std:** 0.17295 ± 0.00127
-- **Effect size:** 1.71 σ
-- **p-value:** 0.0396
+- **Real coherence:** 0.17549
+- **Permuted mean ± std:** 0.17124 ± 0.00122
+- **Effect size:** 3.48 σ
+- **p-value:** 0.0099
 
 ### Test 3 — Multi-evidence vs Single-source
 Compare GO overlap of edges supported by 2+ independent sources vs. single-source.
 
-- **Single-source** (n=1234): mean overlap = 0.19956
-- **Multi-source** (n=1961): mean overlap = 0.20015
-- **Ratio:** 1.003×
-- **Mann-Whitney z:** 0.28
+- **Single-source** (n=1233): mean overlap = 0.18271
+- **Multi-source** (n=1949): mean overlap = 0.20314
+- **Ratio:** 1.112×
+- **Mann-Whitney z:** 2.67
 
 ### Test 4 — Expression Coherence
 Check whether interaction-table edges appear in GRNBoost2/GENIE3 coexpression
 more often than random TF-gene pairs.
 
-- **Interaction edges coexpressed:** 1.0%
-- **Random pairs coexpressed:** 0.8%
-- **Rate ratio:** 1.23×
-- **Mean importance (real):** 0.05067
-- **Mean importance (random):** 0.0502
+- **Interaction edges coexpressed:** 0.7%
+- **Random pairs coexpressed:** 0.7%
+- **Rate ratio:** 0.98×
+- **Mean importance (real):** 0.05455
+- **Mean importance (random):** 0.04978
 
 ### Test 5 — Motif Enrichment in Inferred Targets
 For TFs with known binding motifs, check whether Arabidopsis orthologs of
@@ -68,36 +68,36 @@ For each TF with ≥10 targets, measure pairwise GO term overlap among targets
 vs. size-matched random gene sets.
 
 - **TFs tested:** 730
-- **Mean real coherence:** 0.12968
-- **Mean random coherence:** 0.10795
+- **Mean real coherence:** 0.12984
+- **Mean random coherence:** 0.10809
 - **Enrichment:** 1.2×
-- **Fraction of TFs above random:** 0.881
+- **Fraction of TFs above random:** 0.89
 
 ### Test 2 — Permutation Test
 Shuffle all TF→target assignments 100 times, recompute network-wide coherence.
 
-- **Real coherence:** 0.12929
-- **Permuted mean ± std:** 0.10831 ± 0.0006
-- **Effect size:** 35.17 σ
+- **Real coherence:** 0.12966
+- **Permuted mean ± std:** 0.10922 ± 0.00043
+- **Effect size:** 47.37 σ
 - **p-value:** 0.0099
 
 ### Test 3 — Multi-evidence vs Single-source
 Compare GO overlap of edges supported by 2+ independent sources vs. single-source.
 
-- **Single-source** (n=1245): mean overlap = 0.13585
-- **Multi-source** (n=1547): mean overlap = 0.1443
-- **Ratio:** 1.062×
-- **Mann-Whitney z:** 2.36
+- **Single-source** (n=1315): mean overlap = 0.14026
+- **Multi-source** (n=1558): mean overlap = 0.14731
+- **Ratio:** 1.05×
+- **Mann-Whitney z:** 2.21
 
 ### Test 4 — Expression Coherence
 Check whether interaction-table edges appear in GRNBoost2/GENIE3 coexpression
 more often than random TF-gene pairs.
 
-- **Interaction edges coexpressed:** 0.6%
-- **Random pairs coexpressed:** 0.6%
-- **Rate ratio:** 0.94×
-- **Mean importance (real):** 0.05797
-- **Mean importance (random):** 0.05757
+- **Interaction edges coexpressed:** 0.7%
+- **Random pairs coexpressed:** 0.7%
+- **Rate ratio:** 1.02×
+- **Mean importance (real):** 0.06422
+- **Mean importance (random):** 0.05342
 
 ### Test 5 — Motif Enrichment in Inferred Targets
 For TFs with known binding motifs, check whether Arabidopsis orthologs of
@@ -106,8 +106,8 @@ inferred targets have TF motif hits in promoters vs. non-targets.
 - **TFs tested:** 442
 - **Target motif rate:** 40.3%
 - **Non-target motif rate:** 0.6%
-- **Mean enrichment:** 38.55×
-- **Median enrichment:** 29.89×
+- **Mean enrichment:** 38.2×
+- **Median enrichment:** 28.45×
 - **Fraction of TFs enriched:** 1.0
 
 
@@ -118,46 +118,46 @@ For each TF with ≥10 targets, measure pairwise GO term overlap among targets
 vs. size-matched random gene sets.
 
 - **TFs tested:** 610
-- **Mean real coherence:** 0.12611
-- **Mean random coherence:** 0.10779
-- **Enrichment:** 1.17×
+- **Mean real coherence:** 0.12587
+- **Mean random coherence:** 0.10812
+- **Enrichment:** 1.16×
 - **Fraction of TFs above random:** 0.826
 
 ### Test 2 — Permutation Test
 Shuffle all TF→target assignments 100 times, recompute network-wide coherence.
 
-- **Real coherence:** 0.12618
-- **Permuted mean ± std:** 0.10828 ± 0.00059
-- **Effect size:** 30.25 σ
+- **Real coherence:** 0.1239
+- **Permuted mean ± std:** 0.10778 ± 0.00057
+- **Effect size:** 28.48 σ
 - **p-value:** 0.0099
 
 ### Test 3 — Multi-evidence vs Single-source
 Compare GO overlap of edges supported by 2+ independent sources vs. single-source.
 
-- **Single-source** (n=1578): mean overlap = 0.13587
-- **Multi-source** (n=1661): mean overlap = 0.14653
-- **Ratio:** 1.078×
-- **Mann-Whitney z:** 2.08
+- **Single-source** (n=1556): mean overlap = 0.13558
+- **Multi-source** (n=1655): mean overlap = 0.148
+- **Ratio:** 1.092×
+- **Mann-Whitney z:** 4.34
 
 ### Test 4 — Expression Coherence
 Check whether interaction-table edges appear in GRNBoost2/GENIE3 coexpression
 more often than random TF-gene pairs.
 
-- **Interaction edges coexpressed:** 1.1%
-- **Random pairs coexpressed:** 0.6%
-- **Rate ratio:** 1.68×
-- **Mean importance (real):** 0.06272
-- **Mean importance (random):** 0.05862
+- **Interaction edges coexpressed:** 0.9%
+- **Random pairs coexpressed:** 0.8%
+- **Rate ratio:** 1.13×
+- **Mean importance (real):** 0.06985
+- **Mean importance (random):** 0.06424
 
 ### Test 5 — Motif Enrichment in Inferred Targets
 For TFs with known binding motifs, check whether Arabidopsis orthologs of
 inferred targets have TF motif hits in promoters vs. non-targets.
 
-- **TFs tested:** 402
+- **TFs tested:** 403
 - **Target motif rate:** 33.6%
-- **Non-target motif rate:** 0.6%
-- **Mean enrichment:** 29.53×
-- **Median enrichment:** 24.92×
+- **Non-target motif rate:** 0.7%
+- **Mean enrichment:** 30.65×
+- **Median enrichment:** 25.26×
 - **Fraction of TFs enriched:** 1.0
 
 
@@ -168,26 +168,26 @@ For each TF with ≥10 targets, measure pairwise GO term overlap among targets
 vs. size-matched random gene sets.
 
 - **TFs tested:** 191
-- **Mean real coherence:** 0.06079
-- **Mean random coherence:** 0.05475
+- **Mean real coherence:** 0.06084
+- **Mean random coherence:** 0.0546
 - **Enrichment:** 1.11×
-- **Fraction of TFs above random:** 0.487
+- **Fraction of TFs above random:** 0.503
 
 ### Test 2 — Permutation Test
 Shuffle all TF→target assignments 100 times, recompute network-wide coherence.
 
-- **Real coherence:** 0.06085
-- **Permuted mean ± std:** 0.05032 ± 0.00154
-- **Effect size:** 6.82 σ
+- **Real coherence:** 0.06055
+- **Permuted mean ± std:** 0.05067 ± 0.0014
+- **Effect size:** 7.07 σ
 - **p-value:** 0.0099
 
 ### Test 3 — Multi-evidence vs Single-source
 Compare GO overlap of edges supported by 2+ independent sources vs. single-source.
 
-- **Single-source** (n=813): mean overlap = 0.08445
-- **Multi-source** (n=2000): mean overlap = 0.06992
-- **Ratio:** 0.828×
-- **Mann-Whitney z:** -2.24
+- **Single-source** (n=809): mean overlap = 0.07787
+- **Multi-source** (n=2000): mean overlap = 0.07005
+- **Ratio:** 0.9×
+- **Mann-Whitney z:** -2.97
 
 ### Test 4 — Expression Coherence
 Check whether interaction-table edges appear in GRNBoost2/GENIE3 coexpression
@@ -295,11 +295,11 @@ more often than random TF-gene pairs.
 For TFs with known binding motifs, check whether Arabidopsis orthologs of
 inferred targets have TF motif hits in promoters vs. non-targets.
 
-- **TFs tested:** 216
-- **Target motif rate:** 59.0%
-- **Non-target motif rate:** 0.6%
-- **Mean enrichment:** 27.99×
-- **Median enrichment:** 25.86×
+- **TFs tested:** 215
+- **Target motif rate:** 59.2%
+- **Non-target motif rate:** 0.7%
+- **Mean enrichment:** 25.46×
+- **Median enrichment:** 18.9×
 - **Fraction of TFs enriched:** 1.0
 
 
@@ -345,12 +345,12 @@ more often than random TF-gene pairs.
 For TFs with known binding motifs, check whether Arabidopsis orthologs of
 inferred targets have TF motif hits in promoters vs. non-targets.
 
-- **TFs tested:** 167
-- **Target motif rate:** 4.9%
-- **Non-target motif rate:** 0.8%
-- **Mean enrichment:** 3.33×
-- **Median enrichment:** 2.07×
-- **Fraction of TFs enriched:** 0.725
+- **TFs tested:** 168
+- **Target motif rate:** 5.0%
+- **Non-target motif rate:** 0.4%
+- **Mean enrichment:** 3.85×
+- **Median enrichment:** 2.78×
+- **Fraction of TFs enriched:** 0.964
 
 
 ## Pepper
@@ -397,9 +397,9 @@ inferred targets have TF motif hits in promoters vs. non-targets.
 
 - **TFs tested:** 45
 - **Target motif rate:** 70.0%
-- **Non-target motif rate:** 0.9%
-- **Mean enrichment:** 28.5×
-- **Median enrichment:** 31.77×
+- **Non-target motif rate:** 0.5%
+- **Mean enrichment:** 17.84×
+- **Median enrichment:** 16.48×
 - **Fraction of TFs enriched:** 1.0
 
 
