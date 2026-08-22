@@ -1,0 +1,332 @@
+[
+  {
+    "skill": "grn-celltype-regulon",
+    "label": "celltype regulon: imported TP53 treated cluster",
+    "question": "Using imported dataset {dataset_id}, show the TP53 regulon active in the treated cluster in human.",
+    "expected_tools": ["grn_celltype_regulon"],
+    "requires_http": true,
+    "setup_http_posts": [
+      {
+        "path": "/api/v1/import/omics",
+        "json": {
+          "name": "llm fixture celltype regulon",
+          "species": "human",
+          "data_type": "pseudobulk",
+          "gene_values": {
+            "TP53": [5.0, 1.0],
+            "MDM2": [1.0, 5.0],
+            "CDKN1A": [4.0, 1.0],
+            "BAX": [3.0, 1.0],
+            "BCL2": [1.0, 4.0]
+          },
+          "sample_names": ["A", "B"],
+          "contrasts": [
+            {
+              "group_a": "treated",
+              "group_b": "control",
+              "deg": {
+                "TP53": 2.5,
+                "MDM2": -1.8,
+                "CDKN1A": 3.1,
+                "BAX": 1.2,
+                "BCL2": -1.7
+              }
+            }
+          ]
+        },
+        "capture": {
+          "dataset_id": "dataset_id"
+        }
+      }
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": ["grn_celltype_regulon"]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "dataset_id",
+        "value": "{dataset_id}"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "cluster_id",
+        "value": "treated"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_id",
+        "value": "TP53"
+      }
+    ]
+  },
+  {
+    "skill": "grn-cis-support-audit",
+    "label": "cis support audit: TP53 to BAX human",
+    "question": "Assess whether the TP53 to BAX regulatory edge is supported by promoter motifs, chromatin, and enhancer evidence in human.",
+    "expected_tools": ["grn_cis_support_audit"],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": ["grn_cis_support_audit"]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source_id",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_id",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-crispr-vs-dsrna-compare",
+    "label": "crispr vs dsrna compare: JAF13 AN2 petunia",
+    "question": "For petunia flower-color work, compare dsRNA versus CRISPR intervention strategies for JAF13 and AN2. I care about knockdown, not knockout.",
+    "expected_tools": ["grn_crispr_vs_dsrna_compare"],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": ["grn_crispr_vs_dsrna_compare"]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "JAF13"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AN2"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "intent",
+        "value": "knockdown"
+      }
+    ]
+  },
+  {
+    "skill": "grn-edit-consequence",
+    "label": "edit consequence: HY5 promoter disruption",
+    "question": "Predict the regulatory consequences of a promoter disruption edit for HY5 (AT5G11260) in Arabidopsis.",
+    "expected_tools": ["grn_edit_consequence"],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": ["grn_edit_consequence"]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "gene_id",
+        "value": "AT5G11260"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "edit_type",
+        "value": "promoter_disruption"
+      }
+    ]
+  },
+  {
+    "skill": "grn-enhancer-network",
+    "label": "enhancer network: TP53 top 10",
+    "question": "Show me the enhancer-linked regulatory neighborhood around TP53 in human, limited to the top 10 linked elements.",
+    "expected_tools": ["grn_enhancer_network"],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": ["grn_enhancer_network"]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "gene_id",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      },
+      {
+        "type": "arg_lte",
+        "arg": "top",
+        "value": 10
+      }
+    ]
+  },
+  {
+    "skill": "grn-intervention-strategy-ranker",
+    "label": "intervention strategy ranker: petunia pigment shortlist low budget",
+    "question": "Rank intervention strategies for JAF13, AN2, and DFR in petunia under a low budget. Compare dsRNA, CRISPR knockout, and promoter editing for a knockdown-oriented screen.",
+    "expected_tools": ["grn_intervention_strategy_ranker"],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": ["grn_intervention_strategy_ranker"]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "JAF13"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AN2"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "DFR"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "budget",
+        "value": "low"
+      }
+    ]
+  },
+  {
+    "skill": "grn-literature-grounding",
+    "label": "literature grounding: petunia flower-color ortholog labels",
+    "question": "Map these literature gene names into petunia atlas candidates: DntMYB1, TrMYB1, RcMYB308, DFR, and JAF13.",
+    "expected_tools": ["grn_literature_grounding"],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": ["grn_literature_grounding"]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "terms",
+        "value": "DntMYB1"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "terms",
+        "value": "RcMYB308"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "terms",
+        "value": "DFR"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      }
+    ]
+  },
+  {
+    "skill": "grn-multiome-support-audit",
+    "label": "multiome support audit: TP53 to BAX",
+    "question": "Do a multi-layer evidence audit for the TP53 to BAX regulatory claim in human, including network, motif, chromatin, expression, and perturbation support.",
+    "expected_tools": ["grn_multiome_support_audit"],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": ["grn_multiome_support_audit"]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "source_id",
+        "value": "TP53"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "target_id",
+        "value": "BAX"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-peak-gene-linkage",
+    "label": "peak gene linkage: TP53-region human",
+    "question": "For the human region chr17:7668400-7669000, which genes are the strongest linked targets and what motifs overlap that region?",
+    "expected_tools": ["grn_peak_gene_linkage"],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": ["grn_peak_gene_linkage"]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "region",
+        "value": "chr17:7668400-7669000"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-transition-drivers",
+    "label": "transition drivers: petunia petal limb vs seedling",
+    "question": "Using AN2, JAF13, DFR, CHSB, and CHSJ as transition genes, identify the top transcriptional drivers separating petal_limb from seedling in petunia.",
+    "expected_tools": ["grn_transition_drivers"],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": ["grn_transition_drivers"]
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "AN2"
+      },
+      {
+        "type": "arg_contains",
+        "arg": "gene_ids",
+        "value": "JAF13"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "branch_a",
+        "value": "petal_limb"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "branch_b",
+        "value": "seedling"
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "petunia"
+      }
+    ]
+  }
+]

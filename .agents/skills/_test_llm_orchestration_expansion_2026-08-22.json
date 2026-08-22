@@ -1,0 +1,132 @@
+[
+  {
+    "label": "petunia phenotype grounding to intervention ranking",
+    "question": "For petunia flower-color engineering, use literature-derived gene labels from related ornamentals to ground them into atlas-supported petunia candidates, then rank the best first intervention strategy for those candidates under a low budget.",
+    "covers_tools": ["grn_literature_grounding", "grn_intervention_strategy_ranker", "grn_candidate_triage"],
+    "checks_spec": [
+      { "type": "used_tools_any", "tools": ["grn_literature_grounding", "grn_literature_review"] },
+      { "type": "used_tools_any", "tools": ["grn_intervention_strategy_ranker", "grn_experiment_prioritization"] },
+      { "type": "answer_has_any", "terms": ["petunia", "candidate", "strategy", "budget"] },
+      { "type": "n_skills_gte", "value": 2 }
+    ]
+  },
+  {
+    "label": "petunia dsrna versus crispr workflow comparison",
+    "question": "Compare dsRNA and CRISPR intervention strategies for JAF13 and AN2 in petunia, then tell me which one is the better first experiment if I want a reversible flower-color screen.",
+    "covers_tools": ["grn_crispr_vs_dsrna_compare", "grn_intervention_strategy_ranker", "grn_dsrna_screen"],
+    "checks_spec": [
+      { "type": "used_tools_any", "tools": ["grn_crispr_vs_dsrna_compare", "grn_crispr_compare"] },
+      { "type": "used_tools_any", "tools": ["grn_intervention_strategy_ranker", "grn_experiment_optimizer"] },
+      { "type": "answer_has_any", "terms": ["JAF13", "AN2", "reversible", "first experiment", "petunia"] },
+      { "type": "n_skills_gte", "value": 2 }
+    ]
+  },
+  {
+    "label": "tp53 edge audit across cis and multiome layers",
+    "question": "For the TP53 to BAX edge in human, audit promoter-level cis support and then give me the broader multi-omic support picture, including what evidence layers are still missing.",
+    "covers_tools": ["grn_cis_support_audit", "grn_multiome_support_audit"],
+    "checks_spec": [
+      { "type": "used_tools_all_any", "tool_groups": [["grn_cis_support_audit", "grn_motif_query"], ["grn_multiome_support_audit", "grn_evidence_audit"]] },
+      { "type": "answer_has_any", "terms": ["TP53", "BAX", "missing", "evidence", "support"] },
+      { "type": "n_skills_gte", "value": 2 }
+    ]
+  },
+  {
+    "label": "tp53 enhancer region to linked genes workflow",
+    "question": "Start from the human region chr17:7668400-7669000, identify the strongest linked target genes and overlapping motifs, and if no linked genes are returned state that clearly instead of inventing an enhancer neighborhood.",
+    "covers_tools": ["grn_peak_gene_linkage", "grn_enhancer_network", "grn_genome_browser"],
+    "checks_spec": [
+      { "type": "used_tools_any", "tools": ["grn_peak_gene_linkage", "grn_genome_browser"] },
+      { "type": "answer_has_any", "terms": ["chr17:7668400-7669000", "linked", "motif", "no linked", "no atlas-supported"] },
+      { "type": "n_skills_gte", "value": 1 }
+    ]
+  },
+  {
+    "label": "hy5 promoter edit consequence planning",
+    "question": "For HY5 in Arabidopsis, identify the best promoter editing target sites, then predict the likely regulatory consequences of disrupting one of those sites and summarize the downstream risk.",
+    "covers_tools": ["grn_promoter_edit_prioritization", "grn_edit_consequence", "grn_confidence_boundary"],
+    "checks_spec": [
+      { "type": "used_tools_any", "tools": ["grn_promoter_edit_prioritization", "grn_motif_query"] },
+      { "type": "used_tools_any", "tools": ["grn_edit_consequence", "grn_variant_effect"] },
+      { "type": "answer_has_any", "terms": ["HY5", "promoter", "consequence", "risk", "Arabidopsis"] },
+      { "type": "n_skills_gte", "value": 2 }
+    ]
+  },
+  {
+    "label": "imported cell-state transition with driver extraction",
+    "question": "Using this treated-versus-control human transition signature: TP53, CDKN1A, BAX, MDM2, and BCL2, identify the transition drivers and then show the regulon of the top driver.",
+    "covers_tools": ["grn_transition_drivers", "grn_regulon", "grn_celltype_regulon"],
+    "checks_spec": [
+      { "type": "used_tools_any", "tools": ["grn_transition_drivers", "grn_trajectory_drivers"] },
+      { "type": "used_tools_any", "tools": ["grn_regulon", "grn_celltype_regulon"] },
+      { "type": "answer_has_any", "terms": ["TP53", "CDKN1A", "BAX", "driver", "regulon"] },
+      { "type": "n_skills_gte", "value": 2 }
+    ]
+  },
+  {
+    "label": "petunia literature to hit-list to first intervention",
+    "question": "I do not know the target genes yet. Use literature ideas for petunia flower-color control, ground them into atlas candidates, narrow them to a short list, and tell me the best first intervention to try.",
+    "covers_tools": ["grn_literature_grounding", "grn_candidate_triage", "grn_intervention_strategy_ranker"],
+    "checks_spec": [
+      { "type": "used_tools_any", "tools": ["grn_literature_grounding", "grn_literature_review"] },
+      { "type": "used_tools_any", "tools": ["grn_candidate_triage", "grn_consensus_ranking", "grn_user_gene_set_analysis"] },
+      { "type": "used_tools_any", "tools": ["grn_intervention_strategy_ranker", "grn_experiment_prioritization", "grn_dsrna_screen"] },
+      { "type": "answer_has_any", "terms": ["petunia", "short list", "candidate", "first intervention"] },
+      { "type": "n_skills_gte", "value": 3 }
+    ]
+  },
+  {
+    "label": "tp53 linked region to edge audit",
+    "question": "Take the human peak region chr17:7668400-7669000, identify linked genes, and if TP53 or BAX is implicated, audit whether the TP53 to BAX edge is well supported across cis and multi-omic layers.",
+    "covers_tools": ["grn_peak_gene_linkage", "grn_cis_support_audit", "grn_multiome_support_audit"],
+    "checks_spec": [
+      { "type": "used_tools_any", "tools": ["grn_peak_gene_linkage", "grn_genome_browser"] },
+      { "type": "answer_has_any", "terms": ["TP53", "BAX", "cis", "multi-omic", "support", "not implicated", "linked genes identified: 0"] },
+      { "type": "n_skills_gte", "value": 1 }
+    ]
+  },
+  {
+    "label": "petunia intervention ranking with dsrna follow-up",
+    "question": "For JAF13, AN2, and DFR in petunia, rank the intervention modes under a modest budget, then check whether the top-ranked dsRNA-compatible target can actually get a clean dsRNA design.",
+    "covers_tools": ["grn_intervention_strategy_ranker", "grn_dsrna", "grn_dsrna_screen"],
+    "checks_spec": [
+      { "type": "used_tools_any", "tools": ["grn_intervention_strategy_ranker", "grn_experiment_prioritization"] },
+      { "type": "used_tools_any", "tools": ["grn_dsrna", "grn_dsrna_screen"] },
+      { "type": "answer_has_any", "terms": ["JAF13", "AN2", "DFR", "dsRNA", "budget"] },
+      { "type": "n_skills_gte", "value": 2 }
+    ]
+  },
+  {
+    "label": "petunia transition drivers versus candidate shortlist",
+    "question": "Using AN2, JAF13, DFR, CHSB, and CHSJ as a petunia state-transition signature, identify the likely transition drivers and tell me which of the original genes look most intervention-worthy afterward.",
+    "covers_tools": ["grn_transition_drivers", "grn_candidate_triage", "grn_intervention_strategy_ranker"],
+    "checks_spec": [
+      { "type": "used_tools_any", "tools": ["grn_transition_drivers", "grn_upstream", "grn_diff_regulation"] },
+      { "type": "used_tools_any", "tools": ["grn_candidate_triage", "grn_consensus_ranking", "grn_intervention_strategy_ranker"] },
+      { "type": "answer_has_any", "terms": ["AN2", "JAF13", "DFR", "driver", "intervention"] },
+      { "type": "n_skills_gte", "value": 2 }
+    ]
+  },
+  {
+    "label": "literature ortholog names to petunia dsrna candidate",
+    "question": "I only have literature names from other ornamentals like DntMYB1, TrMYB1, and RcMYB308. Ground those into petunia candidates and tell me which mapped candidate is the best RNAi target to test first.",
+    "covers_tools": ["grn_literature_grounding", "grn_dsrna_screen", "grn_candidate_triage"],
+    "checks_spec": [
+      { "type": "used_tools_any", "tools": ["grn_literature_grounding", "grn_literature_review"] },
+      { "type": "used_tools_any", "tools": ["grn_dsrna_screen", "grn_intervention_strategy_ranker", "grn_candidate_triage"] },
+      { "type": "answer_has_any", "terms": ["petunia", "RNAi", "mapped candidate", "first"] },
+      { "type": "n_skills_gte", "value": 2 }
+    ]
+  },
+  {
+    "label": "cell-state driver to perturbation-ready candidate",
+    "question": "From this treated-versus-control human transition signature — TP53, CDKN1A, BAX, MDM2, and BCL2 — identify the likely driver TFs, then tell me whether the strongest driver looks better suited to CRISPR or dsRNA as a first perturbation modality.",
+    "covers_tools": ["grn_transition_drivers", "grn_crispr_vs_dsrna_compare", "grn_intervention_strategy_ranker"],
+    "checks_spec": [
+      { "type": "used_tools_any", "tools": ["grn_transition_drivers", "grn_trajectory_drivers"] },
+      { "type": "used_tools_any", "tools": ["grn_crispr_vs_dsrna_compare", "grn_crispr_compare", "grn_dsrna_screen"] },
+      { "type": "answer_has_any", "terms": ["TP53", "CRISPR", "dsRNA", "driver", "transition"] },
+      { "type": "n_skills_gte", "value": 2 }
+    ]
+  }
+]

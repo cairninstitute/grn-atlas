@@ -40,6 +40,13 @@ API_RETRIES = 6
 API_BACKOFF_S = 5
 API_TIMEOUT_S = 180
 
+try:
+    from _test_llm_tool_extensions import EXTRA_ARG_MAP, EXTRA_TOOLS, EXTRA_TOOL_TO_SKILL
+except Exception:
+    EXTRA_TOOLS = []
+    EXTRA_TOOL_TO_SKILL = {}
+    EXTRA_ARG_MAP = {}
+
 # ---------------------------------------------------------------------------
 # Tool definitions (OpenAI function-calling format)
 # ---------------------------------------------------------------------------
@@ -1048,16 +1055,19 @@ TOOLS = [
     },
 ]
 
+TOOLS.extend(EXTRA_TOOLS)
+
 # ---------------------------------------------------------------------------
 # Map tool name -> skill directory name + arg translation
 # ---------------------------------------------------------------------------
 
 _TOOL_TO_SKILL = {
-    "grn_motif_query": "grn-motif",
+    "grn_motif_query": "grn-motif-query",
     "grn_modules": "grn-module",
     "grn_diff_regulation": "grn-diff-regulation",
     "grn_inferred_edges": "grn-infer",
 }
+_TOOL_TO_SKILL.update(EXTRA_TOOL_TO_SKILL)
 
 
 def _tool_to_cli(tool_name: str, args: dict, http_url: str | None) -> list[str]:
@@ -1106,6 +1116,7 @@ def _tool_to_cli(tool_name: str, args: dict, http_url: str | None) -> list[str]:
         "combo_size": "--combo-size", "species_name": "--species-name",
         "intended_capabilities": "--intended-capabilities",
     }
+    arg_map.update(EXTRA_ARG_MAP)
 
     _BOOL_FLAGS = {"include_edge_support", "compare_curated", "include_external"}
 
@@ -1187,6 +1198,25 @@ def _answer_has_number(trace):
     return any(ch.isdigit() for ch in ans)
 
 
+def _evaluate_check_spec(trace, check):
+    ct = check["type"]
+    if ct == "used_tools_all":
+        return all(_used(trace, t) for t in check["tools"])
+    if ct == "used_tools_all_any":
+        return all(_used(trace, *group) for group in check["tool_groups"])
+    if ct == "used_tools_any":
+        return _used(trace, *check["tools"])
+    if ct == "used_tool_arg_contains":
+        return _used_with(trace, check["tool"], check["arg"], check["value"])
+    if ct == "n_skills_gte":
+        return _n_skills(trace) >= int(check["value"])
+    if ct == "answer_has_any":
+        return _answer_has_any(trace, *check["terms"])
+    if ct == "answer_has_number":
+        return _answer_has_number(trace)
+    return False
+
+
 QUESTIONS = [
     # =================================================================
     # Category 1: Network intersection / shared regulators (2 skills)
@@ -1228,7 +1258,7 @@ QUESTIONS = [
                 c["name"] in ("grn_perturbation", "grn_network") and
                 ("AT5G11260" in str(c["args"]) or "HY5" in str(c["args"]))
                 for c in t["tool_calls"])),
-            ("called enrichment", lambda t: _used(t, "grn_enrichment")),
+            ("called enrichment", lambda t: _used(t, "grn_enrichment", "grn_pathway_enrichment")),
             ("used >= 3 different skills", lambda t: _n_skills(t) >= 3),
         ],
     },
@@ -1247,7 +1277,7 @@ QUESTIONS = [
                 or sum(1 for c in t["tool_calls"]
                        if c["name"] == "grn_network" and c["args"].get("gene_id") in ("TP53", "NFKB1")) >= 2
             )),
-            ("called enrichment", lambda t: _used(t, "grn_enrichment")),
+            ("called enrichment", lambda t: _used(t, "grn_enrichment", "grn_pathway_enrichment")),
             ("mentions shared target count", lambda t: _answer_has_number(t)),
         ],
     },
@@ -1382,7 +1412,7 @@ QUESTIONS = [
         "checks": [
             ("used dsrna_screen or dsrna", lambda t: _used(t, "grn_dsrna_screen", "grn_dsrna")),
             ("used perturbation", lambda t: _used(t, "grn_perturbation")),
-            ("used enrichment", lambda t: _used(t, "grn_enrichment")),
+            ("used enrichment", lambda t: _used(t, "grn_enrichment", "grn_pathway_enrichment")),
             ("mentions specificity or off-target", lambda t:
                 _answer_has_any(t, "specific", "off-target", "off_target")),
             ("used >= 3 skills", lambda t: _n_skills(t) >= 3),
@@ -1400,7 +1430,7 @@ QUESTIONS = [
         ),
         "checks": [
             ("used cascade", lambda t: _used(t, "grn_cascade")),
-            ("called enrichment", lambda t: _used(t, "grn_enrichment")),
+            ("called enrichment", lambda t: _used(t, "grn_enrichment", "grn_pathway_enrichment")),
             ("mentions affected gene count", lambda t: _answer_has_number(t)),
             ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
         ],
@@ -1469,7 +1499,7 @@ QUESTIONS = [
         ),
         "checks": [
             ("used regulon_compare", lambda t: _used(t, "grn_regulon_compare")),
-            ("called enrichment on overlap", lambda t: _used(t, "grn_enrichment")),
+            ("called enrichment on overlap", lambda t: _used(t, "grn_enrichment", "grn_pathway_enrichment")),
             ("mentions Jaccard or overlap", lambda t:
                 _answer_has_any(t, "jaccard", "overlap")),
             ("mentions number", lambda t: _answer_has_number(t)),
@@ -1639,7 +1669,7 @@ QUESTIONS = [
         ),
         "checks": [
             ("used regulon", lambda t: _used(t, "grn_regulon")),
-            ("used enrichment", lambda t: _used(t, "grn_enrichment")),
+            ("used enrichment", lambda t: _used(t, "grn_enrichment", "grn_pathway_enrichment")),
             ("mentions pathway or enriched", lambda t: _answer_has_any(t, "pathway", "enrich", "process")),
             ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
         ],
@@ -1700,7 +1730,7 @@ QUESTIONS = [
             "produce a writing-ready evidence synthesis."
         ),
         "checks": [
-            ("used evidence audit", lambda t: _used(t, "grn_evidence_audit")),
+            ("used evidence audit", lambda t: _used(t, "grn_evidence_audit", "grn_multiome_support_audit")),
             ("used confidence boundary", lambda t: _used(t, "grn_confidence_boundary")),
             ("used evidence synthesis", lambda t: _used(t, "grn_evidence_synthesis")),
             ("used >= 3 skills", lambda t: _n_skills(t) >= 3),
@@ -1946,7 +1976,7 @@ QUESTIONS = [
     # =================================================================
     {
         "question": (
-            "I compared these petunia candidates for flower color change and none looks strongly separated. "
+            "I compared these petunia candidates for flower color change — AN2, JAF13, and DFR — and none looks strongly separated. "
             "What does the current atlas evidence support, what does it not support, and what is the smallest "
             "next experiment that would reduce uncertainty?"
         ),
@@ -1996,9 +2026,9 @@ QUESTIONS = [
         "checks": [
             ("used dsrna or dsrna screen", lambda t: _used(t, "grn_dsrna", "grn_dsrna_screen")),
             ("used promoter edit prioritization or crispr", lambda t:
-                _used(t, "grn_promoter_edit_prioritization", "grn_crispr_design")),
+                _used(t, "grn_promoter_edit_prioritization", "grn_crispr_design", "grn_edit_consequence")),
             ("used experiment prioritization or optimizer", lambda t:
-                _used(t, "grn_experiment_prioritization", "grn_experiment_optimizer")),
+                _used(t, "grn_experiment_prioritization", "grn_experiment_optimizer", "grn_intervention_strategy_ranker", "grn_crispr_vs_dsrna_compare")),
             ("mentions comparison language", lambda t:
                 _answer_has_any(t, "compare", "more practical", "first experiment", "budget")),
             ("used >= 3 skills", lambda t: _n_skills(t) >= 3),
@@ -2105,6 +2135,15 @@ QUESTIONS = [
     },
 ]
 
+_SUPP_PATHS = sorted(SKILLS_DIR.glob("_test_llm_orchestration_*.json"))
+for _supp_path in _SUPP_PATHS:
+    for q in json.loads(_supp_path.read_text()):
+        checks = []
+        for spec in q.get("checks_spec", []):
+            desc = spec.get("label") or spec["type"]
+            checks.append((desc, lambda t, spec=spec: _evaluate_check_spec(t, spec)))
+        QUESTIONS.append({"question": q["question"], "checks": checks, "label": q.get("label"), "covers_tools": q.get("covers_tools", [])})
+
 
 # ---------------------------------------------------------------------------
 # Provider-backed chat completion
@@ -2194,22 +2233,40 @@ When answering questions:
    - shared/common regulators across multiple genes -> grn_shared_regulators
    - best upstream TFs explaining a gene set, DEG set, or min-overlap style upstream analysis -> grn_upstream
    - if the user explicitly says regulon -> grn_regulon, even if the gene may be non-TF or have zero targets
+   - regulon active in one imported cell state / cluster -> grn_celltype_regulon, not grn_celltype_upstream
    - promoter motif questions, even for unsupported species -> grn_motif_query
+   - promoter/chromatin/enhancer support audit for one explicit TF→target edge -> grn_cis_support_audit
+   - broader multi-layer evidence audit for one explicit TF→target edge across network, motif, chromatin, expression, and perturbation -> grn_multiome_support_audit
    - dsRNA or RNAi designability for one gene -> grn_dsrna
+   - direct dsRNA-versus-CRISPR modality comparison for the same gene set -> grn_crispr_vs_dsrna_compare
+   - predict consequences of a promoter edit, motif disruption, or coding edit -> grn_edit_consequence
+   - enhancer-linked neighborhood around one gene -> grn_enhancer_network
+   - rank intervention modalities across candidate genes under an explicit budget or intent -> grn_intervention_strategy_ranker
+   - map literature gene symbols, ortholog labels, or family cues into atlas-grounded candidates -> grn_literature_grounding
+   - start from a peak or genomic region and ask which genes it likely regulates -> grn_peak_gene_linkage
+   - identify drivers of a transition from branch labels or a transition gene signature -> grn_transition_drivers
    - what silencing / knockout changes -> grn_perturbation
    - what GO terms or pathways are enriched -> grn_enrichment
 6. Common RNAi chain: if asked whether a dsRNA can be designed and what silencing would do, call grn_dsrna, then grn_perturbation or grn_network, then grn_enrichment.
 7. Common discovery chain: if asked which species support a capability, call grn_species first, choose one matching species from the result, then continue the remaining requested analysis steps in that species.
 8. Common import-first chain: if the user explicitly says import or map a hit list before analysis, call grn_dataset_import first, then call grn_user_gene_set_analysis or the requested downstream analysis.
-9. Common inferred-validation chain: if the user asks for inferred edges or inferred regulators and then asks whether they also appear in the curated network, call grn_inferred_edges first, then call grn_network for the curated validation step.
-10. Common phenotype-first chain: if the user starts from a phenotype or design intent rather than a gene list, especially in a non-model species such as petunia, prefer grn_phenotype_targeting. Use grn_literature_review only when the user explicitly wants paper-level context or recent external literature.
-11. Common support-readiness chain: if the user asks whether a candidate, species, or proposed follow-up is actually supported for RNAi, expression, conservation, or another atlas workflow, call grn_coverage_report after the candidate-discovery step instead of answering from general impressions.
-12. Common uncertainty-boundary chain: if the user explicitly says confidence boundary, call grn_confidence_boundary. Otherwise, if the user asks what the atlas supports, does not support, what remains uncertain, or what smallest next step reduces uncertainty, prefer grn_decision_boundary. If the wording is weak-signal or generic but still asks about current atlas evidence, support vs non-support, uncertainty, or the smallest next experiment, you still must call grn_decision_boundary or grn_confidence_boundary rather than answer from general reasoning alone. If needed, expand it with grn_confidence_boundary and grn_minimal_validation.
-13. Common inferred-compare chain: if the user asks to compare GRNBoost2 and GENIE3 and then inspect the overlapping TFs, call grn_inferred_edges for both methods first, then call grn_gene_info or grn_gene_search on at least one overlapping TF before finishing.
-14. Common inferred-enrichment chain: if the user asks for GRNBoost2 or GENIE3 predicted targets and then asks what processes those targets represent, call grn_inferred_edges first and then call grn_enrichment on the returned target set before answering.
-15. In the final answer, explicitly state the requested conclusion words when relevant (for example conserved/not conserved, ortholog, mouse, shared regulators, enriched pathways) instead of implying them.
-16. Synthesize the tool results into a clear, data-backed answer.
-17. Cite specific numbers from the tool outputs.
+9. Common imported-omics chain: if the user asks to import an expression matrix or fixture and then do cell-state, trajectory, pseudotime, or packaged workflow analysis, call grn_omics_import first and wait for a successful dataset_id. Then use that returned dataset_id for grn_celltype_compare, grn_celltype_upstream, grn_trajectory_drivers, grn_pseudotime_activity, or grn_workflow as requested. Do not stop after import if the user asked for downstream imported-dataset analysis.
+10. Common inferred-validation chain: if the user asks for inferred edges or inferred regulators and then asks whether they also appear in the curated network, call grn_inferred_edges first, then call grn_network for the curated validation step.
+11. Common phenotype-first chain: if the user starts from a phenotype or design intent rather than a gene list, especially in a non-model species such as petunia, prefer grn_phenotype_targeting. Use grn_literature_review only when the user explicitly wants paper-level context or recent external literature.
+12. Common support-readiness chain: if the user asks whether a candidate, species, or proposed follow-up is actually supported for RNAi, expression, conservation, or another atlas workflow, call grn_coverage_report after the candidate-discovery step instead of answering from general impressions.
+13. Common uncertainty-boundary chain: if the user explicitly says confidence boundary, call grn_confidence_boundary. Otherwise, if the user asks what the atlas supports, does not support, what remains uncertain, or what smallest next step reduces uncertainty, prefer grn_decision_boundary. If the wording is weak-signal or generic but still asks about current atlas evidence, support vs non-support, uncertainty, or the smallest next experiment, you still must call grn_decision_boundary or grn_confidence_boundary rather than answer from general reasoning alone. If needed, expand it with grn_confidence_boundary and grn_minimal_validation.
+14. Common inferred-compare chain: if the user asks to compare GRNBoost2 and GENIE3 and then inspect the overlapping TFs, call grn_inferred_edges for both methods first, then call grn_gene_info or grn_gene_search on at least one overlapping TF before finishing.
+15. Common inferred-enrichment chain: if the user asks for GRNBoost2 or GENIE3 predicted targets and then asks what processes those targets represent, call grn_inferred_edges first and then call grn_enrichment on the returned target set before answering.
+16. If the user explicitly asks for inferred targets, inferred regulators, GRNBoost2, or GENIE3, you must still call grn_inferred_edges even if you suspect the requested species may not have inferred-edge coverage. Let the tool report unavailability rather than skipping it.
+17. If the user explicitly asks for pathway enrichment, prefer grn_pathway_enrichment over grn_enrichment unless the request also explicitly asks for GO terms, motifs, or mixed enrichment types.
+18. If the user asks you to design a CRISPR guide and then evaluate off-target risk, you must call grn_crispr_design first and then call grn_crispr_offtargets on one concrete designed guide before finishing.
+19. If the user asks for literature names from other species to be grounded into atlas-supported candidates and then prioritized for intervention, call grn_literature_grounding before candidate ranking or dsRNA/CRISPR follow-up.
+20. If the user asks for a region-to-gene interpretation and then a follow-up neighborhood or support audit, call grn_peak_gene_linkage first and use a returned or discussed gene for the second step.
+21. If the user asks for state-transition drivers and then asks what that top driver regulates in one state, call grn_transition_drivers first and then grn_celltype_regulon or grn_regulon for the selected driver.
+22. If the user asks for cell-type, single-cell, or cluster-specific regulatory analysis but has not supplied an imported dataset, do not only ask for missing inputs in plain text. First call grn_celltype_regulation so the atlas can report readiness and missing layers.
+23. In the final answer, explicitly state the requested conclusion words when relevant (for example conserved/not conserved, ortholog, mouse, shared regulators, enriched pathways) instead of implying them.
+24. Synthesize the tool results into a clear, data-backed answer.
+25. Cite specific numbers from the tool outputs.
 
 Key gene IDs to know:
 - Human genes use symbols directly: TP53, MYC, BAX, NFKB1, E2F1, etc.
@@ -2316,7 +2373,7 @@ def main():
     parser = argparse.ArgumentParser(description="LLM skill-orchestration test")
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--provider", default="auto", choices=["auto", "openrouter", "openai"])
-    parser.add_argument("--http", default=None, help="GRN Atlas server URL")
+    parser.add_argument("--http", default=os.environ.get("LLM_TEST_HTTP"), help="GRN Atlas server URL")
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--question", type=int, default=None, help="Run only question N (1-indexed)")
     args = parser.parse_args()
@@ -2365,6 +2422,8 @@ def main():
             "checks": check_results,
             "tool_calls_count": len(trace["tool_calls"]),
             "unique_skills": len(set(c["name"] for c in trace["tool_calls"])),
+            "tool_calls": trace["tool_calls"],
+            "final_answer": trace.get("final_answer"),
             "rounds": trace["rounds"],
             "elapsed_s": round(elapsed, 1),
             "error": trace["error"],

@@ -332,73 +332,16 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 
 ### Complete skill inventory
 
-The repository currently contains **61 documented skills**:
+The repository currently contains **100 documented GRN Atlas skills**:
 
-- **60 callable analysis/workflow skills** listed below
+- **99 callable analysis/workflow skills**
 - **1 overview/router skill**: `grn-atlas-overview`
 
-| # | Skill | Description |
-|---|---|---|
-| 1 | `grn-gene-search` | Fuzzy gene search by name, symbol, or ID |
-| 2 | `grn-gene-info` | Detailed gene information (symbol, type, TF status, synonyms) |
-| 3 | `grn-network` | Get regulators and/or targets of a gene with confidence scores |
-| 4 | `grn-pathfinding` | Find regulatory paths between two genes |
-| 5 | `grn-enrichment` | GO, pathway, and trait enrichment for gene sets |
-| 6 | `grn-expression` | Per-sample TPM expression profiles (arabidopsis, tomato, petunia) |
-| 7 | `grn-coexpression` | Find co-expressed gene partners across RNA-seq panels |
-| 8 | `grn-perturbation` | Predict downstream effects of gene knockouts |
-| 9 | `grn-subgraph` | Extract regulatory subgraph among a set of genes |
-| 10 | `grn-orthology` | Find orthologs and compare regulatory edges across species |
-| 11 | `grn-conservation` | Score conservation of regulatory edges between species |
-| 12 | `grn-cascade` | Model regulatory cascades from fold-change perturbations |
-| 13 | `grn-regulon` | BFS expansion of a TF's regulatory targets at configurable depth |
-| 14 | `grn-regulon-compare` | Compare two TF regulons (overlap, Jaccard, hypergeometric) |
-| 15 | `grn-upstream` | Identify upstream regulators enriched for a gene set |
-| 16 | `grn-stats` | Global database statistics (genes, edges, species coverage) |
-| 17 | `grn-species` | Species manifest with per-species layer availability |
-| 18 | `grn-provenance` | Data source versions, DOIs, and freshness audit |
-| 19 | `grn-citations` | BibTeX citations for all integrated data sources |
-| 20 | `grn-centrality` | Degree, betweenness, closeness, eigenvector centrality |
-| 21 | `grn-dsrna` | Design dsRNA constructs for RNAi gene silencing |
-| 22 | `grn-dsrna-screen` | Screen multiple genes for dsRNA designability |
-| 23 | `grn-network-patterns` | Detect autoregulation, feed-forward loops, bi-fan motifs |
-| 24 | `grn-export` | Export regulatory edges with genomic coordinates (JSON/TSV) |
-| 25 | `grn-motif` | Query TF binding motif hits in gene promoters (JASPAR 2024) |
-| 26 | `grn-module` | Community detection on regulatory networks (louvain/leiden/infomap) |
-| 27 | `grn-diff-regulation` | Differential TF activity between tissue conditions |
-| 28 | `grn-infer` | GRNBoost2/GENIE3 inferred regulatory edges from expression data |
-| 29 | `grn-evidence-audit` | Audit support for a gene or edge across loaded evidence layers |
-| 30 | `grn-coverage-report` | Score whether a species has the right loaded layers for an analysis intent |
-| 31 | `grn-candidate-triage` | Rank a candidate gene list for a research intent |
-| 32 | `grn-experiment-prioritization` | Recommend next analyses or experiments for selected genes |
-| 33 | `grn-confidence-boundary` | State what the atlas supports, does not support, and leaves ambiguous |
-| 34 | `grn-transferability` | Assess whether a candidate-level story transfers across species |
-| 35 | `grn-minimal-validation` | Compress a validation plan into the smallest defensible next step |
-| 36 | `grn-evidence-synthesis` | Build a writing-ready, atlas-grounded evidence summary with PMIDs and citations |
-| 37 | `grn-hypothesis-compare` | Compare competing candidate hypotheses and explain the current winner |
-| 38 | `grn-research-brief` | Build a structured multi-step research and experiment brief |
-| 39 | `grn-validation-plan` | Build an execution-ready validation checklist and decision matrix |
-| 40 | `grn-study-packet` | Assemble a shareable collaborator handoff packet with brief, plan, and citations |
-| 41 | `grn-study-report` | Turn a study packet into a collaborator-facing narrative report with markdown |
-| 42 | `grn-dataset-import` | Parse a user gene list/CSV/TSV, map genes onto the atlas, and report ambiguous or unmapped rows |
-| 43 | `grn-user-gene-set-analysis` | Run enrichment, upstream-regulator analysis, candidate triage, and subgraph extraction on a user-provided gene set |
-| 44 | `grn-differential-expression` | Compare atlas tissue groups or import a precomputed DEG table to identify genes with the largest expression changes |
-| 45 | `grn-experiment-optimizer` | Re-rank follow-up experiments using budget, timeline, and allowed assay constraints instead of only scientific priority |
-| 46 | `grn-literature-review` | Retrieve recent external literature for a gene, edge, pathway, or phenotype and classify papers as support, contradiction, or mention |
-| 47 | `grn-consensus-ranking` | Rank competing candidates by a weighted consensus across atlas evidence layers and optional external literature support |
-| 48 | `grn-counterfactual-analysis` | Explain what evidence shifts would most likely overturn the current lead candidate or flip the ranking |
-| 49 | `grn-variant-effect` | Assess whether a promoter-region variant overlaps motif-supported regulatory sites for a gene |
-| 50 | `grn-promoter-edit-prioritization` | Prioritize promoter windows and motif-supported sites that are strategic edit targets |
-| 51 | `grn-crispr-design` | Suggest sequence-only heuristic CRISPR guides for a provided DNA sequence |
-| 52 | `grn-primer-design` | Suggest sequence-only heuristic PCR/qPCR primer pairs for a provided DNA sequence |
-| 53 | `grn-celltype-regulation` | Report readiness and missing layers for cell-type or single-cell regulatory analysis |
-| 54 | `grn-trajectory-regulation` | Report readiness and missing layers for trajectory or time-series regulatory analysis |
-| 55 | `grn-combinatorial-perturbation` | Rank pairwise or triple perturbation combinations by predicted downstream impact |
-| 56 | `grn-species-onboarding-plan` | Generate a staged plan for onboarding a new species into the atlas architecture |
-| 57 | `grn-shared-regulators` | Find transcription factors that regulate two or more genes in common |
-| 58 | `grn-decision-boundary` | Summarize what the atlas supports, does not support, and what minimal next step reduces uncertainty |
-| 59 | `grn-input-normalization` | Normalize messy pasted inputs, infer likely structure/species, and prepare atlas-ready rows |
-| 60 | `grn-phenotype-targeting` | Start from a phenotype or design objective and produce atlas-grounded candidate targets |
+The full live inventory, with every skill name and current description, is maintained in:
+
+- [docs/SKILL_INVENTORY.md](docs/SKILL_INVENTORY.md)
+
+That inventory is the canonical skill list for the current repo state and supersedes older partial lists from earlier release phases.
 
 ## Agent skills
 
@@ -424,7 +367,7 @@ venv/bin/python .agents/skills/_test_llm_orchestration_matrix.py --provider open
 ## LLM orchestration testing
 
 The skill suite has been tested with external LLMs to validate tool selection and multi-step
-orchestration. The current repo status as of **Thursday, August 13, 2026** is:
+orchestration. The current repo status as of **Saturday, August 22, 2026** is:
 
 | Test tier | Cases | Tested | Pass rate | What it tests |
 |---|---|---|---|---|
@@ -434,27 +377,35 @@ orchestration. The current repo status as of **Thursday, August 13, 2026** is:
 | **E2E (Playwright)** | 22 | 22 | 100% (22/22) | Browser tests: all views, 14 analysis panels, 4 workflow chains, URL state |
 | **Backend API pytest** | 165 | 165 | 100% (165/165) | API contracts, science helpers, and milestone 1-7 workflow endpoints including the newer researcher-facing skills |
 | **Frontend Vitest** | 9 | 9 | 100% (9/9) | Frontend component / utility regression coverage |
-| **Single-skill LLM (GPT-5.4)** | 347 | 347 | 100% (347/347) | LLM selects the correct skill and arguments across the current expanded skill inventory |
-| **Multi-skill orchestration (GPT-5.4)** | 59 | 59 | 100% (59/59) | LLM chains multiple skills across realistic multi-step biology and workflow questions |
+| **Historical direct HTTP all-skill pass** | 90 | 90 | 100% (90/90) | One-by-one execution across the then-current Aug. 21, 2026 90-skill inventory via each skill's `scripts/run.py --http ...` surface |
+| **Single-skill LLM inventory** | 386 | 386 | inventory coverage | Natural-language routing coverage across **100/100** skills in the current inventory |
+| **Single-skill LLM (GPT-5.4 full rerun)** | 386 | 383 | 99.2% (383/386) | Latest full GPT-5.4 rerun on Saturday, August 22, 2026 across the current 386-case single-skill matrix |
+| **Multi-skill orchestration inventory** | 111 | 111 | inventory coverage | Current chained-workflow inventory: 59 legacy + 52 supplemental/expansion questions |
+| **Multi-skill orchestration (GPT-5.4 full rerun)** | 111 | 111 | 100% (111/111) | Latest full GPT-5.4 rerun on Saturday, August 22, 2026 across the current 111-question orchestration matrix |
+| **Multi-skill orchestration (Nemotron partial rerun)** | 40 | 37 | 92.5% (37/40) | Latest Saturday, August 22, 2026 paced partial rerun before provider/model exit; useful as a health check, not a full benchmark |
 
-All **61 documented skills** are documented in-repo. The older direct/HTTP harnesses still
-cover the legacy 41-skill subset, while the current LLM matrices now exercise the expanded
-post-M16 skill inventory at the routing and orchestration layer.
+All **100 documented skills** are documented in-repo. The older direct/HTTP harnesses still
+cover the legacy 41-skill subset, while the current skill inventory, coverage audit, and LLM matrices
+cover the current expanded surface.
 
 Current automated coverage boundary:
 
 - legacy direct skill harness: **41 callable skills**, **319/319 PASS**
 - legacy HTTP skill harness: **41 callable skills**, **83/83 PASS**
-- expanded skill inventory: **347/347 PASS** single-skill GPT-5.4 matrix
-- orchestration workflows: **59/59 PASS** GPT-5.4 matrix
+- historical direct HTTP all-skill pass: **90/90 PASS** on the Aug. 21, 2026 90-skill inventory snapshot
+- natural-language single-skill inventory: **386 cases**, **100/100 skills covered**
+- latest GPT-5.4 routing rerun: **383/386 PASS**
+- current orchestration inventory: **111 questions**
+- latest GPT-5.4 orchestration rerun: **111/111 PASS**
+- latest Nemotron partial rerun: **37/40 PASS** before provider/model exit
 
 Historical note: Nemotron-3-Ultra via OpenRouter was useful for finding
-routing/frontmatter weaknesses. The latest full Nemotron orchestration comparison run on
-**Friday, August 14, 2026** completed **50/59 PASS (84.7%)**, with the main misses in
-messy-input recovery, uncertainty/boundary explanation, and multi-strategy intervention
-comparison. It is a useful robustness probe, but not the best statement of current clean
-repo status. The latest fully clean published matrix results in this repo are the GPT-5.4
-results above.
+routing/frontmatter weaknesses. A completed paced expanded historical run reached
+**79/99 PASS**, with the main persistent misses in phenotype-first planning, import-first
+chaining, uncertainty/boundary explanation, and multi-strategy intervention comparison.
+The latest Saturday, August 22, 2026 rerun exited before either full matrix completed, so
+the current Nemotron numbers in this README should be interpreted as partial rerun health
+checks rather than as new full benchmark totals.
 
 Integration tests (`_test_integration.py`) cover four categories:
 cross-skill consistency (regulon↔network, search↔info, inferred↔curated, orthology, expression↔coexpression),

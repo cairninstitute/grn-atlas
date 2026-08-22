@@ -6,15 +6,18 @@ This note captures the current external-LLM testing story for the GRN Atlas skil
 
 ## Short version
 
-The current clean repo status is based on GPT-5.4:
+The current canonical repo status is:
 
-- single-skill matrix: **347/347 PASS**
-- multi-skill orchestration matrix: **59/59 PASS**
+- current documented skill inventory: **100 skills** (**99 callable + 1 overview/router**)
+- current single-skill coverage audit: **100/100 skills covered** across **386** natural-language routing prompts
+- latest GPT-5.4 single-skill rerun on Saturday, August 22, 2026: **383/386 PASS**
+- latest GPT-5.4 orchestration rerun on Saturday, August 22, 2026: **111/111 PASS**
 
-We also ran a full comparison pass with Nvidia Nemotron-3-Ultra through OpenRouter:
+We also ran comparison passes with Nvidia Nemotron-3-Ultra through OpenRouter:
 
-- full orchestration matrix: **50/59 PASS**
-- pass rate: **84.7%**
+- historical completed paced expanded orchestration matrix: **79/99 PASS**
+- latest Saturday, August 22, 2026 single-skill rerun: **255/258 PASS** before provider/model exit
+- latest Saturday, August 22, 2026 orchestration rerun: **37/40 PASS** before provider/model exit
 
 We also ran a targeted Nemotron single-skill diagnostic subset focused on the orchestration failure families and their overlapping neighboring skills:
 
@@ -31,9 +34,13 @@ Interpretation:
 
 | Model | Date | Suite | Result | Interpretation |
 |---|---|---|---|---|
-| GPT-5.4 | August 13, 2026 | Single-skill matrix | 347/347 PASS | clean current routing status |
-| GPT-5.4 | August 13, 2026 | Orchestration matrix | 59/59 PASS | clean current orchestration status |
+| GPT-5.4 | August 22, 2026 | Single-skill matrix | 383/386 PASS | current routing status on the 386-case live matrix |
+| GPT-5.4 | August 22, 2026 | Orchestration matrix | 111/111 PASS | current orchestration status on the 111-question live matrix |
+| GPT-5.4 | August 21, 2026 | Historical expanded orchestration matrix | 99/99 PASS | earlier completed expanded benchmark |
 | Nemotron-3-Ultra | August 14, 2026 | Orchestration matrix | 50/59 PASS | portability / robustness comparison |
+| Nemotron-3-Ultra | August 22, 2026 | Historical paced expanded orchestration matrix | 79/99 PASS | completed expanded portability probe; substantial but not clean support |
+| Nemotron-3-Ultra | August 22, 2026 | Partial single-skill rerun | 255/258 PASS | later health-check rerun; provider/model exited before completion |
+| Nemotron-3-Ultra | August 22, 2026 | Partial orchestration rerun | 37/40 PASS | later health-check rerun; provider/model exited before completion |
 | Nemotron-3-Ultra | August 14, 2026 | Targeted single-skill subset | 36/38 PASS | routing diagnostic centered on orchestration miss families |
 
 ## What Nemotron was able to do
@@ -98,15 +105,39 @@ Nemotron failed 9 questions that GPT-5.4 passed:
 | 56 | Capability boundary | weak "can and cannot support" explanation for petunia intervention planning |
 | 57 | Single vs double perturbation | weak comparative perturbation reasoning |
 
+In the later paced 99-question expanded run on Saturday, August 22, 2026, the persistent fail set broadened to:
+
+- Q3, Q24, Q36, Q40, Q43, Q50, Q53, Q54, Q56, Q60, Q65, Q66, Q67, Q71, Q72, Q76, Q77, Q78, Q81, Q83
+
+Those 20 persistent fails cluster into these families:
+
+| Family | Questions | Failure mode |
+|---|---|---|
+| overlap / comparison under-chaining | Q3, Q24 | model retrieved partial evidence but did not complete overlap follow-up, enrichment, or gene-info steps |
+| phenotype-first petunia targeting | Q36, Q50, Q54, Q81, Q83 | model found candidates but did not consistently turn them into explicit RNAi-ready ranking or validation-plan output |
+| intervention tradeoff / boundary explanation | Q53, Q56 | weak final planning synthesis and weak “what the atlas can and cannot support” framing |
+| transferability / family-rescue synthesis | Q40, Q67 | weak cross-species transfer narrative, sometimes compounded by provider overload |
+| motif / promoter / edit chaining | Q43, Q78 | motif-side tools were touched, but the full promoter-support/edit interpretation did not complete cleanly |
+| import-first chained workflows | Q65, Q66, Q71, Q77 | hardest current Nemotron family; returned-id reuse and downstream chaining remain fragile |
+| decision-boundary / calibration / counterfactual synthesis | Q60, Q72, Q76 | model called part of the workflow surface but did not satisfy the requested synthesis structure |
+
 ## Failure pattern
 
-Observed failure buckets in the final 59-question Nemotron run:
+Observed failure buckets in the paced 99-question Nemotron run on Saturday, August 22, 2026:
 
-- **3 zero-tool-call misses**
-- **6 tool-selection / under-chaining / synthesis misses**
-- **0 provider-collapse failures** in the final completed run
+- **20 persistent fails**
+- **9 flaky passes** that failed first and passed on retry
+- a mixed failure profile:
+  - true under-chaining / synthesis misses
+  - provider overload / immediate upstream failures
+  - a small number of real workflow-path issues surfaced by the run
 
-That last point is important: the final 59-question run did not fail because the provider fell over. It failed because the model more often missed the right starting skill, used too few skills, or failed to synthesize the required comparison or uncertainty framing.
+Notable runtime-path issues exposed by the expanded run:
+
+- Q66 surfaced a real `grn-omics-import` runtime error
+- Q76, Q77, and Q78 surfaced HTTP 404 workflow-path failures
+
+So the expanded Nemotron result is not just “the provider fell over” and not just “the model reasoned poorly.” It is a mixed stress result that reveals both weaker orchestration behavior and a few chain-path issues worth hardening.
 
 ## What this says about the current system
 
@@ -122,6 +153,7 @@ Still more fragile on weaker orchestrators:
 
 - abstract or underspecified starting prompts
 - messy-import recovery before downstream analysis
+- import-first returned-id chaining
 - weak-signal and uncertainty-boundary questions
 - tradeoff-heavy intervention comparisons
 - phenotype-to-experiment planning in non-model species
@@ -132,25 +164,22 @@ Still more fragile on weaker orchestrators:
 Accurate public framing:
 
 - GRN Atlas now has a broad, tested skill layer for regulatory-network research workflows.
-- The clean current repo status is 347/347 GPT-5.4 single-skill pass and 59/59 GPT-5.4 orchestration pass.
+- The current repo status is 383/386 on the live GPT-5.4 single-skill matrix and 111/111 on the live GPT-5.4 orchestration matrix.
 - We also tested the same workflow surface against Nemotron-3-Ultra through OpenRouter.
-- Nemotron completed the full 59-question orchestration matrix at 50/59 pass, which was strong enough to validate broad portability while still revealing where weaker orchestrators struggle.
+- Nemotron completed a historical paced 99-question expanded orchestration matrix at 79/99 pass, and a later Aug. 22 rerun reached 255/258 single-skill and 37/40 orchestration cases before provider/model exit.
 - A targeted 38-case Nemotron single-skill diagnostic then passed 36/38, showing that many of the remaining weaknesses are in orchestration depth rather than basic skill selection.
 - Those weaker-model misses were useful: they directly shaped frontmatter, workflow guidance, and skill-boundary improvements.
 
 ## Useful phrases for later writing
 
 - "tested not only with deterministic harnesses, but with external LLM-driven tool use"
-- "clean full-matrix GPT-5.4 performance on the current workflow surface"
-- "cross-model comparison with Nemotron-3-Ultra revealed the remaining weak spots in messy-input recovery, uncertainty framing, and intervention tradeoff reasoning"
+- "clean full-matrix GPT-5.4 performance on the current orchestration surface"
+- "cross-model comparison with Nemotron-3-Ultra revealed the remaining weak spots in phenotype-first planning, import-first chaining, uncertainty framing, and intervention tradeoff reasoning"
 - "the same skill layer can support both interactive UI use and agent-driven orchestration"
 - "a targeted Nemotron single-skill diagnostic passed 36/38, suggesting the remaining gap is more about chaining and synthesis than raw tool routing"
 
 ## Source artifacts
 
-- GPT-5.4 full clean orchestration matrix:
-  - `.agents/skills/_test_results_llm_orchestration_matrix_full_clean3_2026-08-13.json`
-- Nemotron full orchestration matrix:
-  - `.run_logs/nemotron_full_orchestration_matrix_2026-08-14.json`
-- Nemotron targeted single-skill subset:
-  - `.run_logs/nemotron_targeted_single_subset_2026-08-14.json`
+- Current persistent in-repo audit artifact:
+  - `.agents/skills/_test_llm_coverage_audit.json`
+- Raw temporary rerun outputs and local `.run_logs/` artifacts were intentionally cleaned from the workspace after the summarized results were recorded in the docs and release materials.

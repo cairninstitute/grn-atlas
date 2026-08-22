@@ -1,0 +1,162 @@
+[
+  {
+    "label": "benchmark-status plus species readiness",
+    "question": "Show me the current benchmark status of the atlas, then give me a concise organism overview for petunia and its onboarding readiness.",
+    "covers_tools": ["grn_benchmark_status", "grn_organism_overview", "grn_species_onboarding_status"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_benchmark_status", "grn_organism_overview", "grn_species_onboarding_status"]},
+      {"type": "answer_has_any", "terms": ["petunia", "benchmark", "readiness"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "celltype chain from imported dataset",
+    "question": "Import the expression fixture at .agents/skills/test_fixtures/omics_human_small.tsv as a human pseudobulk dataset named omics_human_small, then use the returned dataset_id to compare treated versus control cell states in that imported dataset, identify upstream regulators for TP53,MDM2,CDKN1A in the treated state of that same dataset, and summarize the strongest regulator signal.",
+    "covers_tools": ["grn_omics_import", "grn_celltype_compare", "grn_celltype_upstream"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_omics_import", "grn_celltype_compare", "grn_celltype_upstream"]},
+      {"type": "answer_has_any", "terms": ["TP53", "regulator", "treated", "control"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "trajectory chain from imported dataset",
+    "question": "Import the expression fixture at .agents/skills/test_fixtures/omics_human_small.tsv as a human pseudobulk dataset named omics_human_small, then use the returned dataset_id and returned treated-versus-control contrast_id to identify trajectory drivers for that imported contrast and run pseudotime-style TF activity scoring on TP53:3.0,MDM2:-2.0,CDKN1A:2.5,BAX:1.8,BCL2:-1.5 in the same imported dataset.",
+    "covers_tools": ["grn_omics_import", "grn_trajectory_drivers", "grn_pseudotime_activity"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_omics_import", "grn_trajectory_drivers", "grn_pseudotime_activity"]},
+      {"type": "answer_has_any", "terms": ["TP53", "driver", "activity"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "workflow import to activity",
+    "question": "Import the expression fixture at .agents/skills/test_fixtures/omics_human_small.tsv as a human pseudobulk dataset named omics_human_small, then use the returned dataset_id to run the packaged import-to-activity workflow and explain what it says the next action is.",
+    "covers_tools": ["grn_omics_import", "grn_workflow"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_omics_import", "grn_workflow"]},
+      {"type": "answer_has_any", "terms": ["import-to-activity", "next action", "TF activity"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  },
+  {
+    "label": "chromatin support chain",
+    "question": "For TP53 in human, audit chromatin support, then query direct promoter motif evidence and summarize whether the regulatory support looks promoter-backed or only network-backed.",
+    "covers_tools": ["grn_chromatin_support", "grn_motif_query"],
+    "checks_spec": [
+      {"type": "used_tools_any", "tools": ["grn_chromatin_support", "grn_motif_query"]},
+      {"type": "answer_has_any", "terms": ["promoter", "motif", "chromatin", "support"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  },
+  {
+    "label": "peak import chain",
+    "question": "Import the chromatin peaks fixture at .agents/skills/test_fixtures/peaks_human_small.bed for human, then inspect chromatin support for TP53 and summarize whether any imported peak-backed evidence is visible.",
+    "covers_tools": ["grn_peak_import", "grn_chromatin_support"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_peak_import", "grn_chromatin_support"]},
+      {"type": "answer_has_any", "terms": ["peak", "TP53", "evidence", "chromatin"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  },
+  {
+    "label": "crispr design chain",
+    "question": "For TP53 in human, compare CRISPR knockout versus CRISPRi versus CRISPRa, then evaluate off-target risk for guide GAGCGCTGCTCAGATAGCGA and summarize which strategy looks safest to start with.",
+    "covers_tools": ["grn_crispr_compare", "grn_crispr_offtargets"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_crispr_compare", "grn_crispr_offtargets"]},
+      {"type": "answer_has_any", "terms": ["CRISPRi", "knockout", "off-target", "safe"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  },
+  {
+    "label": "family rescue transfer chain",
+    "question": "For JAF13 in petunia, run a family-rescue style assessment, then evaluate transfer risk to tomato and summarize whether cross-species extrapolation looks safe or risky.",
+    "covers_tools": ["grn_family_rescue", "grn_transfer_risk"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_family_rescue", "grn_transfer_risk"]},
+      {"type": "answer_has_any", "terms": ["petunia", "tomato", "risk", "family"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  },
+  {
+    "label": "genome browser and motif chain",
+    "question": "Show me the genome context for TP53 in human, then query promoter motif support and summarize the locus and promoter evidence together.",
+    "covers_tools": ["grn_genome_browser", "grn_motif"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_genome_browser"], ["grn_motif", "grn_motif_query"]]},
+      {"type": "answer_has_any", "terms": ["chromosome", "promoter", "motif", "TP53"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  },
+  {
+    "label": "infer plus module chain",
+    "question": "In human, inspect inferred targets for TP53 using GRNBoost2 or GENIE3 style inferred edges, then identify the module containing TP53 and summarize whether the inferred neighborhood and module agree.",
+    "covers_tools": ["grn_infer", "grn_module"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_infer", "grn_inferred_edges"], ["grn_module", "grn_modules"]]},
+      {"type": "answer_has_any", "terms": ["TP53", "module", "inferred", "agree"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  },
+  {
+    "label": "ligand receptor signaling chain",
+    "question": "In human, list likely ligand-receptor or signaling pairs, then trace one signaling entry to downstream transcription factors and summarize whether the signal looks direct or fallback-backed.",
+    "covers_tools": ["grn_ligand_receptor", "grn_signaling_to_tf"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_ligand_receptor", "grn_signaling_to_tf"]},
+      {"type": "answer_has_any", "terms": ["signaling", "TF", "fallback", "direct"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  },
+  {
+    "label": "activity and regulon enrichment chain",
+    "question": "Using human gene-value statistics TP53:3.0,MDM2:-2.0,CDKN1A:2.5,BAX:1.8,BCL2:-1.5,GADD45A:2.1, score TF activity, score pathway activity, then test regulon enrichment for TP53,MDM2,CDKN1A,BAX,BCL2 and summarize whether the three analyses point to the same regulator program.",
+    "covers_tools": ["grn_tf_activity", "grn_pathway_activity", "grn_regulon_enrichment"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_tf_activity", "grn_pathway_activity", "grn_regulon_enrichment"]},
+      {"type": "answer_has_any", "terms": ["TP53", "pathway", "regulon", "activity"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "dsrna sequence quality chain",
+    "question": "For JAF13 in petunia, design or inspect a dsRNA-style intervention by checking isoform coverage and then scoring the siRNA pool for sequence GAAGAAGACCTACAACCACAGGCCAAAAGGCCCTCGGCTGCATTATCTCCTGAAGATCTCACTGATACAGAGTGGTATTTCTTAGTATGCATGTCGTTCGTCTTCAATGTTGGCCAAGGGTTGCCAGGAAAGAGCTTAGCAAGGAACGAAACAATCTGGCTAGGTAATGCTCACCAAGCAGAGAGTAGAACTGTTGTATGCTTTCCATATCTAGGAGGAGTAATTGAGCTGGGAGTCACTGAGCTTGTTG, then summarize whether isoform coverage and siRNA quality look acceptable.",
+    "covers_tools": ["grn_isoform_coverage", "grn_sirna_pool"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_isoform_coverage", "grn_sirna_pool"]},
+      {"type": "answer_has_any", "terms": ["isoform", "siRNA", "quality", "coverage"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  },
+  {
+    "label": "trait and pathway enrichment chain",
+    "question": "For TP53,BAX,MDM2,CDKN1A in human, run pathway enrichment and trait association analysis together, then summarize what diseases or phenotypes are most consistent with the pathway story.",
+    "covers_tools": ["grn_pathway_enrichment", "grn_trait_association"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_pathway_enrichment", "grn_enrichment"], ["grn_trait_association"]]},
+      {"type": "answer_has_any", "terms": ["pathway", "trait", "disease", "phenotype"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  },
+  {
+    "label": "perturbation import and calibration chain",
+    "question": "Import the perturbation fixture at .agents/skills/test_fixtures/perturbation_human_small.tsv as human CRISPR_KO observations, then run perturbation calibration for TP53 and summarize whether predicted and observed effects look concordant.",
+    "covers_tools": ["grn_perturbation_import", "grn_perturbation_calibration"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_perturbation_import", "grn_perturbation_calibration"]},
+      {"type": "answer_has_any", "terms": ["TP53", "calibration", "concord", "observed"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  },
+  {
+    "label": "tissue coexpression and organism context",
+    "question": "Give me a species overview for petunia, then inspect tissue-specific coexpression for JAF13 and summarize in which tissue context the edge weights look most relevant.",
+    "covers_tools": ["grn_organism_overview", "grn_tissue_coexpression"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_organism_overview", "grn_tissue_coexpression"]},
+      {"type": "answer_has_any", "terms": ["petunia", "tissue", "coexpression", "JAF13"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  }
+]

@@ -30,12 +30,18 @@ venv/bin/python .agents/skills/_test_llm_orchestration_matrix.py --provider open
 ```
 
 Coverage note: the dedicated skill harnesses above currently cover the legacy 41-skill
-set. Newer milestone 2-7 skills are currently validated through `backend/tests/` API
-tests plus targeted CLI smoke checks rather than the older `_test_all_skills*.py`
-harnesses. As of **Thursday, August 13, 2026**, the current broad LLM status is:
+set. The repo also contains a historical direct HTTP full-surface execution pass recorded in
+[`docs/skill_test_results_2026-08-21.md`](./skill_test_results_2026-08-21.md), where the
+then-current 90 documented skills were executed individually through their own
+`scripts/run.py --http` surface. As of **Saturday, August 22, 2026**, the current broad
+LLM/coverage status is:
 
-- **347/347 PASS** on the GPT-5.4 single-skill matrix
-- **59/59 PASS** on the GPT-5.4 orchestration matrix
+- **100 documented skills** in the current inventory (**99 callable + 1 overview/router**)
+- **386** natural-language single-skill cases covering **100/100** skills
+- **383/386 PASS** on the latest GPT-5.4 single-skill rerun
+- **111** orchestration questions in the current chained-workflow inventory
+- **111/111 PASS** on the latest GPT-5.4 orchestration rerun
+- **37/40 PASS** on the latest Nemotron partial orchestration rerun before provider/model exit
 
 ## Fetch source data, then build the database
 

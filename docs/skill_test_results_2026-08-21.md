@@ -1,8 +1,10 @@
 # Agent Skill Test Results — 2026-08-21
 
-**Result: 90/90 skills passing**
+Historical snapshot: on Thursday, August 21, 2026, the then-current 90-skill inventory passed **90/90** direct HTTP one-by-one execution checks.
 
-All skills tested via `scripts/run.py --http http://localhost:8000` against a running backend.
+This file is kept for historical traceability. The current repository inventory on Saturday, August 22, 2026 is **100 documented skills** (**99 callable + 1 overview/router**), so this file should not be read as the current full-surface status page.
+
+All skills in that Aug. 21 snapshot were tested via `scripts/run.py --http http://localhost:8000` against a running backend.
 
 ## Summary
 
@@ -17,7 +19,7 @@ All skills tested via `scripts/run.py --http http://localhost:8000` against a ru
   (`backend.{gene_id}()`) instead of actual code. Fixed to
   `backend.chromatin_gene_support(args.gene_id)`.
 
-## All 90 skills tested
+## All 90 skills tested in the Aug. 21 snapshot
 
 grn-atlas-overview, grn-benchmark-status, grn-candidate-triage,
 grn-cascade, grn-celltype-compare, grn-celltype-regulation,

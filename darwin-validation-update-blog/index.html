@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validation Update: New Data, Biological Benchmarking, and LLM Stress Testing in GRN Atlas</title>
+  <style>
+    :root {
+      --fg: #111827;
+      --muted: #4b5563;
+      --border: #d1d5db;
+      --bg: #ffffff;
+      --accent: #0f766e;
+      --code-bg: #f3f4f6;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+    }
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    h1, h2, h3 {
+      line-height: 1.25;
+      margin-top: 1.6em;
+      margin-bottom: 0.6em;
+    }
+    h1:first-child {
+      margin-top: 0;
+    }
+    p, ul, ol, table, blockquote {
+      margin: 0 0 1em 0;
+    }
+    .meta {
+      color: var(--muted);
+      margin-bottom: 0.4em;
+    }
+    .tags {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 1.4em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.96rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f9fafb;
+    }
+    code {
+      background: var(--code-bg);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      font-size: 0.95em;
+    }
+    blockquote {
+      border-left: 4px solid var(--border);
+      padding-left: 16px;
+      color: var(--muted);
+    }
+    .footer {
+      margin-top: 2.5em;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .hero-link {
+      display: inline-block;
+      margin: 0.4em 0 1.2em;
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .hero-link:hover {
+      text-decoration: underline;
+    }
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 16px 24px;
+    }
+    .site-header a {
+      text-decoration: none;
+      color: var(--fg);
+    }
+    .site-header .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .site-header .logo-group img {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+    }
+    .site-header .logo-group span {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .site-header nav {
+      display: flex;
+      gap: 24px;
+      font-size: 0.95rem;
+    }
+    .site-header nav a {
+      color: var(--muted);
+    }
+    .site-header nav a:hover {
+      color: var(--accent);
+    }
+    .header-rule {
+      max-width: 920px;
+      margin: 0 auto;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+    figure {
+      margin: 1.25em 0 1.5em;
+    }
+    figure img {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: block;
+    }
+    figcaption {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 0.5em;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="http://cairninstitute.com" class="logo-group">
+      <img src="cairn-logo.jpg" alt="CAIRN Institute" />
+      <span>CAIRN Institute</span>
+    </a>
+    <nav>
+      <a href="http://cairninstitute.com">Home</a>
+      <a href="http://cairninstitute.com/about">About</a>
+      <a href="http://cairninstitute.com/projects">Projects</a>
+      <a href="mailto:info@cairninstitute.com">Contact</a>
+    </nav>
+  </header>
+  <hr class="header-rule" />
+  <main>
+    <h1>Validation Update: New Data, Biological Benchmarking, and LLM Stress Testing in GRN Atlas</h1>
+
+    <p class="meta">Author: CAIRN Institute</p>
+    <p class="meta">Published: August 22, 2026</p>
+    <p class="meta">Read time: 10&ndash;12 minutes</p>
+    <p class="tags">#Genomics #Bioinformatics #GeneRegulation #SystemsBiology #OpenScience #AgenticAI</p>
+    <a class="hero-link" href="https://github.com/cairninstitute/grn-atlas">Explore the repository on GitHub &rarr;</a>
+
+    <h2>Quick Summary</h2>
+    <p>Today we are publishing a validation-focused update for GRN Atlas.</p>
+    <p>Over the past week, we expanded the atlas data surface, added and hardened a large set of new research skills, and ran three different validation layers:</p>
+    <ul>
+      <li>direct biological validation of inferred and projected regulatory edges</li>
+      <li>statistical validation at the network level and against independent benchmark sets</li>
+      <li>skill and orchestration testing through both direct harnesses and external LLM-driven tool use</li>
+    </ul>
+    <p>The current repository state is materially stronger than the initial public release:</p>
+    <ul>
+      <li>current species coverage is <strong>human, mouse, arabidopsis, tomato, petunia, pepper, and potato</strong>, with <strong>dahlia onboarding prepared</strong></li>
+      <li>the repository now contains <strong>90 documented GRN Atlas skills</strong></li>
+      <li>the direct HTTP skill harness currently passes <strong>90/90 skills</strong></li>
+      <li>the LLM single-skill inventory now contains <strong>376 natural-language cases covering 90/90 skills</strong></li>
+      <li>the clean GPT-5.4 expanded orchestration matrix is <strong>99/99 pass</strong></li>
+      <li>the paced Nemotron-3-Ultra expanded orchestration matrix is <strong>79/99 pass</strong>, with <strong>9 retry-recovered flaky passes</strong></li>
+    </ul>
+    <p>Most importantly, the new validation work was not limited to software contracts. We also reran direct biological benchmarks on the network itself and completed a milestone validation suite across import, TF activity, pathway activity, chromatin support, trajectory workflows, dsRNA, CRISPR, perturbation calibration, transferability, and packaged workflow generation.</p>
+
+    <h2>Why This Update Matters</h2>
+    <p>Many biological tools are evaluated only at the interface level.</p>
+    <p>That is not enough for a system like GRN Atlas.</p>
+    <p>If a platform claims to support regulatory-network reasoning, intervention planning, and cross-species hypothesis transfer, then three things have to be tested separately:</p>
+    <ul>
+      <li>whether the underlying network data are biologically plausible</li>
+      <li>whether the statistical benchmark surfaces behave as expected</li>
+      <li>whether the researcher-facing tools and skills can actually execute multi-step workflows correctly</li>
+    </ul>
+    <p>This update is about method hardening. It is the difference between &ldquo;the code runs&rdquo; and &ldquo;the scientific and workflow surfaces have been exercised directly.&rdquo;</p>
+
+    <h2>What New Data Was Added</h2>
+    <p>The atlas now spans a broader species and data surface than the initial release branch.</p>
+    <p>Current species coverage is:</p>
+    <ul>
+      <li>human</li>
+      <li>mouse</li>
+      <li>arabidopsis</li>
+      <li>tomato</li>
+      <li>petunia</li>
+      <li>pepper</li>
+      <li>potato</li>
+    </ul>
+    <p>with dahlia onboarding prepared.</p>
+    <p>The atlas continues to combine curated regulation, inferred edges, promoter and motif context, orthology and transfer layers, pathway and trait annotation, perturbation surfaces, RNAi / dsRNA design surfaces, CRISPR-oriented heuristic surfaces, and importable omics, chromatin, and workflow packaging layers.</p>
+    <p>At the network level, the current build includes:</p>
+    <ul>
+      <li><strong>arabidopsis:</strong> 919,449 edges</li>
+      <li><strong>tomato:</strong> 248,288 edges</li>
+      <li><strong>petunia:</strong> 236,727 edges</li>
+      <li><strong>human:</strong> 17,946 edges</li>
+      <li><strong>mouse:</strong> 17,692 edges</li>
+      <li><strong>rice:</strong> 16,933 edges</li>
+      <li><strong>potato:</strong> 11,409 edges</li>
+      <li><strong>pepper:</strong> 2,212 edges</li>
+    </ul>
+    <p>This is not just more data. It is a broader surface for validation, especially in plant and non-model workflows.</p>
+
+    <h2>Direct Validation of Inferred and Projected Regulatory Edges</h2>
+    <p>One of the key questions for GRN Atlas is whether the inferred and projected edges are good enough to use as part of a defensible workflow.</p>
+    <p>We reran the direct gold-standard quality checks against the current build.</p>
+
+    <h3>Gold-standard edge quality</h3>
+    <p>For species where we have explicit positive and negative control sets, the refreshed reports remained strong:</p>
+    <table>
+      <thead>
+        <tr><th>Species</th><th>Recall</th><th>Specificity</th><th>Precision</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Petunia</td><td>93.75% (30/32)</td><td>100.0%</td><td>100.0%</td></tr>
+        <tr><td>Tomato</td><td>84.21% (32/38)</td><td>100.0%</td><td>100.0%</td></tr>
+      </tbody>
+    </table>
+    <p>Those numbers matter because petunia and tomato are exactly the kinds of species where a researcher is most likely to worry that projected or inferred layers are weaker than the canonical human or Arabidopsis surfaces.</p>
+
+    <h3>Independent benchmark validation</h3>
+    <p>We also reran the independent benchmark surfaces:</p>
+    <table>
+      <thead>
+        <tr><th>Benchmark</th><th>Result</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Arabidopsis vs DAP-seq AUROC</td><td>0.8801</td></tr>
+        <tr><td>Arabidopsis vs DAP-seq AUPRC</td><td>0.6990</td></tr>
+        <tr><td>Arabidopsis vs DAP-seq precision@100</td><td>0.9000</td></tr>
+        <tr><td>Human DoRothEA vs TRRUST AUROC</td><td>1.0000</td></tr>
+        <tr><td>Human DoRothEA vs TRRUST AUPRC</td><td>1.0000</td></tr>
+        <tr><td>Human DoRothEA vs TRRUST precision@100</td><td>1.0000</td></tr>
+      </tbody>
+    </table>
+    <p>These are important for two reasons:</p>
+    <ul>
+      <li>they test the network against independent evidence rather than only internal consistency</li>
+      <li>they exercise both plant and human validation paths</li>
+    </ul>
+
+    <h2>Statistical Validation at the Network Level</h2>
+    <p>We also regenerated the population-level network validation reports across the current species build.</p>
+    <p>Headline results:</p>
+    <table>
+      <thead>
+        <tr><th>Species</th><th>Edges</th><th>Coherence (&sigma;)</th><th>Multi-evidence z</th><th>Motif enrichment</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>arabidopsis</td><td>919,449</td><td>1.71</td><td>0.28</td><td>&mdash;</td></tr>
+        <tr><td>tomato</td><td>248,288</td><td>35.17</td><td>2.36</td><td>38.55x</td></tr>
+        <tr><td>petunia</td><td>236,727</td><td>30.25</td><td>2.08</td><td>29.53x</td></tr>
+        <tr><td>human</td><td>17,946</td><td>6.82</td><td>-2.24</td><td>&mdash;</td></tr>
+        <tr><td>mouse</td><td>17,692</td><td>&mdash;</td><td>0</td><td>&mdash;</td></tr>
+        <tr><td>rice</td><td>16,933</td><td>&mdash;</td><td>0</td><td>27.99x</td></tr>
+        <tr><td>potato</td><td>11,409</td><td>&mdash;</td><td>0</td><td>3.33x</td></tr>
+        <tr><td>pepper</td><td>2,212</td><td>&mdash;</td><td>0</td><td>28.5x</td></tr>
+      </tbody>
+    </table>
+    <p>This layer is useful because it asks a different question from the gold-standard reports. Instead of asking &ldquo;did this edge match a held-out truth set?&rdquo;, it asks whether the network as a population shows the kinds of structural and motif-support patterns we expect from a plausible regulatory graph.</p>
+
+    <h2>The New Validation Suite</h2>
+    <p>Beyond the legacy validation scripts, we implemented and ran a full milestone benchmark suite under <code>backend/scripts/</code>.</p>
+    <p>The full suite completed successfully on Friday, August 21, 2026:</p>
+    <ul>
+      <li>suite execution status: <code>pass</code></li>
+      <li>scripts executed: <code>15</code></li>
+      <li>benchmark JSON outputs written: <code>12</code></li>
+    </ul>
+    <p>That means every planned validation script for the roadmap now exists and executed successfully.</p>
+
+    <h3>Milestone benchmark coverage</h3>
+    <table>
+      <thead>
+        <tr><th>Milestone</th><th>Area</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>M1</td><td>omics import foundation</td><td>pass</td></tr>
+        <tr><td>M2a</td><td>pathway activity</td><td>pass</td></tr>
+        <tr><td>M2b</td><td>TF activity</td><td>pass</td></tr>
+        <tr><td>M3</td><td>cell-type workflows</td><td>pass</td></tr>
+        <tr><td>M4</td><td>chromatin layer</td><td>pass</td></tr>
+        <tr><td>M5</td><td>trajectory workflows</td><td>pass</td></tr>
+        <tr><td>M6</td><td>RNAi / dsRNA</td><td>pass</td></tr>
+        <tr><td>M7</td><td>CRISPR heuristics</td><td>pass</td></tr>
+        <tr><td>M8</td><td>perturbation calibration</td><td>pass</td></tr>
+        <tr><td>M9</td><td>signaling &rarr; TF</td><td>pass</td></tr>
+        <tr><td>M10</td><td>living validation dashboard</td><td>pass</td></tr>
+        <tr><td>M11</td><td>transferability / onboarding</td><td>pass</td></tr>
+        <tr><td>M12</td><td>workflow packaging</td><td>pass</td></tr>
+      </tbody>
+    </table>
+    <p>Summary across the 12 milestone benchmark files after rerun:</p>
+    <ul>
+      <li><strong>pass:</strong> 12</li>
+      <li><strong>partial:</strong> 0</li>
+      <li><strong>fail:</strong> 0</li>
+    </ul>
+
+    <h2>What Had to Be Hardened</h2>
+    <p>The validation work did not simply confirm that everything was already correct.</p>
+    <p>Several areas needed method hardening before the suite came back clean:</p>
+    <ul>
+      <li>TF activity ranking behavior</li>
+      <li>cell-type and trajectory workflow ranking</li>
+      <li>signaling fallback behavior when direct non-TF &rarr; TF edges are sparse</li>
+      <li>benchmark artifact schema validation</li>
+      <li>comparator-style validation for dsRNA and CRISPR</li>
+      <li>species threshold aggregation and validation governance artifacts</li>
+    </ul>
+    <p>One important example was TF activity.</p>
+    <p>Earlier, the TP53-like signature benchmarks showed a failure mode where tiny perfect-overlap regulons could outrank TFs that explained more of the user&rsquo;s signature. After hardening, literal TP53 recovery passed rank-1 for both <code>ulm</code> and <code>wmean</code>, while synthetic self-consistency cases still passed.</p>
+    <p>That is exactly the kind of fix that matters scientifically. It is not cosmetic. It changes whether an activity-scoring surface is trustworthy enough to be used in downstream reasoning.</p>
+
+    <h2>New Skills and Expanded Workflow Surface</h2>
+    <p>The skill layer has expanded substantially since the earlier release state.</p>
+    <p>The repository now contains <strong>90 documented GRN Atlas skills</strong>, all of which currently pass the direct HTTP skill harness:</p>
+    <ul>
+      <li><strong>90/90 skills pass</strong></li>
+      <li>no direct-harness skill failures remain in the current status doc</li>
+    </ul>
+    <p>The newer parts of the skill surface include major additions in these families:</p>
+
+    <h3>Omics and cell-state workflows</h3>
+    <ul>
+      <li><code>grn-omics-import</code></li>
+      <li><code>grn-celltype-regulation</code></li>
+      <li><code>grn-celltype-upstream</code></li>
+      <li><code>grn-celltype-compare</code></li>
+      <li><code>grn-trajectory-drivers</code></li>
+      <li><code>grn-pseudotime-activity</code></li>
+      <li><code>grn-trajectory-regulation</code></li>
+      <li><code>grn-workflow</code></li>
+    </ul>
+
+    <h3>Chromatin and promoter-support workflows</h3>
+    <ul>
+      <li><code>grn-peak-import</code></li>
+      <li><code>grn-chromatin-support</code></li>
+      <li><code>grn-motif-query</code></li>
+      <li><code>grn-promoter-edit-prioritization</code></li>
+      <li><code>grn-variant-effect</code></li>
+    </ul>
+
+    <h3>RNAi and CRISPR follow-up layers</h3>
+    <ul>
+      <li><code>grn-dsrna</code></li>
+      <li><code>grn-dsrna-screen</code></li>
+      <li><code>grn-isoform-coverage</code></li>
+      <li><code>grn-sirna-pool</code></li>
+      <li><code>grn-crispr-design</code></li>
+      <li><code>grn-crispr-offtargets</code></li>
+      <li><code>grn-crispr-compare</code></li>
+      <li><code>grn-primer-design</code></li>
+    </ul>
+
+    <h3>Validation, calibration, and decision-support workflows</h3>
+    <ul>
+      <li><code>grn-perturbation-import</code></li>
+      <li><code>grn-perturbation-calibration</code></li>
+      <li><code>grn-transfer-risk</code></li>
+      <li><code>grn-family-rescue</code></li>
+      <li><code>grn-species-onboarding-status</code></li>
+      <li><code>grn-benchmark-status</code></li>
+      <li><code>grn-validation-plan</code></li>
+      <li><code>grn-study-packet</code></li>
+      <li><code>grn-study-report</code></li>
+    </ul>
+
+    <p>These additions matter because they push the system beyond static network browsing into import-first analysis, assay-oriented follow-up, and collaborator-facing handoff workflows.</p>
+
+    <figure>
+      <img src="gene_regulatory_network.png" alt="A regulatory-network view in GRN Atlas showing signed edges, confidence encoding, gene metadata, and expression context." />
+      <figcaption>A regulatory-network view in GRN Atlas showing signed edges, confidence encoding, gene metadata, and expression context. The same atlas surfaces validated in the benchmark suite are also exposed interactively in the UI and through the skill layer.</figcaption>
+    </figure>
+
+    <h2>Single-Skill Testing</h2>
+    <p>The single-skill story is now broader than the older baseline matrices.</p>
+    <p>There are two relevant views of single-skill testing in the repository:</p>
+
+    <h3>1. Direct skill execution harness</h3>
+    <p>This is the most literal check of whether each skill runs correctly through its own <code>scripts/run.py</code> entrypoint against the backend.</p>
+    <p>Current result:</p>
+    <ul>
+      <li><strong>90/90 skills passing</strong></li>
+    </ul>
+
+    <h3>2. Natural-language single-skill coverage inventory</h3>
+    <p>This asks a different question: if a model receives a natural-language request, do we have routing cases that exercise the full skill surface?</p>
+    <p>Current inventory:</p>
+    <ul>
+      <li><strong>376 natural-language single-skill cases</strong></li>
+      <li><strong>90/90 skills covered</strong></li>
+    </ul>
+    <p>Historically, the clean baseline GPT-5.4 single-skill matrix remains:</p>
+    <ul>
+      <li><strong>347/347 pass</strong></li>
+    </ul>
+    <p>The later expansion work added supplemental coverage to reach the current 376-case inventory and full 90-skill surface coverage.</p>
+
+    <h2>GPT-5.4 Orchestrator Testing</h2>
+    <p>The strongest current orchestration result in the repository is the expanded GPT-5.4 matrix.</p>
+    <p>Current result:</p>
+    <ul>
+      <li><strong>99/99 pass</strong></li>
+    </ul>
+    <p>This expanded orchestration layer includes import &rarr; contrast &rarr; upstream and trajectory chains, CRISPR design plus promoter and motif follow-up, inferred-edge validation against module structure, pathway activity plus phenotype or trait interpretation, conservation plus transferability plus family-rescue chains, and phenotype-targeting plus validation-plan handoff.</p>
+    <p>In practical terms, GPT-5.4 is now clean on the full expanded workflow surface currently represented in the repository.</p>
+
+    <h2>Nemotron-3-Ultra Orchestrator Testing</h2>
+    <p>We also ran the same expanded workflow surface through Nvidia Nemotron-3-Ultra via OpenRouter, with slower pacing to reduce avoidable provider noise.</p>
+    <p>Paced expanded run result on Saturday, August 22, 2026:</p>
+    <ul>
+      <li><strong>79/99 pass</strong></li>
+      <li><strong>20 persistent fails</strong></li>
+      <li><strong>9 retry-recovered flaky passes</strong></li>
+    </ul>
+    <p>This is still useful. It tells us two things at once:</p>
+    <ul>
+      <li>the skill layer is portable enough that a weaker external orchestrator can still complete a large share of the workflow surface</li>
+      <li>the hardest workflow families are now clearly identified</li>
+    </ul>
+
+    <h3>Nemotron fail families</h3>
+    <p>The persistent fail set clustered into a few clear groups:</p>
+    <table>
+      <thead>
+        <tr><th>Family</th><th>Questions</th><th>Pattern</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Comparison under-chaining</td><td>Q3, Q24</td><td>partial retrieval without completing overlap, gene-info, or enrichment follow-up</td></tr>
+        <tr><td>Phenotype-first petunia planning and ranking</td><td>Q36, Q50, Q54, Q81, Q83</td><td>candidate discovery happened, but ranking, RNAi framing, or validation handoff was weak or incomplete</td></tr>
+        <tr><td>Intervention tradeoff / capability boundary</td><td>Q53, Q56</td><td>model touched the right surface but did not complete the required planning synthesis</td></tr>
+        <tr><td>Cross-species transfer / family-rescue synthesis</td><td>Q40, Q67</td><td>weak transferability framing, sometimes compounded by provider overload</td></tr>
+        <tr><td>Motif / promoter / edit planning</td><td>Q43, Q78</td><td>started the motif side of the workflow but did not finish the full promoter/edit interpretation</td></tr>
+        <tr><td>Import-first returned-id workflows</td><td>Q65, Q66, Q71, Q77</td><td>hardest current family for Nemotron</td></tr>
+        <tr><td>Decision-boundary / calibration / counterfactual synthesis</td><td>Q60, Q72, Q76</td><td>the right tools were partially called, but the final structure was not satisfied</td></tr>
+      </tbody>
+    </table>
+    <p>The paced run also surfaced a few real chain-path issues that are not merely model weakness:</p>
+    <ul>
+      <li>Q66 exposed a real <code>grn-omics-import</code> runtime error</li>
+      <li>Q76, Q77, and Q78 surfaced HTTP 404 workflow-path failures</li>
+    </ul>
+    <p>That is useful signal. It means the Nemotron stress pass did not just grade the model. It also helped expose hardening targets in the workflow layer itself.</p>
+
+    <figure>
+      <img src="grn-llm-testing-matrix.png" alt="Current external-orchestrator summary for GRN Atlas." />
+      <figcaption>Current external-orchestrator summary: GPT-5.4 is clean on the expanded orchestration matrix, while Nemotron remains useful as a portability and hardening probe that exposes weak families in phenotype-first planning, import-first chaining, and decision-boundary synthesis.</figcaption>
+    </figure>
+
+    <h2>What This Update Says About GRN Atlas Today</h2>
+    <p>After the past week of work, the evidence is materially stronger in four different ways.</p>
+
+    <h3>1. The atlas data surface is broader</h3>
+    <p>The project now spans a larger multi-species network surface, including newer crop and ornamental-supporting builds beyond the original five-species emphasis.</p>
+
+    <h3>2. The inferred and projected regulatory layers are benchmarked directly</h3>
+    <p>We are not only asserting that the network is biologically useful. We refreshed the gold-standard quality reports, reran independent AUROC/AUPRC benchmarks, and regenerated the population-level network validation reports.</p>
+
+    <h3>3. The workflow layer is substantially deeper</h3>
+    <p>Import-first omics workflows, chromatin-aware follow-up, calibration surfaces, CRISPR comparison, onboarding readiness, and collaborator-facing packaging are now part of the validated surface.</p>
+
+    <h3>4. The LLM testing is now a real stress surface</h3>
+    <p>The system is no longer being tested only on isolated prompts. It is being tested on direct skill execution, natural-language skill routing coverage, full GPT-5.4 orchestration, and paced Nemotron orchestration on the harder chain families.</p>
+
+    <h2>Practical Bottom Line</h2>
+    <p>The most defensible current public statement is:</p>
+    <ul>
+      <li>GRN Atlas is no longer just a network browser</li>
+      <li>it is a multi-layer research system with direct biological benchmarking, statistical validation, and explicit workflow-level testing</li>
+      <li>the strongest current clean orchestrator result is GPT-5.4 at <strong>99/99</strong></li>
+      <li>Nemotron remains useful as a stress-test model, but it is materially less reliable on the hardest chained workflows</li>
+    </ul>
+    <p>For academic and non-commercial use, the project is publicly available now.</p>
+    <p>For commercial use, productization, hosted deployment, or partnership discussions, contact CAIRN Institute.</p>
+
+    <h2>Source Documents Behind This Update</h2>
+    <p>This update is grounded in the current in-repo validation and testing artifacts, including:</p>
+    <ul>
+      <li><code>docs/validation_summary_2026-08-21.md</code></li>
+      <li><code>docs/validation_run_summary_2026-08-21.md</code></li>
+      <li><code>docs/post_release_hardening_execution_2026-08-21.md</code></li>
+      <li><code>docs/skill_test_results_2026-08-21.md</code></li>
+      <li><code>docs/llm_skill_orchestration_coverage_matrix_2026-08-21.md</code></li>
+      <li><code>docs/llm_testing_workflow_coverage_2026-08-13.md</code></li>
+      <li><code>docs/llm_model_comparison_release_notes_2026-08-14.md</code></li>
+    </ul>
+
+    <h2>Closing</h2>
+    <p>The point of this week&rsquo;s work was not just to add features.</p>
+    <p>It was to make the platform more defensible.</p>
+    <p>That means better data, more explicit validation, stronger assay-oriented workflows, broader direct testing, and clearer understanding of which LLM-driven workflow families are robust today and which still need hardening.</p>
+    <p>That is the standard we want GRN Atlas to meet as a research platform.</p>
+  </main>
+</body>
+</html>

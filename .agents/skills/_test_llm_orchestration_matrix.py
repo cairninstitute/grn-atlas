@@ -43,7 +43,7 @@ def run_one(question_id: int, timeout_s: int, env: dict[str, str]) -> dict:
             grade = "ERROR"
         else:
             grade = "UNKNOWN"
-        return {
+        result = {
             "question_id": question_id,
             "grade": grade,
             "returncode": proc.returncode,
@@ -51,6 +51,16 @@ def run_one(question_id: int, timeout_s: int, env: dict[str, str]) -> dict:
             "stdout": stdout,
             "stderr": stderr,
         }
+        detail_path = SKILLS_DIR / "_test_results_llm.json"
+        if detail_path.exists():
+            try:
+                detail = json.loads(detail_path.read_text())
+                detail_results = detail.get("results") or []
+                if detail_results:
+                    result["detail"] = detail_results[0]
+            except Exception:
+                pass
+        return result
     except subprocess.TimeoutExpired as e:
         elapsed = round(time.time() - t0, 1)
         return {
@@ -67,6 +77,7 @@ def main():
     parser = argparse.ArgumentParser(description="Exhaustive isolated orchestration runner")
     parser.add_argument("--model", default=orch.DEFAULT_MODEL)
     parser.add_argument("--provider", default="auto", choices=["auto", "openrouter", "openai"])
+    parser.add_argument("--http", default=None)
     parser.add_argument("--retries", type=int, default=1, help="Retries after the first attempt for non-pass cases")
     parser.add_argument("--timeout", type=int, default=420, help="Per-question timeout in seconds")
     parser.add_argument("--sleep-between", type=float, default=0.0, help="Sleep between questions to avoid rate limits")
@@ -78,6 +89,8 @@ def main():
     env = os.environ.copy()
     env["LLM_TEST_MODEL"] = args.model
     env["LLM_TEST_PROVIDER"] = args.provider
+    if args.http:
+        env["LLM_TEST_HTTP"] = args.http
     results = []
     out_path = Path(args.out)
 

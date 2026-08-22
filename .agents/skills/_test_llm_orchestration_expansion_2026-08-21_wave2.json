@@ -1,0 +1,112 @@
+[
+  {
+    "label": "atlas overview plus onboarding strategy comparison",
+    "question": "Give me an atlas-wide overview of the currently supported species and workflow layers, then compare onboarding readiness for wheat versus maize-style crop use cases and produce a staged onboarding plan for wheat focused on regulatory-network, expression, and chromatin support.",
+    "covers_tools": ["grn_atlas_overview", "grn_species_onboarding_status", "grn_species_onboarding_plan"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_atlas_overview", "grn_species_onboarding_status", "grn_species_onboarding_plan"]},
+      {"type": "answer_has_any", "terms": ["wheat", "overview", "onboarding", "chromatin"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "evidence boundary synthesis chain",
+    "question": "For TP53 and BAX in human, audit the edge support, state the confidence boundary around acting on that edge today, and then turn the result into a concise evidence synthesis for a collaborator.",
+    "covers_tools": ["grn_evidence_audit", "grn_confidence_boundary", "grn_evidence_synthesis"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_evidence_audit", "grn_multiome_support_audit"], ["grn_confidence_boundary", "grn_decision_boundary"], ["grn_evidence_synthesis"]]},
+      {"type": "answer_has_any", "terms": ["TP53", "BAX", "confidence", "evidence"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "consensus ranking with hypothesis brief chain",
+    "question": "For TP53, BAX, and MDM2 in human, build a consensus ranking, compare the competing hypotheses, and finish with a short research brief that explains why the current top candidate leads.",
+    "covers_tools": ["grn_consensus_ranking", "grn_hypothesis_compare", "grn_research_brief"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_consensus_ranking", "grn_hypothesis_compare", "grn_research_brief"]},
+      {"type": "answer_has_any", "terms": ["TP53", "BAX", "MDM2", "candidate"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "counterfactual plus minimal validation chain",
+    "question": "For TP53, BAX, and MDM2 in human, explain what evidence would overturn the current leader, reduce that into the smallest validation experiment that would most efficiently resolve the counterfactual, and explicitly state the current decision boundary after that validation step.",
+    "covers_tools": ["grn_counterfactual_analysis", "grn_minimal_validation", "grn_validation_plan"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_counterfactual_analysis"], ["grn_minimal_validation"], ["grn_validation_plan", "grn_decision_boundary"]]},
+      {"type": "answer_has_any", "terms": ["overturn", "validation", "counterfactual", "leader"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "differential expression to workflow chain",
+    "question": "In Arabidopsis, compare root versus inflorescence with the differential-expression tool, then use the resulting shifted genes to run the packaged deg-to-regulators workflow and explain whether the atlas recommends an expression-first or regulator-first follow-up.",
+    "covers_tools": ["grn_differential_expression", "grn_workflow", "grn_experiment_optimizer"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_differential_expression"], ["grn_workflow"], ["grn_experiment_optimizer", "grn_decision_boundary"]]},
+      {"type": "answer_has_any", "terms": ["root", "inflorescence", "workflow", "follow-up"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "motif variant primer chain",
+    "question": "For Arabidopsis HY5, query promoter motif support directly, assess whether promoter variant A to G at position 1900 overlaps a motif-supported site, prioritize the best promoter edit target, and suggest primer pairs for validating the edit.",
+    "covers_tools": ["grn_motif", "grn_variant_effect", "grn_promoter_edit_prioritization", "grn_primer_design"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_motif", "grn_motif_query"], ["grn_variant_effect"], ["grn_promoter_edit_prioritization"], ["grn_primer_design"]]},
+      {"type": "answer_has_any", "terms": ["HY5", "motif", "variant", "primer"]},
+      {"type": "n_skills_gte", "value": 4}
+    ]
+  },
+  {
+    "label": "crispr design plus strategy chain",
+    "question": "For TP53 in human, design a CRISPR guide from sequence ATGCGGCCGGTACCGGATCCGGTACCGGATCCGGTACCGGATCCGGTAA using the default NGG PAM, run an off-target scan on one returned guide, and compare whether CRISPR knockout or CRISPRi looks like the safer first intervention.",
+    "covers_tools": ["grn_crispr_design", "grn_crispr_offtargets", "grn_crispr_compare"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_crispr_design", "grn_crispr_offtargets", "grn_crispr_compare"]},
+      {"type": "answer_has_any", "terms": ["TP53", "guide", "off-target", "CRISPRi"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "infer module conservation chain",
+    "question": "In Arabidopsis, inspect inferred targets for HY5 using GRNBoost2 or GENIE3 style inferred edges, identify the module containing HY5, and then summarize whether the inferred neighborhood supports the same biological story as the module context.",
+    "covers_tools": ["grn_infer", "grn_module", "grn_evidence_synthesis"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_infer", "grn_inferred_edges"], ["grn_module", "grn_modules"], ["grn_evidence_synthesis", "grn_network", "grn_gene_info", "grn_enrichment"]]},
+      {"type": "answer_has_any", "terms": ["HY5", "inferred", "module", "story"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "literature phenotype targeting ranking chain",
+    "question": "Use recent literature to identify flower-color regulator ideas in petunia and related ornamentals, map those ideas into atlas-supported candidates, and then build a consensus-style ranking of the strongest intervention targets.",
+    "covers_tools": ["grn_literature_review", "grn_phenotype_targeting", "grn_consensus_ranking"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_literature_review", "grn_literature_grounding"], ["grn_phenotype_targeting", "grn_candidate_triage"], ["grn_consensus_ranking", "grn_decision_boundary"]]},
+      {"type": "answer_has_any", "terms": ["petunia", "flower", "literature", "ranking"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "transfer risk with family rescue planning chain",
+    "question": "For petunia JAF13, assess family-rescue support, evaluate transfer risk to tomato, and then explain the smallest next experiment that would most efficiently resolve the transfer-risk uncertainty.",
+    "covers_tools": ["grn_family_rescue", "grn_transfer_risk", "grn_minimal_validation"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_family_rescue", "grn_transfer_risk", "grn_minimal_validation"]},
+      {"type": "answer_has_any", "terms": ["JAF13", "tomato", "risk", "experiment"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "phenotype targeting with validation planning chain",
+    "question": "For petunia flower-color change, start from the phenotype objective to identify atlas-supported intervention candidates, then turn the leading candidates into an execution-ready validation plan.",
+    "covers_tools": ["grn_phenotype_targeting", "grn_validation_plan"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_phenotype_targeting", "grn_validation_plan"]},
+      {"type": "answer_has_any", "terms": ["petunia", "flower", "candidate", "validation plan"]},
+      {"type": "n_skills_gte", "value": 2}
+    ]
+  }
+]

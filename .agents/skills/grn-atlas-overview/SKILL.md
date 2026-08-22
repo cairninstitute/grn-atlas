@@ -8,7 +8,7 @@ metadata:
 
 ## GRN Atlas
 
-GRN Atlas is a multi-species gene regulatory network database covering **human, mouse, Arabidopsis, tomato, and petunia**. It integrates curated TF-target interactions, expression data, pathway annotations, GWAS traits, TF binding motifs, and cross-species orthology.
+GRN Atlas is a multi-species gene regulatory network database covering the species currently loaded into the atlas build. In the current repository state that includes **human, mouse, Arabidopsis, tomato, petunia, pepper, and potato**, with additional onboarding work prepared for dahlia. It integrates curated TF-target interactions, expression data, pathway annotations, GWAS traits, TF binding motifs, and cross-species orthology.
 
 ## Available Skills
 

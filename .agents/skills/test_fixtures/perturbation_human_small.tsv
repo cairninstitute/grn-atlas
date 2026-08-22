@@ -1,0 +1,3 @@
+perturbed_gene	affected_gene	log2fc	significant	dataset_label
+TP53	MDM2	-2.5	True	fixture_crispr
+TP53	CDKN1A	-3.1	True	fixture_crispr

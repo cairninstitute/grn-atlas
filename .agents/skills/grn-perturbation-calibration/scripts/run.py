@@ -17,7 +17,7 @@ def main():
 
     payload = {}
     if args.gene:
-        payload["gene"] = args.gene
+        payload["perturbed_gene"] = args.gene
     if args.species:
         payload["species"] = args.species
 

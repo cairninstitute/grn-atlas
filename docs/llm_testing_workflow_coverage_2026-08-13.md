@@ -1,13 +1,16 @@
 # LLM Testing Workflow Coverage Notes
 
-Date: August 14, 2026
+Date: August 22, 2026
 
 This note captures the current summary of what kinds of questions are being asked in the GRN Atlas LLM test suites, how those questions map to researcher workflows, and where the main testing gaps remain. It is intended as a durable reference for future planning, reporting, or blog-writing.
 
 Latest cross-model reference point:
 
-- GPT-5.4 orchestration matrix: **59/59 PASS** on Wednesday, August 13, 2026
-- Nemotron-3-Ultra orchestration matrix: **50/59 PASS** on Friday, August 14, 2026
+- current documented skill inventory: **100 skills** (**99 callable + 1 overview/router**)
+- GPT-5.4 single-skill rerun: **383/386 PASS** on Saturday, August 22, 2026
+- GPT-5.4 orchestration rerun: **111/111 PASS** on Saturday, August 22, 2026
+- historical completed Nemotron paced orchestration matrix: **79/99 PASS**
+- latest Nemotron partial reruns on Saturday, August 22, 2026: **255/258** single-skill and **37/40** orchestration before provider/model exit
 
 That comparison matters because it separates two different claims:
 
@@ -18,8 +21,8 @@ That comparison matters because it separates two different claims:
 
 There are two broad classes of LLM test questions in the repo:
 
-1. Single-skill routing questions: 347 total
-2. Multi-skill orchestration questions: 59 total
+1. Single-skill routing questions: 386 total
+2. Multi-skill orchestration questions: 111 total
 
 Single-skill questions test whether the model picks the correct skill and arguments for one prompt.
 
@@ -71,7 +74,7 @@ Multi-skill orchestration questions test whether the model chains multiple skill
 
 ## Single-skill coverage by workflow
 
-The exact current matrix size is **347** single-skill questions. The workflow groupings below are a current qualitative breakdown of where coverage is strongest rather than a second stale numeric accounting:
+The exact current matrix size is **386** single-skill questions. The workflow groupings below are a current qualitative breakdown of where coverage is strongest rather than a second stale numeric accounting:
 
 | Workflow | What it covers | Assessment |
 |---|---|---|
@@ -122,6 +125,14 @@ The orchestration suite covers these categories:
 33. Inferred edge overlap -> gene info inspection
 34. Weak-signal candidate set -> decision boundary -> minimal next step
 35. Candidate discovery -> support/readiness validation
+36. Atlas overview + benchmark + species onboarding planning
+37. Import-first pseudobulk -> cell-state compare -> upstream brief
+38. Import-first pseudobulk -> trajectory/activity/pathway chain
+39. Promoter/chromatin import -> support inspection
+40. Pathway activity -> phenotype/trait synthesis
+41. Perturbation import -> calibration -> confidence boundary
+42. Counterfactual -> minimal validation -> decision boundary
+43. Phenotype-first target discovery -> validation-plan handoff
 
 ## Representative orchestration questions
 
@@ -151,8 +162,8 @@ Well covered right now:
 
 Cross-model note:
 
-- GPT-5.4 handled the full current orchestration surface cleanly
-- Nemotron was materially weaker on abstract shared-regulator prompts, messy-import recovery, intervention tradeoff questions, and uncertainty / capability-boundary explanation
+- GPT-5.4 handled the full expanded orchestration surface cleanly
+- Nemotron was materially weaker on phenotype-first planning, import-first id-chaining workflows, intervention tradeoff questions, and explicit decision-boundary / uncertainty framing
 
 Relatively thin right now:
 
@@ -183,13 +194,13 @@ Relatively thin right now:
    - Example: DEG tables, malformed CSVs, aliases, mixed species IDs
    - Current coverage: improved from thin to moderate
    - Missing: larger real-world tables, extra metadata columns, duplicate rows, alias collisions, and multi-file upload-style cases
-   - Nemotron signal: mixed-species normalization/import is still fragile
+   - Nemotron signal: import-first chaining remains one of the clearest persistent failure families in the 99-question run
 
 4. Experimental tradeoff decisions
    - Example: dsRNA vs promoter edit vs observational validation under budget/time constraints
    - Current coverage: improved from light to moderate
    - Missing: broader comparison across more than two strategies, stronger grading for explicit tradeoff reasoning, and phenotype-specific decision frameworks
-   - Nemotron signal: still weaker on dsRNA vs promoter-edit and single vs double perturbation comparisons
+   - Nemotron signal: still weaker on dsRNA vs promoter-edit and planner-style comparison prompts
 
 5. Comparative phenotype workflows
    - Example: "Which intervention is most likely to alter pigment without broad pleiotropy?"
@@ -234,7 +245,31 @@ The system now covers substantially more of the "questions researchers actually 
 The latest cross-model results sharpen that interpretation:
 
 - GPT-5.4 shows the expanded workflow surface can be completed cleanly end-to-end.
-- Nemotron shows which parts are still fragile when the orchestrator is weaker: abstract routing starts, messy normalization before analysis, explicit uncertainty framing, and tradeoff-heavy intervention comparisons.
+- Nemotron shows which parts are still fragile when the orchestrator is weaker: phenotype-first planning, import-first chaining, explicit uncertainty framing, and tradeoff-heavy intervention comparisons.
+
+## Nemotron 99-question persistent failure families
+
+The paced Saturday, August 22, 2026 Nemotron run failed 20 questions after one retry each:
+
+- Q3, Q24, Q36, Q40, Q43, Q50, Q53, Q54, Q56, Q60, Q65, Q66, Q67, Q71, Q72, Q76, Q77, Q78, Q81, Q83
+
+These cluster into a few clear families:
+
+| Family | Questions | What failed |
+|---|---|---|
+| Comparison workflows that require overlap follow-up | Q3, Q24 | model stopped after retrieval without completing the required overlap/enrichment/gene-info chain |
+| Petunia phenotype-first planning and ranking | Q36, Q50, Q54, Q81, Q83 | candidate discovery happened, but the final ranking, RNAi framing, or validation-plan handoff was weak or incomplete |
+| Intervention tradeoff / capability-boundary synthesis | Q53, Q56 | model called part of the surface but did not finish the required planning comparison or honest support boundary |
+| Cross-species transfer / family-rescue interpretation | Q40, Q67 | weak transferability synthesis, sometimes compounded by provider overload |
+| Motif / promoter / edit planning | Q43, Q78 | prompt required explicit promoter/motif/edit interpretation that did not complete cleanly |
+| Import-first id-chaining workflows | Q65, Q66, Q71, Q77 | hardest family for Nemotron; returned ids and follow-up chaining remain fragile |
+| Decision-boundary / calibration / counterfactual synthesis | Q60, Q72, Q76 | model called some tools but did not satisfy the required synthesis and planning structure |
+
+Some of these failures were pure model misses. Some were runtime-path issues that the model did not recover from well:
+
+- provider overload showed up in several fails
+- Q66 exposed a real omics-import runtime error
+- Q76, Q77, and Q78 surfaced 404-style workflow-path failures
 
 The main remaining limitation is not the absence of basic atlas functions. It is the gap between:
 
