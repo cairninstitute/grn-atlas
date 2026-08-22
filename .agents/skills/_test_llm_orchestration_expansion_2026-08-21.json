@@ -1,0 +1,132 @@
+[
+  {
+    "label": "atlas benchmarking plus wheat onboarding plan",
+    "question": "Show me the atlas-wide supported analysis surface, summarize the current benchmark status, then assess whether wheat is ready for cell-state and chromatin-aware regulatory analysis and produce a staged onboarding plan for wheat.",
+    "covers_tools": ["grn_atlas_overview", "grn_benchmark_status", "grn_species_onboarding_status", "grn_species_onboarding_plan"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_atlas_overview", "grn_benchmark_status", "grn_species_onboarding_status", "grn_species_onboarding_plan"]},
+      {"type": "answer_has_any", "terms": ["wheat", "benchmark", "onboarding", "ready"]},
+      {"type": "n_skills_gte", "value": 4}
+    ]
+  },
+  {
+    "label": "evidence audit synthesis minimal validation chain",
+    "question": "For TP53 and BAX in human, audit the edge support, convert that into a writing-ready evidence synthesis, then reduce it to the smallest defensible next validation step.",
+    "covers_tools": ["grn_evidence_audit", "grn_multiome_support_audit", "grn_evidence_synthesis", "grn_minimal_validation"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_evidence_audit", "grn_evidence_synthesis", "grn_minimal_validation"], ["grn_multiome_support_audit", "grn_evidence_synthesis", "grn_minimal_validation"]]},
+      {"type": "answer_has_any", "terms": ["TP53", "BAX", "evidence", "validation"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "consensus hypothesis counterfactual chain",
+    "question": "For TP53, BAX, and MDM2 in human, build a consensus ranking, compare the competing hypotheses, then explain what evidence would overturn the current winner.",
+    "covers_tools": ["grn_consensus_ranking", "grn_hypothesis_compare", "grn_counterfactual_analysis"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_consensus_ranking", "grn_hypothesis_compare", "grn_counterfactual_analysis"]},
+      {"type": "answer_has_any", "terms": ["winner", "overturn", "TP53", "MDM2"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "petunia dsrna family quality minimal-validation chain",
+    "question": "For petunia JAF13, run a family-rescue style assessment, then check isoform coverage for sequence GAAGAAGACCTACAACCACAGGCCAAAAGGCCCTCGGCTGCATTATCTCCTGAAGATCTCACTGATACAGAGTGGTATTTCTTAGTATGCATGTCGTTCGTCTTCAATGTTGGCCAAGGGTTGCCAGGAAAGAGCTTAGCAAGGAACGAAACAATCTGGCTAGGTAATGCTCACCAAGCAGAGAGTAGAACTGTTGTATGCTTTCCATATCTAGGAGGAGTAATTGAGCTGGGAGTCACTGAGCTTGTTG, score the siRNA pool, and tell me the minimal next validation step if the dsRNA quality looks acceptable.",
+    "covers_tools": ["grn_family_rescue", "grn_isoform_coverage", "grn_sirna_pool", "grn_minimal_validation"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_family_rescue", "grn_isoform_coverage", "grn_sirna_pool", "grn_minimal_validation"]},
+      {"type": "answer_has_any", "terms": ["JAF13", "isoform", "siRNA", "validation"]},
+      {"type": "n_skills_gte", "value": 4}
+    ]
+  },
+  {
+    "label": "integrated crispr promoter design chain",
+    "question": "For Arabidopsis HY5, assess whether promoter variant A to G at position 1900 overlaps a motif-supported regulatory site, prioritize promoter edit targets, design a CRISPR guide, explicitly run an off-target scan on candidate guide ATGGAGCTATGCAATTTTCT, suggest primer pairs, and compare whether promoter editing or simple knockout looks like the better first strategy.",
+    "covers_tools": ["grn_variant_effect", "grn_promoter_edit_prioritization", "grn_crispr_design", "grn_crispr_offtargets", "grn_primer_design", "grn_crispr_compare"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_variant_effect", "grn_promoter_edit_prioritization", "grn_crispr_design", "grn_crispr_offtargets", "grn_primer_design", "grn_crispr_compare"]},
+      {"type": "answer_has_any", "terms": ["HY5", "promoter", "guide", "off-target"]},
+      {"type": "n_skills_gte", "value": 6}
+    ]
+  },
+  {
+    "label": "imported cell-state briefing chain",
+    "question": "Import the expression fixture at .agents/skills/test_fixtures/omics_human_small.tsv as a human pseudobulk dataset named omics_human_small, then use the returned dataset_id to compare treated versus control cell states, identify upstream regulators for TP53,MDM2,CDKN1A in the treated state, and finish by building a structured research brief for the follow-up.",
+    "covers_tools": ["grn_omics_import", "grn_celltype_compare", "grn_celltype_upstream", "grn_research_brief"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_omics_import", "grn_celltype_compare", "grn_celltype_upstream", "grn_research_brief"]},
+      {"type": "answer_has_any", "terms": ["treated", "control", "TP53", "brief"]},
+      {"type": "n_skills_gte", "value": 4}
+    ]
+  },
+  {
+    "label": "imported trajectory activity enrichment chain",
+    "question": "Import the expression fixture at .agents/skills/test_fixtures/omics_human_small.tsv as a human pseudobulk dataset named omics_human_small, then use the returned dataset_id and returned treated-versus-control contrast_id to identify trajectory drivers, score pseudotime-style TF activity on TP53:3.0,MDM2:-2.0,CDKN1A:2.5,BAX:1.8,BCL2:-1.5, score pathway activity from the same signature, and test regulon enrichment for TP53,MDM2,CDKN1A,BAX,BCL2.",
+    "covers_tools": ["grn_omics_import", "grn_trajectory_drivers", "grn_pseudotime_activity", "grn_pathway_activity", "grn_regulon_enrichment"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_omics_import", "grn_trajectory_drivers", "grn_pseudotime_activity", "grn_pathway_activity", "grn_regulon_enrichment"]},
+      {"type": "answer_has_any", "terms": ["trajectory", "activity", "pathway", "regulon"]},
+      {"type": "n_skills_gte", "value": 5}
+    ]
+  },
+  {
+    "label": "human signature triad plus traits chain",
+    "question": "Using human gene-value statistics TP53:3.0,MDM2:-2.0,CDKN1A:2.5,BAX:1.8,BCL2:-1.5,GADD45A:2.1, score TF activity, score pathway activity, run pathway enrichment on TP53,BAX,MDM2,CDKN1A,GADD45A, and then summarize what disease or phenotype associations best match that pathway story.",
+    "covers_tools": ["grn_tf_activity", "grn_pathway_activity", "grn_pathway_enrichment", "grn_trait_association"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_tf_activity"], ["grn_pathway_activity"], ["grn_pathway_enrichment"], ["grn_trait_association", "grn_enrichment"]]},
+      {"type": "answer_has_any", "terms": ["TP53", "pathway", "disease", "phenotype"]},
+      {"type": "n_skills_gte", "value": 4}
+    ]
+  },
+  {
+    "label": "peak motif genome evidence chain",
+    "question": "Import the chromatin peaks fixture at .agents/skills/test_fixtures/peaks_human_small.bed for human, then inspect chromatin support for TP53, query direct promoter motif evidence, and summarize that together with the TP53 genome context.",
+    "covers_tools": ["grn_peak_import", "grn_chromatin_support", "grn_motif_query", "grn_genome_browser"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_peak_import", "grn_chromatin_support", "grn_motif_query", "grn_genome_browser"]},
+      {"type": "answer_has_any", "terms": ["TP53", "peak", "motif", "genome"]},
+      {"type": "n_skills_gte", "value": 4}
+    ]
+  },
+  {
+    "label": "ligand signaling plus pathway chain",
+    "question": "In human, list likely ligand-receptor or signaling pairs, trace one signaling entry to downstream transcription factors, and then run pathway enrichment on the downstream transcription-factor set to summarize what signaling program it suggests.",
+    "covers_tools": ["grn_ligand_receptor", "grn_signaling_to_tf", "grn_pathway_enrichment"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_ligand_receptor"], ["grn_signaling_to_tf"], ["grn_pathway_enrichment", "grn_enrichment"]]},
+      {"type": "answer_has_any", "terms": ["signaling", "TF", "pathway", "human"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "petunia organism plus literature plus tissue chain",
+    "question": "Give me a species-level organism overview for petunia, use recent literature to identify candidate flower-color regulator families, then inspect tissue-specific coexpression for JAF13 and summarize whether the literature story and tissue context point in the same direction.",
+    "covers_tools": ["grn_organism_overview", "grn_literature_review", "grn_tissue_coexpression"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_organism_overview", "grn_literature_review", "grn_tissue_coexpression"]},
+      {"type": "answer_has_any", "terms": ["petunia", "JAF13", "literature", "tissue"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  },
+  {
+    "label": "perturbation import calibration confidence chain",
+    "question": "Import the perturbation fixture at .agents/skills/test_fixtures/perturbation_human_small.tsv as human CRISPR_KO observations, then run perturbation calibration for TP53, state the confidence boundary around the observed-versus-predicted agreement, and finish with a short research brief for the next experiment.",
+    "covers_tools": ["grn_perturbation_import", "grn_perturbation_calibration", "grn_confidence_boundary", "grn_research_brief"],
+    "checks_spec": [
+      {"type": "used_tools_all", "tools": ["grn_perturbation_import", "grn_perturbation_calibration", "grn_confidence_boundary", "grn_research_brief"]},
+      {"type": "answer_has_any", "terms": ["TP53", "confidence", "calibration", "experiment"]},
+      {"type": "n_skills_gte", "value": 4}
+    ]
+  },
+  {
+    "label": "direct differential-expression follow-up chain",
+    "question": "In Arabidopsis, compare root versus inflorescence with the differential-expression tool, then run pathway enrichment on the strongest shifted genes and explain whether the resulting follow-up should focus on expression context or regulatory activity first.",
+    "covers_tools": ["grn_differential_expression", "grn_pathway_enrichment", "grn_experiment_optimizer"],
+    "checks_spec": [
+      {"type": "used_tools_all_any", "tool_groups": [["grn_differential_expression"], ["grn_pathway_enrichment", "grn_enrichment"], ["grn_experiment_optimizer", "grn_decision_boundary", "grn_diff_regulation"]]},
+      {"type": "answer_has_any", "terms": ["root", "inflorescence", "pathway", "follow-up"]},
+      {"type": "n_skills_gte", "value": 3}
+    ]
+  }
+]

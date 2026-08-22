@@ -2,7 +2,7 @@
 
 Author: CAIRN Institute
 
-Published: August 17, 2026
+Published: August 22, 2026
 
 Read time: 10–12 minutes
 
@@ -12,18 +12,22 @@ Read time: 10–12 minutes
 
 Today we are publishing a release update for GRN Atlas focused on the skill layer, the research workflows it enables, and the validation work completed across both the application stack and external LLM orchestrators.
 
-GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.
+GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, RNAi-oriented dsRNA design, CRISPR-oriented heuristics, chromatin-linked support, and packaged research workflows across human, mouse, Arabidopsis, tomato, petunia, pepper, and potato. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.
 
-As of Friday, August 14, 2026, the repository contains **61 documented GRN Atlas skills**:
+As of Saturday, August 22, 2026, the repository contains **100 documented GRN Atlas skills**:
 
-- **60 callable analysis and workflow skills**
+- **99 callable analysis and workflow skills**
 - **1 overview/router skill**
 
-The current clean repository LLM results are:
+The current full GPT-5.4 rerun results are:
 
-- **GPT-5.4 single-skill matrix:** 347/347 pass
-- **GPT-5.4 orchestration matrix:** 59/59 pass
-- **Nemotron-3-Ultra orchestration matrix:** 50/59 pass
+- **GPT-5.4 single-skill matrix:** 383/386 pass, with 7 retry-recovered flaky passes
+- **GPT-5.4 orchestration matrix:** 111/111 pass, with 4 retry-recovered flaky passes
+
+The latest August 22, 2026 Nemotron rerun reached:
+
+- **Nemotron-3-Ultra single-skill matrix:** 255/258 pass before provider/model exit
+- **Nemotron-3-Ultra orchestration matrix:** 37/40 pass before provider/model exit
 - **Nemotron targeted single-skill diagnostic subset:** 36/38 pass
 
 GRN Atlas is being released free for academic and non-commercial use. For commercial use, productization, deployment, or partnership discussions, contact CAIRN Institute.
@@ -64,13 +68,15 @@ It combines:
 - evidence-audit and experiment-planning workflows
 - collaborator-facing study packet and report generation
 
-The atlas currently supports five species:
+The atlas currently supports seven species in the working release branch:
 
 - human
 - mouse
 - Arabidopsis
 - tomato
 - petunia
+- pepper
+- potato
 
 Some layers are measured, some are projected, and some are computationally inferred or predicted. A core design rule is that these are never mixed without labeling.
 
@@ -167,12 +173,12 @@ Representative panel groups include:
 
 GRN Atlas also includes an AgentSkills-style skill library for structured tool use.
 
-The repository currently contains 61 documented skills:
+The repository currently contains 100 documented skills:
 
-- 60 callable analysis/workflow skills
+- 99 callable analysis/workflow skills
 - 1 overview/router skill
 
-These skills are best understood by the high-level work they enable.
+The grouped list below highlights the major researcher-facing skill families in the current release branch rather than repeating the entire canonical inventory verbatim.
 
 ### 1. Orientation, search, provenance, and data readiness
 
@@ -332,14 +338,23 @@ The repository now has two useful LLM validation stories:
 - the current clean GPT-5.4 matrices, which reflect the latest repository status
 - the Nemotron-3-Ultra comparison runs, which exposed both portability strengths and model-specific limits
 
-### Current clean repository status: GPT-5.4
+### Current full repository rerun: GPT-5.4
 
-As of Thursday, August 13, 2026:
+As of Saturday, August 22, 2026:
 
-- single-skill matrix: 347/347 pass
-- multi-skill orchestration matrix: 59/59 pass
+- single-skill matrix: 383/386 pass
+- retry-recovered flaky single-skill cases: 7
+- multi-skill orchestration matrix: 111/111 pass
+- retry-recovered flaky orchestration cases: 4
 
-These current matrices are the best statement of the repository’s present skill-calling status.
+Most of the remaining single-skill misses were not backend execution failures. They concentrated in a small number of routing-boundary families where the newer specialized tools are now preferred over older, broader skills:
+
+- pathway enrichment prompts now often route to `grn-pathway-enrichment` instead of the pathway branch inside `grn-enrichment`
+- some edge-support prompts route to `grn-multiome-support-audit` instead of the older `grn-evidence-audit`
+- some confidence-boundary prompts route to `grn-decision-boundary` instead of `grn-confidence-boundary`
+- some petunia intervention-ranking prompts prefer `grn-intervention-strategy-ranker` over older triage-only routing
+
+The orchestration rerun was materially stronger than the single-skill rerun because GPT-5.4 was usually able to finish the requested multi-step workflow even when it preferred a newer specialized tool inside the chain.
 
 ### Nemotron-3-Ultra comparison results
 
@@ -366,14 +381,14 @@ Targeted Nemotron single-skill diagnostic subset on the later weak families:
 
 ### Multi-skill orchestration testing
 
-The latest full Nemotron orchestration rerun covered the complete **59-question** workflow matrix on **Friday, August 14, 2026**.
+The latest August 22, 2026 paced Nemotron rerun did not complete the full matrices because the provider/model exited mid-run after partial completion.
 
 Result:
 
-- 59/59 tested
-- 50/59 passes
-- 84.7% pass rate
-- 9 questions failed that GPT-5.4 passed cleanly
+- single-skill matrix reached 258 completed cases
+- 255/258 passes
+- orchestration matrix reached 40 completed questions
+- 37/40 passes
 
 These orchestration questions cover:
 
@@ -412,13 +427,13 @@ The misses were concentrated in a few workflow families:
 - phenotype-to-experiment planning in non-model species
 - some inferred-edge prompts that benefited from stronger stable-ID normalization
 
-Failure shape in the final 59-question Nemotron run:
+Failure shape in the latest August 22 Nemotron rerun:
 
-- 3 zero-tool-call misses
-- 6 tool-selection or under-chaining misses
-- no provider-collapse pattern in the final run
+- the completed subset still showed the same reasoning and chaining weaknesses seen in earlier comparison runs
+- the August 22 rerun also showed provider/model instability, with the process exiting before either matrix finished
+- that means August 22 should be interpreted as a partial health check plus partial comparison, not as a new full completed benchmark
 
-That matters because the comparison failure mode was mainly reasoning and chaining quality, not provider instability in the final completed run.
+That matters because Nemotron still demonstrates two distinct issues: reasoning/chaining quality gaps on some workflow families, and separate provider/model reliability issues on long runs.
 
 ### What improved during testing
 
@@ -508,9 +523,9 @@ Yes. The repository includes the full skill layer in `.agents/skills/`.
 
 **How many skills are included?**
 
-61 documented skills total:
+100 documented skills total:
 
-- 60 callable analysis/workflow skills
+- 99 callable analysis/workflow skills
 - 1 overview/router skill
 
 **What types of work do the skills cover?**
@@ -521,18 +536,18 @@ They cover orientation and search, network structure, expression and context, cr
 
 Current clean GPT-5.4 matrix results:
 
-- single-skill routing: 347/347
-- multi-skill orchestration: 59/59
+- single-skill routing: 383/386, with 7 retry-recovered flaky passes
+- multi-skill orchestration: 111/111, with 4 retry-recovered flaky passes
 
 Nemotron comparison results:
 
 - broad earlier single-skill rerun: 285/305 correct tool selections
 - targeted later diagnostic subset: 36/38 pass
-- full 59-question orchestration matrix on August 14, 2026: 50/59
+- August 22 partial full rerun: 255/258 single-skill and 37/40 orchestration before provider/model exit
 
 **What are the main current limits on Nemotron?**
 
-The main weak areas were abstract shared-regulator prompts, messy mixed-species normalization, weak-signal explanation, intervention tradeoff questions, single-vs-double perturbation comparisons, and some phenotype-to-experiment chains.
+The main weak areas were abstract shared-regulator prompts, weak-signal support-boundary explanation, intervention tradeoff questions, conditional edge-audit workflows, and some phenotype-to-experiment planning chains.
 
 **Is this open source?**
 

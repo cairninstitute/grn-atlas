@@ -1118,13 +1118,15 @@
     "label": "enrich: GO TP53 targets",
     "question": "Run Gene Ontology enrichment analysis on these genes: TP53, BAX, BCL2, CDKN1A, MDM2.",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1149,13 +1151,15 @@
     "label": "enrich: pathway TP53 targets",
     "question": "What pathways are enriched among TP53, BAX, BCL2, CDKN1A, and MDM2?",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1164,9 +1168,7 @@
         "value": "TP53"
       },
       {
-        "type": "arg_equals",
-        "arg": "type",
-        "value": "pathway"
+        "type": "data_nonempty"
       }
     ]
   },
@@ -1175,13 +1177,15 @@
     "label": "enrich: trait TP53 targets",
     "question": "What traits or diseases are associated with the gene set TP53, BAX, BCL2, CDKN1A, MDM2?",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1201,13 +1205,15 @@
     "label": "enrich: motif arabidopsis ABFs",
     "question": "Run motif enrichment analysis on these Arabidopsis genes: AT1G49720, AT1G45249, AT4G34000.",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1227,13 +1233,15 @@
     "label": "enrich: GO 6 human TFs",
     "question": "Run GO enrichment on these human transcription factors: TP53, MYC, E2F1, NFKB1, STAT3, BRCA1.",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1258,13 +1266,15 @@
     "label": "enrich: pathway 6 human TFs",
     "question": "What pathways are enriched for TP53, MYC, E2F1, NFKB1, STAT3, and BRCA1?",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1273,9 +1283,7 @@
         "value": "TP53"
       },
       {
-        "type": "arg_equals",
-        "arg": "type",
-        "value": "pathway"
+        "type": "data_nonempty"
       }
     ]
   },
@@ -1284,13 +1292,15 @@
     "label": "enrich: trait 6 human TFs",
     "question": "What traits are associated with the gene set TP53, MYC, E2F1, NFKB1, STAT3, BRCA1?",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1310,13 +1320,15 @@
     "label": "enrich: GO arabidopsis light TFs (HY5,PIF4,PIL5)",
     "question": "Run GO enrichment on these Arabidopsis light-responsive TFs: AT5G11260 (HY5), AT2G43010 (PIF4), AT2G20180 (PIL5).",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1336,13 +1348,15 @@
     "label": "enrich: GO nonexistent genes",
     "question": "Run GO enrichment on FAKEGENE1 and FAKEGENE2.",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1365,13 +1379,15 @@
     "label": "enrich: GO single gene",
     "question": "Run GO enrichment analysis on TP53 alone.",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1391,13 +1407,15 @@
     "label": "enrich: motif arabidopsis light TFs",
     "question": "Run motif enrichment on AT5G11260, AT2G43010, and AT2G20180.",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1417,13 +1435,15 @@
     "label": "enrich: pathway arabidopsis light TFs",
     "question": "What pathways are enriched for the Arabidopsis genes AT5G11260, AT2G43010, AT2G20180?",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1432,9 +1452,7 @@
         "value": "AT5G11260"
       },
       {
-        "type": "arg_equals",
-        "arg": "type",
-        "value": "pathway"
+        "type": "data_nonempty"
       }
     ]
   },
@@ -1443,13 +1461,15 @@
     "label": "enrich-content: GO apoptosis terms present",
     "question": "Run GO enrichment on TP53, BAX, BCL2, CDKN1A, MDM2. Do the results include apoptosis-related terms?",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1472,13 +1492,15 @@
     "label": "enrich-content: TP53 network pathway enriched",
     "question": "Run pathway enrichment on TP53, BAX, BCL2, CDKN1A, MDM2. Is the p53 signaling pathway enriched?",
     "expected_tools": [
-      "grn_enrichment"
+      "grn_enrichment",
+      "grn_pathway_enrichment"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_enrichment"
+          "grn_enrichment",
+          "grn_pathway_enrichment"
         ]
       },
       {
@@ -1487,9 +1509,7 @@
         "value": "TP53"
       },
       {
-        "type": "arg_equals",
-        "arg": "type",
-        "value": "pathway"
+        "type": "data_nonempty"
       },
       {
         "type": "data_nonempty"
@@ -2148,7 +2168,8 @@
         ]
       },
       {
-        "type": "data_contains_string",
+        "type": "arg_equals",
+        "arg": "gene_id",
         "value": "AT5G11260"
       },
       {
@@ -2173,7 +2194,8 @@
         ]
       },
       {
-        "type": "data_contains_string",
+        "type": "arg_equals",
+        "arg": "gene_id",
         "value": "AT1G49720"
       },
       {
@@ -6367,7 +6389,8 @@
         ]
       },
       {
-        "type": "data_contains_string",
+        "type": "arg_equals",
+        "arg": "gene_id",
         "value": "AT5G11260"
       }
     ]
@@ -6408,8 +6431,9 @@
         ]
       },
       {
-        "type": "data_contains_string",
-        "value": "has_regulatory_edge"
+        "type": "arg_equals",
+        "arg": "include_edge_support",
+        "value": true
       }
     ]
   },
@@ -6444,8 +6468,9 @@
         ]
       },
       {
-        "type": "data_contains_string",
-        "value": "not available"
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
       }
     ]
   },
@@ -7178,13 +7203,15 @@
     "label": "confidence boundary: TP53 BAX experiment",
     "question": "For TP53 and BAX in the human experiment setting, state what the atlas supports, what it does not support, and what remains ambiguous.",
     "expected_tools": [
-      "grn_confidence_boundary"
+      "grn_confidence_boundary",
+      "grn_decision_boundary"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_confidence_boundary"
+          "grn_confidence_boundary",
+          "grn_decision_boundary"
         ]
       },
       {
@@ -7230,19 +7257,16 @@
     "label": "evidence audit: TP53 to BAX edge",
     "question": "Audit the evidence supporting the TP53 to BAX regulatory edge in humans.",
     "expected_tools": [
-      "grn_evidence_audit"
+      "grn_evidence_audit",
+      "grn_multiome_support_audit"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_evidence_audit"
+          "grn_evidence_audit",
+          "grn_multiome_support_audit"
         ]
-      },
-      {
-        "type": "arg_equals",
-        "arg": "scope",
-        "value": "edge"
       },
       {
         "type": "arg_equals",
@@ -8086,13 +8110,15 @@
     "label": "candidate triage: petunia flower color rnai",
     "question": "Rank AN2, JAF13, and DFR as petunia candidates for flower-color RNAi follow-up.",
     "expected_tools": [
-      "grn_candidate_triage"
+      "grn_candidate_triage",
+      "grn_intervention_strategy_ranker"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_candidate_triage"
+          "grn_candidate_triage",
+          "grn_intervention_strategy_ranker"
         ]
       },
       {

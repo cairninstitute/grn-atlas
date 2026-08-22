@@ -163,24 +163,25 @@
     <h1>Public Release Update: GRN Atlas Skill Layer, Research Workflows, and LLM Validation</h1>
 
     <p class="meta">Author: CAIRN Institute</p>
-    <p class="meta">Published: August 17, 2026</p>
+    <p class="meta">Published: August 22, 2026</p>
     <p class="meta">Read time: 10&ndash;12 minutes</p>
     <p class="tags">#Genomics #Bioinformatics #GeneRegulation #SystemsBiology #OpenScience #AgenticAI</p>
     <a class="hero-link" href="https://github.com/cairninstitute/grn-atlas">Explore the repository on GitHub &rarr;</a>
 
     <h2>Quick Summary</h2>
     <p>Today we are publishing a release update for GRN Atlas focused on the skill layer, the research workflows it enables, and the validation work completed across both the application stack and external LLM orchestrators.</p>
-    <p>GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.</p>
-    <p>As of Friday, August 14, 2026, the repository contains <strong>61 documented GRN Atlas skills</strong>:</p>
+    <p>GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, RNAi-oriented dsRNA design, CRISPR-oriented heuristics, chromatin-linked support, and packaged research workflows across human, mouse, Arabidopsis, tomato, petunia, pepper, and potato. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.</p>
+    <p>As of Saturday, August 22, 2026, the repository contains <strong>100 documented GRN Atlas skills</strong>:</p>
     <ul>
-      <li><strong>60 callable analysis and workflow skills</strong></li>
+      <li><strong>99 callable analysis and workflow skills</strong></li>
       <li><strong>1 overview/router skill</strong></li>
     </ul>
     <p>The current clean repository LLM results are:</p>
     <ul>
-      <li><strong>GPT-5.4 single-skill matrix:</strong> 347/347 pass</li>
-      <li><strong>GPT-5.4 orchestration matrix:</strong> 59/59 pass</li>
-      <li><strong>Nemotron-3-Ultra orchestration matrix:</strong> 50/59 pass</li>
+      <li><strong>GPT-5.4 single-skill matrix:</strong> 383/386 pass, with 7 retry-recovered flaky passes</li>
+      <li><strong>GPT-5.4 orchestration matrix:</strong> 111/111 pass, with 4 retry-recovered flaky passes</li>
+      <li><strong>Nemotron-3-Ultra single-skill matrix:</strong> 255/258 pass before provider/model exit</li>
+      <li><strong>Nemotron-3-Ultra orchestration matrix:</strong> 37/40 pass before provider/model exit</li>
       <li><strong>Nemotron targeted single-skill diagnostic subset:</strong> 36/38 pass</li>
     </ul>
     <p>GRN Atlas is being released free for academic and non-commercial use. For commercial use, productization, deployment, or partnership discussions, contact CAIRN Institute.</p>
@@ -214,7 +215,7 @@
       <li>evidence-audit and experiment-planning workflows</li>
       <li>collaborator-facing study packet and report generation</li>
     </ul>
-    <p>The atlas currently supports five species: human, mouse, Arabidopsis, tomato, and petunia.</p>
+    <p>The atlas currently supports seven species: human, mouse, Arabidopsis, tomato, petunia, pepper, and potato.</p>
     <p>Some layers are measured, some are projected, and some are computationally inferred or predicted. A core design rule is that these are never mixed without labeling.</p>
 
     <h2>What You Can Do With It</h2>
@@ -310,14 +311,14 @@
     <p>This release includes a working frontend for direct use by researchers as well as an API-backed analysis layer for more structured workflows.</p>
 
     <h2>The Skill Layer</h2>
-    <p>GRN Atlas also includes an AgentSkills-style skill library for structured tool use. The repository currently contains 61 documented skills:</p>
+    <p>GRN Atlas also includes an AgentSkills-style skill library for structured tool use. The repository currently contains 100 documented skills:</p>
     <ul>
-      <li>60 callable analysis/workflow skills</li>
+      <li>99 callable analysis/workflow skills</li>
       <li>1 overview/router skill</li>
     </ul>
     <figure>
-      <img src="grn-skill-categories.png" alt="61 skills across 7 research categories." />
-      <figcaption>The 61 GRN Atlas skills organized across 7 research categories, from core network analysis to collaborator handoff.</figcaption>
+      <img src="grn-skill-categories.png" alt="100 skills across 7 research categories." />
+      <figcaption>The 100 GRN Atlas skills organized across 7 research categories, from core network analysis to collaborator handoff.</figcaption>
     </figure>
     <p>These skills are best understood by the high-level work they enable.</p>
 
@@ -470,10 +471,10 @@
     </ul>
 
     <h3>Current clean repository status: GPT-5.4</h3>
-    <p>As of Thursday, August 13, 2026:</p>
+    <p>As of Saturday, August 22, 2026:</p>
     <ul>
-      <li>single-skill matrix: 347/347 pass</li>
-      <li>multi-skill orchestration matrix: 59/59 pass</li>
+      <li>single-skill matrix: 383/386 pass, with 7 retry-recovered flaky passes</li>
+      <li>multi-skill orchestration matrix: 111/111 pass, with 4 retry-recovered flaky passes</li>
     </ul>
     <p>These current matrices are the best statement of the repository&rsquo;s present skill-calling status.</p>
 
@@ -496,13 +497,13 @@
     </ul>
 
     <h3>Multi-skill orchestration testing</h3>
-    <p>The latest full Nemotron orchestration rerun covered the complete <strong>59-question</strong> workflow matrix on <strong>Friday, August 14, 2026</strong>.</p>
+    <p>The latest August 22, 2026 paced Nemotron rerun did not complete the full matrices because the provider/model exited mid-run after partial completion.</p>
     <p>Result:</p>
     <ul>
-      <li>59/59 tested</li>
-      <li>50/59 passes</li>
-      <li>84.7% pass rate</li>
-      <li>9 questions failed that GPT-5.4 passed cleanly</li>
+      <li>single-skill matrix reached 258 completed cases</li>
+      <li>255/258 passes</li>
+      <li>orchestration matrix reached 40 completed questions</li>
+      <li>37/40 passes</li>
     </ul>
     <p>These orchestration questions cover:</p>
     <ul>
@@ -541,13 +542,13 @@
       <li>phenotype-to-experiment planning in non-model species</li>
       <li>some inferred-edge prompts that benefited from stronger stable-ID normalization</li>
     </ul>
-    <p>Failure shape in the final 59-question Nemotron run:</p>
+    <p>Failure shape in the latest August 22 Nemotron rerun:</p>
     <ul>
-      <li>3 zero-tool-call misses</li>
-      <li>6 tool-selection or under-chaining misses</li>
-      <li>no provider-collapse pattern in the final run</li>
+      <li>the completed subset still showed the same reasoning and chaining weaknesses seen in earlier comparison runs</li>
+      <li>the August 22 rerun also showed provider/model instability, with the process exiting before either matrix finished</li>
+      <li>that means August 22 should be interpreted as a partial health check plus partial comparison, not as a new full completed benchmark</li>
     </ul>
-    <p>That matters because the comparison failure mode was mainly reasoning and chaining quality, not provider instability in the final completed run.</p>
+    <p>That matters because Nemotron still demonstrates two distinct issues: reasoning/chaining quality gaps on some workflow families, and separate provider/model reliability issues on long runs.</p>
 
     <h3>What improved during testing</h3>
     <p>The Nemotron evaluation directly shaped the skill layer. We improved:</p>
@@ -612,7 +613,7 @@
     <p><strong>Does it separate curated and inferred results?</strong></p>
     <p>Yes. That distinction is a core design rule. Every inferred, predicted, or computationally derived result carries an explicit label distinct from measured data.</p>
     <p><strong>Can I use it through the web UI, the API, or agent tools?</strong></p>
-    <p>All three. The UI supports direct interactive use, the FastAPI backend supports programmatic access, and the repository includes 61 documented skills in <code>.agents/skills/</code> for LLM-driven workflows.</p>
+    <p>All three. The UI supports direct interactive use, the FastAPI backend supports programmatic access, and the repository includes 100 documented skills in <code>.agents/skills/</code> for LLM-driven workflows.</p>
 
     <h2>Further Reading</h2>
     <ul>
