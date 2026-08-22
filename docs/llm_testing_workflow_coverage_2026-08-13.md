@@ -7,11 +7,11 @@ This note captures the current summary of what kinds of questions are being aske
 Latest cross-model reference point:
 
 - current documented skill inventory: **100 skills** (**99 callable + 1 overview/router**)
-- GPT-5.4 single-skill rerun: **385/386 PASS** on Saturday, August 22, 2026
+- GPT-5.4 single-skill rerun: **386/386 PASS** on Saturday, August 22, 2026, with **2 retry-recovered flaky passes**
 - GPT-5.4 orchestration rerun: **111/111 PASS** on Saturday, August 22, 2026
 - historical completed Nemotron paced orchestration matrix: **79/99 PASS**
 - latest Nemotron partial reruns on Saturday, August 22, 2026: **255/258** single-skill and **37/40** orchestration before provider/model exit
-- the one remaining GPT-5.4 single-skill miss from that rerun (`subgraph: TP53<->E2F1`) was fixed in a targeted follow-up rerun later on Saturday, August 22, 2026
+- a later slower Nemotron full-orchestration rerun attempt on Saturday, August 22, 2026 failed immediately: Q1 failed three times at roughly 197 seconds each, then Q2 failed once before the run was stopped
 
 That comparison matters because it separates two different claims:
 

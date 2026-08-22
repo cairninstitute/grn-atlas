@@ -379,7 +379,7 @@ orchestration. The current repo status as of **Saturday, August 22, 2026** is:
 | **Frontend Vitest** | 9 | 9 | 100% (9/9) | Frontend component / utility regression coverage |
 | **Historical direct HTTP all-skill pass** | 90 | 90 | 100% (90/90) | One-by-one execution across the then-current Aug. 21, 2026 90-skill inventory via each skill's `scripts/run.py --http ...` surface |
 | **Single-skill LLM inventory** | 386 | 386 | inventory coverage | Natural-language routing coverage across **100/100** skills in the current inventory |
-| **Single-skill LLM (GPT-5.4 full rerun)** | 386 | 385 | 99.7% (385/386) | Latest full GPT-5.4 rerun on Saturday, August 22, 2026 across the current 386-case single-skill matrix |
+| **Single-skill LLM (GPT-5.4 full rerun)** | 386 | 386 | 100% (386/386) | Latest full GPT-5.4 rerun on Saturday, August 22, 2026 across the current 386-case single-skill matrix, with 2 retry-recovered flaky passes |
 | **Multi-skill orchestration inventory** | 111 | 111 | inventory coverage | Current chained-workflow inventory: 59 legacy + 52 supplemental/expansion questions |
 | **Multi-skill orchestration (GPT-5.4 full rerun)** | 111 | 111 | 100% (111/111) | Latest full GPT-5.4 rerun on Saturday, August 22, 2026 across the current 111-question orchestration matrix |
 | **Multi-skill orchestration (Nemotron partial rerun)** | 40 | 37 | 92.5% (37/40) | Latest Saturday, August 22, 2026 paced partial rerun before provider/model exit; useful as a health check, not a full benchmark |
@@ -394,19 +394,29 @@ Current automated coverage boundary:
 - legacy HTTP skill harness: **41 callable skills**, **83/83 PASS**
 - historical direct HTTP all-skill pass: **90/90 PASS** on the Aug. 21, 2026 90-skill inventory snapshot
 - natural-language single-skill inventory: **386 cases**, **100/100 skills covered**
-- latest GPT-5.4 routing rerun: **385/386 PASS**
+- latest GPT-5.4 routing rerun: **386/386 PASS**, with **2 retry-recovered flaky passes**
 - current orchestration inventory: **111 questions**
 - latest GPT-5.4 orchestration rerun: **111/111 PASS**
 - latest Nemotron partial rerun: **37/40 PASS** before provider/model exit
-- the one remaining GPT-5.4 single-skill miss from that rerun (`subgraph: TP53<->E2F1`) was fixed in a targeted follow-up rerun on Saturday, August 22, 2026
+
+Latest Nemotron note: a slower full-rerun attempt on **Saturday, August 22, 2026**
+still failed immediately at the model level rather than cleanly pacing through the matrix:
+
+- Q1 failed 3 consecutive attempts at roughly 197 seconds each
+- Q2 then failed its first attempt at roughly 197 seconds before the run was stopped
+
+So the most recent usable Nemotron health-check number in this README remains the earlier
+**37/40 PASS** partial rerun from the same date, while the later full-rerun attempt should be
+interpreted as renewed evidence of model/provider instability rather than as a new benchmark.
 
 Historical note: Nemotron-3-Ultra via OpenRouter was useful for finding
 routing/frontmatter weaknesses. A completed paced expanded historical run reached
 **79/99 PASS**, with the main persistent misses in phenotype-first planning, import-first
 chaining, uncertainty/boundary explanation, and multi-strategy intervention comparison.
-The latest Saturday, August 22, 2026 rerun exited before either full matrix completed, so
-the current Nemotron numbers in this README should be interpreted as partial rerun health
-checks rather than as new full benchmark totals.
+On Saturday, August 22, 2026, the earlier paced partial rerun exited before either full
+matrix completed, and a later slower full-rerun attempt still failed immediately on Q1/Q2.
+The current Nemotron numbers in this README should therefore be interpreted as partial
+health checks and failure diagnostics rather than as a new clean full-matrix benchmark.
 
 Integration tests (`_test_integration.py`) cover four categories:
 cross-skill consistency (regulon↔network, search↔info, inferred↔curated, orthology, expression↔coexpression),

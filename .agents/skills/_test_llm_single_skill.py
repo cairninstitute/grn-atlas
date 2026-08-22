@@ -259,7 +259,13 @@ def evaluate_check(check: dict, tool_name: str | None, tool_args: dict, tool_dat
     elif ct == "data_contains_string":
         val = check["value"]
         desc = f"data contains '{val}'"
-        return desc, val.lower() in str(tool_data).lower() if tool_data else False
+        if not tool_data:
+            return desc, False
+        try:
+            haystack = json.dumps(tool_data, sort_keys=True)
+        except Exception:
+            haystack = str(tool_data)
+        return desc, val.lower() in haystack.lower()
 
     elif ct == "data_handles_error":
         desc = "handles error gracefully"

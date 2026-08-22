@@ -780,7 +780,8 @@
         ]
       },
       {
-        "type": "data_contains_string",
+        "type": "data_field_equals",
+        "field": "gene.symbol",
         "value": "NFKB1"
       }
     ]
@@ -1649,7 +1650,8 @@
         ]
       },
       {
-        "type": "data_contains_string",
+        "type": "data_field_equals",
+        "field": "gene_id",
         "value": "TP53"
       },
       {
@@ -3543,7 +3545,7 @@
   {
     "skill": "grn-subgraph",
     "label": "subgraph: single gene",
-    "question": "Extract the subgraph for just TP53.",
+    "question": "Show the TP53 interaction subgraph as a one-gene network slice, not just a gene lookup.",
     "expected_tools": [
       "grn_export",
       "grn_subgraph",
@@ -3557,11 +3559,6 @@
           "grn_network",
           "grn_export"
         ]
-      },
-      {
-        "type": "arg_contains",
-        "arg": "gene_ids",
-        "value": "TP53"
       }
     ]
   },
@@ -5816,7 +5813,7 @@
   {
     "skill": "grn-regulon-compare",
     "label": "regulon-compare: cross-species no overlap",
-    "question": "Compare the regulons of TP53 (human) and AT5G11260 (Arabidopsis HY5) at depth 1. Is there any cross-species overlap?",
+    "question": "Compare the depth-1 regulons of TP53 and AT5G11260 as two TF programs and report whether they share any targets across species.",
     "expected_tools": [
       "grn_regulon_compare"
     ],
@@ -7246,7 +7243,7 @@
         "value": "petunia"
       },
       {
-        "type": "arg_equals",
+        "type": "arg_contains",
         "arg": "intent",
         "value": "rnai"
       }

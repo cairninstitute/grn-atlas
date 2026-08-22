@@ -1,6 +1,6 @@
 ---
 name: grn-regulon-compare
-description: "Compare the regulatory programs of two transcription factors: shared targets, overlap size, Jaccard similarity, enrichment significance, and unique targets. Use for prompts like 'what targets do TP53 and NFKB1 share', 'how similar are these TFs', or 'compare their regulons and then interpret the shared target set with enrichment.'"
+description: "Compare the regulatory programs of two transcription factors: shared targets, overlap size, Jaccard similarity, enrichment significance, and unique targets. Use for prompts like 'what targets do TP53 and NFKB1 share', 'how similar are these TFs', 'compare their regulons and then interpret the shared target set with enrichment', or 'compare these two TF regulons even if they are from different species and may have no overlap.' If the request asks to compare two regulons, shared targets, overlap, or unique-vs-shared structure across two TFs, use this skill rather than extracting a single regulon with grn-regulon."
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server. Run `make setup` to create the venv.
 metadata:
   author: grn-atlas

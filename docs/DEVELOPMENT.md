@@ -38,11 +38,12 @@ LLM/coverage status is:
 
 - **100 documented skills** in the current inventory (**99 callable + 1 overview/router**)
 - **386** natural-language single-skill cases covering **100/100** skills
-- **385/386 PASS** on the latest GPT-5.4 single-skill rerun
+- **386/386 PASS** on the latest GPT-5.4 single-skill rerun, with **2 retry-recovered flaky passes**
 - **111** orchestration questions in the current chained-workflow inventory
 - **111/111 PASS** on the latest GPT-5.4 orchestration rerun
 - **37/40 PASS** on the latest Nemotron partial orchestration rerun before provider/model exit
-- The one remaining GPT-5.4 single-skill miss from that rerun (`subgraph: TP53<->E2F1`) was fixed in a targeted follow-up rerun on Saturday, August 22, 2026
+- A later slower Nemotron full-rerun attempt on **Saturday, August 22, 2026** failed immediately:
+  Q1 failed three times at roughly 197 seconds per attempt, then Q2 failed once at roughly 197 seconds before the run was stopped
 
 ## Fetch source data, then build the database
 

@@ -46,7 +46,7 @@ Raw temporary rerun outputs and local `.run_logs/` artifacts were intentionally 
 - Single-skill smoke slice: 6/6 pass
 - Supplemental weak-family orchestration slice (Q60-Q75): 16/16 pass after hardening
 - Stress-expansion orchestration slices (Q76-Q99): 24/24 pass after hardening
-- Full current single-skill rerun: 385/386 pass on Saturday, August 22, 2026
+- Full current single-skill rerun: 386/386 pass on Saturday, August 22, 2026, with 2 retry-recovered flaky passes
 - Full current orchestration rerun: 111/111 pass on Saturday, August 22, 2026
 
 ### Nemotron-3-Ultra
@@ -65,13 +65,18 @@ Raw temporary rerun outputs and local `.run_logs/` artifacts were intentionally 
 - Latest Saturday, August 22, 2026 full-rerun attempt:
   - single-skill rerun reached 258 completed cases and passed 255/258 before provider/model exit
   - orchestration rerun reached 40 completed questions and passed 37/40 before provider/model exit
+ - Later slower Saturday, August 22, 2026 full-orchestration rerun attempt:
+   - Q1 failed 3 consecutive attempts at roughly 197 seconds each
+   - Q2 failed its first attempt at roughly 197 seconds
+   - run was stopped because the failure shape was stable and no longer looked like simple pacing noise
 
 Interpretation:
 
 - GPT-5.4 is currently clean on the full current 111-question orchestration matrix, including the hardened weak families and new stress chains.
 - Nemotron can complete much of the same surface, and pacing reduces transient failures, but it is not clean on the expanded matrix.
 - The remaining Nemotron gap is a mix of provider instability, under-chaining, and weak final synthesis on harder comparison / phenotype / import workflows.
-- The one remaining GPT-5.4 single-skill miss from the full rerun (`subgraph: TP53<->E2F1`) was fixed in a targeted follow-up rerun later on Saturday, August 22, 2026.
+- GPT-5.4 is now clean on the full current 386-case single-skill matrix as well as the full 111-question orchestration matrix.
+- Nemotron remains materially unstable on long reruns even under slower pacing; the later Aug. 22 full-rerun attempt failed immediately on Q1/Q2.
 
 ## Functionality-area coverage matrix
 
