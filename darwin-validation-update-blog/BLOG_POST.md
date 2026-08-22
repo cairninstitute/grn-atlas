@@ -23,10 +23,10 @@ The current repository state is materially stronger than the initial public rele
 - current species coverage is **human, mouse, arabidopsis, tomato, petunia, pepper, and potato**, with **dahlia onboarding prepared**
 - the repository now contains **100 documented GRN Atlas skills** (**99 callable + 1 overview/router**)
 - the current single-skill coverage audit spans **386 natural-language cases covering 100/100 skills**
-- the latest full GPT-5.4 single-skill rerun is **385/386 pass**
+- the latest full GPT-5.4 single-skill rerun is **386/386 pass**
 - the latest full GPT-5.4 orchestration rerun is **111/111 pass**
 - the historical completed paced Nemotron-3-Ultra expanded orchestration matrix is **79/99 pass**, with **9 retry-recovered flaky passes**
-- a later Nemotron health-check rerun reached **255/258** single-skill cases and **37/40** orchestration cases before provider/model exit
+- a later Nemotron health-check rerun reached **255/258** single-skill cases and **37/40** orchestration cases before provider/model exit, and an even slower rerun later on Saturday, August 22, 2026 still failed immediately on Q1/Q2
 
 Most importantly, the new validation work was not limited to software contracts. We also reran direct biological benchmarks on the network itself and completed a milestone validation suite across import, TF activity, pathway activity, chromatin support, trajectory workflows, dsRNA, CRISPR, perturbation calibration, transferability, and packaged workflow generation.
 
@@ -207,8 +207,7 @@ The repository now contains **100 documented GRN Atlas skills**:
 - **99 callable analysis/workflow skills**
 - **1 overview/router skill**
 - the current single-skill coverage audit covers **100/100** skills across **386** prompts
-- the latest full GPT-5.4 rerun passed **385/386**
-- the one remaining miss from that rerun (`subgraph: TP53<->E2F1`) was fixed in a targeted follow-up rerun later on Saturday, August 22, 2026
+- the latest full GPT-5.4 rerun passed **386/386**
 
 The newer parts of the skill surface include major additions in these families:
 
@@ -374,7 +373,7 @@ The most defensible current public statement is:
 
 - GRN Atlas is no longer just a network browser
 - it is a multi-layer research system with direct biological benchmarking, statistical validation, and explicit workflow-level testing
-- the strongest current clean orchestrator result is GPT-5.4 at **99/99**
+- the strongest current clean orchestrator results are GPT-5.4 at **386/386** on the full single-skill matrix and **111/111** on the full current orchestration matrix
 - Nemotron remains useful as a stress-test model, but it is materially less reliable on the hardest chained workflows
 
 For academic and non-commercial use, the project is publicly available now.

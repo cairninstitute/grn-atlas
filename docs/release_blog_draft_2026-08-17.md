@@ -14,16 +14,16 @@ Today we are publishing a release update for GRN Atlas focused on the skill laye
 
 GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.
 
-As of Friday, August 14, 2026, the repository contains **61 documented GRN Atlas skills**:
+As of Saturday, August 22, 2026, the repository contains **100 documented GRN Atlas skills**:
 
-- **60 callable analysis and workflow skills**
+- **99 callable analysis and workflow skills**
 - **1 overview/router skill**
 
 The current clean repository LLM results are:
 
-- **GPT-5.4 single-skill matrix:** 347/347 pass
-- **GPT-5.4 orchestration matrix:** 59/59 pass
-- **Nemotron-3-Ultra orchestration matrix:** 50/59 pass
+- **GPT-5.4 single-skill matrix:** 386/386 pass, with 2 retry-recovered flaky passes
+- **GPT-5.4 orchestration matrix:** 111/111 pass
+- **Nemotron-3-Ultra orchestration matrix:** historical completed 50/59 pass on August 14, 2026
 - **Nemotron targeted single-skill diagnostic subset:** 36/38 pass
 
 GRN Atlas is being released free for academic and non-commercial use. For commercial use, productization, deployment, or partnership discussions, contact CAIRN Institute.
@@ -352,10 +352,10 @@ The repository now has two useful LLM validation stories:
 
 ### Current clean repository status: GPT-5.4
 
-As of Thursday, August 13, 2026:
+As of Saturday, August 22, 2026:
 
-- single-skill matrix: 347/347 pass
-- multi-skill orchestration matrix: 59/59 pass
+- single-skill matrix: 386/386 pass, with 2 retry-recovered flaky passes
+- multi-skill orchestration matrix: 111/111 pass
 
 These current matrices are the best statement of the repository’s present skill-calling status.
 
@@ -384,14 +384,19 @@ Targeted Nemotron single-skill diagnostic subset on the later weak families:
 
 ### Multi-skill orchestration testing
 
-The latest full Nemotron orchestration rerun covered the complete **59-question** workflow matrix on **Friday, August 14, 2026**.
+The most recent completed historical Nemotron orchestration rerun covered the complete **59-question** workflow matrix on **Friday, August 14, 2026**.
 
-Result:
+Historical completed result:
 
 - 59/59 tested
 - 50/59 passes
 - 84.7% pass rate
 - 9 questions failed that GPT-5.4 passed cleanly
+
+Later Saturday, August 22, 2026 health-check results:
+
+- partial full rerun reached 255/258 single-skill and 37/40 orchestration before provider/model exit
+- a later slower full-rerun attempt still failed immediately at the model/provider layer: Q1 failed three times at roughly 197 seconds each, then Q2 failed once before the run was stopped
 
 These orchestration questions cover:
 

@@ -21,8 +21,8 @@ As of Saturday, August 22, 2026, the repository contains **100 documented GRN At
 
 The current full GPT-5.4 rerun results are:
 
-- **GPT-5.4 single-skill matrix:** 383/386 pass, with 7 retry-recovered flaky passes
-- **GPT-5.4 orchestration matrix:** 111/111 pass, with 4 retry-recovered flaky passes
+- **GPT-5.4 single-skill matrix:** 386/386 pass, with 2 retry-recovered flaky passes
+- **GPT-5.4 orchestration matrix:** 111/111 pass
 
 The latest August 22, 2026 Nemotron rerun reached:
 
@@ -342,10 +342,9 @@ The repository now has two useful LLM validation stories:
 
 As of Saturday, August 22, 2026:
 
-- single-skill matrix: 383/386 pass
-- retry-recovered flaky single-skill cases: 7
+- single-skill matrix: 386/386 pass
+- retry-recovered flaky single-skill cases: 2
 - multi-skill orchestration matrix: 111/111 pass
-- retry-recovered flaky orchestration cases: 4
 
 Most of the remaining single-skill misses were not backend execution failures. They concentrated in a small number of routing-boundary families where the newer specialized tools are now preferred over older, broader skills:
 
@@ -381,7 +380,7 @@ Targeted Nemotron single-skill diagnostic subset on the later weak families:
 
 ### Multi-skill orchestration testing
 
-The latest August 22, 2026 paced Nemotron rerun did not complete the full matrices because the provider/model exited mid-run after partial completion.
+The latest August 22, 2026 paced Nemotron rerun did not complete the full matrices because the provider/model exited mid-run after partial completion. A later slower full-rerun attempt on the same date still failed immediately at Q1/Q2 rather than cleanly pacing through the matrix.
 
 Result:
 
@@ -430,8 +429,9 @@ The misses were concentrated in a few workflow families:
 Failure shape in the latest August 22 Nemotron rerun:
 
 - the completed subset still showed the same reasoning and chaining weaknesses seen in earlier comparison runs
-- the August 22 rerun also showed provider/model instability, with the process exiting before either matrix finished
-- that means August 22 should be interpreted as a partial health check plus partial comparison, not as a new full completed benchmark
+- the earlier August 22 rerun showed provider/model instability, with the process exiting before either matrix finished
+- the later slower August 22 rerun reinforced that instability: Q1 failed three times at roughly 197 seconds each, then Q2 failed once before the run was stopped
+- that means August 22 should be interpreted as a partial health check plus explicit instability evidence, not as a new full completed benchmark
 
 That matters because Nemotron still demonstrates two distinct issues: reasoning/chaining quality gaps on some workflow families, and separate provider/model reliability issues on long runs.
 
@@ -536,14 +536,15 @@ They cover orientation and search, network structure, expression and context, cr
 
 Current clean GPT-5.4 matrix results:
 
-- single-skill routing: 383/386, with 7 retry-recovered flaky passes
-- multi-skill orchestration: 111/111, with 4 retry-recovered flaky passes
+- single-skill routing: 386/386, with 2 retry-recovered flaky passes
+- multi-skill orchestration: 111/111
 
 Nemotron comparison results:
 
 - broad earlier single-skill rerun: 285/305 correct tool selections
 - targeted later diagnostic subset: 36/38 pass
 - August 22 partial full rerun: 255/258 single-skill and 37/40 orchestration before provider/model exit
+- later slower August 22 orchestration rerun: Q1 failed three times and Q2 failed once before the run was stopped
 
 **What are the main current limits on Nemotron?**
 

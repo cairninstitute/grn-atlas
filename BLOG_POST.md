@@ -12,7 +12,7 @@ Read time: 8–10 minutes
 
 Today we’re publicly releasing GRN Atlas for academic and non-commercial use.
 
-GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows. As of Thursday, August 13, 2026, the repository contains 61 documented skills: 60 callable analysis/workflow skills plus one overview/router skill. Earlier Nemotron-3-Ultra testing helped harden the routing layer, and the current clean GPT-5.4 matrices in-repo are 347/347 pass on single-skill routing and 59/59 pass on multi-skill orchestration.
+GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, RNAi-oriented dsRNA design, CRISPR-oriented heuristics, chromatin-linked support, and packaged research workflows across human, mouse, Arabidopsis, tomato, petunia, pepper, and potato. It includes both an interactive web UI and a structured skill layer for agent-driven workflows. As of Saturday, August 22, 2026, the repository contains 100 documented GRN Atlas skills: 99 callable analysis/workflow skills plus one overview/router skill. Earlier Nemotron-3-Ultra testing helped harden the routing layer, and the current clean GPT-5.4 matrices in-repo are 386/386 pass on single-skill routing and 111/111 pass on multi-skill orchestration.
 
 Repository: https://github.com/cairninstitute/grn-atlas
 
@@ -48,13 +48,15 @@ It combines:
 - RNAi-oriented dsRNA design and screening
 - evidence-audit and experiment-planning workflows
 
-The atlas currently supports five species:
+The atlas currently supports seven species in the working release branch:
 
 - human
 - mouse
 - Arabidopsis
 - tomato
 - petunia
+- pepper
+- potato
 
 Some layers are measured, some are projected, and some are computationally inferred or predicted. A core design rule is that these are never mixed without labeling.
 
@@ -265,10 +267,10 @@ The repo now has two useful testing stories:
 
 ### Current clean repo status: GPT-5.4
 
-As of Thursday, August 13, 2026:
+As of Saturday, August 22, 2026:
 
-- single-skill matrix: 347/347 pass
-- multi-skill orchestration matrix: 59/59 pass
+- single-skill matrix: 386/386 pass, with 2 retry-recovered flaky passes
+- multi-skill orchestration matrix: 111/111 pass
 
 These current matrices are the best statement of the repository’s present LLM skill-calling status.
 
@@ -291,7 +293,7 @@ Representative result from the wider reruns:
 
 ### Multi-skill orchestration testing
 
-The latest full Nemotron orchestration rerun covered the complete **59-question** workflow matrix on **Friday, August 14, 2026**.
+The most recent completed historical Nemotron orchestration rerun covered the **59-question** workflow matrix on **Friday, August 14, 2026**.
 
 Result:
 
@@ -340,7 +342,7 @@ The Nemotron evaluation directly shaped the skill layer. We improved:
 - RNAi-screen evaluation coverage
 - collaborator-handoff and validation-plan chaining
 
-Those Nemotron results were valuable mainly because they revealed where skill descriptions, frontmatter, and orchestration sequencing needed to be tightened. The repo status has moved forward since then.
+Those Nemotron results were valuable mainly because they revealed where skill descriptions, frontmatter, and orchestration sequencing needed to be tightened. The repo status has moved forward since then. Later Saturday, August 22, 2026 partial reruns reached 255/258 single-skill and 37/40 orchestration before provider/model exit, and a slower full-rerun attempt later that day still failed immediately on Q1/Q2.
 
 The result is not just a library of tools. It is a release candidate that has been exercised with both deterministic tests and external LLM-driven tool use.
 
@@ -400,22 +402,24 @@ Yes. The repository includes the full skill layer in `.agents/skills/`.
 
 **How many skills are included?**
 
-61 documented skills total:
+100 documented skills total:
 
-- 60 callable analysis/workflow skills
+- 99 callable analysis/workflow skills
 - 1 overview/router skill
 
 **How well does an external LLM use the skills today?**
 
 Current clean GPT-5.4 matrix results:
 
-- single-skill routing: 347/347
-- multi-skill orchestration: 59/59
+- single-skill routing: 386/386, with 2 retry-recovered flaky passes
+- multi-skill orchestration: 111/111
 
 Nemotron comparison results:
 
 - single-skill tool selection accuracy in earlier broad reruns: 93.4%
 - full 59-question orchestration matrix on August 14, 2026: 50/59
+- later August 22, 2026 partial rerun: 255/258 single-skill and 37/40 orchestration before provider/model exit
+- slower August 22, 2026 rerun: Q1 failed three times and Q2 failed once before the run was stopped
 
 **Is this open source?**
 

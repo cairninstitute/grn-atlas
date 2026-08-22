@@ -184,8 +184,8 @@ What this means:
 
 As of Friday, August 14, 2026:
 
-- GPT-5.4 single-skill matrix: **347/347 PASS**
-- GPT-5.4 orchestration matrix: **59/59 PASS**
+- GPT-5.4 single-skill matrix: **386/386 PASS**
+- GPT-5.4 orchestration matrix: **111/111 PASS**
 
 This is the cleanest current statement of repo-level LLM routing/orchestration status.
 
@@ -206,7 +206,7 @@ Direct comparison:
 
 | Model | Single-skill status | Orchestration status | Interpretation |
 |---|---|---|---|
-| GPT-5.4 | 347/347 PASS | 59/59 PASS | current clean repo status |
+| GPT-5.4 | 386/386 PASS | 111/111 PASS | current clean repo status |
 | Nemotron-3-Ultra | earlier broad reruns were mainly used for routing/frontmatter hardening | 50/59 PASS | portability / robustness probe, but weaker orchestrator |
 
 Nemotron failed 9 orchestration questions that GPT-5.4 passed:

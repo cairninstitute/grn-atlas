@@ -21,8 +21,8 @@ As of Friday, August 14, 2026, the repository contains **61 documented GRN Atlas
 
 The current clean repository LLM results are:
 
-- **GPT-5.4 single-skill matrix:** 347/347 pass
-- **GPT-5.4 orchestration matrix:** 59/59 pass
+- **GPT-5.4 single-skill matrix:** 386/386 pass, with 2 retry-recovered flaky passes
+- **GPT-5.4 orchestration matrix:** 111/111 pass
 - **Nemotron-3-Ultra orchestration matrix:** 50/59 pass
 - **Nemotron targeted single-skill diagnostic subset:** 36/38 pass
 
@@ -334,10 +334,10 @@ The repository now has two useful LLM validation stories:
 
 ### Current clean repository status: GPT-5.4
 
-As of Thursday, August 13, 2026:
+As of Saturday, August 22, 2026:
 
-- single-skill matrix: 347/347 pass
-- multi-skill orchestration matrix: 59/59 pass
+- single-skill matrix: 386/386 pass, with 2 retry-recovered flaky passes
+- multi-skill orchestration matrix: 111/111 pass
 
 These current matrices are the best statement of the repository’s present skill-calling status.
 
@@ -521,8 +521,8 @@ They cover orientation and search, network structure, expression and context, cr
 
 Current clean GPT-5.4 matrix results:
 
-- single-skill routing: 347/347
-- multi-skill orchestration: 59/59
+- single-skill routing: 386/386, with 2 retry-recovered flaky passes
+- multi-skill orchestration: 111/111
 
 Nemotron comparison results:
 
