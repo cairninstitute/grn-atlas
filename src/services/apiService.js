@@ -515,6 +515,86 @@ export const analysisAPI = {
     return response.json();
   },
 
+  cisSupportAudit: async (sourceId, targetId, species) => {
+    const response = await fetch(`${API_BASE}/cis-support/audit`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source_id: sourceId, target_id: targetId, species }),
+    });
+    return response.json();
+  },
+
+  enhancerNetwork: async (geneId, options = {}) => {
+    const response = await fetch(`${API_BASE}/enhancer/network`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gene_id: geneId, ...options }),
+    });
+    return response.json();
+  },
+
+  peakGeneLinkage: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/peak-gene/linkage`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(options),
+    });
+    return response.json();
+  },
+
+  crisprVsDsrna: async (geneIds, species, intent = 'knockdown') => {
+    const response = await fetch(`${API_BASE}/compare/crispr-vs-dsrna`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gene_ids: geneIds, species, intent }),
+    });
+    return response.json();
+  },
+
+  editConsequence: async (geneId, editType, options = {}) => {
+    const response = await fetch(`${API_BASE}/edit/consequence`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gene_id: geneId, edit_type: editType, ...options }),
+    });
+    return response.json();
+  },
+
+  celltypeRegulon: async (geneId, options = {}) => {
+    const response = await fetch(`${API_BASE}/celltype/regulon`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gene_id: geneId, ...options }),
+    });
+    return response.json();
+  },
+
+  transitionDrivers: async (options = {}) => {
+    const response = await fetch(`${API_BASE}/transition/drivers`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(options),
+    });
+    return response.json();
+  },
+
+  multiomeAudit: async (sourceId, targetId, species) => {
+    const response = await fetch(`${API_BASE}/multiome/audit`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source_id: sourceId, target_id: targetId, species }),
+    });
+    return response.json();
+  },
+
+  literatureGrounding: async (terms, species, top = 20) => {
+    const response = await fetch(`${API_BASE}/literature/grounding`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ terms, species, top }),
+    });
+    return response.json();
+  },
+
+  interventionRank: async (geneIds, species, intent = 'knockdown', budget = 'moderate') => {
+    const response = await fetch(`${API_BASE}/intervention/rank`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gene_ids: geneIds, species, intent, budget }),
+    });
+    return response.json();
+  },
+
   networkPatterns: async (options = {}) => {
     const response = await fetch(`${API_BASE}/network/patterns`, {
       method: 'POST',
