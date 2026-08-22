@@ -17,29 +17,32 @@
 
 .analysis-tab-bar {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   margin-bottom: 6px;
-  padding: 4px;
+  padding: 3px;
   background: var(--surface-1);
   border-radius: 10px;
   border: 1px solid var(--border);
+  flex-wrap: wrap;
 }
 
 .analysis-tab {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 12px;
+  gap: 5px;
+  padding: 8px 10px;
   border: none;
   border-radius: 8px;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .analysis-tab:hover {
@@ -54,11 +57,12 @@
 }
 
 .analysis-tab-icon {
-  font-size: 1rem;
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .analysis-tab-label {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
 }
 
 .analysis-tab-desc {

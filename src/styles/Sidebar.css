@@ -8,8 +8,92 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  transition: width 0.2s ease;
 }
 
+.sidebar-collapsed {
+  width: 48px;
+  padding: 8px 6px;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sidebar-collapse-btn,
+.sidebar-expand-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 10px;
+  padding: 4px 6px;
+  transition: background 0.15s;
+}
+
+.sidebar-collapse-btn:hover,
+.sidebar-expand-btn:hover {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
+.sidebar-collapsed-search {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.sidebar-collapsed-search:hover {
+  background: var(--surface-2);
+}
+
+.sidebar-collapsed-gene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 0;
+}
+
+.sidebar-collapsed-gene-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-primary);
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-collapsed-species {
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+
+.sidebar-collapsed-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: auto;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+/* Sidebar Section */
 .sidebar-section {
   display: flex;
   flex-direction: column;
@@ -72,6 +156,7 @@
   overflow-y: auto;
   z-index: 100;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: slideInRight 0.15s ease-out;
 }
 
 .suggestion-item {
@@ -270,8 +355,4 @@
     opacity: 1;
     transform: translateX(0);
   }
-}
-
-.suggestions-dropdown {
-  animation: slideInRight 0.15s ease-out;
 }

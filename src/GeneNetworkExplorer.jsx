@@ -443,6 +443,7 @@ function ExplorerInner() {
         onFilterChange={handleFilterChange}
         onGeneSearch={handleGeneSearch}
         loading={loading}
+        selectedGene={selectedGene}
       />
 
       <div className="main-content">

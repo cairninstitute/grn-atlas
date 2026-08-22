@@ -3,9 +3,6 @@ import { geneLabel } from '../utils/geneLabel';
 import DataSourcesPanel from './DataSourcesPanel';
 import '../styles/Sidebar.css';
 
-// Display metadata for species we may hold data for. The actual list shown is
-// driven by which species exist in the database (see the stats fetch below);
-// this map only supplies nice labels and kingdom grouping.
 const SPECIES_META = {
   human: { common: 'Human', scientific: 'Homo sapiens', kingdom: 'Animalia' },
   mouse: { common: 'Mouse', scientific: 'Mus musculus', kingdom: 'Animalia' },
@@ -17,8 +14,6 @@ const SPECIES_META = {
 
 const KINGDOM_ORDER = ['Animalia', 'Plantae', 'Other'];
 
-// Build the {kingdom: [species]} grouping and kingdom list from the species
-// symbols actually present in the data.
 function groupSpecies(presentSymbols) {
   const byKingdom = {};
   presentSymbols.forEach((symbol) => {
@@ -36,7 +31,8 @@ function groupSpecies(presentSymbols) {
   return { byKingdom, kingdoms };
 }
 
-export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading }) {
+export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading, selectedGene }) {
+  const [collapsed, setCollapsed] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -54,7 +50,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
   const searchInputRef = useRef(null);
   const suggestionsRef = useRef(null);
 
-  // Populate the kingdom/species filters from the species actually in the data.
   useEffect(() => {
     fetch('/api/v1/stats')
       .then((r) => r.json())
@@ -77,7 +72,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
     setMaxDepth(filters.maxDepth);
   }, [filters]);
 
-  // Fetch gene suggestions
   useEffect(() => {
     if (searchInput.length < 2) {
       setSuggestions([]);
@@ -106,7 +100,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
     return () => clearTimeout(timer);
   }, [searchInput, selectedSpecies]);
 
-  // Handle search
   const handleSearch = (gene) => {
     onGeneSearch(gene.symbol);
     setSearchInput('');
@@ -114,7 +107,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
     setShowSuggestions(false);
   };
 
-  // Handle kingdom change
   const handleKingdomToggle = (kingdom) => {
     const newKingdoms = new Set(selectedKingdoms);
     if (newKingdoms.has(kingdom)) {
@@ -123,8 +115,7 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
       newKingdoms.add(kingdom);
     }
     setSelectedKingdoms(newKingdoms);
-    
-    // Reset species if kingdom is deselected
+
     if (!newKingdoms.has(kingdom)) {
       const newSpecies = new Set(selectedSpecies);
       speciesByKingdom[kingdom]?.forEach(s => newSpecies.delete(s.symbol));
@@ -138,7 +129,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
     });
   };
 
-  // Handle species change
   const handleSpeciesToggle = (species) => {
     const newSpecies = new Set(selectedSpecies);
     if (newSpecies.has(species)) {
@@ -154,7 +144,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
     });
   };
 
-  // Handle regulation type change
   const handleRegulationTypeToggle = (type) => {
     const newTypes = new Set(regulationTypes);
     if (newTypes.has(type)) {
@@ -170,43 +159,27 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
     });
   };
 
-  // Handle confidence change
   const handleConfidenceChange = (e) => {
     const value = parseFloat(e.target.value);
     setConfidence(value);
-
-    onFilterChange({
-      ...filters,
-      minConfidence: value
-    });
+    onFilterChange({ ...filters, minConfidence: value });
   };
 
-  // Handle inferred-edge toggle
   const handleInferredToggle = () => {
     const value = !includeInferred;
     setIncludeInferred(value);
     onFilterChange({ ...filters, includeInferred: value });
   };
 
-  // Handle direction change
   const handleDirectionChange = (e) => {
     setDirection(e.target.value);
-
-    onFilterChange({
-      ...filters,
-      direction: e.target.value
-    });
+    onFilterChange({ ...filters, direction: e.target.value });
   };
 
-  // Handle depth change
   const handleDepthChange = (e) => {
     const value = parseInt(e.target.value, 10);
     setMaxDepth(value);
-
-    onFilterChange({
-      ...filters,
-      maxDepth: value
-    });
+    onFilterChange({ ...filters, maxDepth: value });
   };
 
   const getVisibleSpecies = () => {
@@ -217,9 +190,46 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
     return visible;
   };
 
+  if (collapsed) {
+    return (
+      <div className="sidebar sidebar-collapsed">
+        <button className="sidebar-expand-btn" onClick={() => setCollapsed(false)} title="Expand sidebar">
+          <span className="sidebar-expand-icon">&#9654;</span>
+        </button>
+        <button
+          className="sidebar-collapsed-search"
+          onClick={() => { setCollapsed(false); setTimeout(() => searchInputRef.current?.focus(), 100); }}
+          title="Search genes"
+        >
+          &#128269;
+        </button>
+        {selectedGene && (
+          <div className="sidebar-collapsed-gene" title={selectedGene.symbol || selectedGene.id}>
+            <span className="sidebar-collapsed-gene-label">
+              {(selectedGene.symbol || selectedGene.id || '').slice(0, 6)}
+            </span>
+            <span className="sidebar-collapsed-species">{selectedGene.species?.slice(0, 4)}</span>
+          </div>
+        )}
+        {stats && (
+          <div className="sidebar-collapsed-stats">
+            <span title={`${stats.species} species`}>{stats.species}sp</span>
+            <span title={`${stats.genes?.toLocaleString()} genes`}>{(stats.genes / 1000).toFixed(0)}k</span>
+          </div>
+        )}
+        <DataSourcesPanel open={showDataSources} onClose={() => setShowDataSources(false)} />
+      </div>
+    );
+  }
+
   return (
     <div className="sidebar">
-      {/* Gene Search */}
+      <div className="sidebar-header">
+        <button className="sidebar-collapse-btn" onClick={() => setCollapsed(true)} title="Collapse sidebar">
+          <span className="sidebar-collapse-icon">&#9664;</span>
+        </button>
+      </div>
+
       <div className="sidebar-section">
         <h3 className="sidebar-title">Gene search</h3>
         <div className="search-container">
@@ -237,7 +247,7 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
               onFocus={() => setShowSuggestions(true)}
               disabled={loading}
             />
-            {loading && <div className="search-spinner">⟳</div>}
+            {loading && <div className="search-spinner">&#10227;</div>}
           </div>
 
           {showSuggestions && suggestions.length > 0 && (
@@ -258,7 +268,7 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
                   </div>
                   {gene.synonyms && gene.synonyms.length > 0 && (
                     <div className="suggestion-synonyms">
-                      <span className="synonym-label">≈ Arabidopsis ortholog (inferred):</span>{' '}
+                      <span className="synonym-label">&#8776; Arabidopsis ortholog (inferred):</span>{' '}
                       {gene.synonyms.join(', ')}
                     </div>
                   )}
@@ -269,7 +279,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
         </div>
       </div>
 
-      {/* Kingdom Filter */}
       <div className="sidebar-section">
         <h3 className="sidebar-title">Kingdom</h3>
         <div className="filter-group">
@@ -286,7 +295,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
         </div>
       </div>
 
-      {/* Species Filter */}
       {getVisibleSpecies().length > 0 && (
         <div className="sidebar-section">
           <h3 className="sidebar-title">Species</h3>
@@ -305,7 +313,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
         </div>
       )}
 
-      {/* Evidence Filter */}
       <div className="sidebar-section">
         <h3 className="sidebar-title">Evidence</h3>
         <div className="filter-group">
@@ -320,7 +327,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
         </div>
       </div>
 
-      {/* Regulation Type Filter */}
       <div className="sidebar-section">
         <h3 className="sidebar-title">Regulation type</h3>
         <div className="filter-group">
@@ -337,7 +343,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
         </div>
       </div>
 
-      {/* Confidence Threshold */}
       <div className="sidebar-section">
         <h3 className="sidebar-title">Confidence threshold</h3>
         <input
@@ -349,10 +354,9 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
           value={confidence}
           onChange={handleConfidenceChange}
         />
-        <div className="slider-value">≥ {confidence.toFixed(2)}</div>
+        <div className="slider-value">&ge; {confidence.toFixed(2)}</div>
       </div>
 
-      {/* Direction */}
       <div className="sidebar-section">
         <h3 className="sidebar-title">Regulation direction</h3>
         <select className="select-input" value={direction} onChange={handleDirectionChange}>
@@ -362,7 +366,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
         </select>
       </div>
 
-      {/* Max Depth */}
       <div className="sidebar-section">
         <h3 className="sidebar-title">Network depth</h3>
         <input
@@ -376,7 +379,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
         <div className="slider-value">{maxDepth} hops</div>
       </div>
 
-      {/* Info */}
       <div className="sidebar-info">
         <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
           {stats ? (
@@ -386,7 +388,7 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
               <div>{stats.interactions?.toLocaleString()} interactions</div>
             </>
           ) : (
-            <div>Loading…</div>
+            <div>Loading&hellip;</div>
           )}
         </div>
         <button className="data-sources-btn" onClick={() => setShowDataSources(true)}>

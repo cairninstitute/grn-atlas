@@ -32,75 +32,99 @@ import TransitionDriversPanel from './TransitionDriversPanel';
 import '../styles/AnalysisView.css';
 
 const TABS = [
-  { id: 'discover', label: 'Discover', icon: '🔍',
-    desc: 'Find regulators, regulons, and enriched TFs',
+  {
+    id: 'regulators',
+    label: 'Who regulates my gene?',
+    icon: '↑',
+    desc: 'Find upstream TFs, enriched regulons, and binding evidence for your gene of interest',
     sections: [
-      { label: 'Regulon & Upstream', panels: [
-        { id: 'regulon', title: 'Regulon Extraction', desc: 'Extract downstream targets of a TF', component: RegulonPanel, accepts: 'sharedGeneSet', shares: true },
-        { id: 'compare', title: 'Regulon Comparison', desc: 'Compare regulons of two TFs', component: RegulonComparePanel, shares: true },
-        { id: 'upstream', title: 'Upstream Regulators', desc: 'Predict which TFs regulate a gene set', component: UpstreamPanel, accepts: 'sharedGeneSet' },
+      { label: '1. Find candidate regulators', panels: [
+        { id: 'upstream', title: 'Upstream Regulators', desc: 'Which TFs have your gene in their regulon?', component: UpstreamPanel, accepts: 'sharedGeneSet' },
         { id: 'regulon-enrichment', title: 'Regulon Enrichment', desc: 'Test which TF regulons are enriched in a gene list', component: RegulonEnrichmentPanel, accepts: 'sharedGeneSet' },
-        { id: 'tf-activity', title: 'TF / Pathway Activity', desc: 'Infer TF or pathway activity from gene statistics', component: TFActivityPanel, accepts: 'sharedGeneSet' },
+        { id: 'tf-activity', title: 'TF / Pathway Activity', desc: 'Infer TF or pathway activity from expression data', component: TFActivityPanel, accepts: 'sharedGeneSet' },
       ]},
-      { label: 'Network Structure', panels: [
-        { id: 'patterns', title: 'Network Patterns', desc: 'Feed-forward loops, autoregulation, bi-fans', component: NetworkPatternsPanel },
-        { id: 'centrality', title: 'Centrality Metrics', desc: 'Rank genes by network centrality', component: CentralityPanel },
-        { id: 'modules', title: 'Module Detection', desc: 'Co-regulated gene communities', component: ModulePanel },
+      { label: '2. Examine the regulon', panels: [
+        { id: 'regulon', title: 'Regulon Extraction', desc: 'See the full downstream target list of a candidate TF', component: RegulonPanel, accepts: 'sharedGeneSet', shares: true },
+        { id: 'compare', title: 'Regulon Comparison', desc: 'Compare regulons of two TFs side by side', component: RegulonComparePanel, shares: true },
       ]},
-      { label: 'Cell State & Transitions', panels: [
-        { id: 'celltype', title: 'Cell-type Regulation', desc: 'TF regulators active in specific cell types/clusters', component: CelltypePanel, accepts: 'sharedGeneSet' },
-        { id: 'transition-drivers', title: 'Transition Drivers', desc: 'TF drivers of cell-state transitions', component: TransitionDriversPanel, accepts: 'sharedGeneSet' },
+      { label: '3. Validate the evidence', panels: [
+        { id: 'cis-support-audit', title: 'Cis-Support Audit', desc: 'Is the TF→target edge backed by motif, chromatin, and prior data?', component: CisSupportAuditPanel },
+        { id: 'motif', title: 'Motif Query', desc: 'Check for TF binding motif hits in the target promoter', component: MotifQueryPanel },
+        { id: 'literature-grounding', title: 'Literature Grounding', desc: 'Map gene names from papers to atlas IDs', component: LiteratureGroundingPanel },
+      ]},
+    ],
+  },
+  {
+    id: 'phenotype',
+    label: "What's driving this phenotype?",
+    icon: '⚙',
+    desc: 'Starting from DEGs or a gene list, find the TF drivers, co-regulated modules, and network structure behind a phenotype',
+    sections: [
+      { label: '1. Identify driver TFs', panels: [
+        { id: 'transition-drivers', title: 'Transition Drivers', desc: 'Which TFs’ regulons overlap your DEG list?', component: TransitionDriversPanel, accepts: 'sharedGeneSet' },
+        { id: 'celltype', title: 'Cell-type Regulators', desc: 'TFs active in specific cell types or clusters', component: CelltypePanel, accepts: 'sharedGeneSet' },
         { id: 'diffreg', title: 'Differential Regulation', desc: 'Compare TF activity between tissue conditions', component: DiffRegulationPanel },
       ]},
-    ],
-  },
-  { id: 'evidence', label: 'Evidence', icon: '🔬',
-    desc: 'Audit regulatory edge support across data layers',
-    sections: [
-      { label: 'Edge Auditing', panels: [
-        { id: 'cis-support-audit', title: 'Cis-Support Audit', desc: 'Is a TF→target edge supported by motif, chromatin, and prior evidence?', component: CisSupportAuditPanel },
-        { id: 'multiome-audit', title: 'Multi-layer Evidence', desc: 'Triangulate support across network, motif, chromatin, expression, perturbation', component: MultiomeAuditPanel },
+      { label: '2. Explore network structure', panels: [
+        { id: 'modules', title: 'Module Detection', desc: 'Find co-regulated gene communities in your list', component: ModulePanel },
+        { id: 'patterns', title: 'Network Patterns', desc: 'Feed-forward loops, autoregulation, bi-fan motifs', component: NetworkPatternsPanel },
+        { id: 'centrality', title: 'Centrality Metrics', desc: 'Rank genes by network centrality (hub TFs)', component: CentralityPanel },
       ]},
-      { label: 'Chromatin & Enhancers', panels: [
-        { id: 'enhancer-network', title: 'Enhancer Network', desc: "Gene's enhancer-linked regulatory neighborhood", component: EnhancerNetworkPanel },
-        { id: 'chromatin', title: 'Chromatin Peaks', desc: 'View and import chromatin peaks, enhancer-gene links', component: ChromatinPanel },
-        { id: 'motif', title: 'Motif Query', desc: 'TF binding motif hits in gene promoters', component: MotifQueryPanel },
-      ]},
-      { label: 'Expression & Inference', panels: [
-        { id: 'inferred', title: 'Inferred Edges', desc: 'GRNBoost2/GENIE3 predicted regulatory edges', component: InferredEdgesPanel, accepts: 'sharedGeneSet', shares: true },
-        { id: 'tissue-weights', title: 'Tissue Coexpression', desc: 'Tissue-specific edge coexpression weights', component: TissueWeightsPanel },
-      ]},
-      { label: 'Validation', panels: [
-        { id: 'validation-dashboard', title: 'Validation Dashboard', desc: 'Benchmarks, per-species quality, atlas coverage', component: ValidationDashboard },
-      ]},
-    ],
-  },
-  { id: 'intervene', label: 'Intervene', icon: '🎯',
-    desc: 'Design and compare intervention strategies',
-    sections: [
-      { label: 'Strategy Comparison', panels: [
-        { id: 'crispr-vs-dsrna', title: 'CRISPR vs dsRNA', desc: 'Compare RNAi and CRISPR for the same gene targets', component: CrisprVsDsrnaPanel },
-        { id: 'intervention-ranker', title: 'Intervention Ranker', desc: 'Rank dsRNA, CRISPR, and promoter editing by feasibility and cost', component: InterventionRankerPanel },
-      ]},
-      { label: 'Consequence Prediction', panels: [
-        { id: 'edit-consequence', title: 'Edit Consequence', desc: 'Predict regulatory effects of promoter or coding edits', component: EditConsequencePanel },
-      ]},
-      { label: 'Multi-step Workflows', panels: [
+      { label: '3. Multi-step workflows', panels: [
         { id: 'wf-infer-enrich', title: 'Inferred → Enrichment', desc: 'Find predicted TF targets, then GO enrichment', component: InferredEnrichmentWorkflow },
         { id: 'wf-module-motif', title: 'Module → Motif', desc: 'Gene communities, then TF motif enrichment', component: ModuleMotifWorkflow },
         { id: 'wf-regulon-diff', title: 'Regulon → Differential', desc: 'TF regulon, then tissue activity comparison', component: RegulonDiffWorkflow },
-        { id: 'wf-infer-validate', title: 'Inferred → Validation', desc: 'Predicted edges, then curated evidence cross-ref', component: InferredValidationWorkflow },
       ]},
     ],
   },
-  { id: 'import', label: 'Import', icon: '📥',
-    desc: 'Bring in datasets, gene lists, and literature terms',
+  {
+    id: 'intervene',
+    label: 'How should I intervene?',
+    icon: '✂',
+    desc: 'Compare CRISPR, RNAi, and promoter editing strategies for your target genes',
     sections: [
-      { label: 'Data Import', panels: [
-        { id: 'omics-import', title: 'Omics Import', desc: 'Import expression matrices, DEG lists, cluster definitions', component: OmicsImportPanel },
+      { label: '1. Compare strategies', panels: [
+        { id: 'crispr-vs-dsrna', title: 'CRISPR vs dsRNA', desc: 'Side-by-side comparison of RNAi and CRISPR for each target', component: CrisprVsDsrnaPanel },
+        { id: 'intervention-ranker', title: 'Intervention Ranker', desc: 'Rank strategies by feasibility, cost, and network impact', component: InterventionRankerPanel },
       ]},
-      { label: 'Literature & Naming', panels: [
-        { id: 'literature-grounding', title: 'Literature Grounding', desc: 'Map gene names from papers to atlas-grounded IDs', component: LiteratureGroundingPanel },
+      { label: '2. Predict consequences', panels: [
+        { id: 'edit-consequence', title: 'Edit Consequence', desc: 'What regulatory edges break if you edit a promoter or coding region?', component: EditConsequencePanel },
+        { id: 'tissue-weights', title: 'Tissue Coexpression', desc: 'Which tissues will be most affected?', component: TissueWeightsPanel },
+      ]},
+      { label: '3. Examine inferred edges', panels: [
+        { id: 'inferred', title: 'Inferred Edges', desc: 'GRNBoost2/GENIE3 predicted edges (to estimate off-target risk)', component: InferredEdgesPanel, accepts: 'sharedGeneSet', shares: true },
+        { id: 'wf-infer-validate', title: 'Inferred → Validation', desc: 'Cross-reference predicted edges against curated evidence', component: InferredValidationWorkflow },
+      ]},
+    ],
+  },
+  {
+    id: 'evidence',
+    label: 'Is this edge real?',
+    icon: '✔',
+    desc: 'Triangulate support for a regulatory edge across chromatin, motif, expression, and perturbation layers',
+    sections: [
+      { label: '1. Multi-layer audit', panels: [
+        { id: 'multiome-audit', title: 'Multi-layer Evidence', desc: 'Check network + motif + chromatin + expression + perturbation support', component: MultiomeAuditPanel },
+        { id: 'cis-support-audit-2', title: 'Cis-Support Audit', desc: 'Motif, chromatin, and prior-literature support for an edge', component: CisSupportAuditPanel },
+      ]},
+      { label: '2. Chromatin & enhancers', panels: [
+        { id: 'enhancer-network', title: 'Enhancer Network', desc: 'Gene’s enhancer-linked regulatory neighborhood', component: EnhancerNetworkPanel },
+        { id: 'chromatin', title: 'Chromatin Peaks', desc: 'View chromatin accessibility peaks and enhancer-gene links', component: ChromatinPanel },
+      ]},
+      { label: '3. Benchmarks & validation', panels: [
+        { id: 'validation-dashboard', title: 'Validation Dashboard', desc: 'Gold-standard recall, specificity, atlas coverage', component: ValidationDashboard },
+      ]},
+    ],
+  },
+  {
+    id: 'import',
+    label: 'Import & Export',
+    icon: '⇅',
+    desc: 'Bring in datasets, map gene names, and export results',
+    sections: [
+      { label: 'Data import', panels: [
+        { id: 'omics-import', title: 'Omics Import', desc: 'Import expression matrices, DEG lists, cluster definitions', component: OmicsImportPanel },
+        { id: 'literature-grounding-2', title: 'Literature Grounding', desc: 'Map gene names from papers to atlas-grounded IDs', component: LiteratureGroundingPanel },
       ]},
       { label: 'Export', panels: [
         { id: 'export', title: 'Edge Export', desc: 'Export edges with genomic context (JSON/TSV)', component: ExportPanel, accepts: 'sharedGeneSet' },
@@ -110,8 +134,8 @@ const TABS = [
 ];
 
 export default function AnalysisView({ gene, networkData, filters, onNodeAction, onDepthChange }) {
-  const [activeTab, setActiveTab] = useState('discover');
-  const [open, setOpen] = useState({ regulon: true });
+  const [activeTab, setActiveTab] = useState('regulators');
+  const [open, setOpen] = useState({ upstream: true });
   const [sharedGeneSet, setSharedGeneSet] = useState(null);
   const currentSpecies = gene?.species || filters?.species?.[0] || '';
 
@@ -131,7 +155,7 @@ export default function AnalysisView({ gene, networkData, filters, onNodeAction,
           <div className="analysis-card-header">
             <div>
               <strong>Current neighborhood</strong>
-              <span className="analysis-card-desc"> — network context for {gene.symbol || gene.id}</span>
+              <span className="analysis-card-desc"> &mdash; network context for {gene.symbol || gene.id}</span>
             </div>
           </div>
           <div className="analysis-card-body">
@@ -154,6 +178,7 @@ export default function AnalysisView({ gene, networkData, filters, onNodeAction,
             key={tab.id}
             className={`analysis-tab ${activeTab === tab.id ? 'active' : ''}`}
             onClick={() => setActiveTab(tab.id)}
+            title={tab.desc}
           >
             <span className="analysis-tab-icon">{tab.icon}</span>
             <span className="analysis-tab-label">{tab.label}</span>
@@ -178,7 +203,7 @@ export default function AnalysisView({ gene, networkData, filters, onNodeAction,
               <div className="analysis-card-header" onClick={() => toggle(id)}>
                 <div>
                   <strong>{title}</strong>
-                  {!open[id] && <span className="analysis-card-desc"> — {desc}</span>}
+                  {!open[id] && <span className="analysis-card-desc"> &mdash; {desc}</span>}
                 </div>
                 <span className="chevron">{open[id] ? '▾' : '▸'}</span>
               </div>
