@@ -10,7 +10,7 @@ The current canonical repo status is:
 
 - current documented skill inventory: **100 skills** (**99 callable + 1 overview/router**)
 - current single-skill coverage audit: **100/100 skills covered** across **386** natural-language routing prompts
-- latest GPT-5.4 single-skill rerun on Saturday, August 22, 2026: **383/386 PASS**
+- latest GPT-5.4 single-skill rerun on Saturday, August 22, 2026: **385/386 PASS**
 - latest GPT-5.4 orchestration rerun on Saturday, August 22, 2026: **111/111 PASS**
 
 We also ran comparison passes with Nvidia Nemotron-3-Ultra through OpenRouter:
@@ -34,7 +34,7 @@ Interpretation:
 
 | Model | Date | Suite | Result | Interpretation |
 |---|---|---|---|---|
-| GPT-5.4 | August 22, 2026 | Single-skill matrix | 383/386 PASS | current routing status on the 386-case live matrix |
+| GPT-5.4 | August 22, 2026 | Single-skill matrix | 385/386 PASS | current routing status on the 386-case live matrix |
 | GPT-5.4 | August 22, 2026 | Orchestration matrix | 111/111 PASS | current orchestration status on the 111-question live matrix |
 | GPT-5.4 | August 21, 2026 | Historical expanded orchestration matrix | 99/99 PASS | earlier completed expanded benchmark |
 | Nemotron-3-Ultra | August 14, 2026 | Orchestration matrix | 50/59 PASS | portability / robustness comparison |
@@ -164,7 +164,8 @@ Still more fragile on weaker orchestrators:
 Accurate public framing:
 
 - GRN Atlas now has a broad, tested skill layer for regulatory-network research workflows.
-- The current repo status is 383/386 on the live GPT-5.4 single-skill matrix and 111/111 on the live GPT-5.4 orchestration matrix.
+- The current repo status is 385/386 on the live GPT-5.4 single-skill matrix and 111/111 on the live GPT-5.4 orchestration matrix.
+- The one remaining single-skill miss from that rerun (`subgraph: TP53<->E2F1`) was fixed in a targeted follow-up rerun later on Saturday, August 22, 2026.
 - We also tested the same workflow surface against Nemotron-3-Ultra through OpenRouter.
 - Nemotron completed a historical paced 99-question expanded orchestration matrix at 79/99 pass, and a later Aug. 22 rerun reached 255/258 single-skill and 37/40 orchestration cases before provider/model exit.
 - A targeted 38-case Nemotron single-skill diagnostic then passed 36/38, showing that many of the remaining weaknesses are in orchestration depth rather than basic skill selection.

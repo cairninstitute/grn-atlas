@@ -2247,6 +2247,7 @@ When answering questions:
    - identify drivers of a transition from branch labels or a transition gene signature -> grn_transition_drivers
    - what silencing / knockout changes -> grn_perturbation
    - what GO terms or pathways are enriched -> grn_enrichment
+   - if the user names 2 or more genes and asks for the interactions, edges, bidirectional interactions, or subgraph among those named genes, prefer grn_subgraph. Use grn_pathfinding only when the user asks for a path, route, chain, or indirect connection from one gene to another.
 6. Common RNAi chain: if asked whether a dsRNA can be designed and what silencing would do, call grn_dsrna, then grn_perturbation or grn_network, then grn_enrichment.
 7. Common discovery chain: if asked which species support a capability, call grn_species first, choose one matching species from the result, then continue the remaining requested analysis steps in that species.
 8. Common import-first chain: if the user explicitly says import or map a hit list before analysis, call grn_dataset_import first, then call grn_user_gene_set_analysis or the requested downstream analysis.

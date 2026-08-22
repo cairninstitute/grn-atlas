@@ -21,11 +21,12 @@ Over the past week, we expanded the atlas data surface, added and hardened a lar
 The current repository state is materially stronger than the initial public release:
 
 - current species coverage is **human, mouse, arabidopsis, tomato, petunia, pepper, and potato**, with **dahlia onboarding prepared**
-- the repository now contains **90 documented GRN Atlas skills**
-- the direct HTTP skill harness currently passes **90/90 skills**
-- the LLM single-skill inventory now contains **376 natural-language cases covering 90/90 skills**
-- the clean GPT-5.4 expanded orchestration matrix is **99/99 pass**
-- the paced Nemotron-3-Ultra expanded orchestration matrix is **79/99 pass**, with **9 retry-recovered flaky passes**
+- the repository now contains **100 documented GRN Atlas skills** (**99 callable + 1 overview/router**)
+- the current single-skill coverage audit spans **386 natural-language cases covering 100/100 skills**
+- the latest full GPT-5.4 single-skill rerun is **385/386 pass**
+- the latest full GPT-5.4 orchestration rerun is **111/111 pass**
+- the historical completed paced Nemotron-3-Ultra expanded orchestration matrix is **79/99 pass**, with **9 retry-recovered flaky passes**
+- a later Nemotron health-check rerun reached **255/258** single-skill cases and **37/40** orchestration cases before provider/model exit
 
 Most importantly, the new validation work was not limited to software contracts. We also reran direct biological benchmarks on the network itself and completed a milestone validation suite across import, TF activity, pathway activity, chromatin support, trajectory workflows, dsRNA, CRISPR, perturbation calibration, transferability, and packaged workflow generation.
 
@@ -201,10 +202,13 @@ That is exactly the kind of fix that matters scientifically. It is not cosmetic.
 
 The skill layer has expanded substantially since the earlier release state.
 
-The repository now contains **90 documented GRN Atlas skills**, all of which currently pass the direct HTTP skill harness:
+The repository now contains **100 documented GRN Atlas skills**:
 
-- **90/90 skills pass**
-- no direct-harness skill failures remain in the current status doc
+- **99 callable analysis/workflow skills**
+- **1 overview/router skill**
+- the current single-skill coverage audit covers **100/100** skills across **386** prompts
+- the latest full GPT-5.4 rerun passed **385/386**
+- the one remaining miss from that rerun (`subgraph: TP53<->E2F1`) was fixed in a targeted follow-up rerun later on Saturday, August 22, 2026
 
 The newer parts of the skill surface include major additions in these families:
 

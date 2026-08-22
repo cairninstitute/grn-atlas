@@ -46,7 +46,7 @@ Raw temporary rerun outputs and local `.run_logs/` artifacts were intentionally 
 - Single-skill smoke slice: 6/6 pass
 - Supplemental weak-family orchestration slice (Q60-Q75): 16/16 pass after hardening
 - Stress-expansion orchestration slices (Q76-Q99): 24/24 pass after hardening
-- Full current single-skill rerun: 383/386 pass on Saturday, August 22, 2026
+- Full current single-skill rerun: 385/386 pass on Saturday, August 22, 2026
 - Full current orchestration rerun: 111/111 pass on Saturday, August 22, 2026
 
 ### Nemotron-3-Ultra
@@ -71,6 +71,7 @@ Interpretation:
 - GPT-5.4 is currently clean on the full current 111-question orchestration matrix, including the hardened weak families and new stress chains.
 - Nemotron can complete much of the same surface, and pacing reduces transient failures, but it is not clean on the expanded matrix.
 - The remaining Nemotron gap is a mix of provider instability, under-chaining, and weak final synthesis on harder comparison / phenotype / import workflows.
+- The one remaining GPT-5.4 single-skill miss from the full rerun (`subgraph: TP53<->E2F1`) was fixed in a targeted follow-up rerun later on Saturday, August 22, 2026.
 
 ## Functionality-area coverage matrix
 
