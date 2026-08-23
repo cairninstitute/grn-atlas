@@ -12,7 +12,7 @@ Read time: 8–10 minutes
 
 Today we’re publicly releasing GRN Atlas for academic and non-commercial use.
 
-GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, RNAi-oriented dsRNA design, CRISPR-oriented heuristics, chromatin-linked support, and packaged research workflows across human, mouse, Arabidopsis, tomato, petunia, pepper, and potato. It includes both an interactive web UI and a structured skill layer for agent-driven workflows. As of Saturday, August 22, 2026, the repository contains 100 documented GRN Atlas skills: 99 callable analysis/workflow skills plus one overview/router skill. Earlier Nemotron-3-Ultra testing helped harden the routing layer, and the current clean GPT-5.4 matrices in-repo are 386/386 pass on single-skill routing and 111/111 pass on multi-skill orchestration.
+GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, RNAi-oriented dsRNA design, CRISPR-oriented heuristics, chromatin-linked support, and packaged research workflows across human, mouse, Arabidopsis, tomato, petunia, pepper, potato, and rice. It includes both an interactive web UI and a structured skill layer for agent-driven workflows. As of Saturday, August 22, 2026, the repository contains 100 documented GRN Atlas skills: 99 callable analysis/workflow skills plus one overview/router skill. Earlier Nemotron-3-Ultra testing helped harden the routing layer, and the current clean GPT-5.4 matrices in-repo are 386/386 pass on single-skill routing and 111/111 pass on multi-skill orchestration.
 
 Repository: https://github.com/cairninstitute/grn-atlas
 
@@ -48,7 +48,7 @@ It combines:
 - RNAi-oriented dsRNA design and screening
 - evidence-audit and experiment-planning workflows
 
-The atlas currently supports seven species in the working release branch:
+The atlas currently supports eight species in the working release branch:
 
 - human
 - mouse
@@ -57,6 +57,7 @@ The atlas currently supports seven species in the working release branch:
 - petunia
 - pepper
 - potato
+- rice
 
 Some layers are measured, some are projected, and some are computationally inferred or predicted. A core design rule is that these are never mixed without labeling.
 

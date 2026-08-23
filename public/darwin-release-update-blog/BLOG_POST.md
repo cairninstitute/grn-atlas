@@ -12,7 +12,7 @@ Read time: 10–12 minutes
 
 Today we are publishing a release update for GRN Atlas focused on the skill layer, the research workflows it enables, and the validation work completed across both the application stack and external LLM orchestrators.
 
-GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.
+GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, petunia, pepper, potato, and rice. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.
 
 As of Saturday, August 22, 2026, the repository contains **100 documented GRN Atlas skills**:
 
@@ -64,13 +64,16 @@ It combines:
 - evidence-audit and experiment-planning workflows
 - collaborator-facing study packet and report generation
 
-The atlas currently supports five species:
+The atlas currently supports eight species:
 
 - human
 - mouse
 - Arabidopsis
 - tomato
 - petunia
+- pepper
+- potato
+- rice
 
 Some layers are measured, some are projected, and some are computationally inferred or predicted. A core design rule is that these are never mixed without labeling.
 

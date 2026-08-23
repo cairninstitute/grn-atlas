@@ -101,7 +101,7 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
   }, [searchInput, selectedSpecies]);
 
   const handleSearch = (gene) => {
-    onGeneSearch(gene.symbol);
+    onGeneSearch(gene.symbol, gene);
     setSearchInput('');
     setSuggestions([]);
     setShowSuggestions(false);

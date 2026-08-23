@@ -12,7 +12,7 @@ Read time: 10–12 minutes
 
 Today we are publishing a release update for GRN Atlas focused on the skill layer, the research workflows it enables, and the validation work completed across both the application stack and external LLM orchestrators.
 
-GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.
+GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, petunia, pepper, potato, and rice. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.
 
 As of Saturday, August 22, 2026, the repository contains **100 documented GRN Atlas skills**:
 
@@ -64,13 +64,16 @@ It combines:
 - evidence-audit and experiment-planning workflows
 - collaborator-facing study packet and report generation
 
-The atlas currently supports five species:
+The atlas currently supports eight species:
 
 - human
 - mouse
 - Arabidopsis
 - tomato
 - petunia
+- pepper
+- potato
+- rice
 
 Some layers are measured, some are projected, and some are computationally inferred or predicted. A core design rule is that these are never mixed without labeling.
 
@@ -179,12 +182,12 @@ Representative panel groups include:
 
 GRN Atlas also includes an AgentSkills-style skill library for structured tool use.
 
-The repository currently contains 61 documented skills:
+The repository currently contains 100 documented skills (99 callable + 1 overview/router):
 
 - 60 callable analysis/workflow skills
 - 1 overview/router skill
 
-![61 skills across 7 research categories.](/blog-assets/grn-skill-categories.png)
+![99 callable skills across 7 research categories.](/blog-assets/grn-skill-categories.png)
 
 These skills are best understood by the high-level work they enable.
 
@@ -523,7 +526,7 @@ Yes. That distinction is a core design rule. Every inferred, predicted, or compu
 
 **Can I use it through the web UI, the API, or agent tools?**
 
-All three. The UI supports direct interactive use, the FastAPI backend supports programmatic access, and the repository includes 61 documented skills in `.agents/skills/` for LLM-driven workflows.
+All three. The UI supports direct interactive use, the FastAPI backend supports programmatic access, and the repository includes 100 documented skills (99 callable + 1 overview/router) in `.agents/skills/` for LLM-driven workflows.
 
 ## Further Reading
 

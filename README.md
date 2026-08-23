@@ -9,7 +9,7 @@ measured data.
 
 React + Cytoscape.js frontend · FastAPI + SQLite backend.
 
-Current species coverage: **human, mouse, arabidopsis, tomato, petunia, pepper, potato** (with dahlia
+Current species coverage: **human, mouse, arabidopsis, tomato, petunia, pepper, potato, rice** (with dahlia
 onboarding prepared). Data layers vary by species; see the live coverage matrix at
 `GET /api/v1/species`.
 

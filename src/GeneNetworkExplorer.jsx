@@ -53,8 +53,8 @@ function ExplorerInner() {
   const [filters, setFilters] = useState({
     kingdom: ['Animalia'],
     species: ['human'],
-    regulationType: ['activation', 'repression'],
-    minConfidence: 0.6,
+    regulationType: ['activation', 'repression', 'unknown'],
+    minConfidence: 0.4,
     maxDepth: 3,
     direction: 'both',
     includeInferred: true,
@@ -93,7 +93,7 @@ function ExplorerInner() {
       body: JSON.stringify({
         max_depth: activeFilters.maxDepth,
         direction: activeFilters.direction,
-        regulation_type: activeFilters.regulationType,
+        regulation_type: activeFilters.regulationType.map(t => t === 'unknown' ? 'regulation' : t),
         min_confidence: activeFilters.minConfidence,
         include_inferred: activeFilters.includeInferred,
       }),
@@ -161,12 +161,15 @@ function ExplorerInner() {
     }
   }, [dispatch, filters, syncSpeciesContext]);
 
-  const handleGeneSearch = useCallback(async (symbol) => {
+  const handleGeneSearch = useCallback(async (symbol, geneObj) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/v1/genes/symbol/${symbol}`);
-      const data = await response.json();
+      let data = geneObj;
+      if (!data?.id) {
+        const response = await fetch(`/api/v1/genes/symbol/${symbol}`);
+        data = await response.json();
+      }
       if (!data?.id) {
         setError('Gene not found');
         return;
