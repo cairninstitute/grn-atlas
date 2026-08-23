@@ -14,9 +14,9 @@ Today we are publishing a release update for GRN Atlas focused on the skill laye
 
 GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.
 
-As of Friday, August 14, 2026, the repository contains **61 documented GRN Atlas skills**:
+As of Saturday, August 22, 2026, the repository contains **100 documented GRN Atlas skills**:
 
-- **60 callable analysis and workflow skills**
+- **99 callable analysis and workflow skills**
 - **1 overview/router skill**
 
 The current clean repository LLM results are:
@@ -167,9 +167,9 @@ Representative panel groups include:
 
 GRN Atlas also includes an AgentSkills-style skill library for structured tool use.
 
-The repository currently contains 61 documented skills:
+The repository currently contains 100 documented skills:
 
-- 60 callable analysis/workflow skills
+- 99 callable analysis/workflow skills
 - 1 overview/router skill
 
 These skills are best understood by the high-level work they enable.
@@ -508,9 +508,9 @@ Yes. The repository includes the full skill layer in `.agents/skills/`.
 
 **How many skills are included?**
 
-61 documented skills total:
+100 documented skills total:
 
-- 60 callable analysis/workflow skills
+- 99 callable analysis/workflow skills
 - 1 overview/router skill
 
 **What types of work do the skills cover?**

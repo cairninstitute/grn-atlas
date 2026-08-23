@@ -271,7 +271,7 @@ This is the most literal check of whether each skill runs correctly through its 
 
 Current result:
 
-- **90/90 skills passing**
+- **99/99 callable skills passing**
 
 ### 2. Natural-language single-skill coverage inventory
 
@@ -279,14 +279,14 @@ This asks a different question: if a model receives a natural-language request, 
 
 Current inventory:
 
-- **376 natural-language single-skill cases**
-- **90/90 skills covered**
+- **386 natural-language single-skill cases**
+- **100/100 skills covered**
 
-Historically, the clean baseline GPT-5.4 single-skill matrix remains:
+The current clean GPT-5.4 single-skill matrix is:
 
-- **347/347 pass**
+- **386/386 pass**
 
-The later expansion work added supplemental coverage to reach the current 376-case inventory and full 90-skill surface coverage.
+The later expansion work brought the repository to the current 386-case inventory and full 100-skill surface coverage.
 
 ## GPT-5.4 Orchestrator Testing
 
@@ -294,7 +294,7 @@ The strongest current orchestration result in the repository is the expanded GPT
 
 Current result:
 
-- **99/99 pass**
+- **111/111 pass**
 
 This expanded orchestration layer includes:
 

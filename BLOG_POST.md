@@ -158,9 +158,9 @@ Examples of workflow panels:
 
 GRN Atlas also includes an AgentSkills-style skill library for structured tool use.
 
-The repository currently contains 61 documented skills:
+The repository currently contains 100 documented skills:
 
-- 60 callable analysis/workflow skills
+- 99 callable analysis/workflow skills
 - 1 overview/router skill
 
 The list below is grouped by family rather than serving as the exact full inventory. The current canonical inventory lives in `README.md`.

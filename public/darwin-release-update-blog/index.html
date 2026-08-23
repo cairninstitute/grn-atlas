@@ -171,15 +171,15 @@
     <h2>Quick Summary</h2>
     <p>Today we are publishing a release update for GRN Atlas focused on the skill layer, the research workflows it enables, and the validation work completed across both the application stack and external LLM orchestrators.</p>
     <p>GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.</p>
-    <p>As of Friday, August 14, 2026, the repository contains <strong>61 documented GRN Atlas skills</strong>:</p>
+    <p>As of Saturday, August 22, 2026, the repository contains <strong>100 documented GRN Atlas skills</strong>:</p>
     <ul>
-      <li><strong>60 callable analysis and workflow skills</strong></li>
+      <li><strong>99 callable analysis and workflow skills</strong></li>
       <li><strong>1 overview/router skill</strong></li>
     </ul>
     <p>The current clean repository LLM results are:</p>
     <ul>
-      <li><strong>GPT-5.4 single-skill matrix:</strong> 347/347 pass</li>
-      <li><strong>GPT-5.4 orchestration matrix:</strong> 59/59 pass</li>
+      <li><strong>GPT-5.4 single-skill matrix:</strong> 386/386 pass, with 2 retry-recovered flaky passes</li>
+      <li><strong>GPT-5.4 orchestration matrix:</strong> 111/111 pass</li>
       <li><strong>Nemotron-3-Ultra orchestration matrix:</strong> 50/59 pass</li>
       <li><strong>Nemotron targeted single-skill diagnostic subset:</strong> 36/38 pass</li>
     </ul>
@@ -310,14 +310,14 @@
     <p>This release includes a working frontend for direct use by researchers as well as an API-backed analysis layer for more structured workflows.</p>
 
     <h2>The Skill Layer</h2>
-    <p>GRN Atlas also includes an AgentSkills-style skill library for structured tool use. The repository currently contains 61 documented skills:</p>
+    <p>GRN Atlas also includes an AgentSkills-style skill library for structured tool use. The repository currently contains 100 documented skills:</p>
     <ul>
-      <li>60 callable analysis/workflow skills</li>
+      <li>99 callable analysis/workflow skills</li>
       <li>1 overview/router skill</li>
     </ul>
     <figure>
-      <img src="grn-skill-categories.png" alt="61 skills across 7 research categories." />
-      <figcaption>The 61 GRN Atlas skills organized across 7 research categories, from core network analysis to collaborator handoff.</figcaption>
+      <img src="grn-skill-categories.png" alt="99 callable skills across 7 research categories." />
+      <figcaption>The 99 callable GRN Atlas skills organized across 7 research categories, from orientation and data readiness through perturbation design and collaborator handoff.</figcaption>
     </figure>
     <p>These skills are best understood by the high-level work they enable.</p>
 
@@ -472,8 +472,8 @@
     <h3>Current clean repository status: GPT-5.4</h3>
     <p>As of Thursday, August 13, 2026:</p>
     <ul>
-      <li>single-skill matrix: 347/347 pass</li>
-      <li>multi-skill orchestration matrix: 59/59 pass</li>
+      <li>single-skill matrix: 386/386 pass, with 2 retry-recovered flaky passes</li>
+      <li>multi-skill orchestration matrix: 111/111 pass</li>
     </ul>
     <p>These current matrices are the best statement of the repository&rsquo;s present skill-calling status.</p>
 
@@ -612,7 +612,7 @@
     <p><strong>Does it separate curated and inferred results?</strong></p>
     <p>Yes. That distinction is a core design rule. Every inferred, predicted, or computationally derived result carries an explicit label distinct from measured data.</p>
     <p><strong>Can I use it through the web UI, the API, or agent tools?</strong></p>
-    <p>All three. The UI supports direct interactive use, the FastAPI backend supports programmatic access, and the repository includes 61 documented skills in <code>.agents/skills/</code> for LLM-driven workflows.</p>
+    <p>All three. The UI supports direct interactive use, the FastAPI backend supports programmatic access, and the repository includes 100 documented skills in <code>.agents/skills/</code> for LLM-driven workflows.</p>
 
     <h2>Further Reading</h2>
     <ul>

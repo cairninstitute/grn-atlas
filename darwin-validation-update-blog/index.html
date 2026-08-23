@@ -181,7 +181,7 @@
       <li>current species coverage is <strong>human, mouse, arabidopsis, tomato, petunia, pepper, and potato</strong>, with <strong>dahlia onboarding prepared</strong></li>
       <li>the repository now contains <strong>100 documented GRN Atlas skills</strong> (<strong>99 callable + 1 overview/router</strong>)</li>
       <li>the current single-skill coverage audit spans <strong>386 natural-language cases covering 100/100 skills</strong></li>
-      <li>the latest full GPT-5.4 single-skill rerun is <strong>385/386 pass</strong></li>
+      <li>the latest full GPT-5.4 single-skill rerun is <strong>386/386 pass</strong></li>
       <li>the latest full GPT-5.4 orchestration rerun is <strong>111/111 pass</strong></li>
       <li>the historical completed paced Nemotron-3-Ultra expanded orchestration matrix is <strong>79/99 pass</strong>, with <strong>9 retry-recovered flaky passes</strong></li>
       <li>a later Nemotron health-check rerun reached <strong>255/258</strong> single-skill cases and <strong>37/40</strong> orchestration cases before provider/model exit</li>
@@ -344,7 +344,7 @@
       <li><strong>99 callable analysis/workflow skills</strong></li>
       <li><strong>1 overview/router skill</strong></li>
       <li>the current single-skill coverage audit covers <strong>100/100</strong> skills across <strong>386</strong> prompts</li>
-      <li>the latest full GPT-5.4 rerun passed <strong>385/386</strong></li>
+      <li>the latest full GPT-5.4 rerun passed <strong>386/386</strong></li>
       <li>the one remaining miss from that rerun (<code>subgraph: TP53&lt;-&gt;E2F1</code>) was fixed in a targeted follow-up rerun later on Saturday, August 22, 2026</li>
     </ul>
     <p>The newer parts of the skill surface include major additions in these families:</p>
@@ -410,27 +410,27 @@
     <p>This is the most literal check of whether each skill runs correctly through its own <code>scripts/run.py</code> entrypoint against the backend.</p>
     <p>Current result:</p>
     <ul>
-      <li><strong>90/90 skills passing</strong></li>
+      <li><strong>99/99 callable skills passing</strong></li>
     </ul>
 
     <h3>2. Natural-language single-skill coverage inventory</h3>
     <p>This asks a different question: if a model receives a natural-language request, do we have routing cases that exercise the full skill surface?</p>
     <p>Current inventory:</p>
     <ul>
-      <li><strong>376 natural-language single-skill cases</strong></li>
-      <li><strong>90/90 skills covered</strong></li>
+      <li><strong>386 natural-language single-skill cases</strong></li>
+      <li><strong>100/100 skills covered</strong></li>
     </ul>
     <p>Historically, the clean baseline GPT-5.4 single-skill matrix remains:</p>
     <ul>
-      <li><strong>347/347 pass</strong></li>
+      <li><strong>386/386 pass</strong></li>
     </ul>
-    <p>The later expansion work added supplemental coverage to reach the current 376-case inventory and full 90-skill surface coverage.</p>
+    <p>The later expansion work brought the repository to the current 386-case inventory and full 100-skill surface coverage.</p>
 
     <h2>GPT-5.4 Orchestrator Testing</h2>
     <p>The strongest current orchestration result in the repository is the expanded GPT-5.4 matrix.</p>
     <p>Current result:</p>
     <ul>
-      <li><strong>99/99 pass</strong></li>
+      <li><strong>111/111 pass</strong></li>
     </ul>
     <p>This expanded orchestration layer includes import &rarr; contrast &rarr; upstream and trajectory chains, CRISPR design plus promoter and motif follow-up, inferred-edge validation against module structure, pathway activity plus phenotype or trait interpretation, conservation plus transferability plus family-rescue chains, and phenotype-targeting plus validation-plan handoff.</p>
     <p>In practical terms, GPT-5.4 is now clean on the full expanded workflow surface currently represented in the repository.</p>
@@ -497,7 +497,7 @@
     <ul>
       <li>GRN Atlas is no longer just a network browser</li>
       <li>it is a multi-layer research system with direct biological benchmarking, statistical validation, and explicit workflow-level testing</li>
-      <li>the strongest current clean orchestrator result is GPT-5.4 at <strong>99/99</strong></li>
+      <li>the strongest current clean orchestrator results are GPT-5.4 at <strong>386/386</strong> on the full single-skill matrix and <strong>111/111</strong> on the full orchestration matrix</li>
       <li>Nemotron remains useful as a stress-test model, but it is materially less reliable on the hardest chained workflows</li>
     </ul>
     <p>For academic and non-commercial use, the project is publicly available now.</p>
