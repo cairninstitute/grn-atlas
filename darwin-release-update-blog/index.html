@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Public Release Update: GRN Atlas Skill Layer, Research Workflows, and LLM Validation</title>
+  <title>Darwin: From Gene to Hypothesis — AI-Powered Research for Gene Regulation</title>
   <style>
     :root {
       --fg: #111827;
@@ -160,18 +160,20 @@
   </header>
   <hr class="header-rule" />
   <main>
-    <h1>Public Release Update: GRN Atlas Skill Layer, Research Workflows, and LLM Validation</h1>
+    <h1>Darwin: From Gene to Hypothesis — AI-Powered Research for Gene Regulation</h1>
 
     <p class="meta">Author: CAIRN Institute</p>
-    <p class="meta">Published: August 22, 2026</p>
+    <p class="meta">Published: August 24, 2026</p>
     <p class="meta">Read time: 10&ndash;12 minutes</p>
     <p class="tags">#Genomics #Bioinformatics #GeneRegulation #SystemsBiology #OpenScience #AgenticAI</p>
-    <a class="hero-link" href="https://github.com/cairninstitute/grn-atlas">Explore the repository on GitHub &rarr;</a>
+    <a class="hero-link" href="https://github.com/cairninstitute/grn-atlas">Explore Darwin on GitHub &rarr;</a>
+    <p style="color: var(--muted); font-style: italic;">Darwin is powered by the CAIRN Institute GRN Atlas.</p>
+    <p style="color: var(--muted); font-style: italic;">Darwin is powered by the CAIRN Institute GRN Atlas.</p>
 
     <h2>Quick Summary</h2>
-    <p>Today we are publishing a release update for GRN Atlas focused on the skill layer, the research workflows it enables, and the validation work completed across both the application stack and external LLM orchestrators.</p>
-    <p>GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, RNAi-oriented dsRNA design, CRISPR-oriented heuristics, chromatin-linked support, and packaged research workflows across human, mouse, Arabidopsis, tomato, petunia, pepper, potato, and rice. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.</p>
-    <p>As of Saturday, August 22, 2026, the repository contains <strong>100 documented GRN Atlas skills</strong>:</p>
+    <p>Today we are publicly introducing <strong>Darwin</strong> — an AI-powered research environment for understanding gene regulation and developing testable biological hypotheses.</p>
+    <p>Darwin combines regulatory networks, expression, binding evidence, sequence context, pathways, traits, cross-species conservation, literature, perturbation analysis, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, petunia, pepper, potato, and rice. It includes both an interactive web UI and a structured skill layer — 100 documented research skills — for agent-driven workflows.</p>
+    <p>As of Saturday, August 22, 2026, the repository contains <strong>100 documented Darwin research skills</strong>:</p>
     <ul>
       <li><strong>99 callable analysis and workflow skills</strong></li>
       <li><strong>1 overview/router skill</strong></li>
@@ -184,7 +186,7 @@
       <li><strong>Nemotron-3-Ultra orchestration matrix:</strong> 37/40 pass before provider/model exit</li>
       <li><strong>Nemotron targeted single-skill diagnostic subset:</strong> 36/38 pass</li>
     </ul>
-    <p>GRN Atlas is being released free for academic and non-commercial use. For commercial use, productization, deployment, or partnership discussions, contact CAIRN Institute.</p>
+    <p>Darwin is free for academic and non-commercial use. For commercial use, productization, deployment, or partnership discussions, contact CAIRN Institute.</p>
 
     <h2>Why We Built It</h2>
     <p>Researchers do not usually ask one-step questions.</p>
@@ -199,10 +201,10 @@
       <li>decide whether the evidence is strong enough to justify an experiment</li>
       <li>hand the result to a collaborator in a readable form</li>
     </ul>
-    <p>Most biological software handles only one piece of that chain. GRN Atlas was built to close that gap and give researchers a single place to move from question to hypothesis to next action.</p>
+    <p>Most biological software handles only one piece of that chain. Darwin was built to close that gap and give researchers a single place to move from question to hypothesis to next action.</p>
 
-    <h2>What GRN Atlas Is</h2>
-    <p>GRN Atlas is an integrated research workspace for gene regulatory network analysis. It combines:</p>
+    <h2>What Darwin Is</h2>
+    <p>Darwin is an AI-powered research environment for gene regulatory network analysis, built on the CAIRN Institute GRN Atlas. It combines:</p>
     <ul>
       <li>curated regulatory interactions</li>
       <li>inferred regulatory edges</li>
@@ -222,7 +224,7 @@
 
     <h3>1. Explore a gene&rsquo;s regulatory neighborhood</h3>
     <figure>
-      <img src="gene_regulatory_network.png" alt="JAF13 regulatory network in GRN Atlas showing activations, repressions, confidence levels, expression profile, and evidence sources for a petunia transcription factor." />
+      <img src="gene_regulatory_network.png" alt="JAF13 regulatory network in Darwin showing activations, repressions, confidence levels, expression profile, and evidence sources for a petunia transcription factor." />
       <figcaption>Regulatory neighborhood of JAF13 (petunia) at 3-hop depth. Green edges are activations, red are repressions; line style encodes confidence. The right panel shows gene metadata, evidence sources, and per-tissue expression.</figcaption>
     </figure>
     <p>You can ask:</p>
@@ -296,7 +298,7 @@
     </ul>
 
     <h2>The Web UI</h2>
-    <p>GRN Atlas ships with a browser-based interface for interactive exploration and workflow-first analysis. The UI supports:</p>
+    <p>Darwin ships with a browser-based interface for interactive exploration and workflow-first analysis. The UI supports:</p>
     <ul>
       <li>gene search by symbol, alias, name, or ID</li>
       <li>network browsing</li>
@@ -311,14 +313,14 @@
     <p>This release includes a working frontend for direct use by researchers as well as an API-backed analysis layer for more structured workflows.</p>
 
     <h2>The Skill Layer</h2>
-    <p>GRN Atlas also includes an AgentSkills-style skill library for structured tool use. The repository currently contains 100 documented skills:</p>
+    <p>Darwin also includes an AgentSkills-style skill library for structured tool use. The repository currently contains 100 documented skills:</p>
     <ul>
       <li>99 callable analysis/workflow skills</li>
       <li>1 overview/router skill</li>
     </ul>
     <figure>
       <img src="grn-skill-categories.png" alt="99 callable skills across 7 research categories." />
-      <figcaption>The 99 callable GRN Atlas skills organized across 7 research categories, from orientation and data readiness through perturbation design and collaborator handoff.</figcaption>
+      <figcaption>The 99 callable Darwin research skills organized across 7 research categories, from orientation and data readiness through perturbation design and collaborator handoff.</figcaption>
     </figure>
     <p>These skills are best understood by the high-level work they enable.</p>
 
@@ -429,7 +431,7 @@
     <p>A question like:</p>
     <blockquote>Screen these RNAi candidates, pick the cleanest one, predict the perturbation effects, and summarize the affected biology.</blockquote>
     <p>is not one database call. It is a multi-step workflow.</p>
-    <p>In GRN Atlas, that workflow can be expressed as:</p>
+    <p>In Darwin, that workflow can be expressed as:</p>
     <ul>
       <li><code>grn-dsrna-screen</code></li>
       <li><code>grn-perturbation</code></li>
@@ -463,7 +465,7 @@
       <img src="grn-llm-testing-matrix.png" alt="LLM agent testing results &mdash; GPT-5.4 and Nemotron-3-Ultra across single-skill and multi-skill orchestration." />
       <figcaption>Testing results across GPT-5.4 and Nemotron-3-Ultra for single-skill routing, multi-skill orchestration, and the full deterministic test suite.</figcaption>
     </figure>
-    <p>To validate that the skill layer works not just in isolation but when driven by an external language model, we tested with two commercial LLMs &mdash; OpenAI&rsquo;s GPT-5.4 and Nvidia&rsquo;s Nemotron-3-Ultra (via OpenRouter) &mdash; neither fine-tuned on GRN Atlas. The models received only the skill definitions and natural-language research questions, and had to select the correct tools, extract the right parameters, and chain multi-step workflows on their own.</p>
+    <p>To validate that the skill layer works not just in isolation but when driven by an external language model, we tested with two commercial LLMs &mdash; OpenAI&rsquo;s GPT-5.4 and Nvidia&rsquo;s Nemotron-3-Ultra (via OpenRouter) &mdash; neither fine-tuned on Darwin's skill definitions. The models received only the skill definitions and natural-language research questions, and had to select the correct tools, extract the right parameters, and chain multi-step workflows on their own.</p>
     <p>The repository now has two useful LLM validation stories:</p>
     <ul>
       <li>the current clean GPT-5.4 matrices, which reflect the latest repository status</li>
@@ -575,7 +577,7 @@
     </table>
 
     <h2>Data, Evidence, and Trust</h2>
-    <p>GRN Atlas makes several distinctions explicit:</p>
+    <p>Darwin makes several distinctions explicit:</p>
     <ul>
       <li>curated vs inferred regulatory edges</li>
       <li>measured vs predicted sequence or binding evidence</li>
@@ -586,7 +588,7 @@
     <p>That makes the atlas useful for exploration without blurring the line between evidence classes.</p>
 
     <h2>Release Model</h2>
-    <p>GRN Atlas is being released publicly for academic and non-commercial use.</p>
+    <p>Darwin is being released publicly for academic and non-commercial use.</p>
     <p>The repository is source-available under a non-commercial license. Academic research, education, and non-commercial experimentation are allowed under the repository terms. Commercial use, hosted productization, service deployment, or product integration requires separate permission.</p>
     <p>The software license covers the code in the repository. Third-party data fetched into the atlas remains under the terms of the original upstream sources.</p>
     <p>You can browse the code and documentation here:</p>
@@ -617,7 +619,7 @@
 
     <h2>Further Reading</h2>
     <ul>
-      <li><a href="https://github.com/cairninstitute/grn-atlas">GRN Atlas repository</a></li>
+      <li><a href="https://github.com/cairninstitute/grn-atlas">Darwin repository (GRN Atlas)</a></li>
       <li><a href="http://cairninstitute.com">CAIRN Institute</a></li>
     </ul>
 

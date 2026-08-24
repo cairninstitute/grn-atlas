@@ -23,12 +23,11 @@ export default function HomeWorkspace({ onSelectMode }) {
     <div className="workflow-workspace">
       <div className="workflow-hero">
         <div>
-          <p className="workflow-kicker">Workflow-first atlas</p>
+          <p className="workflow-kicker">From gene to hypothesis</p>
           <h1>Choose the way your research question starts.</h1>
           <p className="workflow-subtitle">
-            The UI is now organized around researcher entry modes instead of a flat tool catalog.
-            You can still reach the legacy panels under Advanced tools, but the primary path is now
-            question-first and context-persistent.
+            Darwin organizes research around your question, not a tool catalog. Choose how your
+            investigation starts — you can still reach all analysis panels under Advanced tools.
           </p>
         </div>
       </div>

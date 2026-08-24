@@ -1,8 +1,8 @@
-# Public Release Update: GRN Atlas Skill Layer, Research Workflows, and LLM Validation
+# Darwin: From Gene to Hypothesis — AI-Powered Research for Gene Regulation
 
 Author: CAIRN Institute
 
-Published: August 17, 2026
+Published: August 24, 2026
 
 Read time: 10–12 minutes
 
@@ -10,25 +10,30 @@ Read time: 10–12 minutes
 
 ## Quick Summary
 
-Today we are publishing a release update for GRN Atlas focused on the skill layer, the research workflows it enables, and the validation work completed across both the application stack and external LLM orchestrators.
+Today we are publicly introducing **Darwin** — an AI-powered research environment for understanding gene regulation and developing testable biological hypotheses.
 
-GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, petunia, pepper, potato, and rice. It includes both an interactive web UI and a structured skill layer for agent-driven workflows.
+Darwin combines regulatory networks, expression, binding evidence, sequence context, pathways, traits, cross-species conservation, literature, perturbation analysis, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, petunia, pepper, potato, and rice. It includes both an interactive web UI and a structured skill layer — 100 documented research skills — for agent-driven workflows.
 
-As of Saturday, August 22, 2026, the repository contains **100 documented GRN Atlas skills**:
+Instead of searching databases one at a time, writing glue scripts, and manually reconciling evidence, researchers can ask questions directly:
 
-- **99 callable analysis and workflow skills**
-- **1 overview/router skill**
+- *What regulates this gene?*
+- *Which transcription factors are most likely driving this phenotype?*
+- *What changes downstream if I suppress this regulator?*
+- *Is this regulatory relationship conserved in another species?*
+- *Can I design an RNAi experiment against one of them?*
 
-The current clean repository LLM results are:
+Darwin doesn't simply return search results. It assembles evidence, traverses regulatory relationships, runs analysis tools, distinguishes measured observations from inference, and produces a research-ready explanation of the result.
+
+The current clean LLM validation results are:
 
 - **GPT-5.4 single-skill matrix:** 386/386 pass, with 2 retry-recovered flaky passes
 - **GPT-5.4 orchestration matrix:** 111/111 pass
 - **Nemotron-3-Ultra orchestration matrix:** historical completed 50/59 pass on August 14, 2026
 - **Nemotron targeted single-skill diagnostic subset:** 36/38 pass
 
-GRN Atlas is being released free for academic and non-commercial use. For commercial use, productization, deployment, or partnership discussions, contact CAIRN Institute.
+Darwin is free for academic and non-commercial use. For commercial use, productization, deployment, or partnership discussions, contact CAIRN Institute.
 
-Repository: https://github.com/cairninstitute/grn-atlas
+Darwin is powered by the CAIRN Institute GRN Atlas. Repository: https://github.com/cairninstitute/grn-atlas
 
 ## Why We Built It
 
@@ -45,11 +50,11 @@ A real workflow looks more like this:
 - decide whether the evidence is strong enough to justify an experiment
 - hand the result to a collaborator in a readable form
 
-Most biological software handles only one piece of that chain. GRN Atlas was built to close that gap and give researchers a single place to move from question to hypothesis to next action.
+Most biological software handles only one piece of that chain. Darwin was built to close that gap and give researchers a single place to move from question to hypothesis to next action.
 
-## What GRN Atlas Is
+## What Darwin Is
 
-GRN Atlas is an integrated research workspace for gene regulatory network analysis.
+Darwin is an AI-powered research environment for gene regulatory network analysis, built on the CAIRN Institute GRN Atlas.
 
 It combines:
 
@@ -81,7 +86,7 @@ Some layers are measured, some are projected, and some are computationally infer
 
 ### 1. Explore a gene’s regulatory neighborhood
 
-![JAF13 regulatory network in GRN Atlas — activations, repressions, confidence levels, expression profile, and evidence sources for a petunia transcription factor.](/blog-assets/gene_regulatory_network.png)
+![JAF13 regulatory network in Darwin — activations, repressions, confidence levels, expression profile, and evidence sources for a petunia transcription factor.](/blog-assets/gene_regulatory_network.png)
 *Regulatory neighborhood of JAF13 (petunia) at 3-hop depth. Green edges are activations, red are repressions; line style encodes confidence. The right panel shows gene metadata, evidence sources, and per-tissue expression.*
 
 You can ask:
@@ -152,7 +157,7 @@ You can ask:
 
 ## The Web UI
 
-GRN Atlas ships with a browser-based interface for interactive exploration and workflow-first analysis.
+Darwin ships with a browser-based interface for interactive exploration and workflow-first analysis.
 
 The UI supports:
 
@@ -180,7 +185,7 @@ Representative panel groups include:
 
 ## The Skill Layer
 
-GRN Atlas also includes an AgentSkills-style skill library for structured tool use.
+Darwin also includes an AgentSkills-style skill library for structured tool use.
 
 The repository currently contains 100 documented skills (99 callable + 1 overview/router):
 
@@ -310,7 +315,7 @@ A question like:
 
 is not one database call. It is a multi-step workflow.
 
-In GRN Atlas, that workflow can be expressed as:
+In Darwin, that workflow can be expressed as:
 
 - `grn-dsrna-screen`
 - `grn-perturbation`
@@ -346,7 +351,7 @@ This matters because typical biological questions are rarely isolated. They are 
 
 ![LLM agent testing results — GPT-5.4 and Nemotron-3-Ultra across single-skill and multi-skill orchestration.](/blog-assets/grn-llm-testing-matrix.png)
 
-To validate that the skill layer works not just in isolation but when driven by an external language model, we tested with two commercial LLMs — OpenAI's GPT-5.4 and Nvidia's Nemotron-3-Ultra (via OpenRouter) — neither fine-tuned on GRN Atlas. The models received only the skill definitions and natural-language research questions, and had to select the correct tools, extract the right parameters, and chain multi-step workflows on their own.
+To validate that the skill layer works not just in isolation but when driven by an external language model, we tested with two commercial LLMs — OpenAI's GPT-5.4 and Nvidia's Nemotron-3-Ultra (via OpenRouter) — neither fine-tuned on Darwin's skill definitions. The models received only the skill definitions and natural-language research questions, and had to select the correct tools, extract the right parameters, and chain multi-step workflows on their own.
 
 The repository now has two useful LLM validation stories:
 
@@ -474,7 +479,7 @@ In addition to LLM validation, the repository has been exercised at the applicat
 
 ## Data, Evidence, and Trust
 
-GRN Atlas makes several distinctions explicit:
+Darwin makes several distinctions explicit:
 
 - curated vs inferred regulatory edges
 - measured vs predicted sequence or binding evidence
@@ -486,7 +491,7 @@ That makes the atlas useful for exploration without blurring the line between ev
 
 ## Release Model
 
-GRN Atlas is being released publicly for academic and non-commercial use.
+Darwin is being released publicly for academic and non-commercial use.
 
 The repository is source-available under a non-commercial license. Academic research, education, and non-commercial experimentation are allowed under the repository terms. Commercial use, hosted productization, service deployment, or product integration requires separate permission.
 
@@ -530,7 +535,7 @@ All three. The UI supports direct interactive use, the FastAPI backend supports 
 
 ## Further Reading
 
-- [GRN Atlas repository](https://github.com/cairninstitute/grn-atlas)
+- [Darwin repository (GRN Atlas)](https://github.com/cairninstitute/grn-atlas)
 - [CAIRN Institute](http://cairninstitute.com)
 
 Questions or Feedback?

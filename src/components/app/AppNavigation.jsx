@@ -11,6 +11,7 @@ const WORKFLOW_TABS = [
 export default function AppNavigation({ mode, onChange }) {
   return (
     <div className="app-navigation" role="tablist" aria-label="Primary workflows">
+      <span className="app-brand">Darwin</span>
       {WORKFLOW_TABS.map((tab) => (
         <button
           key={tab.id}

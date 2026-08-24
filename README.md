@@ -1,21 +1,26 @@
-# GRN Atlas
+# Darwin
 
-GRN Atlas is an interactive multi-species **gene regulatory network atlas** for researchers
-who need to move from a gene or gene set to a defensible next step quickly. It combines
-regulatory networks, sequence and binding context, expression, pathways, traits,
-cross-species conservation, predicted perturbations, and in-silico **dsRNA / RNAi design**
-in one workspace — with predicted and inferred results always labelled separately from
-measured data.
+**From gene to hypothesis.**
+
+Darwin is an AI-powered research environment for understanding gene regulation and
+developing testable biological hypotheses.
+
+Ask a biological question. Darwin combines regulatory networks, expression, binding
+evidence, sequence context, pathways, traits, cross-species conservation, literature, and
+perturbation analysis to help determine what regulates a system, why the evidence supports
+it, and what experiment to consider next.
+
+**Powered by the CAIRN Institute GRN Atlas.**
 
 React + Cytoscape.js frontend · FastAPI + SQLite backend.
 
-Current species coverage: **human, mouse, arabidopsis, tomato, petunia, pepper, potato, rice** (with dahlia
-onboarding prepared). Data layers vary by species; see the live coverage matrix at
-`GET /api/v1/species`.
+Current species coverage: **human, mouse, Arabidopsis, tomato, petunia, pepper, potato, rice**
+(with dahlia onboarding prepared). Data layers vary by species; see the live coverage matrix
+at `GET /api/v1/species`.
 
-GRN Atlas can be used in three ways:
+Darwin can be used in three ways:
 
-- through the browser UI for interactive network exploration
+- through the browser UI for interactive exploration
 - through the FastAPI backend for programmatic analysis and reproducible workflows
 - through the included AgentSkills.io-compatible skills for LLM-guided single-skill and
   multi-step orchestration

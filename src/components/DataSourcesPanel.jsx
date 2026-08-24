@@ -62,7 +62,7 @@ export default function DataSourcesPanel({ open, onClose }) {
         )}
 
         <p className="ds-note">
-          GRN Atlas combines measured regulation with <strong>inferred</strong> edges —
+          Darwin combines measured regulation with <strong>inferred</strong> edges —
           the Arabidopsis network projected onto tomato and petunia through orthology.
           Inferred edges are shown dashed and labeled, and can be hidden with the
           “Include inferred edges” filter. They are predictions, not measurements.

@@ -49,7 +49,7 @@ function phenotypeInferenceSummary({ species, phenotypeSuggestedGenes, phenotype
     <div className="workflow-summary-box">
       <strong>How the lower list was produced</strong>
       <div className="workflow-help-text" style={{ marginTop: '0.45rem' }}>
-        First, the literature step extracts repeated gene-like names from papers. Next, GRN Atlas turns those names into a small set of species-relevant search cues such as pathway genes or regulator families. Finally, it searches the {species || 'selected species'} atlas and ranks candidate genes by the number and strength of matching cues.
+        First, the literature step extracts repeated gene-like names from papers. Next, Darwin turns those names into a small set of species-relevant search cues such as pathway genes or regulator families. Finally, it searches the {species || 'selected species'} atlas and ranks candidate genes by the number and strength of matching cues.
       </div>
       <div className="workflow-inline-actions" style={{ marginTop: '0.6rem' }}>
         <StatusPill tone="success">{exactCount} exact atlas match{exactCount === 1 ? '' : 'es'}</StatusPill>
