@@ -1,4 +1,4 @@
-# Public Release: GRN Atlas for Multi-Species Gene Regulatory Network Research
+# Public Release: Darwin for Multi-Species Gene Regulatory Network Research
 
 Author: CAIRN Institute
 
@@ -10,11 +10,13 @@ Read time: 8–10 minutes
 
 ## Quick Summary
 
-Today we’re publicly releasing GRN Atlas for academic and non-commercial use.
+Today we’re publicly releasing Darwin for academic and non-commercial use.
 
-GRN Atlas is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows. As of Thursday, August 13, 2026, the repository contains 61 documented skills: 60 callable analysis/workflow skills plus one overview/router skill. Earlier Nemotron-3-Ultra testing helped harden the routing layer, and the current clean GPT-5.4 matrices in-repo are 347/347 pass on single-skill routing and 59/59 pass on multi-skill orchestration.
+Darwin is a multi-species gene regulatory network platform for exploring regulatory edges, promoter and motif context, expression, pathways, traits, orthology, perturbation effects, and RNAi-oriented dsRNA design across human, mouse, Arabidopsis, tomato, and petunia. It includes both an interactive web UI and a structured skill layer for agent-driven workflows. As of Thursday, August 13, 2026, the repository contains 61 documented skills: 60 callable analysis/workflow skills plus one overview/router skill. Earlier Nemotron-3-Ultra testing helped harden the routing layer, and the current clean GPT-5.4 matrices in-repo are 347/347 pass on single-skill routing and 59/59 pass on multi-skill orchestration.
 
 Repository: https://github.com/cairninstitute/grn-atlas
+
+Darwin is powered by the CAIRN Institute GRN Atlas.
 
 ## Why We Built It
 
@@ -30,11 +32,11 @@ A real workflow looks more like this:
 - decide whether the evidence is strong enough to justify an experiment
 - hand the result to a collaborator in a readable form
 
-Most biological software handles only one piece of that chain. GRN Atlas was built to close that gap and give researchers a single place to move from question to hypothesis to next action.
+Most biological software handles only one piece of that chain. Darwin was built to close that gap and give researchers a single place to move from question to hypothesis to next action.
 
-## What GRN Atlas Is
+## What Darwin Is
 
-GRN Atlas is an integrated research workspace for gene regulatory network analysis.
+Darwin is an integrated research workspace for gene regulatory network analysis, built on the CAIRN Institute GRN Atlas.
 
 It combines:
 
@@ -117,7 +119,7 @@ You can ask:
 
 ## The Web UI
 
-GRN Atlas ships with a browser-based interface for interactive exploration.
+Darwin ships with a browser-based interface for interactive exploration.
 
 The UI supports:
 
@@ -140,7 +142,7 @@ Representative panel groups include:
 - Export
 - Workflows
 
-![GRN Atlas Organism panel showing the Arabidopsis gene regulatory network](grn-atlas-organism-arabidopsis-cropped.png)
+![Darwin Organism panel showing the Arabidopsis gene regulatory network](grn-atlas-organism-arabidopsis-cropped.png)
 
 Examples of workflow panels:
 
@@ -154,7 +156,7 @@ Examples of workflow panels:
 
 ## The Skill Layer
 
-GRN Atlas also includes an AgentSkills-style skill library for structured tool use.
+Darwin also includes an AgentSkills-style skill library for structured tool use.
 
 The repository currently contains 61 documented skills:
 
@@ -248,7 +250,7 @@ A question like:
 
 is not one database call. It is a multi-step workflow.
 
-In GRN Atlas, that workflow can be expressed as:
+In Darwin, that workflow can be expressed as:
 
 - `grn-dsrna-screen`
 - `grn-perturbation`
@@ -346,7 +348,7 @@ The result is not just a library of tools. It is a release candidate that has be
 
 ## Data, Evidence, and Trust
 
-GRN Atlas makes several distinctions explicit:
+Darwin makes several distinctions explicit:
 
 - curated vs inferred regulatory edges
 - measured vs predicted sequence or binding evidence
@@ -357,7 +359,7 @@ That makes the atlas useful for exploration without blurring the line between ev
 
 ## Release Model
 
-GRN Atlas is being released publicly for academic and non-commercial use.
+Darwin is being released publicly for academic and non-commercial use.
 
 The repository is source-available under a non-commercial license. Academic research, education, and non-commercial experimentation are allowed under the repository terms. Commercial use, hosted productization, or service deployment requires separate permission.
 
@@ -423,8 +425,8 @@ No, not in the OSI sense. It is source-available for non-commercial use.
 
 ## Further Reading
 
-- GRN Atlas repository documentation
-- GRN Atlas provenance and citation endpoints
+- Darwin repository (GRN Atlas) documentation
+- Darwin repository (GRN Atlas) provenance and citation endpoints
 - CAIRN Institute website
 
 Questions or Feedback?
