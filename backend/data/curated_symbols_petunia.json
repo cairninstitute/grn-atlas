@@ -1,542 +1,603 @@
 {
-"Peaxi162Scf00207g00444": {
-"symbol": "CCR1",
-"source": "UniProt:homology",
-"identity": 90.4
-},
-"Peaxi162Scf01060g00145": {
-"symbol": "DAHP2",
-"source": "UniProt:homology",
-"identity": 95.9
-},
-"Peaxi162Scf00030g01715": {
-"symbol": "DAHP1",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00016g02023": {
-"symbol": "CCOAOMT3",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00003g02440": {
-"symbol": "CCOAOMT1",
-"source": "UniProt:homology",
-"identity": 91.0
-},
-"Peaxi162Scf00474g00217": {
-"symbol": "CFAT",
-"source": "UniProt:homology",
-"identity": 97.4
-},
-"Peaxi162Scf00218g00096": {
-"symbol": "WS1",
-"source": "UniProt:homology",
-"identity": 99.6
-},
-"Peaxi162Scf00575g00001": {
-"symbol": "VPY",
-"source": "UniProt:homology",
-"identity": 98.3
-},
-"Peaxi162Scf00166g00931": {
-"symbol": "CM1",
-"source": "UniProt:homology",
-"identity": 94.2
-},
-"Peaxi162Scf00183g01421": {
-"symbol": "PPA-AT",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf01060g00147": {
-"symbol": "ABCG1",
-"source": "UniProt:homology",
-"identity": 94.2
-},
-"Peaxi162Scf00314g00086": {
-"symbol": "4CL1",
-"source": "UniProt:homology",
-"identity": 99.8
-},
-"Peaxi162Scf00129g01231": {
-"symbol": "EOBI",
-"source": "UniProt:homology",
-"identity": 96.0
-},
-"Peaxi162Scf01526g00020": {
-"symbol": "KAI2IA",
-"source": "UniProt:homology",
-"identity": 97.1
-},
-"Peaxi162Scf00959g00022": {
-"symbol": "EPSPS",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00889g00229": {
-"symbol": "IGS1",
-"source": "UniProt:homology",
-"identity": 98.1
-},
-"Peaxi162Scf00007g00011": {
-"symbol": "BEBT1",
-"source": "UniProt:homology",
-"identity": 99.6
-},
-"Peaxi162Scf00007g00012": {
-"symbol": "BEBT1",
-"source": "UniProt:homology",
-"identity": 97.4
-},
-"Peaxi162Scf00092g01519": {
-"symbol": "LHY",
-"source": "UniProt:homology",
-"identity": 92.7
-},
-"Peaxi162Scf00420g00650": {
-"symbol": "RAM1",
-"source": "UniProt:homology",
-"identity": 98.7
-},
-"Peaxi162Scf00450g00032": {
-"symbol": "CCOAOMT2",
-"source": "UniProt:homology",
-"identity": 97.9
-},
-"Peaxi162Scf00409g00422": {
-"symbol": "PT1",
-"source": "UniProt:homology",
-"identity": 99.8
-},
-"Peaxi162Scf00618g00532": {
-"symbol": "PT4",
-"source": "UniProt:homology",
-"identity": 99.6
-},
-"Peaxi162Scf00020g01714": {
-"symbol": "EGS1",
-"source": "UniProt:homology",
-"identity": 97.2
-},
-"Peaxi162Scf00052g00819": {
-"symbol": "KAT1",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00495g00010": {
-"symbol": "CM2",
-"source": "UniProt:homology",
-"identity": 99.6
-},
-"Peaxi162Scf00114g00001": {
-"symbol": "ADT1",
-"source": "UniProt:homology",
-"identity": 99.3
-},
-"Peaxi162Scf00389g00425": {
-"symbol": "ADT2",
-"source": "UniProt:homology",
-"identity": 90.5
-},
-"Peaxi162Scf00002g00514": {
-"symbol": "ADT3",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf01221g00042": {
-"symbol": "MYB4",
-"source": "UniProt:homology",
-"identity": 99.6
-},
-"Peaxi162Scf00251g00071": {
-"symbol": "PDR1",
-"source": "UniProt:homology",
-"identity": 93.3
-},
-"Peaxi162Scf00081g01812": {
-"symbol": "DAD2",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00069g00320": {
-"symbol": "SPY",
-"source": "UniProt:homology",
-"identity": 98.0
-},
-"Peaxi162Scf00476g00046": {
-"symbol": "NIA",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00699g00210": {
-"symbol": "CDC2",
-"source": "UniProt:homology",
-"identity": 98.9
-},
-"Peaxi162Scf00620g00533": {
-"symbol": "ANT17",
-"source": "UniProt:homology",
-"identity": 99.3
-},
-"Peaxi162Scf00927g00035": {
-"symbol": "FL",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00561g00021": {
-"symbol": "PAAS",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00152g00237": {
-"symbol": "PAAS",
-"source": "UniProt:homology",
-"identity": 90.9
-},
-"Peaxi162Scf00858g00215": {
-"symbol": "PAL1",
-"source": "UniProt:homology",
-"identity": 99.9
-},
-"Peaxi162Scf00047g01123": {
-"symbol": "BSMT2",
-"source": "UniProt:homology",
-"identity": 99.7
-},
-"Peaxi162Scf00297g00815": {
-"symbol": "D2",
-"source": "UniProt:homology",
-"identity": 94.1
-},
-"Peaxi162Scf00297g00816": {
-"symbol": "D1",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00303g00004": {
-"symbol": "NEC1",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00282g00221": {
-"symbol": "STR",
-"source": "UniProt:homology",
-"identity": 94.8
-},
-"Peaxi162Scf00620g00418": {
-"symbol": "SBT",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00129g00625": {
-"symbol": "RAM2",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00378g00624": {
-"symbol": "STR2",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00163g00104": {
-"symbol": "BCP",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00829g00066": {
-"symbol": "PT2",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00829g00053": {
-"symbol": "PT2",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00006g00443": {
-"symbol": "PT2",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00119g10131": {
-"symbol": "CYP86A22",
-"source": "UniProt:homology",
-"identity": 98.6
-},
-"Peaxi162Scf00556g00035": {
-"symbol": "C4H1",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00469g00034": {
-"symbol": "MAX2A",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00384g00211": {
-"symbol": "MAX2B",
-"source": "UniProt:homology",
-"identity": 96.1
-},
-"Peaxi162Scf00314g00633": {
-"symbol": "ALF",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00368g00095": {
-"symbol": "PAC1",
-"source": "UniProt:homology",
-"identity": 99.6
-},
-"Peaxi162Scf00047g01225": {
-"symbol": "CHSJ",
-"source": "UniProt:homology",
-"identity": 93.3
-},
-"Peaxi162Scf00536g00092": {
-"symbol": "CHSJ",
-"source": "UniProt:homology",
-"identity": 99.7
-},
-"Peaxi162Scf00449g00010": {
-"symbol": "KAI2CA",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00264g00416": {
-"symbol": "KAI2CA",
-"source": "UniProt:homology",
-"identity": 90.3
-},
-"Peaxi162Scf00983g00213": {
-"symbol": "SODCP",
-"source": "UniProt:homology",
-"identity": 99.1
-},
-"Peaxi162Scf00006g00088": {
-"symbol": "CHI1",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00164g00313": {
-"symbol": "CHSB",
-"source": "UniProt:homology",
-"identity": 98.7
-},
-"Peaxi162Scf00126g01326": {
-"symbol": "CHSD",
-"source": "UniProt:homology",
-"identity": 99.2
-},
-"Peaxi162Scf00817g00216": {
-"symbol": "CHSF",
-"source": "UniProt:homology",
-"identity": 98.2
-},
-"Peaxi162Scf00830g00048": {
-"symbol": "CHSG",
-"source": "UniProt:homology",
-"identity": 99.5
-},
-"Peaxi162Scf00263g00219": {
-"symbol": "ADH1",
-"source": "UniProt:homology",
-"identity": 93.5
-},
-"Peaxi162Scf00234g00511": {
-"symbol": "CAM53",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00062g00930": {
-"symbol": "CAM53",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00153g00106": {
-"symbol": "CAM81",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00760g00322": {
-"symbol": "TPIP1",
-"source": "UniProt:homology",
-"identity": 95.3
-},
-"Peaxi162Scf01081g00002": {
-"symbol": "SAM1",
-"source": "UniProt:homology",
-"identity": 99.2
-},
-"Peaxi162Scf00578g00014": {
-"symbol": "SAM1",
-"source": "UniProt:homology",
-"identity": 95.4
-},
-"Peaxi162Scf00311g00131": {
-"symbol": "SAM1",
-"source": "UniProt:homology",
-"identity": 94.6
-},
-"Peaxi162Scf00003g05363": {
-"symbol": "CAM81",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00050g00146": {
-"symbol": "CAM81",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00063g02323": {
-"symbol": "GAD",
-"source": "UniProt:homology",
-"identity": 97.8
-},
-"Peaxi162Scf00328g01214": {
-"symbol": "AN3",
-"source": "UniProt:homology",
-"identity": 99.2
-},
-"Peaxi162Scf01084g00119": {
-"symbol": "PMADS1",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf01333g10015": {
-"symbol": "ACO3",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf01333g10016": {
-"symbol": "ACO4",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00285g00006": {
-"symbol": "MPK1",
-"source": "UniProt:homology",
-"identity": 99.5
-},
-"Peaxi162Scf00028g00182": {
-"symbol": "MPK1",
-"source": "UniProt:homology",
-"identity": 90.7
-},
-"Peaxi162Scf00022g00098": {
-"symbol": "AG1",
-"source": "UniProt:homology",
-"identity": 94.2
-},
-"Peaxi162Scf00487g00064": {
-"symbol": "RT",
-"source": "UniProt:homology",
-"identity": 99.8
-},
-"Peaxi162Scf00083g00516": {
-"symbol": "WUS",
-"source": "UniProt:homology",
-"identity": 99.3
-},
-"Peaxi162Scf00066g00133": {
-"symbol": "FBP24",
-"source": "UniProt:homology",
-"identity": 99.6
-},
-"Peaxi162Scf00357g00318": {
-"symbol": "SAM3",
-"source": "UniProt:homology",
-"identity": 95.7
-},
-"Peaxi162Scf00668g00049": {
-"symbol": "SAM3",
-"source": "UniProt:homology",
-"identity": 94.6
-},
-"Peaxi162Scf00164g00055": {
-"symbol": "SAM3",
-"source": "UniProt:homology",
-"identity": 93.6
-},
-"Peaxi162Scf00961g00115": {
-"symbol": "RPL15",
-"source": "UniProt:homology",
-"identity": 98.0
-},
-"Peaxi162Scf00078g00529": {
-"symbol": "RPL15",
-"source": "UniProt:homology",
-"identity": 97.5
-},
-"Peaxi162Scf00078g00541": {
-"symbol": "RPL15",
-"source": "UniProt:homology",
-"identity": 96.6
-},
-"Peaxi162Scf00008g03318": {
-"symbol": "PBF1",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00104g00083": {
-"symbol": "RBCS1",
-"source": "UniProt:homology",
-"identity": 97.6
-},
-"Peaxi162Scf00501g00021": {
-"symbol": "RBCS1",
-"source": "UniProt:homology",
-"identity": 91.1
-},
-"Peaxi162Scf00394g00510": {
-"symbol": "RBCS1",
-"source": "UniProt:homology",
-"identity": 90.8
-},
-"Peaxi162Scf00406g00042": {
-"symbol": "HSP70",
-"source": "UniProt:homology",
-"identity": 99.8
-},
-"Peaxi162Scf00264g00415": {
-"symbol": "KAI2IB",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00457g00017": {
-"symbol": "SMAX1A",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00171g00822": {
-"symbol": "CAM72",
-"source": "UniProt:homology",
-"identity": 98.7
-},
-"Peaxi162Scf00300g00829": {
-"symbol": "HSP22",
-"source": "UniProt:homology",
-"identity": 98.7
-},
-"Peaxi162Scf00060g00017": {
-"symbol": "ADF2",
-"source": "UniProt:homology",
-"identity": 98.6
-},
-"Peaxi162Scf00060g00124": {
-"symbol": "ADF2",
-"source": "UniProt:homology",
-"identity": 98.6
-},
-"Peaxi162Scf00039g01223": {
-"symbol": "ADF1",
-"source": "UniProt:homology",
-"identity": 100.0
-},
-"Peaxi162Scf00047g00440": {
-"symbol": "ERD2",
-"source": "UniProt:homology",
-"identity": 100.0
-}
+  "Peaxi162Scf00002g00514": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "ADT3"
+  },
+  "Peaxi162Scf00003g02440": {
+    "identity": 91.0,
+    "source": "UniProt:homology",
+    "symbol": "CCOAOMT1"
+  },
+  "Peaxi162Scf00003g05363": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "CAM81"
+  },
+  "Peaxi162Scf00006g00088": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "CHI1"
+  },
+  "Peaxi162Scf00006g00443": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "PT2"
+  },
+  "Peaxi162Scf00007g00011": {
+    "identity": 99.6,
+    "source": "UniProt:homology",
+    "symbol": "BEBT1"
+  },
+  "Peaxi162Scf00007g00012": {
+    "identity": 97.4,
+    "source": "UniProt:homology",
+    "symbol": "BEBT1"
+  },
+  "Peaxi162Scf00008g03318": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "PBF1"
+  },
+  "Peaxi162Scf00016g02023": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "CCOAOMT3"
+  },
+  "Peaxi162Scf00020g01714": {
+    "identity": 97.2,
+    "source": "UniProt:homology",
+    "symbol": "EGS1"
+  },
+  "Peaxi162Scf00021g00922": {
+    "source": "Literature:26977085",
+    "symbol": "ANL2"
+  },
+  "Peaxi162Scf00022g00098": {
+    "identity": 94.2,
+    "source": "UniProt:homology",
+    "symbol": "AG1"
+  },
+  "Peaxi162Scf00028g00182": {
+    "identity": 90.7,
+    "source": "UniProt:homology",
+    "symbol": "MPK1"
+  },
+  "Peaxi162Scf00030g01715": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "DAHP1"
+  },
+  "Peaxi162Scf00032g00067": {
+    "source": "Literature:24642943",
+    "symbol": "DFR-A"
+  },
+  "Peaxi162Scf00039g01223": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "ADF1"
+  },
+  "Peaxi162Scf00040g00320": {
+    "source": "Literature:26977085",
+    "symbol": "ANL2-like"
+  },
+  "Peaxi162Scf00047g00440": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "ERD2"
+  },
+  "Peaxi162Scf00047g01123": {
+    "identity": 99.7,
+    "source": "UniProt:homology",
+    "symbol": "BSMT2"
+  },
+  "Peaxi162Scf00047g01225": {
+    "source": "Literature:24642943",
+    "symbol": "CHS-A"
+  },
+  "Peaxi162Scf00050g00146": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "CAM81"
+  },
+  "Peaxi162Scf00052g00819": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "KAT1"
+  },
+  "Peaxi162Scf00060g00017": {
+    "identity": 98.6,
+    "source": "UniProt:homology",
+    "symbol": "ADF2"
+  },
+  "Peaxi162Scf00060g00124": {
+    "identity": 98.6,
+    "source": "UniProt:homology",
+    "symbol": "ADF2"
+  },
+  "Peaxi162Scf00062g00930": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "CAM53"
+  },
+  "Peaxi162Scf00063g02323": {
+    "identity": 97.8,
+    "source": "UniProt:homology",
+    "symbol": "GAD"
+  },
+  "Peaxi162Scf00066g00133": {
+    "identity": 99.6,
+    "source": "UniProt:homology",
+    "symbol": "FBP24"
+  },
+  "Peaxi162Scf00069g00320": {
+    "identity": 98.0,
+    "source": "UniProt:homology",
+    "symbol": "SPY"
+  },
+  "Peaxi162Scf00078g00529": {
+    "identity": 97.5,
+    "source": "UniProt:homology",
+    "symbol": "RPL15"
+  },
+  "Peaxi162Scf00078g00541": {
+    "identity": 96.6,
+    "source": "UniProt:homology",
+    "symbol": "RPL15"
+  },
+  "Peaxi162Scf00080g01317": {
+    "source": "Literature:24642943",
+    "symbol": "CHI-B"
+  },
+  "Peaxi162Scf00081g01812": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "DAD2"
+  },
+  "Peaxi162Scf00083g00516": {
+    "identity": 99.3,
+    "source": "UniProt:homology",
+    "symbol": "WUS"
+  },
+  "Peaxi162Scf00092g01519": {
+    "identity": 92.7,
+    "source": "UniProt:homology",
+    "symbol": "LHY"
+  },
+  "Peaxi162Scf00104g00083": {
+    "identity": 97.6,
+    "source": "UniProt:homology",
+    "symbol": "RBCS1"
+  },
+  "Peaxi162Scf00114g00001": {
+    "identity": 99.3,
+    "source": "UniProt:homology",
+    "symbol": "ADT1"
+  },
+  "Peaxi162Scf00118g00310": {
+    "source": "Literature:24642943",
+    "symbol": "AN2"
+  },
+  "Peaxi162Scf00119g00942": {
+    "source": "Literature:10449578",
+    "symbol": "JAF13"
+  },
+  "Peaxi162Scf00119g10131": {
+    "identity": 98.6,
+    "source": "UniProt:homology",
+    "symbol": "CYP86A22"
+  },
+  "Peaxi162Scf00126g01326": {
+    "identity": 99.2,
+    "source": "UniProt:homology",
+    "symbol": "CHSD"
+  },
+  "Peaxi162Scf00129g00625": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "RAM2"
+  },
+  "Peaxi162Scf00129g01231": {
+    "identity": 96.0,
+    "source": "UniProt:homology",
+    "symbol": "EOBI"
+  },
+  "Peaxi162Scf00150g00218": {
+    "source": "Literature:24642943",
+    "symbol": "F3'5'H-A"
+  },
+  "Peaxi162Scf00152g00237": {
+    "identity": 90.9,
+    "source": "UniProt:homology",
+    "symbol": "PAAS"
+  },
+  "Peaxi162Scf00153g00106": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "CAM81"
+  },
+  "Peaxi162Scf00163g00104": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "BCP"
+  },
+  "Peaxi162Scf00164g00055": {
+    "identity": 93.6,
+    "source": "UniProt:homology",
+    "symbol": "SAM3"
+  },
+  "Peaxi162Scf00164g00313": {
+    "source": "Literature:24642943",
+    "symbol": "CHS-B"
+  },
+  "Peaxi162Scf00166g00931": {
+    "identity": 94.2,
+    "source": "UniProt:homology",
+    "symbol": "CM1"
+  },
+  "Peaxi162Scf00171g00822": {
+    "identity": 98.7,
+    "source": "UniProt:homology",
+    "symbol": "CAM72"
+  },
+  "Peaxi162Scf00180g00126": {
+    "source": "Literature:24642943",
+    "symbol": "CHI-A"
+  },
+  "Peaxi162Scf00183g01421": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "PPA-AT"
+  },
+  "Peaxi162Scf00201g00243": {
+    "source": "Literature:24642943",
+    "symbol": "F3'5'H-B"
+  },
+  "Peaxi162Scf00207g00444": {
+    "identity": 90.4,
+    "source": "UniProt:homology",
+    "symbol": "CCR1"
+  },
+  "Peaxi162Scf00218g00096": {
+    "identity": 99.6,
+    "source": "UniProt:homology",
+    "symbol": "WS1"
+  },
+  "Peaxi162Scf00234g00511": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "CAM53"
+  },
+  "Peaxi162Scf00251g00071": {
+    "identity": 93.3,
+    "source": "UniProt:homology",
+    "symbol": "PDR1"
+  },
+  "Peaxi162Scf00263g00219": {
+    "identity": 93.5,
+    "source": "UniProt:homology",
+    "symbol": "ADH1"
+  },
+  "Peaxi162Scf00264g00415": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "KAI2IB"
+  },
+  "Peaxi162Scf00264g00416": {
+    "identity": 90.3,
+    "source": "UniProt:homology",
+    "symbol": "KAI2CA"
+  },
+  "Peaxi162Scf00274g00747": {
+    "source": "Literature:24642943",
+    "symbol": "FLS"
+  },
+  "Peaxi162Scf00282g00221": {
+    "identity": 94.8,
+    "source": "UniProt:homology",
+    "symbol": "STR"
+  },
+  "Peaxi162Scf00285g00006": {
+    "identity": 99.5,
+    "source": "UniProt:homology",
+    "symbol": "MPK1"
+  },
+  "Peaxi162Scf00297g00815": {
+    "identity": 94.1,
+    "source": "UniProt:homology",
+    "symbol": "D2"
+  },
+  "Peaxi162Scf00297g00816": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "D1"
+  },
+  "Peaxi162Scf00300g00829": {
+    "identity": 98.7,
+    "source": "UniProt:homology",
+    "symbol": "HSP22"
+  },
+  "Peaxi162Scf00303g00004": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "NEC1"
+  },
+  "Peaxi162Scf00311g00131": {
+    "identity": 94.6,
+    "source": "UniProt:homology",
+    "symbol": "SAM1"
+  },
+  "Peaxi162Scf00314g00086": {
+    "identity": 99.8,
+    "source": "UniProt:homology",
+    "symbol": "4CL1"
+  },
+  "Peaxi162Scf00314g00633": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "ALF"
+  },
+  "Peaxi162Scf00328g01214": {
+    "identity": 99.2,
+    "source": "UniProt:homology",
+    "symbol": "AN3"
+  },
+  "Peaxi162Scf00329g00024": {
+    "source": "Literature:24642943",
+    "symbol": "DFR-B"
+  },
+  "Peaxi162Scf00349g00057": {
+    "source": "Literature:26977085",
+    "symbol": "PH4"
+  },
+  "Peaxi162Scf00357g00318": {
+    "identity": 95.7,
+    "source": "UniProt:homology",
+    "symbol": "SAM3"
+  },
+  "Peaxi162Scf00368g00095": {
+    "identity": 99.6,
+    "source": "UniProt:homology",
+    "symbol": "PAC1"
+  },
+  "Peaxi162Scf00378g00624": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "STR2"
+  },
+  "Peaxi162Scf00384g00211": {
+    "identity": 96.1,
+    "source": "UniProt:homology",
+    "symbol": "MAX2B"
+  },
+  "Peaxi162Scf00389g00425": {
+    "identity": 90.5,
+    "source": "UniProt:homology",
+    "symbol": "ADT2"
+  },
+  "Peaxi162Scf00394g00510": {
+    "identity": 90.8,
+    "source": "UniProt:homology",
+    "symbol": "RBCS1"
+  },
+  "Peaxi162Scf00406g00042": {
+    "identity": 99.8,
+    "source": "UniProt:homology",
+    "symbol": "HSP70"
+  },
+  "Peaxi162Scf00409g00422": {
+    "identity": 99.8,
+    "source": "UniProt:homology",
+    "symbol": "PT1"
+  },
+  "Peaxi162Scf00420g00650": {
+    "identity": 98.7,
+    "source": "UniProt:homology",
+    "symbol": "RAM1"
+  },
+  "Peaxi162Scf00449g00010": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "KAI2CA"
+  },
+  "Peaxi162Scf00450g00032": {
+    "identity": 97.9,
+    "source": "UniProt:homology",
+    "symbol": "CCOAOMT2"
+  },
+  "Peaxi162Scf00457g00017": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "SMAX1A"
+  },
+  "Peaxi162Scf00469g00034": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "MAX2A"
+  },
+  "Peaxi162Scf00474g00217": {
+    "identity": 97.4,
+    "source": "UniProt:homology",
+    "symbol": "CFAT"
+  },
+  "Peaxi162Scf00476g00046": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "NIA"
+  },
+  "Peaxi162Scf00487g00064": {
+    "identity": 99.8,
+    "source": "UniProt:homology",
+    "symbol": "RT"
+  },
+  "Peaxi162Scf00495g00010": {
+    "identity": 99.6,
+    "source": "UniProt:homology",
+    "symbol": "CM2"
+  },
+  "Peaxi162Scf00501g00021": {
+    "identity": 91.1,
+    "source": "UniProt:homology",
+    "symbol": "RBCS1"
+  },
+  "Peaxi162Scf00536g00092": {
+    "source": "Literature:24642943",
+    "symbol": "CHS-J"
+  },
+  "Peaxi162Scf00540g00515": {
+    "source": "Literature:26977085",
+    "symbol": "PH1"
+  },
+  "Peaxi162Scf00556g00035": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "C4H1"
+  },
+  "Peaxi162Scf00561g00021": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "PAAS"
+  },
+  "Peaxi162Scf00575g00001": {
+    "identity": 98.3,
+    "source": "UniProt:homology",
+    "symbol": "VPY"
+  },
+  "Peaxi162Scf00578g00014": {
+    "identity": 95.4,
+    "source": "UniProt:homology",
+    "symbol": "SAM1"
+  },
+  "Peaxi162Scf00618g00532": {
+    "identity": 99.6,
+    "source": "UniProt:homology",
+    "symbol": "PT4"
+  },
+  "Peaxi162Scf00620g00418": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "SBT"
+  },
+  "Peaxi162Scf00620g00533": {
+    "identity": 99.3,
+    "source": "UniProt:homology",
+    "symbol": "ANT17"
+  },
+  "Peaxi162Scf00668g00049": {
+    "identity": 94.6,
+    "source": "UniProt:homology",
+    "symbol": "SAM3"
+  },
+  "Peaxi162Scf00699g00210": {
+    "identity": 98.9,
+    "source": "UniProt:homology",
+    "symbol": "CDC2"
+  },
+  "Peaxi162Scf00760g00322": {
+    "identity": 95.3,
+    "source": "UniProt:homology",
+    "symbol": "TPIP1"
+  },
+  "Peaxi162Scf00817g00216": {
+    "identity": 98.2,
+    "source": "UniProt:homology",
+    "symbol": "CHSF"
+  },
+  "Peaxi162Scf00829g00053": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "PT2"
+  },
+  "Peaxi162Scf00829g00066": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "PT2"
+  },
+  "Peaxi162Scf00830g00048": {
+    "identity": 99.5,
+    "source": "UniProt:homology",
+    "symbol": "CHSG"
+  },
+  "Peaxi162Scf00858g00215": {
+    "identity": 99.9,
+    "source": "UniProt:homology",
+    "symbol": "PAL1"
+  },
+  "Peaxi162Scf00889g00229": {
+    "identity": 98.1,
+    "source": "UniProt:homology",
+    "symbol": "IGS1"
+  },
+  "Peaxi162Scf00904g00048": {
+    "source": "Literature:24642943",
+    "symbol": "CHI-A"
+  },
+  "Peaxi162Scf00912g00146": {
+    "source": "Literature:24642943",
+    "symbol": "AN11"
+  },
+  "Peaxi162Scf00927g00035": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "FL"
+  },
+  "Peaxi162Scf00959g00022": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "EPSPS"
+  },
+  "Peaxi162Scf00961g00115": {
+    "identity": 98.0,
+    "source": "UniProt:homology",
+    "symbol": "RPL15"
+  },
+  "Peaxi162Scf00983g00213": {
+    "identity": 99.1,
+    "source": "UniProt:homology",
+    "symbol": "SODCP"
+  },
+  "Peaxi162Scf01060g00145": {
+    "identity": 95.9,
+    "source": "UniProt:homology",
+    "symbol": "DAHP2"
+  },
+  "Peaxi162Scf01060g00147": {
+    "identity": 94.2,
+    "source": "UniProt:homology",
+    "symbol": "ABCG1"
+  },
+  "Peaxi162Scf01081g00002": {
+    "identity": 99.2,
+    "source": "UniProt:homology",
+    "symbol": "SAM1"
+  },
+  "Peaxi162Scf01084g00119": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "PMADS1"
+  },
+  "Peaxi162Scf01210g00002": {
+    "source": "Literature:24642943",
+    "symbol": "DPL"
+  },
+  "Peaxi162Scf01221g00042": {
+    "identity": 99.6,
+    "source": "UniProt:homology",
+    "symbol": "MYB4"
+  },
+  "Peaxi162Scf01333g10015": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "ACO3"
+  },
+  "Peaxi162Scf01333g10016": {
+    "identity": 100.0,
+    "source": "UniProt:homology",
+    "symbol": "ACO4"
+  },
+  "Peaxi162Scf01526g00020": {
+    "identity": 97.1,
+    "source": "UniProt:homology",
+    "symbol": "KAI2IA"
+  }
 }

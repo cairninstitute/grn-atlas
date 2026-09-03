@@ -1,477 +1,521 @@
 {
   "Solyc01g059870.2": {
-    "symbol": "PHYB1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "PHYB1"
   },
   "Solyc01g060130.2": {
-    "symbol": "SAR2",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "SAR2"
   },
   "Solyc01g095080.2": {
-    "symbol": "ACS2",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "ACS2"
   },
   "Solyc01g096050.2": {
-    "symbol": "MTB1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "MTB1"
   },
   "Solyc01g096190.2": {
-    "symbol": "LCA1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "LCA1"
   },
   "Solyc01g099630.2": {
-    "symbol": "XTH1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "XTH1"
   },
   "Solyc01g100490.2": {
-    "symbol": "CHLN",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "CHLN"
   },
   "Solyc01g104510.2": {
-    "symbol": "MSI1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "MSI1"
   },
   "Solyc01g105030.2": {
-    "symbol": "CAP10A",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "CAP10A"
   },
   "Solyc01g109140.2": {
-    "symbol": "DES",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "DES"
   },
   "Solyc01g111170.2": {
-    "symbol": "CYP",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "CYP"
   },
   "Solyc02g062400.2": {
-    "symbol": "EOT1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "EOT1"
   },
   "Solyc02g062560.2": {
-    "symbol": "tm-1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "tm-1"
   },
   "Solyc02g063150.2": {
-    "symbol": "RBCS1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "RBCS1"
   },
   "Solyc02g065400.2": {
-    "symbol": "PSBO",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "PSBO"
   },
   "Solyc02g065750.1": {
-    "symbol": "CYP85A3",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "CYP85A3"
   },
   "Solyc02g071730.2": {
-    "symbol": "AG1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "AG1"
+  },
+  "Solyc02g077920.2": {
+    "source": "Literature:23386264",
+    "symbol": "CNR"
   },
   "Solyc02g078260.2": {
-    "symbol": "RPB2",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "RPB2"
+  },
+  "Solyc02g082670.2": {
+    "source": "Literature:37995308",
+    "symbol": "WOX13"
   },
   "Solyc02g082920.2": {
-    "symbol": "CHI3",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "CHI3"
   },
   "Solyc02g084850.2": {
-    "symbol": "TAS14",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "TAS14"
   },
   "Solyc02g085950.2": {
-    "symbol": "RBCS4",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "RBCS4"
   },
   "Solyc02g089160.2": {
-    "symbol": "CYP85A1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "CYP85A1"
   },
   "Solyc02g091990.2": {
-    "symbol": "ACS3",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "ACS3"
   },
   "Solyc03g025560.2": {
-    "symbol": "CPT3",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "CPT3"
   },
   "Solyc03g031860.2": {
-    "symbol": "PSY1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "PSY1"
   },
   "Solyc03g034220.2": {
-    "symbol": "RBCS2",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "RBCS2"
+  },
+  "Solyc03g044300.2": {
+    "source": "Literature:23386264",
+    "symbol": "AP2a"
   },
   "Solyc03g082420.2": {
-    "symbol": "HSP21",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "HSP21"
   },
   "Solyc03g095770.2": {
-    "symbol": "WRKY70",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "WRKY70"
   },
   "Solyc03g098050.2": {
-    "symbol": "CALM1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "CALM1"
+  },
+  "Solyc03g111690.2": {
+    "source": "Literature:23386264",
+    "symbol": "PL"
   },
   "Solyc03g111720.2": {
-    "symbol": "E4",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "E4"
   },
   "Solyc03g113120.2": {
-    "symbol": "WRKY72A",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "WRKY72A"
   },
   "Solyc03g113800.2": {
-    "symbol": "AMADH2",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "AMADH2"
   },
   "Solyc03g114600.2": {
-    "symbol": "Asc-1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "Asc-1"
+  },
+  "Solyc03g114830.2": {
+    "source": "Literature:24415769",
+    "symbol": "FUL2"
   },
   "Solyc03g118290.2": {
-    "symbol": "ARF2A",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "ARF2A"
   },
   "Solyc03g123760.2": {
-    "symbol": "PDS",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "PDS"
   },
   "Solyc04g005610.2": {
-    "symbol": "NAP2",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "NAP2"
   },
   "Solyc04g051510.1": {
-    "symbol": "CURL3",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "CURL3"
   },
   "Solyc04g051860.2": {
-    "symbol": "SK",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "SK"
   },
   "Solyc04g078900.2": {
-    "symbol": "CYP707A1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "CYP707A1"
   },
   "Solyc04g079730.1": {
-    "symbol": "AOS1",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "AOS1"
   },
   "Solyc04g082010.1": {
-    "symbol": "PETE",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "PETE"
   },
   "Solyc04g082030.1": {
-    "symbol": "ODC",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
+    "symbol": "ODC"
   },
   "Solyc05g005710.2": {
-    "symbol": "SPDSYN",
+    "identity": null,
     "source": "UniProt",
-    "identity": null
-  },
-  "Solyc05g050560.1": {
-    "symbol": "MTB2",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc05g055230.1": {
-    "symbol": "RPS17",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc06g060340.2": {
-    "symbol": "PSBS",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc06g071290.2": {
-    "symbol": "AMADH1",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc06g073190.2": {
-    "symbol": "FRK2",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc06g074740.2": {
-    "symbol": "VPS41",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc06g082590.1": {
-    "symbol": "PTI6",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc06g083230.2": {
-    "symbol": "GCH1",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc06g083980.1": {
-    "symbol": "MTB3",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc07g007870.2": {
-    "symbol": "OPR3",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc07g015860.2": {
-    "symbol": "PDF1A",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc07g049530.2": {
-    "symbol": "ACO1",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc07g049690.2": {
-    "symbol": "HPL",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc07g053260.2": {
-    "symbol": "TFT9",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc07g056570.1": {
-    "symbol": "NCED1",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc07g063410.2": {
-    "symbol": "JA2L",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc07g065840.2": {
-    "symbol": "HSC80",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc07g066310.2": {
-    "symbol": "PSBR",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc07g066480.2": {
-    "symbol": "FLACCA",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc08g005170.2": {
-    "symbol": "HSF8",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc08g005610.2": {
-    "symbol": "CYP707A2",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc08g016720.1": {
-    "symbol": "NCED2",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc08g061130.2": {
-    "symbol": "HY5",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc08g076460.2": {
-    "symbol": "DAD1",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc08g076930.1": {
-    "symbol": "MYC2",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc09g008280.1": {
-    "symbol": "SAM3",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc09g008670.2": {
-    "symbol": "TD2",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc09g009020.2": {
-    "symbol": "PGH1",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc09g010180.2": {
-    "symbol": "SPY",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc09g090580.2": {
-    "symbol": "eIFiso4E",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc10g005060.2": {
-    "symbol": "CTOMT1",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc10g007270.2": {
-    "symbol": "LAT52",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc10g080210.1": {
-    "symbol": "PG2",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc10g081650.1": {
-    "symbol": "CRTISO",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc10g086500.1": {
-    "symbol": "DET2",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc11g010570.1": {
-    "symbol": "J",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc11g011030.1": {
-    "symbol": "JAZ7",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc11g011260.1": {
-    "symbol": "GAI",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc11g012410.1": {
-    "symbol": "IMP3",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc11g066430.1": {
-    "symbol": "H2B-2",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc11g068540.1": {
-    "symbol": "CPA",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc11g069040.2": {
-    "symbol": "GLX1",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc11g069800.1": {
-    "symbol": "AOS2",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc12g010860.1": {
-    "symbol": "TFT8",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc12g013620.1": {
-    "symbol": "JA2",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc12g044630.1": {
-    "symbol": "PRO1",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc12g098350.1": {
-    "symbol": "infA",
-    "source": "UniProt",
-    "identity": null
-  },
-  "Solyc10g006880.2": {
-    "symbol": "NOR",
-    "source": "literature",
-    "identity": null
-  },
-  "Solyc05g050010.2": {
-    "symbol": "ACS4",
-    "source": "literature",
-    "identity": null
+    "symbol": "SPDSYN"
   },
   "Solyc05g012020": {
-    "symbol": "RIN",
+    "identity": null,
     "source": "literature",
-    "identity": null
+    "symbol": "RIN"
   },
-  "Solyc12g049350.1": {
-    "symbol": "SlMYB12",
+  "Solyc05g050010.2": {
+    "identity": null,
     "source": "literature",
-    "identity": null
+    "symbol": "ACS4"
+  },
+  "Solyc05g050560.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "MTB2"
+  },
+  "Solyc05g055230.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "RPS17"
+  },
+  "Solyc06g051800.2": {
+    "source": "Literature:23386264",
+    "symbol": "EXP1"
+  },
+  "Solyc06g060340.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "PSBS"
+  },
+  "Solyc06g069430.2": {
+    "source": "Literature:24415769",
+    "symbol": "FUL1"
+  },
+  "Solyc06g071290.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "AMADH1"
+  },
+  "Solyc06g073190.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "FRK2"
+  },
+  "Solyc06g074740.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "VPS41"
+  },
+  "Solyc06g082590.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "PTI6"
+  },
+  "Solyc06g083230.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "GCH1"
+  },
+  "Solyc06g083980.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "MTB3"
+  },
+  "Solyc07g007870.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "OPR3"
+  },
+  "Solyc07g015860.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "PDF1A"
+  },
+  "Solyc07g049530.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "ACO1"
+  },
+  "Solyc07g049690.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "HPL"
+  },
+  "Solyc07g053260.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "TFT9"
+  },
+  "Solyc07g055920.2": {
+    "source": "Literature:23386264",
+    "symbol": "TAGL1"
+  },
+  "Solyc07g056570.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "NCED1"
+  },
+  "Solyc07g063410.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "JA2L"
+  },
+  "Solyc07g065840.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "HSC80"
+  },
+  "Solyc07g066310.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "PSBR"
+  },
+  "Solyc07g066480.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "FLACCA"
+  },
+  "Solyc08g005170.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "HSF8"
+  },
+  "Solyc08g005610.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "CYP707A2"
+  },
+  "Solyc08g016720.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "NCED2"
+  },
+  "Solyc08g061130.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "HY5"
+  },
+  "Solyc08g076460.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "DAD1"
+  },
+  "Solyc08g076930.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "MYC2"
+  },
+  "Solyc08g080090.2": {
+    "source": "Literature:23386264",
+    "symbol": "SGR1"
+  },
+  "Solyc09g008280.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "SAM3"
+  },
+  "Solyc09g008670.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "TD2"
+  },
+  "Solyc09g009020.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "PGH1"
+  },
+  "Solyc09g010180.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "SPY"
+  },
+  "Solyc09g010210.2": {
+    "source": "Literature:23386264",
+    "symbol": "CEL2"
+  },
+  "Solyc09g090580.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "eIFiso4E"
+  },
+  "Solyc10g005060.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "CTOMT1"
+  },
+  "Solyc10g006880.2": {
+    "identity": null,
+    "source": "literature",
+    "symbol": "NOR"
+  },
+  "Solyc10g007270.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "LAT52"
+  },
+  "Solyc10g080210.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "PG2"
+  },
+  "Solyc10g081650.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "CRTISO"
+  },
+  "Solyc10g086500.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "DET2"
+  },
+  "Solyc11g010570.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "J"
+  },
+  "Solyc11g011030.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "JAZ7"
+  },
+  "Solyc11g011260.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "GAI"
+  },
+  "Solyc11g012410.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "IMP3"
+  },
+  "Solyc11g066430.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "H2B-2"
+  },
+  "Solyc11g068540.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "CPA"
+  },
+  "Solyc11g069040.2": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "GLX1"
+  },
+  "Solyc11g069800.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "AOS2"
   },
   "Solyc12g005860.1": {
-    "symbol": "ACO3",
+    "identity": null,
     "source": "literature",
-    "identity": null
+    "symbol": "ACO3"
+  },
+  "Solyc12g008840.1": {
+    "source": "Literature:23386264",
+    "symbol": "TBG4"
+  },
+  "Solyc12g010860.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "TFT8"
+  },
+  "Solyc12g013620.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "JA2"
+  },
+  "Solyc12g044630.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "PRO1"
+  },
+  "Solyc12g049350.1": {
+    "identity": null,
+    "source": "literature",
+    "symbol": "SlMYB12"
+  },
+  "Solyc12g098350.1": {
+    "identity": null,
+    "source": "UniProt",
+    "symbol": "infA"
   }
 }

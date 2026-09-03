@@ -1,0 +1,20 @@
+# Petunia literature-curated regulatory edges
+# Format: source_id	target_id	regulation_type	confidence	source_tag
+# MBW activator complex: AN2/AN1/AN11 → anthocyanin structural genes
+# Albert et al. 2014 (PMID 24642943), Spelt et al. 2000 (PMID 11006337),
+# Quattrocchio et al. 1999 (PMID 10449578), Verweij et al. 2016 (PMID 26977085)
+Peaxi162Scf00118g00310	Peaxi162Scf00047g01225	activation	0.90	literature:24642943,11006337
+Peaxi162Scf00118g00310	Peaxi162Scf00180g00126	activation	0.90	literature:24642943
+Peaxi162Scf00118g00310	Peaxi162Scf00032g00067	activation	0.90	literature:24642943,11006337
+Peaxi162Scf00118g00310	Peaxi162Scf00150g00218	activation	0.90	literature:24642943
+Peaxi162Scf00118g00310	Peaxi162Scf00029g00323	activation	0.90	literature:24642943
+Peaxi162Scf00029g00323	Peaxi162Scf00047g01225	activation	0.90	literature:11006337,10449578
+Peaxi162Scf00029g00323	Peaxi162Scf00180g00126	activation	0.90	literature:11006337
+Peaxi162Scf00029g00323	Peaxi162Scf00032g00067	activation	0.90	literature:11006337,10449578
+Peaxi162Scf00029g00323	Peaxi162Scf00150g00218	activation	0.90	literature:11006337
+Peaxi162Scf01210g00002	Peaxi162Scf00047g01225	activation	0.90	literature:24642943
+Peaxi162Scf01210g00002	Peaxi162Scf00032g00067	activation	0.90	literature:24642943
+Peaxi162Scf01210g00002	Peaxi162Scf00029g00323	activation	0.90	literature:24642943
+Peaxi162Scf00349g00057	Peaxi162Scf00540g00515	activation	0.90	literature:26977085
+Peaxi162Scf00119g00942	Peaxi162Scf00032g00067	activation	0.90	literature:10449578
+Peaxi162Scf00119g00942	Peaxi162Scf00047g01225	activation	0.90	literature:10449578

@@ -1,0 +1,32 @@
+# Tomato literature-curated regulatory edges
+# Format: source_id	target_id	regulation_type	confidence	source_tag
+# RIN direct targets — Fujisawa et al. 2013, ChIP-chip (PMID 23386264)
+Solyc05g012020	Solyc01g095080.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc05g050010.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc07g049530.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc03g031860.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc03g123760.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc06g051800.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc10g080210.1	activation	0.90	literature:23386264
+Solyc05g012020	Solyc09g010210.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc12g008840.1	activation	0.90	literature:23386264
+Solyc05g012020	Solyc08g080090.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc10g006880.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc02g077920.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc03g044300.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc06g069430.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc03g114830.2	activation	0.90	literature:23386264
+Solyc05g012020	Solyc07g055920.2	activation	0.90	literature:23386264
+# FUL1/FUL2 direct targets — Fujisawa et al. 2014, ChIP-chip (PMID 24415769)
+Solyc06g069430.2	Solyc01g095080.2	activation	0.90	literature:24415769
+Solyc06g069430.2	Solyc03g031860.2	activation	0.90	literature:24415769
+Solyc06g069430.2	Solyc06g051800.2	activation	0.90	literature:24415769
+Solyc06g069430.2	Solyc10g080210.1	activation	0.90	literature:24415769
+Solyc03g114830.2	Solyc01g095080.2	activation	0.90	literature:24415769
+Solyc03g114830.2	Solyc03g031860.2	activation	0.90	literature:24415769
+Solyc03g114830.2	Solyc06g051800.2	activation	0.90	literature:24415769
+# WOX13 targets — Jiang et al. 2024, ChIP-seq + RNA-seq (PMID 37995308)
+Solyc02g082670.2	Solyc05g012020	activation	0.90	literature:37995308
+Solyc02g082670.2	Solyc10g006880.2	activation	0.90	literature:37995308
+Solyc02g082670.2	Solyc01g095080.2	activation	0.90	literature:37995308
+Solyc02g082670.2	Solyc03g031860.2	activation	0.90	literature:37995308

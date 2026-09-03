@@ -426,6 +426,13 @@ async def get_neighborhood(gene_id: str, request: NeighborhoodRequest = Neighbor
     regulators = [r for r in regulators if r.regulation_type in request.regulation_type]
     targets = [t for t in targets if t.regulation_type in request.regulation_type]
 
+    # Cap to top neighbors by confidence to prevent browser overload
+    MAX_NEIGHBORS = 75
+    if len(regulators) > MAX_NEIGHBORS:
+        regulators = sorted(regulators, key=lambda r: r.confidence, reverse=True)[:MAX_NEIGHBORS]
+    if len(targets) > MAX_NEIGHBORS:
+        targets = sorted(targets, key=lambda t: t.confidence, reverse=True)[:MAX_NEIGHBORS]
+
     if request.tissue:
         tissue_edges = set()
         for row in db.conn.execute(
@@ -1434,6 +1441,251 @@ async def get_orthology(
         }
 
     return result
+
+
+@app.get("/api/v1/crossview/{gene_id}")
+async def crossview(
+    gene_id: str,
+    min_confidence: float = Query(0.5, ge=0, le=1),
+    max_edges: int = Query(25, ge=1, le=100),
+):
+    """Cross-species regulatory view: show a gene's network across all species
+    via ortholog mappings, with curated vs inferred edges clearly separated."""
+
+    gene = db.get_gene(gene_id)
+    if not gene:
+        raise HTTPException(status_code=404, detail="Gene not found")
+
+    conn = db.conn
+    all_species = [r[0] for r in conn.execute(
+        "SELECT DISTINCT species FROM genes ORDER BY species"
+    ).fetchall()]
+
+    def network_for_gene(g_id, species):
+        """Get top regulators and targets for a gene, split by evidence type."""
+        edges = []
+        for direction in ("regulator", "target"):
+            if direction == "regulator":
+                sql = """
+                    SELECT g.id, g.symbol, g.display_name, g.species, g.is_tf,
+                           i.regulation_type, i.confidence, i.sources
+                    FROM interactions i JOIN genes g ON g.id = i.source_id
+                    WHERE i.target_id = ? AND i.confidence >= ?
+                    ORDER BY i.confidence DESC LIMIT ?
+                """
+            else:
+                sql = """
+                    SELECT g.id, g.symbol, g.display_name, g.species, g.is_tf,
+                           i.regulation_type, i.confidence, i.sources
+                    FROM interactions i JOIN genes g ON g.id = i.target_id
+                    WHERE i.source_id = ? AND i.confidence >= ?
+                    ORDER BY i.confidence DESC LIMIT ?
+                """
+            rows = conn.execute(sql, (g_id, min_confidence, max_edges)).fetchall()
+            for r in rows:
+                sources = json.loads(r["sources"])
+                inferred = any(s.startswith("Inferred") for s in sources)
+                edges.append({
+                    "partner_id": r["id"],
+                    "partner_symbol": r["display_name"] or r["symbol"],
+                    "is_tf": bool(r["is_tf"]),
+                    "direction": direction,
+                    "regulation_type": r["regulation_type"],
+                    "confidence": r["confidence"],
+                    "sources": sources,
+                    "inferred": inferred,
+                })
+        return edges
+
+    species_data = {}
+
+    # Home species
+    home_edges = network_for_gene(gene.id, gene.species)
+    home_display = conn.execute(
+        "SELECT display_name FROM genes WHERE id = ?", (gene.id,)
+    ).fetchone()
+    home_symbol = (home_display[0] if home_display and home_display[0] else None) or gene.symbol
+    species_data[gene.species] = {
+        "found": True,
+        "gene_id": gene.id,
+        "symbol": home_symbol,
+        "is_home": True,
+        "ortholog_type": None,
+        "edges": home_edges,
+        "n_curated": sum(1 for e in home_edges if not e["inferred"]),
+        "n_inferred": sum(1 for e in home_edges if e["inferred"]),
+    }
+
+    # Find orthologs in all other species (both directions in the table)
+    ortho_rows = conn.execute("""
+        SELECT gene_b AS ortho_id, species_b AS ortho_species, rel_type, score
+        FROM orthologs WHERE gene_a = ?
+        UNION
+        SELECT gene_a AS ortho_id, species_a AS ortho_species, rel_type, score
+        FROM orthologs WHERE gene_b = ?
+    """, (gene.id, gene.id)).fetchall()
+
+    # Group by species, pick best ortholog per species
+    by_species = defaultdict(list)
+    for r in ortho_rows:
+        by_species[r["ortho_species"]].append(r)
+
+    for sp in all_species:
+        if sp == gene.species:
+            continue
+        if sp not in by_species:
+            species_data[sp] = {
+                "found": False, "gene_id": None, "symbol": None,
+                "is_home": False, "ortholog_type": None,
+                "edges": [], "n_curated": 0, "n_inferred": 0,
+            }
+            continue
+
+        # Pick the best-scoring ortholog (prefer 1:1)
+        candidates = sorted(by_species[sp],
+                            key=lambda x: (x["rel_type"] == "1:1", x["score"] or 0),
+                            reverse=True)
+        best = candidates[0]
+        ortho_gene = db.get_gene(best["ortho_id"])
+        if not ortho_gene:
+            species_data[sp] = {
+                "found": False, "gene_id": best["ortho_id"], "symbol": None,
+                "is_home": False, "ortholog_type": best["rel_type"],
+                "edges": [], "n_curated": 0, "n_inferred": 0,
+            }
+            continue
+
+        edges = network_for_gene(ortho_gene.id, sp)
+
+        # Fallback: ortholog table may use a different ID scheme than the
+        # interactions table. If no edges found, try symbol-based lookup.
+        if not edges and ortho_gene.symbol:
+            alt = db.find_gene_by_symbol_species(ortho_gene.symbol, sp)
+            if alt and alt.id != ortho_gene.id:
+                edges = network_for_gene(alt.id, sp)
+                if edges:
+                    ortho_gene = alt
+        ortho_display = conn.execute(
+            "SELECT display_name FROM genes WHERE id = ?", (ortho_gene.id,)
+        ).fetchone()
+        ortho_symbol = (ortho_display[0] if ortho_display and ortho_display[0] else None) or ortho_gene.symbol
+        species_data[sp] = {
+            "found": True,
+            "gene_id": ortho_gene.id,
+            "symbol": ortho_symbol,
+            "is_home": False,
+            "ortholog_type": best["rel_type"],
+            "edges": edges,
+            "n_curated": sum(1 for e in edges if not e["inferred"]),
+            "n_inferred": sum(1 for e in edges if e["inferred"]),
+        }
+
+    # Summary stats
+    species_with_data = [sp for sp, d in species_data.items() if d["found"] and d["edges"]]
+    total_curated = sum(d["n_curated"] for d in species_data.values())
+    total_inferred = sum(d["n_inferred"] for d in species_data.values())
+
+    # Build ortholog families across partner genes so we can detect
+    # conserved regulatory wiring even when gene IDs differ across species.
+    # Union-Find to group partner IDs that are orthologs of each other.
+    partner_ids_by_species = {}
+    partner_meta = {}  # id -> (symbol, species)
+    for sp, d in species_data.items():
+        ids = set()
+        for e in d["edges"]:
+            ids.add(e["partner_id"])
+            partner_meta[e["partner_id"]] = (e["partner_symbol"], sp)
+        partner_ids_by_species[sp] = ids
+
+    all_partner_ids = set()
+    for ids in partner_ids_by_species.values():
+        all_partner_ids.update(ids)
+
+    # Union-Find
+    parent = {pid: pid for pid in all_partner_ids}
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+
+    # Case-insensitive symbol match (handles human JUN / mouse Jun)
+    by_upper = defaultdict(list)
+    for pid, (sym, sp) in partner_meta.items():
+        by_upper[sym.upper()].append(pid)
+    for group in by_upper.values():
+        for i in range(1, len(group)):
+            union(group[0], group[i])
+
+    # Ortholog-table lookup for remaining cross-species links
+    if all_partner_ids:
+        placeholders = ",".join("?" for _ in all_partner_ids)
+        id_list = list(all_partner_ids)
+        ortho_rows = db.conn.execute(
+            f"SELECT gene_a, gene_b FROM orthologs WHERE gene_a IN ({placeholders}) OR gene_b IN ({placeholders})",
+            id_list + id_list,
+        ).fetchall()
+        for row in ortho_rows:
+            ga, gb = row[0], row[1]
+            if ga in all_partner_ids and gb in all_partner_ids:
+                union(ga, gb)
+
+    # Group by family and find conserved ones (span 2+ species)
+    families = defaultdict(set)  # root -> set of (partner_id, species)
+    for pid, (sym, sp) in partner_meta.items():
+        families[find(pid)].add((pid, sp))
+
+    conserved_families = {}
+    for root, members in families.items():
+        member_species = {sp for _, sp in members}
+        if len(member_species) >= 2:
+            # Pick the most readable symbol as canonical label
+            # Prefer real gene names over locus IDs (AT1G..., Solyc..., PGSC...)
+            import re
+            def label_rank(s):
+                is_locus = bool(re.match(r"^(AT[1-5]G|Solyc|PGSC|LOC_|Peaxi|CAN\.G|MOUSE)", s, re.I))
+                return (is_locus, len(s), s)
+            syms = [(partner_meta[pid][0], pid) for pid, _ in members]
+            syms.sort(key=lambda x: label_rank(x[0]))
+            conserved_families[root] = {
+                "label": syms[0][0],
+                "species": sorted(member_species),
+                "ids": {pid for pid, _ in members},
+            }
+
+    # Tag edges with their ortholog family key for frontend alignment
+    family_of = {}
+    for root, fam in conserved_families.items():
+        for pid in fam["ids"]:
+            family_of[pid] = fam["label"]
+    # Also assign families for non-conserved partners
+    for pid in all_partner_ids:
+        if pid not in family_of:
+            family_of[pid] = partner_meta[pid][0]
+
+    for sp, d in species_data.items():
+        for e in d["edges"]:
+            e["family"] = family_of.get(e["partner_id"], e["partner_symbol"])
+
+    conserved_labels = sorted(f["label"] for f in conserved_families.values())
+
+    return {
+        "gene": {"id": gene.id, "symbol": gene.symbol, "species": gene.species,
+                 "name": gene.name, "is_tf": gene.is_tf},
+        "species": species_data,
+        "summary": {
+            "n_species_with_data": len(species_with_data),
+            "n_species_total": len(all_species),
+            "total_curated_edges": total_curated,
+            "total_inferred_edges": total_inferred,
+            "conserved_partners": conserved_labels[:30],
+        },
+    }
+
 
 # ============= Provenance & citations =============
 

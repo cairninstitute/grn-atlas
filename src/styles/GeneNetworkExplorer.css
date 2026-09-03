@@ -30,6 +30,22 @@
   padding-right: var(--space-md);
 }
 
+.chrome-collapse-btn {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  font-size: var(--text-xs);
+  background: var(--surface-1);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  line-height: 1;
+}
+.chrome-collapse-btn:hover {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
 .tabs-actions {
   display: flex;
   gap: var(--space-sm);

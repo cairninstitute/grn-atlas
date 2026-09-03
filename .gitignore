@@ -52,6 +52,7 @@ backend/data/*.assembly.gz
 !backend/data/gold_standard_*.tsv
 !backend/data/regulation_petunia.tsv
 !backend/data/regulation_tomato.tsv
+!backend/data/literature_edges_*.tsv
 !backend/data/curated_symbols_tomato.json
 !backend/data/curated_symbols_petunia.json
 

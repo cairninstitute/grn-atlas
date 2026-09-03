@@ -1,0 +1,21 @@
+# Arabidopsis literature-curated stress/defense regulatory edges
+# Format: source_id	target_id	regulation_type	confidence	source_tag
+# DREB/CBF cascade — Yamaguchi-Shinozaki & Shinozaki 2006 (PMID 16720602)
+# CBF1 (AT4G25490) targets
+AT4G25490	AT2G42540	activation	0.90	literature:16720602
+AT4G25490	AT1G20440	activation	0.90	literature:16720602
+AT4G25490	AT5G52310	activation	0.90	literature:16720602
+# CBF2 (AT4G25470) targets
+AT4G25470	AT2G42540	activation	0.90	literature:16720602
+# DREB2A (AT5G05410) targets
+AT5G05410	AT5G52310	activation	0.90	literature:16720602
+# ABA signaling — Finkelstein 2002 (PMID 12045275), Uno et al. 2000 (PMID 10934215)
+# ABI5 (AT2G36270) targets
+AT2G36270	AT3G51810	activation	0.90	literature:12045275
+# ABF2 (AT1G45249) — target RD29B not in DB, skipped
+# WRKY defense — Birkenbihl et al. 2017 (PMID 28100493), Li et al. 2012 (PMID 22427337)
+# WRKY33 (AT2G38470) targets
+AT2G38470	AT3G26830	activation	0.90	literature:28100493
+AT2G38470	AT2G30770	activation	0.90	literature:28100493
+AT2G38470	AT1G01480	activation	0.90	literature:22427337
+AT2G38470	AT4G11280	activation	0.90	literature:22427337

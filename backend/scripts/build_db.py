@@ -320,12 +320,15 @@ def load_tomato_edges():
 
 def load_plantregmap_edges(tsv_path):
     """Load TF-target edges from a regulation TSV (optional file).
-    Supports both PlantRegMap and curated literature entries."""
+    Supports both PlantRegMap and curated literature entries.
+    Lines starting with '#' are treated as comments and skipped."""
     if not tsv_path.exists():
         return []
     edges = []
     with open(tsv_path) as f:
         for line in f:
+            if line.startswith("#"):
+                continue
             parts = line.rstrip("\n").split("\t")
             if len(parts) < 4:
                 continue
@@ -390,6 +393,27 @@ def build():
     potato_edges = load_plantregmap_edges(POTATO_TSV)
     pepper_edges = load_plantregmap_edges(PEPPER_TSV)
     rice_edges = load_rice_edges()
+
+    # Literature-curated edges (committed TSV files, not from PlantRegMap)
+    literature_total = 0
+    for lit_tsv in sorted(DATA_DIR.glob("literature_edges_*.tsv")):
+        sp = lit_tsv.stem.replace("literature_edges_", "")
+        lit_edges = load_plantregmap_edges(lit_tsv)
+        literature_total += len(lit_edges)
+        if sp == "arabidopsis":
+            arab_edges.extend(lit_edges)
+        elif sp == "tomato":
+            tomato_edges.extend(lit_edges)
+        elif sp == "petunia":
+            petunia_edges.extend(lit_edges)
+        elif sp == "potato":
+            potato_edges.extend(lit_edges)
+        elif sp == "pepper":
+            pepper_edges.extend(lit_edges)
+        elif sp == "rice":
+            rice_edges.extend(lit_edges)
+    if literature_total:
+        print(f"  Literature-curated: {literature_total} edges from {len(list(DATA_DIR.glob('literature_edges_*.tsv')))} files")
 
     # Load gene names (optional; fall back to bare ids if not fetched)
     human_names = json.loads(HUMAN_NAMES_JSON.read_text()) if HUMAN_NAMES_JSON.exists() else {}

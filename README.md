@@ -48,14 +48,20 @@ venv/bin/pip install -r backend/requirements.txt
 venv/bin/python backend/scripts/fetch_sources.py --tier light   # pulls sources into backend/data/ and bootstraps an intermediate DB on fresh clones
 venv/bin/python backend/scripts/build_db.py                      # final rebuild -> backend/data/grn.sqlite3 (gitignored)
 
-# 3. Run the API (http://localhost:8000, docs at /docs)
+# 3. Enrich: ConnecTF edges (~309K), display names, curated pathway overrides
+#    Download ConnecTF data first (one-time, ~200 MB — optional but recommended):
+#    curl -L -o /tmp/connectf_data.tar.gz https://connectf.s3.amazonaws.com/connectf_data_release_v1.tar.gz
+#    tar xzf /tmp/connectf_data.tar.gz -C /tmp
+make enrich
+
+# 4. Run the API (http://localhost:8000, docs at /docs)
 cd backend && ../venv/bin/python -m uvicorn main:app --port 8000
 
-# 4. In another shell: run the UI (http://localhost:3001, proxies /api to :8000)
+# 5. In another shell: run the UI (http://localhost:3001, proxies /api to :8000)
 npm install && npm run dev
 ```
 
-Or with the Makefile: `make setup && make fetch && make db && make tissue-weights`, then
+Or with the Makefile: `make setup && make fetch && make db && make enrich && make tissue-weights`, then
 `make backend` and (elsewhere) `make frontend`. To add inferred regulatory edges from
 expression data: `make infer` (runs GRNBoost2 + GENIE3, ~15 min), then `make db` again to
 load them. After building: `make validate` (network validation) and `make benchmark`
@@ -120,6 +126,7 @@ confirm the build is complete.
 | light | `fetch_sources.py --tier light` | + pathways, traits, PlantRegMap regulation (tomato/petunia/potato/tobacco/rice), curated symbols, tobacco BLAST orthologs | mostly | network; BLAST+ for petunia symbols + tobacco orthologs |
 | manual core | *(see below)* | **measured Arabidopsis network** + ATRM direction labels → Arabidopsis multi-evidence + tomato/petunia/pepper/rice projection | **no** | manual download |
 | heavy | `fetch_expression.py`, `motif_scan.py` | expression + predicted binding | **no** | kallisto / BLAST+, hours, GBs |
+| enrich | `make enrich` | ConnecTF edges (~309K), display names, curated pathway overrides | mostly | built DB; ConnecTF tarball in `/tmp` (optional) |
 | tissue-weights | `make tissue-weights` | per-tissue coexpression weights for edges (petunia, tomato, arabidopsis) | yes | built DB + expression data |
 | validate | `make validate` | gold-standard recall/specificity + population-level statistical validation | yes | built DB |
 | benchmark | `make benchmark` | BEELINE-style AUROC/AUPRC against independent ground truth | yes | built DB |

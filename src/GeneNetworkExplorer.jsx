@@ -24,6 +24,7 @@ const HomeWorkspace = lazy(() => import('./components/home/HomeWorkspace'));
 const DatasetWorkflow = lazy(() => import('./components/workflows/DatasetWorkflow'));
 const DecisionWorkflow = lazy(() => import('./components/workflows/DecisionWorkflow'));
 const GeneWorkflow = lazy(() => import('./components/workflows/GeneWorkflow'));
+const CrossSpeciesView = lazy(() => import('./components/CrossSpeciesView'));
 
 const SPECIES_TO_KINGDOM = {
   human: 'Animalia',
@@ -34,9 +35,10 @@ const SPECIES_TO_KINGDOM = {
   rice: 'Plantae',
 };
 
-const LEGACY_VIEW_IDS = new Set(['network', 'organism', 'pathways', 'comparison', 'genome', 'design', 'analysis']);
+const LEGACY_VIEW_IDS = new Set(['network', 'organism', 'pathways', 'comparison', 'genome', 'design', 'analysis', 'crossview']);
 const ADVANCED_TABS = [
   { id: 'network', label: 'Explorer', icon: '🔗' },
+  { id: 'crossview', label: 'Cross-species', icon: '🌍' },
   { id: 'organism', label: 'Organism', icon: '🌐' },
   { id: 'pathways', label: 'Paths', icon: '🛤️' },
   { id: 'comparison', label: 'Orthology', icon: '⚖️' },
@@ -49,10 +51,10 @@ function ExplorerInner() {
   const { dispatch } = useResearchSession();
   const [selectedGene, setSelectedGene] = useState(null);
   const [viewMode, setViewMode] = useState('home');
-  const [advancedView, setAdvancedView] = useState('network');
+  const [advancedView, setAdvancedView] = useState('crossview');
   const [filters, setFilters] = useState({
-    kingdom: ['Animalia'],
-    species: ['human'],
+    kingdom: [],
+    species: [],
     regulationType: ['activation', 'repression', 'unknown'],
     minConfidence: 0.4,
     maxDepth: 3,
@@ -74,6 +76,7 @@ function ExplorerInner() {
   const [dsRnaSet, setDsRnaSet] = useState([]);
   const [workflowDsRnaSeed, setWorkflowDsRnaSeed] = useState(null);
   const [collection, setCollection] = useState(null);
+  const [chromeCollapsed, setChromeCollapsed] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
 
   const renderWithSuspense = useCallback((node, fallback = 'Loading workspace…') => (
@@ -422,6 +425,13 @@ function ExplorerInner() {
       );
     }
 
+    if (advancedView === 'crossview') {
+      return renderWithSuspense(
+        <CrossSpeciesView selectedGene={selectedGene} onGeneSelect={(id) => focusGeneByRecord({ id })} filters={filters} />,
+        'Loading cross-species view…',
+      );
+    }
+
     if (advancedView === 'comparison') {
       return renderWithSuspense(
         <ComparisonView gene={selectedGene} currentSpecies={filters.species[0]} />,
@@ -450,14 +460,24 @@ function ExplorerInner() {
       />
 
       <div className="main-content">
-        {selectedGene && (
-          <Toolbar gene={selectedGene} stats={networkData?.stats} cyRef={cyInstanceRef} />
+        {!chromeCollapsed && (
+          <>
+            {selectedGene && (
+              <Toolbar gene={selectedGene} stats={networkData?.stats} cyRef={cyInstanceRef} />
+            )}
+            <AppNavigation mode={viewMode} onChange={handlePrimaryModeChange} />
+            <ResearchContextBar />
+          </>
         )}
 
-        <AppNavigation mode={viewMode} onChange={handlePrimaryModeChange} />
-        <ResearchContextBar />
-
         <div className="tabs-row">
+          <button
+            className="chrome-collapse-btn"
+            onClick={() => setChromeCollapsed((c) => !c)}
+            title={chromeCollapsed ? 'Show toolbar' : 'Hide toolbar'}
+          >
+            {chromeCollapsed ? '▼' : '▲'}
+          </button>
           {viewMode === 'advanced' && (
             <ViewTabs viewMode={advancedView} onViewChange={setAdvancedView} tabs={ADVANCED_TABS} />
           )}

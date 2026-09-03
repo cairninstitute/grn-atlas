@@ -55,13 +55,14 @@ venv/bin/python backend/scripts/build_db.py                     # final rebuild 
 venv/bin/python backend/scripts/compute_tissue_weights.py       # per-tissue coexpression (needs expression data)
 ```
 
-Or equivalently: `make fetch && make db && make tissue-weights`.
+Or equivalently: `make fetch && make db && make enrich && make tissue-weights`.
 
 `build_db.py` is stdlib-only and glob-loads whatever caches are present in `backend/data/`
 (sequence context, motif hits, pathways, traits, curated symbols) — **missing caches just
 leave that layer empty**, so the core atlas always builds. Targeted loaders
-(`load_seqctx.py`, `load_pathways.py`, `load_traits.py`, `load_curated_symbols.py`) update
-an existing DB in place without a full rebuild.
+(`load_seqctx.py`, `load_pathways.py`, `load_traits.py`, `load_curated_symbols.py`,
+`load_connectf.py`, `load_curated_pathway_edges.py`) update an existing DB in place
+without a full rebuild.
 
 Fetch tiers (`fetch_sources.py --tier`): `core` (genes/interactions/coords/orthologs/GO/
 DoRothEA/DAP-seq/gene lists, required), `light` (+ pathways/traits/seqctx/curated symbols/
@@ -73,15 +74,76 @@ PlantRegMap including rice/tobacco orthologs), `all` (also attempts the heavy la
 |---------|---------|-----------|-------------------|
 | Human | TRRUST | DoRothEA (OmniPath) | — |
 | Mouse | TRRUST | DoRothEA (OmniPath) | — |
-| Arabidopsis | PlantRegMap | ATRM, DAP-seq (Plant Cistrome) | — |
+| Arabidopsis | PlantRegMap | ATRM, DAP-seq (Plant Cistrome), ConnecTF | — |
 | Tomato | PlantRegMap, Literature | — | Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco |
 | Petunia | PlantRegMap, Literature | — | Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco |
-| Rice | — | — | Inferred:Arabidopsis (PLAZA orthologs) |
+| Rice | ConnecTF | — | Inferred:Arabidopsis (PLAZA orthologs) |
 | Pepper | — | — | Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco |
 | Potato | PlantRegMap | — | — |
 
 Hand-curated files that are committed (not fetchable): `gold_standard_{species}.tsv`,
-`regulation_petunia.tsv`, `regulation_tomato.tsv`, `curated_symbols_{species}.json`.
+`regulation_petunia.tsv`, `regulation_tomato.tsv`, `curated_symbols_{species}.json`,
+`literature_edges_{species}.tsv`.
+
+### Literature-curated edges
+
+`literature_edges_{species}.tsv` files contain experimentally validated regulatory edges
+from published ChIP-seq, ChIP-chip, genetics, and transactivation experiments. They use
+the same 5-column format as the PlantRegMap regulation files:
+
+```
+source_id	target_id	regulation_type	confidence	literature:PMID
+```
+
+`build_db.py` automatically globs `literature_edges_*.tsv` and merges them into the
+species edge lists, so adding a new literature edge is a one-line TSV append — no code
+changes needed. Comment lines (starting with `#`) are skipped.
+
+Current files:
+
+| File | Edges | Key pathways |
+|------|-------|-------------|
+| `literature_edges_petunia.tsv` | 15 | MBW complex → anthocyanin structural genes (CHS-A, DFR-A, CHI-A, F3'5'H-A), PH4 → PH1 |
+| `literature_edges_tomato.tsv` | 27 | RIN/FUL1/FUL2 → ripening targets (PSY1, ACS2, EXP1, NOR, CNR), WOX13 → RIN |
+| `literature_edges_arabidopsis.tsv` | 10 | CBF/DREB2A → COR/RD29A, WRKY33 → PAD3/ACS2 |
+
+### Curated gene symbols
+
+`curated_symbols_{species}.json` maps gene IDs to human-readable names. `build_db.py`
+applies these during the build, and `build_display_names.py` propagates them to the
+`display_name` column. To add a new name override, add an entry to the JSON file:
+
+```json
+{
+  "Solyc05g012020": {"symbol": "RIN", "source": "Literature:23386264"}
+}
+```
+
+### Enrich: ConnecTF and display names (post-build)
+
+After building the core database, run `make enrich` to layer on ConnecTF edges and
+rebuild display names. This is needed only once after `make db` — the literature edges
+and curated symbols are already incorporated by `build_db.py`.
+
+```bash
+# Download ConnecTF data (one-time, ~200 MB)
+curl -L -o /tmp/connectf_data.tar.gz \
+    https://connectf.s3.amazonaws.com/connectf_data_release_v1.tar.gz
+tar xzf /tmp/connectf_data.tar.gz -C /tmp
+
+make enrich
+```
+
+| Script | What it adds |
+|--------|-------------|
+| `load_connectf.py` | ~303K Arabidopsis + ~6K rice TF-target edges from ConnecTF (TARGET, ChIP-seq — DAP-seq excluded since it's already loaded). Source: Brooks et al. 2021, PMID 33631799. |
+| `load_curated_pathway_edges.py` | Applies display name fixes and loads literature edges into an existing DB (same data as the TSV files, for post-build use). |
+| `build_display_names.py` | 6-stage pipeline populating human-readable `display_name` for all species (see below). |
+
+All three scripts are idempotent — safe to re-run. If ConnecTF data is not downloaded,
+`make enrich` skips that step and prints download instructions.
+
+The full bootstrap sequence is: `make fetch && make db && make enrich && make tissue-weights`.
 
 ## Compute dependencies (only for regenerating derived data)
 
@@ -166,6 +228,65 @@ make tissue-weights
 Populates the `edge_tissue_weights` table (~4.18M rows). Edges with |r| ≥ 0.3 are stored.
 The gene detail panel shows these inline; API endpoints: `GET /api/v1/edge-tissues/{gene_id}`
 and `GET /api/v1/tissues/{species}`.
+
+## Gene display names
+
+Plant genes use locus IDs as their primary symbol (`AT1G01010`, `Solyc02g090220.2`,
+`LOC_Os01g01010`), making cross-species comparison views unreadable. The `display_name`
+column in the `genes` table stores a human-readable name when one is available; the
+frontend falls back to `symbol` when `display_name` is `NULL`.
+
+```bash
+cd backend
+source venv/bin/activate
+python scripts/build_display_names.py
+```
+
+The script is idempotent — it only fills `NULL` entries, so it's safe to re-run after
+adding new genes or after a database rebuild. To force a full rebuild of all display names:
+
+```bash
+sqlite3 data/grn.sqlite3 "UPDATE genes SET display_name = NULL"
+python scripts/build_display_names.py
+```
+
+### Pipeline stages (in order)
+
+| Stage | Source | What it does |
+|-------|--------|-------------|
+| 1. Own symbols | Local DB | Human/mouse genes get `display_name = symbol`. Arabidopsis genes where `symbol ≠ id` get their own symbol. |
+| 2. Arabidopsis orthologs | Local DB | Plant genes inherit readable names from their Arabidopsis orthologs via the `orthologs` table. |
+| 3. Ensembl Plants BioMart | `plants.ensembl.org` | Bulk download of `external_gene_name` and `uniprot_gn_symbol` for Arabidopsis, tomato, and potato. New Arabidopsis names cascade to other plant species. |
+| 4. UniProt TAIR | `rest.uniprot.org` | REST query for Arabidopsis genes with TAIR cross-references. Largest single source (~13k names). Results cascade to all plant species via orthologs. |
+| 5. Description parsing | Local DB | Regex extraction of known gene symbols from the `name` (description) field of remaining plant genes. Also handles rice-specific patterns (`OsWRKY22`, etc.). |
+| 6. Cleanup | Local DB | Removes BAC clone IDs (`F19K23.17`, `T14P4.8`) and single-character names that leaked through earlier stages. |
+
+### Expected coverage
+
+| Species | Coverage |
+|---------|----------|
+| Human | 100% |
+| Mouse | 100% |
+| Arabidopsis | ~52% |
+| Potato | ~42% |
+| Rice | ~43% |
+| Tomato | ~41% |
+| Pepper | ~40% |
+| Petunia | ~32% |
+
+### Notes
+
+- **Internet access required** for stages 3 and 4 (Ensembl Plants BioMart and UniProt REST
+  API). If either is unavailable the script logs the error and continues with remaining
+  stages.
+- **RAP-DB** (rice) is attempted by `enrich_display_names.py` but has been unreliable
+  (SSL/403 errors). The consolidated `build_display_names.py` extracts rice names from
+  description fields instead.
+- The **Arabidopsis cascade** is the key mechanism: resolving one Arabidopsis gene name can
+  propagate to tomato, petunia, potato, pepper, and rice orthologs simultaneously.
+- The old two-step scripts (`migrate_display_names.py` + `enrich_display_names.py`) still
+  work but are superseded by `build_display_names.py` which runs the full pipeline in one
+  pass.
 
 ## Data-source currency
 

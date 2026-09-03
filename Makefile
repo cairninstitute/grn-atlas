@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: setup fetch fetch-all infer db tissue-weights validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: setup fetch fetch-all infer db enrich tissue-weights validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make setup          - create venv + install backend & frontend deps"
@@ -7,6 +7,7 @@ help:
 	@echo "make fetch-all      - fetch everything incl. heavy layers (needs kallisto/BLAST, slow)"
 	@echo "make infer          - run GRNBoost2/GENIE3 inference on expression data (needs make db first)"
 	@echo "make db             - (re)build backend/data/grn.sqlite3 from the fetched caches"
+	@echo "make enrich         - load ConnecTF edges, curated pathway edges, and display names (needs make db)"
 	@echo "make tissue-weights - compute per-tissue coexpression weights (needs make db + expression data)"
 	@echo "make validate       - run gold-standard + population-level network validation"
 	@echo "make benchmark      - run BEELINE-style AUROC/AUPRC benchmarks"
@@ -33,6 +34,20 @@ infer:
 
 db:
 	venv/bin/python backend/scripts/build_db.py
+
+enrich:
+	@echo "--- Loading ConnecTF edges (needs connectf_data_release_v1 in /tmp) ---"
+	@if [ -d /tmp/connectf_data_release_v1 ]; then \
+		cd backend && ../venv/bin/python scripts/load_connectf.py /tmp/connectf_data_release_v1; \
+	else \
+		echo "  Skipped: /tmp/connectf_data_release_v1 not found. Download from:"; \
+		echo "    curl -L -o /tmp/connectf_data.tar.gz https://connectf.s3.amazonaws.com/connectf_data_release_v1.tar.gz"; \
+		echo "    tar xzf /tmp/connectf_data.tar.gz -C /tmp"; \
+	fi
+	@echo "--- Building display names ---"
+	cd backend && ../venv/bin/python scripts/build_display_names.py
+	@echo "--- Loading curated pathway edges + display name fixes ---"
+	cd backend && ../venv/bin/python scripts/load_curated_pathway_edges.py
 
 tissue-weights:
 	venv/bin/python backend/scripts/compute_tissue_weights.py
