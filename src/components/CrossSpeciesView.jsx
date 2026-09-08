@@ -55,6 +55,7 @@ const RADIUS = 90;
 function MiniNetwork({ data, centerSymbol, onSelect, slotMap, curatedOnly }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
+  const [nodeTooltip, setNodeTooltip] = useState(null);
 
   useEffect(() => {
     if (!containerRef.current || !data?.edges?.length) return;
@@ -92,6 +93,7 @@ function MiniNetwork({ data, centerSymbol, onSelect, slotMap, curatedOnly }) {
         data: {
           id: e.partner_id,
           label: truncLabel(e.partner_symbol),
+          fullName: e.partner_name || '',
           type: e.inferred ? 'inferred' : 'curated',
         },
       });
@@ -186,13 +188,38 @@ function MiniNetwork({ data, centerSymbol, onSelect, slotMap, curatedOnly }) {
       const id = evt.target.id();
       if (id !== centerId) onSelect?.(id);
     });
+    cy.on('mouseover', 'node', (evt) => {
+      const node = evt.target;
+      const fullName = node.data('fullName');
+      if (!fullName) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const pos = evt.renderedPosition;
+      setNodeTooltip({
+        x: pos.x + 12,
+        y: pos.y - 8,
+        label: node.data('label'),
+        name: fullName,
+      });
+    });
+    cy.on('mouseout', 'node', () => setNodeTooltip(null));
+    cy.on('pan zoom', () => setNodeTooltip(null));
     return () => { if (cyRef.current) { cyRef.current.destroy(); cyRef.current = null; } };
   }, [data, centerSymbol, onSelect, slotMap, curatedOnly]);
 
   if (!data?.edges?.length) return null;
   const hasVisible = curatedOnly ? data.edges.some((e) => !e.inferred) : true;
   if (!hasVisible) return null;
-  return <div ref={containerRef} className="crossview-mini-cy" />;
+  return (
+    <div style={{ position: 'relative' }}>
+      <div ref={containerRef} className="crossview-mini-cy" />
+      {nodeTooltip && (
+        <div className="crossview-node-tooltip" style={{ left: nodeTooltip.x, top: nodeTooltip.y }}>
+          <strong>{nodeTooltip.label}</strong>
+          <span>{nodeTooltip.name}</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ---- Comparison overlay: merge two species into one explorable graph ----
@@ -305,6 +332,7 @@ const ComparisonNetwork = forwardRef(function ComparisonNetwork({ dataA, dataB, 
   const expandedRef = useRef(new Set());
   const [expandCount, setExpandCount] = useState(0);
   const [compStats, setCompStats] = useState({ shared: 0, onlyA: 0, onlyB: 0 });
+  const [nodeTooltip, setNodeTooltip] = useState(null);
 
   useImperativeHandle(ref, () => ({
     tapNode(label) {
@@ -376,9 +404,11 @@ const ComparisonNetwork = forwardRef(function ComparisonNetwork({ dataA, dataB, 
       const nodeId = `fam_${fam}`;
       const nodeType = isShared ? 'shared' : inA ? 'onlyA' : 'onlyB';
 
+      const bestName = edgesForFam.find((e) => e.partner_name)?.partner_name || '';
       elements.push({
         data: {
           id: nodeId, label: truncLabel(bestLabel, 12), nodeType,
+          fullName: bestName,
           family: fam, geneIdA, geneIdB, depth: 1, parent_node: centerId,
         },
       });
@@ -417,6 +447,21 @@ const ComparisonNetwork = forwardRef(function ComparisonNetwork({ dataA, dataB, 
 
     // Animated initial layout
     requestAnimationFrame(() => runLayout(cy, true));
+
+    cy.on('mouseover', 'node', (evt) => {
+      const node = evt.target;
+      const fullName = node.data('fullName');
+      if (!fullName) return;
+      const pos = evt.renderedPosition;
+      setNodeTooltip({
+        x: pos.x + 12,
+        y: pos.y - 8,
+        label: node.data('label'),
+        name: fullName,
+      });
+    });
+    cy.on('mouseout', 'node', () => setNodeTooltip(null));
+    cy.on('pan zoom', () => setNodeTooltip(null));
 
     cy.on('tap', 'node', async (evt) => {
       const node = evt.target;
@@ -490,10 +535,12 @@ const ComparisonNetwork = forwardRef(function ComparisonNetwork({ dataA, dataB, 
           const newGeneIdB = inB ? newFamsB.get(fam)[0].partner_id : null;
           const nodeType = isShared ? 'shared' : inA ? 'onlyA' : 'onlyB';
 
+          const childName = edgesForFam.find((e) => e.partner_name)?.partner_name || '';
           newEles.push({
             group: 'nodes',
             data: {
               id: childId, label: truncLabel(bestLabel, 12), nodeType,
+              fullName: childName,
               family: fam, geneIdA: newGeneIdA, geneIdB: newGeneIdB,
               depth: (node.data('depth') || 1) + 1, parent_node: nodeId,
             },
@@ -571,7 +618,15 @@ const ComparisonNetwork = forwardRef(function ComparisonNetwork({ dataA, dataB, 
           Click a gene to expand its network
         </span>
       </div>
-      <div ref={containerRef} className="comparison-cy" />
+      <div style={{ position: 'relative' }}>
+        <div ref={containerRef} className="comparison-cy" />
+        {nodeTooltip && (
+          <div className="crossview-node-tooltip" style={{ left: nodeTooltip.x, top: nodeTooltip.y }}>
+            <strong>{nodeTooltip.label}</strong>
+            <span>{nodeTooltip.name}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 });

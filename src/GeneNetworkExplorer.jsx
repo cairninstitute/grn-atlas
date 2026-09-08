@@ -25,6 +25,8 @@ const DatasetWorkflow = lazy(() => import('./components/workflows/DatasetWorkflo
 const DecisionWorkflow = lazy(() => import('./components/workflows/DecisionWorkflow'));
 const GeneWorkflow = lazy(() => import('./components/workflows/GeneWorkflow'));
 const CrossSpeciesView = lazy(() => import('./components/CrossSpeciesView'));
+const DiseaseToPlantDemo = lazy(() => import('./components/DiseaseToPlantDemo'));
+const RegulatoryWeatherMap = lazy(() => import('./components/RegulatoryWeatherMap'));
 
 const SPECIES_TO_KINGDOM = {
   human: 'Animalia',
@@ -45,6 +47,7 @@ const ADVANCED_TABS = [
   { id: 'genome', label: 'Genome', icon: '🧬' },
   { id: 'design', label: 'Design', icon: '✏️' },
   { id: 'analysis', label: 'Lab', icon: '🔬' },
+  { id: 'weathermap', label: 'TF Map', icon: '🗺️' },
 ];
 
 function ExplorerInner() {
@@ -57,7 +60,7 @@ function ExplorerInner() {
     species: [],
     regulationType: ['activation', 'repression', 'unknown'],
     minConfidence: 0.4,
-    maxDepth: 3,
+    maxDepth: 1,
     direction: 'both',
     includeInferred: true,
   });
@@ -78,6 +81,7 @@ function ExplorerInner() {
   const [collection, setCollection] = useState(null);
   const [chromeCollapsed, setChromeCollapsed] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [disambiguationChoices, setDisambiguationChoices] = useState(null);
 
   const renderWithSuspense = useCallback((node, fallback = 'Loading workspace…') => (
     <Suspense fallback={<div className="empty-state">{fallback}</div>}>
@@ -167,11 +171,17 @@ function ExplorerInner() {
   const handleGeneSearch = useCallback(async (symbol, geneObj) => {
     setLoading(true);
     setError(null);
+    setDisambiguationChoices(null);
     try {
       let data = geneObj;
       if (!data?.id) {
-        const response = await fetch(`/api/v1/genes/symbol/${symbol}`);
+        const response = await fetch(`/api/v1/genes/symbol/${encodeURIComponent(symbol)}`);
         data = await response.json();
+      }
+      if (data?.ambiguous && data.matches?.length > 1) {
+        setDisambiguationChoices(data.matches);
+        setLoading(false);
+        return;
       }
       if (!data?.id) {
         setError('Gene not found');
@@ -446,6 +456,13 @@ function ExplorerInner() {
       );
     }
 
+    if (advancedView === 'weathermap') {
+      return renderWithSuspense(
+        <RegulatoryWeatherMap />,
+        'Loading regulatory map…',
+      );
+    }
+
     return <div className="empty-state">Unknown advanced view.</div>;
   };
 
@@ -514,11 +531,47 @@ function ExplorerInner() {
             </div>
           )}
 
+          {disambiguationChoices && (
+            <div className="disambiguation-panel">
+              <div className="disambiguation-header">
+                <span>Multiple genes match — which one did you mean?</span>
+                <button onClick={() => setDisambiguationChoices(null)}>×</button>
+              </div>
+              <div className="disambiguation-grid">
+                {disambiguationChoices.map((g) => (
+                  <button
+                    key={g.id}
+                    className="disambiguation-choice"
+                    onClick={() => {
+                      setDisambiguationChoices(null);
+                      handleGeneSearch(g.symbol, g);
+                    }}
+                  >
+                    <strong>{g.label || g.symbol}</strong>
+                    <span className="disambiguation-species">{g.species}</span>
+                    <span className="disambiguation-name">{g.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {viewMode === 'home' && renderWithSuspense(<HomeWorkspace onSelectMode={handlePrimaryModeChange} />, 'Loading home…')}
           {viewMode === 'gene' && renderWithSuspense(<GeneWorkflow {...sharedWorkflowProps} />, 'Loading gene workflow…')}
           {viewMode === 'dataset' && renderWithSuspense(<DatasetWorkflow {...sharedWorkflowProps} />, 'Loading unified workflow…')}
           {viewMode === 'phenotype' && renderWithSuspense(<DatasetWorkflow {...sharedWorkflowProps} />, 'Loading unified workflow…')}
           {viewMode === 'decision' && renderWithSuspense(<DecisionWorkflow {...sharedWorkflowProps} />, 'Loading decision workflow…')}
+          {viewMode === 'demo' && renderWithSuspense(
+            <DiseaseToPlantDemo
+              onOpenDsRna={(seed) => {
+                setDsRnaTarget(seed?.target || null);
+                setDsRnaCompareTarget(null);
+                setShowDsRna(true);
+              }}
+              onGeneSelect={(id) => focusGeneByRecord({ id })}
+            />,
+            'Loading demo…',
+          )}
           {viewMode === 'advanced' && renderAdvancedView()}
         </div>
       </div>

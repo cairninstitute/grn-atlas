@@ -208,6 +208,14 @@
   text-transform: capitalize;
 }
 
+.locus-tag {
+  font-size: 9px;
+  color: var(--text-muted, #888);
+  font-family: var(--font-mono, monospace);
+  margin-left: auto;
+  opacity: 0.7;
+}
+
 .suggestion-secondary {
   font-size: 12px;
   color: var(--text-secondary);

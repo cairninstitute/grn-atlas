@@ -60,7 +60,7 @@ def _normalize_species_input(value: Optional[str]) -> Optional[str]:
 # ============= CORS Configuration =============
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:8000"],
+    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:3003", "http://localhost:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -83,6 +83,8 @@ class Gene(BaseModel):
     # than a native symbol. Populated by friendly_label(); never fabricated.
     label: Optional[str] = None
     label_inferred: bool = False
+    # Common enzyme/protein alias (e.g. "CHS" for TT4, "ANS" for LDOX)
+    common_name: Optional[str] = None
     # provenance when `symbol` is a curated real name (e.g. 'UniProt', 'UniProt:homology')
     symbol_source: Optional[str] = None
 
@@ -114,6 +116,7 @@ class GeneInteraction(BaseModel):
     pmids: List[str] = []
     inferred: bool = False  # True when projected from another species' network
     label_inferred: bool = False   # True when `symbol` is an inferred ortholog name
+    common_name: Optional[str] = None
     symbol_source: Optional[str] = None
 
 class NetworkEdge(BaseModel):
@@ -197,6 +200,8 @@ class NeighborhoodRequest(BaseModel):
     min_confidence: float = 0.3
     include_inferred: bool = True
     tissue: Optional[str] = None
+    max_regulators: Optional[int] = None
+    max_targets: Optional[int] = None
 
 class RegulonRequest(BaseModel):
     gene_id: str
@@ -256,6 +261,12 @@ class GeneDatabase:
             build()
         self.conn = sqlite3.connect(db_path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
+        self._alias_cache = {}
+        try:
+            for r in self.conn.execute("SELECT gene_id, alias FROM gene_aliases"):
+                self._alias_cache.setdefault(r[0], r[1])
+        except sqlite3.OperationalError:
+            pass
 
     def _row_to_gene(self, row) -> Gene:
         keys = row.keys()
@@ -263,6 +274,7 @@ class GeneDatabase:
         syns = [s for s in raw_syn.split("; ") if s] if raw_syn else None
         label, inferred = friendly_label(row["symbol"], row["id"], syns)
         sym_src = row["symbol_source"] if "symbol_source" in keys else None
+        common = self._alias_cache.get(row["id"])
         return Gene(
             id=row["id"],
             symbol=row["symbol"],
@@ -273,18 +285,23 @@ class GeneDatabase:
             synonyms=syns,
             label=label,
             label_inferred=inferred,
+            common_name=common,
             symbol_source=sym_src,
         )
 
     def search_genes(self, query: str, limit: int = 10, species: Optional[str] = None) -> List[Gene]:
         """Search for genes by symbol or name"""
-        sql = "SELECT * FROM genes WHERE (symbol LIKE ? OR name LIKE ? OR synonyms LIKE ?)"
-        params: List[Any] = [f"%{query}%", f"%{query}%", f"%{query}%"]
+        sql = ("SELECT g.* FROM genes g LEFT JOIN gene_aliases a ON a.gene_id = g.id "
+               "WHERE (g.symbol LIKE ? OR g.name LIKE ? OR g.synonyms LIKE ? OR a.alias = ? COLLATE NOCASE) ")
+        params: List[Any] = [f"%{query}%", f"%{query}%", f"%{query}%", query]
         if species:
-            sql += " AND species = ?"
+            sql += " AND g.species = ?"
             params.append(species)
-        sql += " ORDER BY (symbol = ? COLLATE NOCASE) DESC, LENGTH(symbol) ASC LIMIT ?"
-        params.extend([query, limit])
+        sql += (" GROUP BY g.id"
+                " ORDER BY (g.symbol = ? COLLATE NOCASE) DESC,"
+                " (a.alias = ? COLLATE NOCASE) DESC,"
+                " g.is_tf DESC, LENGTH(g.symbol) ASC LIMIT ?")
+        params.extend([query, query, limit])
         rows = self.conn.execute(sql, params).fetchall()
         return [self._row_to_gene(r) for r in rows]
 
@@ -301,20 +318,20 @@ class GeneDatabase:
         ).fetchone()
         return self._row_to_gene(row) if row else None
 
-    @staticmethod
-    def _row_to_interaction(row) -> GeneInteraction:
+    def _row_to_interaction(self, row) -> GeneInteraction:
         sources = json.loads(row["sources"])
         pmids = json.loads(row["pmids"]) if "pmids" in row.keys() and row["pmids"] else []
         keys = row.keys()
         raw_syn = row["synonyms"] if "synonyms" in keys else None
         syns = [s for s in raw_syn.split("; ") if s] if raw_syn else None
         label, label_inf = friendly_label(row["symbol"], row["id"], syns)
+        common = self._alias_cache.get(row["id"])
         return GeneInteraction(
             id=row["id"], symbol=label, name=row["name"], species=row["species"],
             is_tf=bool(row["is_tf"]), confidence=row["confidence"],
             regulation_type=row["regulation_type"], source_databases=sources,
             pmids=pmids, inferred=any(s.startswith("Inferred") for s in sources),
-            label_inferred=label_inf,
+            label_inferred=label_inf, common_name=common,
             symbol_source=row["symbol_source"] if "symbol_source" in keys else None,
         )
 
@@ -391,15 +408,29 @@ async def get_gene(gene_id: str):
         raise HTTPException(status_code=404, detail="Gene not found")
     return gene
 
-@app.get("/api/v1/genes/symbol/{symbol}", response_model=Gene)
+@app.get("/api/v1/genes/symbol/{symbol}")
 async def get_gene_by_symbol(symbol: str):
     """
-    Get gene details by symbol
+    Get gene details by symbol.  When multiple species share the same
+    symbol, return a disambiguation list so the frontend can let the user
+    pick the right one.
     """
-    results = db.search_genes(symbol, limit=1)
+    exact = db.conn.execute(
+        "SELECT * FROM genes WHERE symbol = ? COLLATE NOCASE ORDER BY species",
+        (symbol,),
+    ).fetchall()
+    if len(exact) == 1:
+        return db._row_to_gene(exact[0])
+    if len(exact) > 1:
+        genes = [db._row_to_gene(r) for r in exact]
+        return {"ambiguous": True, "matches": [g.model_dump() for g in genes]}
+
+    results = db.search_genes(symbol, limit=10)
     if not results:
         raise HTTPException(status_code=404, detail="Gene not found")
-    return results[0]
+    if len(results) == 1:
+        return results[0]
+    return {"ambiguous": True, "matches": [g.model_dump() for g in results]}
 
 # ============= Pathway Endpoints =============
 
@@ -426,12 +457,13 @@ async def get_neighborhood(gene_id: str, request: NeighborhoodRequest = Neighbor
     regulators = [r for r in regulators if r.regulation_type in request.regulation_type]
     targets = [t for t in targets if t.regulation_type in request.regulation_type]
 
-    # Cap to top neighbors by confidence to prevent browser overload
-    MAX_NEIGHBORS = 75
-    if len(regulators) > MAX_NEIGHBORS:
-        regulators = sorted(regulators, key=lambda r: r.confidence, reverse=True)[:MAX_NEIGHBORS]
-    if len(targets) > MAX_NEIGHBORS:
-        targets = sorted(targets, key=lambda t: t.confidence, reverse=True)[:MAX_NEIGHBORS]
+    # Cap to requested limits (or fallback default) by confidence
+    max_reg = request.max_regulators or 75
+    max_tgt = request.max_targets or 75
+    if len(regulators) > max_reg:
+        regulators = sorted(regulators, key=lambda r: r.confidence, reverse=True)[:max_reg]
+    if len(targets) > max_tgt:
+        targets = sorted(targets, key=lambda t: t.confidence, reverse=True)[:max_tgt]
 
     if request.tissue:
         tissue_edges = set()
@@ -1467,7 +1499,7 @@ async def crossview(
         for direction in ("regulator", "target"):
             if direction == "regulator":
                 sql = """
-                    SELECT g.id, g.symbol, g.display_name, g.species, g.is_tf,
+                    SELECT g.id, g.symbol, g.display_name, g.name, g.species, g.is_tf,
                            i.regulation_type, i.confidence, i.sources
                     FROM interactions i JOIN genes g ON g.id = i.source_id
                     WHERE i.target_id = ? AND i.confidence >= ?
@@ -1475,7 +1507,7 @@ async def crossview(
                 """
             else:
                 sql = """
-                    SELECT g.id, g.symbol, g.display_name, g.species, g.is_tf,
+                    SELECT g.id, g.symbol, g.display_name, g.name, g.species, g.is_tf,
                            i.regulation_type, i.confidence, i.sources
                     FROM interactions i JOIN genes g ON g.id = i.target_id
                     WHERE i.source_id = ? AND i.confidence >= ?
@@ -1488,6 +1520,7 @@ async def crossview(
                 edges.append({
                     "partner_id": r["id"],
                     "partner_symbol": r["display_name"] or r["symbol"],
+                    "partner_name": r["name"] or "",
                     "is_tf": bool(r["is_tf"]),
                     "direction": direction,
                     "regulation_type": r["regulation_type"],
@@ -6409,6 +6442,190 @@ async def intervention_strategy_ranker(req: InterventionRankerRequest):
 
     return {"intent": req.intent, "budget": req.budget,
             "candidates": candidates}
+
+
+@app.get("/api/v1/orthologs/{gene_id}/evidence")
+async def ortholog_evidence(gene_id: str, species: Optional[str] = None):
+    """Per-ortholog evidence summary for a gene's orthologs in each species."""
+    conn = db.conn
+    query = """
+        SELECT o.gene_b AS ortho_id, g.symbol, g.name, g.species, g.is_tf,
+               g.tf_family, o.rel_type
+        FROM orthologs o JOIN genes g ON g.id = o.gene_b
+        WHERE o.gene_a = ?
+        UNION
+        SELECT o.gene_a AS ortho_id, g.symbol, g.name, g.species, g.is_tf,
+               g.tf_family, o.rel_type
+        FROM orthologs o JOIN genes g ON g.id = o.gene_a
+        WHERE o.gene_b = ?
+    """
+    rows = conn.execute(query, (gene_id, gene_id)).fetchall()
+
+    focus_gene = conn.execute("SELECT species FROM genes WHERE id = ?", (gene_id,)).fetchone()
+    focus_species = focus_gene[0] if focus_gene else None
+
+    results = []
+    for r in rows:
+        if r["species"] == focus_species:
+            continue
+        if species and r["species"] != species:
+            continue
+        oid = r["ortho_id"]
+        edges = conn.execute("""
+            SELECT sources FROM interactions
+            WHERE source_id = ? OR target_id = ?
+        """, (oid, oid)).fetchall()
+
+        measured = 0
+        inferred = 0
+        sources_seen = set()
+        for e in edges:
+            srcs = e["sources"] or "[]"
+            is_inferred = "Inferred" in srcs
+            has_direct = any(s in srcs for s in ["PlantRegMap", "ConnecTF", "ATRM", "Literature", "TRRUST", "funRiceGenes"])
+            if has_direct:
+                measured += 1
+            elif is_inferred:
+                inferred += 1
+            else:
+                measured += 1
+            for token in srcs.strip("[]").replace('"', '').split(","):
+                token = token.strip()
+                if token:
+                    sources_seen.add(token)
+
+        # conserved targets: overlap between focus gene targets and ortholog targets
+        focus_targets = set(
+            row2[0] for row2 in conn.execute(
+                "SELECT target_id FROM interactions WHERE source_id = ?", (gene_id,)
+            ).fetchall()
+        )
+        ortho_targets = set(
+            row2[0] for row2 in conn.execute(
+                "SELECT target_id FROM interactions WHERE source_id = ?", (oid,)
+            ).fetchall()
+        )
+        # count ortho targets whose Arabidopsis ortholog is in focus_targets
+        conserved = 0
+        for ot in ortho_targets:
+            ot_orthos = set(
+                row2[0] for row2 in conn.execute(
+                    "SELECT gene_b FROM orthologs WHERE gene_a = ? UNION SELECT gene_a FROM orthologs WHERE gene_b = ?",
+                    (ot, ot)
+                ).fetchall()
+            )
+            if ot_orthos & focus_targets:
+                conserved += 1
+
+        results.append({
+            "gene_id": oid,
+            "symbol": r["symbol"],
+            "name": r["name"],
+            "species": r["species"],
+            "is_tf": bool(r["is_tf"]),
+            "tf_family": r["tf_family"],
+            "rel_type": r["rel_type"],
+            "measured_edges": measured,
+            "inferred_edges": inferred,
+            "total_edges": measured + inferred,
+            "conserved_targets": conserved,
+            "sources": sorted(sources_seen),
+        })
+
+    results.sort(key=lambda x: (-x["measured_edges"], -x["conserved_targets"]))
+    return {"gene_id": gene_id, "orthologs": results}
+
+
+@app.get("/api/v1/regulatory-map")
+async def regulatory_map():
+    """TF family × species matrix for the regulatory weather map heatmap."""
+    conn = db.conn
+    rows = conn.execute("""
+        SELECT g.species,
+               COALESCE(g.tf_family, 'Other') AS family,
+               COUNT(*)                       AS tf_count,
+               SUM(CASE WHEN g.tf_family IS NOT NULL THEN 1 ELSE 0 END) AS classified
+        FROM genes g
+        WHERE g.is_tf = 1
+        GROUP BY g.species, COALESCE(g.tf_family, 'Other')
+        ORDER BY g.species, tf_count DESC
+    """).fetchall()
+
+    target_rows = conn.execute("""
+        SELECT g.species,
+               COALESCE(g.tf_family, 'Other') AS family,
+               COUNT(DISTINCT i.target_id)     AS target_count,
+               COUNT(*)                        AS edge_count
+        FROM interactions i
+        JOIN genes g ON g.id = i.source_id
+        WHERE g.is_tf = 1
+        GROUP BY g.species, COALESCE(g.tf_family, 'Other')
+    """).fetchall()
+    target_map = {}
+    for r in target_rows:
+        target_map[(r[0], r[1])] = {"targets": r[2], "edges": r[3]}
+
+    conserved = conn.execute("""
+        SELECT COALESCE(g.tf_family, 'Other') AS family,
+               COUNT(DISTINCT g.species)       AS species_count
+        FROM genes g
+        WHERE g.is_tf = 1
+        GROUP BY COALESCE(g.tf_family, 'Other')
+    """).fetchall()
+    conservation = {r[0]: r[1] for r in conserved}
+
+    species_set = set()
+    family_set = set()
+    cells = {}
+    for r in rows:
+        sp, fam, cnt, _ = r[0], r[1], r[2], r[3]
+        species_set.add(sp)
+        family_set.add(fam)
+        t = target_map.get((sp, fam), {"targets": 0, "edges": 0})
+        cells[(sp, fam)] = {
+            "tf_count": cnt,
+            "target_count": t["targets"],
+            "edge_count": t["edges"],
+        }
+
+    family_totals = {}
+    for (sp, fam), v in cells.items():
+        family_totals[fam] = family_totals.get(fam, 0) + v["tf_count"]
+    families_sorted = sorted(family_set, key=lambda f: -family_totals.get(f, 0))
+    if "Other" in families_sorted:
+        families_sorted.remove("Other")
+        families_sorted.append("Other")
+
+    species_sorted = sorted(species_set)
+
+    matrix = []
+    for fam in families_sorted:
+        row = {
+            "family": fam,
+            "conservation": conservation.get(fam, 0),
+            "species": {},
+        }
+        for sp in species_sorted:
+            c = cells.get((sp, fam))
+            if c:
+                row["species"][sp] = c
+            else:
+                row["species"][sp] = {"tf_count": 0, "target_count": 0, "edge_count": 0}
+        matrix.append(row)
+
+    totals = {}
+    for sp in species_sorted:
+        totals[sp] = conn.execute(
+            "SELECT COUNT(*) FROM genes WHERE is_tf = 1 AND species = ?", (sp,)
+        ).fetchone()[0]
+
+    return {
+        "families": families_sorted,
+        "species": species_sorted,
+        "matrix": matrix,
+        "species_totals": totals,
+        "total_tfs": sum(totals.values()),
+    }
 
 
 @app.get("/health")

@@ -16,6 +16,11 @@ const CARDS = [
     title: 'Decide what to do next',
     description: 'Turn evidence into a recommendation, minimal next step, and collaborator-ready handoff artifact.',
   },
+  {
+    id: 'demo',
+    title: 'Demo: Model gene to crop target',
+    description: 'Guided walkthrough: start with an Arabidopsis gene, trace orthologs into crops, and design a dsRNA to silence the crop target.',
+  },
 ];
 
 export default function HomeWorkspace({ onSelectMode }) {

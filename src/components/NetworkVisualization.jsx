@@ -18,37 +18,58 @@ export default function NetworkVisualization({
 }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
+  const expandedRef = useRef(new Set());
+  const hiddenByRef = useRef(new Map());
   const [, setSelectedNode] = useState(null);
   const [tooltip, setTooltip] = useState(null);
+  const [nodeTooltip, setNodeTooltip] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
+  const [expandCount, setExpandCount] = useState(0);
 
   useEffect(() => {
     if (!containerRef.current || !data) return;
 
-    // Initialize Cytoscape
     const cy = cytoscape({
       container: containerRef.current,
       elements: convertDataToCytoscape(data, gene),
       style: getCytoscapeStyle(),
-      layout: getLayout(),
+      layout: { name: 'preset' },
       wheelSensitivity: 0.1,
       autounselectify: false,
       boxSelectionEnabled: false
     });
 
     cyRef.current = cy;
+    expandedRef.current = new Set();
+    hiddenByRef.current = new Map();
+    setExpandCount(0);
     onCyInit?.(cy);
 
-    // Node hover - show tooltip with confidence and sources
+
+    // Node hover - show gene description tooltip
     cy.on('mouseover', 'node', (evt) => {
       const node = evt.target;
       setSelectedNode(node.id());
       node.addClass('hover');
+      const name = node.data('name');
+      if (name) {
+        const pos = evt.renderedPosition;
+        setNodeTooltip({
+          x: pos.x,
+          y: pos.y,
+          label: node.data('label'),
+          name,
+          type: node.data('type'),
+        });
+      }
     });
 
     cy.on('mouseout', 'node', (evt) => {
       evt.target.removeClass('hover');
+      setNodeTooltip(null);
     });
+
+    cy.on('pan zoom', () => setNodeTooltip(null));
 
     // Edge hover - show detailed tooltip
     cy.on('mouseover', 'edge', (evt) => {
@@ -73,21 +94,159 @@ export default function NetworkVisualization({
       setTooltip(null);
     });
 
-    // Node click - show context menu
-    cy.on('tap', 'node', (evt) => {
+    // Node click — expand or collapse neighborhood
+    cy.on('tap', 'node', async (evt) => {
       const node = evt.target;
-      setSelectedNode(node.id());
+      const nodeId = node.id();
+      setSelectedNode(nodeId);
+      setContextMenu(null);
+
+      if (nodeId === gene.id) return;
+
+      const expanded = expandedRef.current;
+
+      if (expanded.has(nodeId)) {
+        cy.elements(`[expanded_from = "${nodeId}"]`).remove();
+        expanded.delete(nodeId);
+        node.removeClass('expanded');
+        const hidden = hiddenByRef.current.get(nodeId);
+        if (hidden) {
+          hidden.forEach((ele) => ele.show());
+          hiddenByRef.current.delete(nodeId);
+        }
+        setExpandCount((c) => c - 1);
+        runLayout(cy);
+        return;
+      }
+
+      try {
+        const parentTier = node.data('tier') || 0;
+        const expandDir = parentTier < 0 ? 'regulators' : parentTier > 0 ? 'targets' : 'both';
+
+        const res = await fetch(`/api/v1/pathways/neighborhood/${encodeURIComponent(nodeId)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            max_depth: 1,
+            direction: expandDir,
+            min_confidence: filters?.minConfidence || 0.4,
+          }),
+        });
+        if (!res.ok) return;
+        const nbr = await res.json();
+
+        const neighbors = expandDir === 'regulators'
+          ? (nbr.regulators || []).map(n => ({ ...n, _isReg: true }))
+          : expandDir === 'targets'
+            ? (nbr.targets || []).map(n => ({ ...n, _isReg: false }))
+            : [
+                ...(nbr.regulators || []).map(n => ({ ...n, _isReg: true })),
+                ...(nbr.targets || []).map(n => ({ ...n, _isReg: false })),
+              ];
+
+        const newEles = [];
+        const parentPos = node.position();
+
+        for (const n of neighbors) {
+          const isReg = n._isReg;
+
+          if (cy.getElementById(n.id).length > 0) {
+            const edgeId = `${isReg ? n.id : nodeId}-${isReg ? nodeId : n.id}-exp`;
+            if (cy.getElementById(edgeId).length === 0) {
+              newEles.push({
+                group: 'edges',
+                data: {
+                  id: edgeId,
+                  source: isReg ? n.id : nodeId,
+                  target: isReg ? nodeId : n.id,
+                  regulation_type: n.regulation_type || 'regulation',
+                  confidence: n.confidence || 0.5,
+                  source_databases: n.source_databases || [],
+                  inferred: n.inferred ? 1 : 0,
+                  expanded_from: nodeId,
+                },
+              });
+            }
+            continue;
+          }
+
+          const childTier = isReg ? parentTier - 1 : parentTier + 1;
+          newEles.push({
+            group: 'nodes',
+            data: {
+              id: n.id,
+              label: nodeLabel(n),
+              name: n.name,
+              is_tf: n.is_tf,
+              type: isReg ? 'regulator' : 'target',
+              species: n.species,
+              expanded_from: nodeId,
+              tier: childTier,
+            },
+            position: {
+              x: parentPos.x + (Math.random() - 0.5) * 80,
+              y: parentPos.y + (isReg ? -120 : 120),
+            },
+          });
+
+          const src = isReg ? n.id : nodeId;
+          const tgt = isReg ? nodeId : n.id;
+          newEles.push({
+            group: 'edges',
+            data: {
+              id: `${src}-${tgt}-exp`,
+              source: src,
+              target: tgt,
+              regulation_type: n.regulation_type || 'regulation',
+              confidence: n.confidence || 0.5,
+              source_databases: n.source_databases || [],
+              inferred: n.inferred ? 1 : 0,
+              expanded_from: nodeId,
+            },
+          });
+        }
+
+        if (newEles.length > 0) {
+          cy.add(newEles);
+          expanded.add(nodeId);
+          node.addClass('expanded');
+
+          const nodeTier = node.data('tier') || 0;
+          const siblings = cy.nodes().filter((n) => {
+            if (n.id() === nodeId) return false;
+            if (n.data('expanded_from') === nodeId) return false;
+            return (n.data('tier') || 0) === nodeTier;
+          });
+          const toHide = cy.collection();
+          siblings.forEach((sib) => {
+            toHide.merge(sib);
+            toHide.merge(sib.connectedEdges());
+          });
+          toHide.hide();
+          hiddenByRef.current.set(nodeId, toHide);
+
+          setExpandCount((c) => c + 1);
+          runLayout(cy);
+        }
+      } catch (err) {
+        console.error('Expand failed:', err);
+      }
+    });
+
+    cy.on('tap', (evt) => {
+      if (evt.target === cy) setContextMenu(null);
+    });
+
+    // Right-click context menu for path-finding
+    cy.on('cxttap', 'node', (evt) => {
+      const node = evt.target;
       const pos = evt.renderedPosition || evt.position;
       setContextMenu({
         x: pos.x,
         y: pos.y,
         nodeId: node.id(),
-        nodeLabel: node.data('label')
+        nodeLabel: node.data('label'),
       });
-    });
-
-    cy.on('tap', (evt) => {
-      if (evt.target === cy) setContextMenu(null);
     });
 
     // Fit to view on load
@@ -110,22 +269,6 @@ export default function NetworkVisualization({
     <div className="network-visualization">
       <div className="network-canvas" ref={containerRef} />
 
-      <div className="network-depth-bar">
-        <span className="network-depth-label">Neighborhood depth</span>
-        <div className="network-depth-switcher">
-          {[1, 2, 3].map((depth) => (
-            <button
-              key={depth}
-              className={`depth-button ${filters?.maxDepth === depth ? 'active' : ''}`}
-              title={`Show ${depth}-hop neighborhood`}
-              onClick={() => onDepthChange?.(depth)}
-            >
-              {depth} hop{depth === 1 ? '' : 's'}
-            </button>
-          ))}
-        </div>
-      </div>
-      
       {tooltip && (
         <div className="network-tooltip">
           <div className="tooltip-header">
@@ -133,19 +276,19 @@ export default function NetworkVisualization({
             <span className="tooltip-source">{tooltip.source}</span>
             <span className="tooltip-target">{tooltip.target}</span>
           </div>
-          
+
           <div className="tooltip-row">
             <span className="tooltip-label">Type:</span>
             <span className={`tooltip-value regulation-type-${tooltip.type}`}>
               {tooltip.type === 'activation' ? '✓ Activation' : tooltip.type === 'repression' ? '✗ Repression' : '● Regulation'}
             </span>
           </div>
-          
+
           <div className="tooltip-row">
             <span className="tooltip-label">Confidence:</span>
             <span className="tooltip-value">{(tooltip.confidence * 100).toFixed(0)}%</span>
           </div>
-          
+
           <div className="tooltip-row">
             <span className="tooltip-label">Sources:</span>
             <div className="tooltip-sources">
@@ -157,13 +300,20 @@ export default function NetworkVisualization({
         </div>
       )}
 
+      {nodeTooltip && (
+        <div className="network-node-tooltip" style={{ left: nodeTooltip.x + 12, top: nodeTooltip.y - 8 }}>
+          <strong>{nodeTooltip.label}</strong>
+          <span>{nodeTooltip.name}</span>
+        </div>
+      )}
+
       {contextMenu && (
         <div className="node-context-menu" style={{ left: contextMenu.x + 10, top: contextMenu.y + 10 }}>
           <div className="context-menu-header">{contextMenu.nodeLabel}</div>
           <button className="context-menu-action" onClick={() => {
             onNodeAction?.(contextMenu.nodeId, contextMenu.nodeLabel, 'view-neighborhood');
             setContextMenu(null);
-          }}>View neighborhood</button>
+          }}>Make focus gene</button>
           <button className="context-menu-action" onClick={() => {
             onNodeAction?.(contextMenu.nodeId, contextMenu.nodeLabel, 'path-from');
             setContextMenu(null);
@@ -208,8 +358,8 @@ export default function NetworkVisualization({
           <span>Regulation</span>
         </div>
 
-        <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '0.5px solid var(--border)' }}>
-          <div className="legend-title" style={{ fontSize: '11px', marginBottom: '4px' }}>Confidence</div>
+        <div style={{ marginTop: '6px', paddingTop: '6px', borderTop: '0.5px solid var(--border)' }}>
+          <div className="legend-title">Confidence</div>
           <div className="legend-item">
             <div className="legend-symbol edge-confidence-high"></div>
             <span>High: solid</span>
@@ -223,6 +373,11 @@ export default function NetworkVisualization({
             <span>Low: dotted</span>
           </div>
         </div>
+        <div className="legend-hint">
+          Click an upstream gene to see its regulators. Click a downstream gene to see its targets.
+          {expandCount > 0 && ' Click again to collapse.'}
+          <br />Right-click for more options.
+        </div>
       </div>
 
       <div className="network-controls">
@@ -235,10 +390,7 @@ export default function NetworkVisualization({
         <button className="control-button" title="Fit to screen" onClick={() => cyRef.current?.fit(cyRef.current?.elements(), 50)}>
           ⊡
         </button>
-        <button className="control-button" title="Circular layout" onClick={() => applyLayout('concentric')}>
-          ◯
-        </button>
-        <button className="control-button" title="Hierarchical layout" onClick={() => applyLayout('klay')}>
+        <button className="control-button" title="Re-arrange layout" onClick={() => runLayout(cyRef.current)}>
           ⬇
         </button>
       </div>
@@ -252,122 +404,171 @@ export default function NetworkVisualization({
   }
 }
 
-// Convert API data to Cytoscape elements format
+function nodeLabel(gene) {
+  const sym = gene.label || gene.symbol;
+  const cn = gene.common_name;
+  if (cn && cn.toUpperCase() !== sym.toUpperCase()) return `${sym} / ${cn}`;
+  return sym;
+}
+
+const MAX_PER_ROW = 12;
+const X_SPACING = 60;
+const ROW_SPACING = 160;
+const SUB_ROW_SPACING = 50;
+
+function positionTierNodes(nodes, baseTier) {
+  const positions = [];
+  const rowCount = Math.ceil(nodes.length / MAX_PER_ROW);
+  for (let r = 0; r < rowCount; r++) {
+    const start = r * MAX_PER_ROW;
+    const slice = nodes.slice(start, start + MAX_PER_ROW);
+    const subOffset = baseTier < 0
+      ? -(rowCount - 1 - r) * SUB_ROW_SPACING
+      : r * SUB_ROW_SPACING;
+    const y = baseTier * ROW_SPACING + subOffset;
+    slice.forEach((node, i) => {
+      positions.push({ node, x: (i - (slice.length - 1) / 2) * X_SPACING, y });
+    });
+  }
+  return positions;
+}
+
+function runLayout(cy) {
+  const tiers = {};
+  cy.nodes().forEach((n) => {
+    const t = n.data('tier') || 0;
+    (tiers[t] = tiers[t] || []).push(n);
+  });
+
+  const allPositions = [];
+  Object.keys(tiers).map(Number).sort((a, b) => a - b).forEach((t) => {
+    allPositions.push(...positionTierNodes(tiers[t], t));
+  });
+
+  allPositions.forEach(({ node, x, y }) => {
+    node.animate({ position: { x, y }, duration: 400, easing: 'ease-out' });
+  });
+
+  setTimeout(() => cy.fit(undefined, 50), 450);
+}
+
 function convertDataToCytoscape(data, selectedGene) {
   const elements = [];
   const processedNodes = new Set();
-  const selectedLabel = selectedGene.label || selectedGene.symbol;
+
+
+  function layoutRow(items, tier) {
+    const positions = [];
+    const rowCount = Math.ceil(items.length / MAX_PER_ROW);
+    for (let r = 0; r < rowCount; r++) {
+      const slice = items.slice(r * MAX_PER_ROW, (r + 1) * MAX_PER_ROW);
+      const subOffset = tier < 0
+        ? -(rowCount - 1 - r) * SUB_ROW_SPACING
+        : r * SUB_ROW_SPACING;
+      const y = tier * ROW_SPACING + subOffset;
+      slice.forEach((_, i) => {
+        positions.push({ x: (i - (slice.length - 1) / 2) * X_SPACING, y });
+      });
+    }
+    return positions;
+  }
 
   if (data?.nodes?.length && data?.edges?.length) {
+    const regs = new Set((data.regulators || []).map(r => r.id));
+    const tgts = new Set((data.targets || []).map(t => t.id));
+    const regNodes = data.nodes.filter(n => regs.has(n.id));
+    const tgtNodes = data.nodes.filter(n => tgts.has(n.id));
+    const regPos = layoutRow(regNodes, -1);
+    const tgtPos = layoutRow(tgtNodes, 1);
+    let rI = 0, tI = 0;
+
     data.nodes.forEach((node) => {
       const isSelected = node.id === selectedGene.id;
-      const isDirectRegulator = !!data.regulators?.some((reg) => reg.id === node.id);
-      const isDirectTarget = !!data.targets?.some((target) => target.id === node.id);
+      const isReg = regs.has(node.id);
+      const isTgt = tgts.has(node.id);
+      let pos;
+      if (isSelected) pos = { x: 0, y: 0 };
+      else if (isReg) pos = regPos[rI++];
+      else if (isTgt) pos = tgtPos[tI++];
+      else pos = { x: 0, y: 0 };
       elements.push({
         data: {
-          id: node.id,
-          label: node.label || node.symbol,
-          name: node.name,
-          is_tf: node.is_tf,
-          type: isSelected ? 'selected' : (isDirectRegulator ? 'regulator' : (isDirectTarget ? 'target' : 'intermediate')),
-          species: node.species,
-        }
+          id: node.id, label: nodeLabel(node), name: node.name,
+          is_tf: node.is_tf, species: node.species,
+          type: isSelected ? 'selected' : (isReg ? 'regulator' : (isTgt ? 'target' : 'intermediate')),
+          tier: isSelected ? 0 : (isReg ? -1 : (isTgt ? 1 : 0)),
+        },
+        position: pos,
       });
       processedNodes.add(node.id);
     });
-
     data.edges.forEach((edge) => {
       elements.push({
         data: {
           id: `${edge.source_id}-${edge.target_id}-${edge.regulation_type}`,
-          source: edge.source_id,
-          target: edge.target_id,
+          source: edge.source_id, target: edge.target_id,
           regulation_type: edge.regulation_type || 'unknown',
           confidence: edge.confidence || 0.5,
           source_databases: edge.source_databases || [],
-          inferred: edge.inferred ? 1 : 0,
-          type: 'network-edge',
+          inferred: edge.inferred ? 1 : 0, type: 'network-edge',
         }
       });
     });
-
     return elements;
   }
 
-  // Add the main selected gene
   elements.push({
     data: {
-      id: selectedGene.id,
-      label: selectedLabel,
-      name: selectedGene.name,
-      is_tf: selectedGene.is_tf,
-      type: 'selected',
-      species: selectedGene.species
-    }
+      id: selectedGene.id, label: nodeLabel(selectedGene), name: selectedGene.name,
+      is_tf: selectedGene.is_tf, type: 'selected', species: selectedGene.species, tier: 0,
+    },
+    position: { x: 0, y: 0 },
   });
   processedNodes.add(selectedGene.id);
 
-  // Add regulators (genes that regulate the selected gene)
+  const regPositions = layoutRow(data.regulators || [], -1);
   if (data.regulators) {
-    data.regulators.forEach((regulator) => {
-      if (!processedNodes.has(regulator.id)) {
+    data.regulators.forEach((reg, i) => {
+      if (!processedNodes.has(reg.id)) {
         elements.push({
           data: {
-            id: regulator.id,
-            label: regulator.symbol,
-            name: regulator.name,
-            is_tf: regulator.is_tf,
-            type: 'regulator',
-            species: regulator.species
-          }
+            id: reg.id, label: nodeLabel(reg), name: reg.name, is_tf: reg.is_tf,
+            type: 'regulator', species: reg.species, tier: -1,
+          },
+          position: regPositions[i],
         });
-        processedNodes.add(regulator.id);
+        processedNodes.add(reg.id);
       }
-
-      // Add edge from regulator to selected gene
       elements.push({
         data: {
-          id: `${regulator.id}-${selectedGene.id}`,
-          source: regulator.id,
-          target: selectedGene.id,
-          regulation_type: regulator.regulation_type || 'unknown',
-          confidence: regulator.confidence || 0.5,
-          source_databases: regulator.source_databases || [],
-          inferred: regulator.inferred ? 1 : 0,
-          type: 'regulator-edge'
+          id: `${reg.id}-${selectedGene.id}`, source: reg.id, target: selectedGene.id,
+          regulation_type: reg.regulation_type || 'unknown', confidence: reg.confidence || 0.5,
+          source_databases: reg.source_databases || [], inferred: reg.inferred ? 1 : 0,
+          type: 'regulator-edge',
         }
       });
     });
   }
 
-  // Add targets (genes regulated by the selected gene)
+  const tgtPositions = layoutRow(data.targets || [], 1);
   if (data.targets) {
-    data.targets.forEach((target) => {
-      if (!processedNodes.has(target.id)) {
+    data.targets.forEach((tgt, i) => {
+      if (!processedNodes.has(tgt.id)) {
         elements.push({
           data: {
-            id: target.id,
-            label: target.symbol,
-            name: target.name,
-            is_tf: target.is_tf,
-            type: 'target',
-            species: target.species
-          }
+            id: tgt.id, label: nodeLabel(tgt), name: tgt.name, is_tf: tgt.is_tf,
+            type: 'target', species: tgt.species, tier: 1,
+          },
+          position: tgtPositions[i],
         });
-        processedNodes.add(target.id);
+        processedNodes.add(tgt.id);
       }
-
-      // Add edge from selected gene to target
       elements.push({
         data: {
-          id: `${selectedGene.id}-${target.id}`,
-          source: selectedGene.id,
-          target: target.id,
-          regulation_type: target.regulation_type || 'unknown',
-          confidence: target.confidence || 0.5,
-          source_databases: target.source_databases || [],
-          inferred: target.inferred ? 1 : 0,
-          type: 'target-edge'
+          id: `${selectedGene.id}-${tgt.id}`, source: selectedGene.id, target: tgt.id,
+          regulation_type: tgt.regulation_type || 'unknown', confidence: tgt.confidence || 0.5,
+          source_databases: tgt.source_databases || [], inferred: tgt.inferred ? 1 : 0,
+          type: 'target-edge',
         }
       });
     });
@@ -383,15 +584,17 @@ export function getCytoscapeStyle() {
       selector: 'node',
       style: {
         'content': 'data(label)',
-        'text-valign': 'center',
+        'text-valign': 'bottom',
         'text-halign': 'center',
-        'font-size': '12px',
+        'text-margin-y': 4,
+        'font-size': '9px',
         'font-weight': '500',
-        'padding': '8px',
-        'border-width': '2px',
-        'color': 'var(--text-primary)',
+        'border-width': '1.5px',
+        'color': '#ccc',
         'text-max-width': '100px',
-        'text-wrap': 'wrap'
+        'text-wrap': 'wrap',
+        'text-outline-color': '#111',
+        'text-outline-width': 1,
       }
     },
     {
@@ -400,8 +603,13 @@ export function getCytoscapeStyle() {
         'background-color': '#3B8BD4',
         'border-color': '#185FA5',
         'color': 'white',
-        'width': '60px',
-        'height': '60px',
+        'text-valign': 'center',
+        'text-halign': 'center',
+        'text-margin-y': 0,
+        'font-size': '11px',
+        'font-weight': '700',
+        'width': '40px',
+        'height': '40px',
         'z-index': '10'
       }
     },
@@ -410,9 +618,8 @@ export function getCytoscapeStyle() {
       style: {
         'background-color': '#7F77DD',
         'border-color': '#534AB7',
-        'color': 'white',
-        'width': '50px',
-        'height': '50px',
+        'width': '28px',
+        'height': '28px',
         'shape': 'diamond',
         'z-index': '5'
       }
@@ -422,30 +629,38 @@ export function getCytoscapeStyle() {
       style: {
         'background-color': '#888780',
         'border-color': '#5F5E5A',
-        'color': 'white',
-        'width': '45px',
-        'height': '45px',
+        'width': '22px',
+        'height': '22px',
         'shape': 'ellipse',
         'z-index': '4'
       }
     },
     {
+      selector: 'node.expanded',
+      style: {
+        'border-width': '2.5px',
+        'border-color': '#4FC3F7',
+        'width': '32px',
+        'height': '32px',
+      }
+    },
+    {
       selector: 'node:hover',
       style: {
-        'border-width': '3px',
-        'box-shadow': '0 0 0 2px rgba(0,0,0,0.1)'
+        'border-width': '2.5px',
+        'cursor': 'pointer',
       }
     },
     {
       selector: 'edge',
       style: {
         'curve-style': 'bezier',
-        'width': 2.5,
+        'width': 1.5,
         'line-color': 'data(edge_color)',
         'target-arrow-shape': 'triangle',
         'target-arrow-color': 'data(edge_color)',
-        'arrow-scale': '1.5',
-        'opacity': '0.7'
+        'arrow-scale': '1',
+        'opacity': '0.65'
       }
     },
     {
@@ -500,39 +715,24 @@ export function getCytoscapeStyle() {
       }
     },
     {
-      // Orthology-projected (inferred) edges: faded.
       selector: 'edge[inferred = 1]',
       style: {
-        'opacity': '0.45'
+        'opacity': '0.4'
       }
     },
     {
       selector: 'edge:hover',
       style: {
         'opacity': '1',
-        'width': 3.5
+        'width': 2.5
       }
     }
   ];
 }
 
-// Layout configuration
-export function getLayout(layoutName = 'cose') {
+export function getLayout(layoutName = 'preset') {
   const layouts = {
-    cose: {
-      name: 'cose',
-      directed: true,
-      roots: undefined,
-      randomize: false,
-      animate: true,
-      animationDuration: 500,
-      animationEasing: 'ease-out',
-      nodeSpacing: 10,
-      edgeElasticity: 0.45,
-      nodeRepulsion: 4500,
-      gravity: 0.25,
-      cooling: 0.9
-    },
+    preset: { name: 'preset' },
     concentric: {
       name: 'concentric',
       concentric: (node) => {
@@ -540,19 +740,11 @@ export function getLayout(layoutName = 'cose') {
         if (node.data('is_tf')) return 2;
         return 1;
       },
-      levelWidth: () => 90,
+      levelWidth: () => 1,
+      minNodeSpacing: 30,
       animate: true,
       animationDuration: 500
     },
-    klay: {
-      name: 'klay',
-      nodePlacementStrategy: 'SIMPLE',
-      klay: {
-        direction: 'DOWN',
-        compactComponents: true,
-        separateConnectedComponents: false
-      }
-    }
   };
-  return layouts[layoutName] || layouts.cose;
+  return layouts[layoutName] || layouts.preset;
 }

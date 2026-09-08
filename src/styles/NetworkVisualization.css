@@ -32,6 +32,29 @@
   animation: slideIn 0.15s ease-out;
 }
 
+.network-node-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--surface-2, #1e1e2e);
+  border: 1px solid var(--border, #444);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  max-width: 240px;
+  z-index: 55;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+.network-node-tooltip strong {
+  display: block;
+  color: var(--accent-blue, #4FC3F7);
+  margin-bottom: 2px;
+}
+.network-node-tooltip span {
+  color: var(--text-muted, #aaa);
+  font-size: 11px;
+}
+
 .tooltip-header {
   display: flex;
   align-items: center;
@@ -99,36 +122,48 @@
 /* Network Legend */
 .network-legend {
   position: absolute;
-  top: 16px;
+  bottom: 16px;
   left: 16px;
   background-color: var(--surface-2);
   border: 0.5px solid var(--border);
   border-radius: var(--radius);
-  padding: 12px;
-  min-width: 180px;
-  font-size: 12px;
+  padding: 8px 10px;
+  width: 120px;
+  font-size: 11px;
   z-index: 40;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .legend-title {
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 6px 0;
+  gap: 5px;
+  margin: 3px 0;
   color: var(--text-secondary);
+  font-size: 10px;
+}
+
+.legend-hint {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 0.5px solid var(--border);
+  font-size: 9px;
+  color: var(--text-muted, #888);
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .legend-symbol {
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -299,9 +334,9 @@
 @media (max-width: 1024px) {
   .network-legend {
     left: 8px;
-    top: 8px;
-    padding: 8px;
-    font-size: 11px;
+    bottom: 8px;
+    padding: 6px 8px;
+    font-size: 10px;
   }
 
   .network-depth-bar {
@@ -331,10 +366,10 @@
 @media (max-width: 768px) {
   .network-legend {
     left: 4px;
-    top: 4px;
-    padding: 6px;
-    font-size: 10px;
-    min-width: 140px;
+    bottom: 4px;
+    padding: 4px 6px;
+    font-size: 9px;
+    width: 100px;
   }
 
   .network-tooltip {

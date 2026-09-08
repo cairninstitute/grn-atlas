@@ -42,7 +42,7 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
   const [confidence, setConfidence] = useState(filters.minConfidence);
   const [includeInferred, setIncludeInferred] = useState(filters.includeInferred !== false);
   const [direction, setDirection] = useState(filters.direction);
-  const [maxDepth, setMaxDepth] = useState(filters.maxDepth);
+  // maxDepth is fixed at 1; expand/collapse is handled by clicking nodes in the graph
   const [speciesByKingdom, setSpeciesByKingdom] = useState({});
   const [kingdoms, setKingdoms] = useState([]);
   const [showDataSources, setShowDataSources] = useState(false);
@@ -69,7 +69,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
     setConfidence(filters.minConfidence);
     setIncludeInferred(filters.includeInferred !== false);
     setDirection(filters.direction);
-    setMaxDepth(filters.maxDepth);
   }, [filters]);
 
   useEffect(() => {
@@ -176,11 +175,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
     onFilterChange({ ...filters, direction: e.target.value });
   };
 
-  const handleDepthChange = (e) => {
-    const value = parseInt(e.target.value, 10);
-    setMaxDepth(value);
-    onFilterChange({ ...filters, maxDepth: value });
-  };
 
   const getVisibleSpecies = () => {
     const visible = [];
@@ -250,32 +244,43 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
             {loading && <div className="search-spinner">&#10227;</div>}
           </div>
 
-          {showSuggestions && suggestions.length > 0 && (
-            <div className="suggestions-dropdown" ref={suggestionsRef}>
-              {suggestions.map((gene) => (
-                <div
-                  key={gene.id}
-                  className="suggestion-item"
-                  onClick={() => handleSearch(gene)}
-                >
-                  <div className="suggestion-main">
-                    <span className="suggestion-symbol">{geneLabel(gene).label}</span>
-                    {gene.is_tf && <span className="tf-badge">TF</span>}
-                    <span className="species-badge">{gene.species}</span>
-                  </div>
-                  <div className="suggestion-secondary">
-                    {gene.name}
-                  </div>
-                  {gene.synonyms && gene.synonyms.length > 0 && (
-                    <div className="suggestion-synonyms">
-                      <span className="synonym-label">&#8776; Arabidopsis ortholog (inferred):</span>{' '}
-                      {gene.synonyms.join(', ')}
+          {showSuggestions && suggestions.length > 0 && (() => {
+            const symbolCounts = {};
+            suggestions.forEach((g) => {
+              const key = (g.symbol || '').toUpperCase();
+              symbolCounts[key] = (symbolCounts[key] || 0) + 1;
+            });
+            return (
+              <div className="suggestions-dropdown" ref={suggestionsRef}>
+                {suggestions.map((gene) => {
+                  const hasDupe = symbolCounts[(gene.symbol || '').toUpperCase()] > 1;
+                  return (
+                    <div
+                      key={gene.id}
+                      className="suggestion-item"
+                      onClick={() => handleSearch(gene)}
+                    >
+                      <div className="suggestion-main">
+                        <span className="suggestion-symbol">{geneLabel(gene).label}</span>
+                        {gene.is_tf && <span className="tf-badge">TF</span>}
+                        <span className="species-badge">{gene.species}</span>
+                        {hasDupe && <span className="locus-tag">{gene.id}</span>}
+                      </div>
+                      <div className="suggestion-secondary">
+                        {gene.name}
+                      </div>
+                      {gene.synonyms && gene.synonyms.length > 0 && (
+                        <div className="suggestion-synonyms">
+                          <span className="synonym-label">&#8776; Arabidopsis ortholog (inferred):</span>{' '}
+                          {gene.synonyms.join(', ')}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            );
+          })()}
         </div>
       </div>
 
@@ -364,19 +369,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
           <option value="regulators">Regulators only</option>
           <option value="targets">Targets only</option>
         </select>
-      </div>
-
-      <div className="sidebar-section">
-        <h3 className="sidebar-title">Network depth</h3>
-        <input
-          type="range"
-          className="slider"
-          min="1"
-          max="5"
-          value={maxDepth}
-          onChange={handleDepthChange}
-        />
-        <div className="slider-value">{maxDepth} hops</div>
       </div>
 
       <div className="sidebar-info">

@@ -442,6 +442,29 @@
   letter-spacing: 0.01em;
 }
 
+.crossview-node-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--surface-2, #1e1e2e);
+  border: 1px solid var(--border, #444);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  max-width: 220px;
+  z-index: 55;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+.crossview-node-tooltip strong {
+  display: block;
+  color: var(--accent-blue, #4FC3F7);
+  margin-bottom: 2px;
+}
+.crossview-node-tooltip span {
+  color: var(--text-muted, #aaa);
+  font-size: 11px;
+}
+
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   .crossview-curated-count {
