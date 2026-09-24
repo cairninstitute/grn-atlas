@@ -14,5 +14,7 @@ backend/venv/bin/python .agents/skills/grn-hypothesis-compare/scripts/run.py --g
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - use this when the researcher needs to choose between competing candidates rather than inspect one in isolation
 - the output emphasizes decisive evidence differences and explicit overturn conditions

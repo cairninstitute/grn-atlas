@@ -14,5 +14,7 @@ backend/venv/bin/python .agents/skills/grn-study-report/scripts/run.py --gene-id
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - use this when the output needs to be read directly by a collaborator, PI, or project channel rather than consumed as raw JSON
 - the report preserves the full study packet and adds a ready-to-share markdown narrative

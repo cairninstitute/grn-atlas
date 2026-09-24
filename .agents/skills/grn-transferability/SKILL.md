@@ -14,5 +14,7 @@ backend/venv/bin/python .agents/skills/grn-transferability/scripts/run.py --gene
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - use this when the question is whether a candidate-level story transfers across species, not whether one exact edge is conserved
 - if the output says transferability is limited, follow up with `grn-conservation` or target-species analysis instead of assuming the source result holds

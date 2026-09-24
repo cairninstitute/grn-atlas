@@ -13,5 +13,7 @@ backend/venv/bin/python .agents/skills/grn-decision-boundary/scripts/run.py --ge
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - use this instead of manually chaining confidence boundary, counterfactual analysis, and minimal validation when the user wants one decision summary
 - accepts atlas IDs or resolvable symbols

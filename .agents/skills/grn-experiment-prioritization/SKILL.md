@@ -14,5 +14,7 @@ backend/venv/bin/python .agents/skills/grn-experiment-prioritization/scripts/run
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - this is meant for “what should I do next?” style research questions
 - it uses evidence and coverage context, so absent layers lower or suppress certain recommendations

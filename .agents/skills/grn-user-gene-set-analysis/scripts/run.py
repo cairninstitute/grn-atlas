@@ -23,7 +23,8 @@ def main():
     parser.add_argument("--species", default=None, help="Optional species override")
     parser.add_argument("--filename", default=None, help="Optional source filename label")
     parser.add_argument("--intent", default="experiment",
-                        choices=["experiment", "network", "rnai", "traits"])
+                        choices=["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"],
+                        help="Research intent: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)")
     parser.add_argument("--top-terms", type=int, default=8)
     parser.add_argument("--top-regulators", type=int, default=8)
     parser.add_argument("--top-candidates", type=int, default=5)

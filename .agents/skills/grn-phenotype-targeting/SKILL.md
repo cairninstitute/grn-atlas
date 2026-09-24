@@ -13,6 +13,8 @@ backend/venv/bin/python .agents/skills/grn-phenotype-targeting/scripts/run.py --
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - use this when the question begins with an outcome, not a defined hit list
 - this skill does literature cue generation, atlas grounding, candidate ranking, readiness checks, and next-step recommendation in one structured output
 - for messy pasted content, use `grn-input-normalization` first

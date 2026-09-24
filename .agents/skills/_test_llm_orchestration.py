@@ -553,7 +553,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent (experiment, network, rnai, etc.)"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "top": {"type": "integer", "description": "Maximum ranked candidates to return (default 10)"},
                 },
@@ -570,7 +570,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "max_recommendations": {"type": "integer", "description": "Maximum recommendations per candidate (default 5)"},
                 },
@@ -587,7 +587,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "max_candidates": {"type": "integer", "description": "Maximum candidates to summarize"},
                     "max_experiments": {"type": "integer", "description": "Maximum experiment summaries"},
@@ -606,7 +606,7 @@ TOOLS = [
                 "properties": {
                     "gene_id": {"type": "string", "description": "Source gene ID"},
                     "target_species": {"type": "string", "description": "Target species"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                 },
                 "required": ["gene_id", "target_species"],
             },
@@ -621,7 +621,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "max_candidates": {"type": "integer", "description": "Maximum candidates to summarize"},
                     "max_experiments": {"type": "integer", "description": "Maximum experiment summaries"},
@@ -639,7 +639,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "max_candidates": {"type": "integer", "description": "Maximum candidates to summarize"},
                     "max_experiments": {"type": "integer", "description": "Maximum experiment summaries"},
@@ -657,7 +657,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated candidate gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "max_candidates": {"type": "integer", "description": "Maximum candidates to compare"},
                     "max_experiments": {"type": "integer", "description": "Maximum experiment summaries"},
@@ -675,7 +675,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "max_candidates": {"type": "integer", "description": "Maximum candidates to include"},
                     "max_experiments": {"type": "integer", "description": "Maximum experiment recommendations"},
@@ -693,7 +693,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "max_candidates": {"type": "integer", "description": "Maximum candidates to include"},
                     "max_experiments": {"type": "integer", "description": "Maximum experiment tracks"},
@@ -712,7 +712,7 @@ TOOLS = [
                 "properties": {
                     "species": {"type": "string", "description": "Species name"},
                     "phenotype": {"type": "string", "description": "Phenotype, trait, or design objective"},
-                    "intent": {"type": "string", "description": "Research intent such as experiment or rnai"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "max_candidates": {"type": "integer", "description": "Maximum candidates to keep"},
                     "years_back": {"type": "integer", "description": "Literature recency window"},
                 },
@@ -729,7 +729,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs or resolvable symbols"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "max_candidates": {"type": "integer", "description": "Maximum candidates to compare"},
                     "max_experiments": {"type": "integer", "description": "Maximum experiment tracks"},
@@ -747,7 +747,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "max_candidates": {"type": "integer", "description": "Maximum candidates to include"},
                     "max_experiments": {"type": "integer", "description": "Maximum experiment tracks"},
@@ -765,7 +765,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "max_candidates": {"type": "integer", "description": "Maximum candidates to include"},
                     "max_experiments": {"type": "integer", "description": "Maximum experiment tracks"},
@@ -818,7 +818,7 @@ TOOLS = [
                     "content": {"type": "string", "description": "Inline gene list or CSV/TSV content"},
                     "species": {"type": "string", "description": "Optional species override"},
                     "filename": {"type": "string", "description": "Optional source filename label"},
-                    "intent": {"type": "string", "description": "Analysis intent: experiment, network, rnai, traits"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "top_terms": {"type": "integer", "description": "Maximum enrichment terms"},
                     "top_regulators": {"type": "integer", "description": "Maximum upstream regulators"},
                     "top_candidates": {"type": "integer", "description": "Maximum ranked candidates"},
@@ -854,7 +854,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "budget_level": {"type": "string", "enum": ["low", "medium", "high"], "description": "Budget constraint"},
                     "timeline_days": {"type": "integer", "description": "Time constraint in days"},
@@ -895,7 +895,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "top_n": {"type": "integer", "description": "Maximum candidates to return"},
                     "include_external": {"type": "boolean", "description": "Whether to incorporate external literature"},
@@ -914,7 +914,7 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "gene_ids": {"type": "string", "description": "Comma-separated gene IDs"},
-                    "intent": {"type": "string", "description": "Research intent"},
+                    "intent": {"type": "string", "enum": ["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], "description": "Research intent. Use 'experiment' for lab validation/follow-up, 'network' for topology/regulation questions, 'rnai' for RNAi/dsRNA knockdown, 'traits' for GWAS/phenotype association"},
                     "species": {"type": "string", "description": "Species name"},
                     "include_external": {"type": "boolean", "description": "Whether to incorporate external literature"},
                     "years_back": {"type": "integer", "description": "External literature recency window"},
@@ -1055,7 +1055,8 @@ TOOLS = [
     },
 ]
 
-TOOLS.extend(EXTRA_TOOLS)
+_existing_names = {t["function"]["name"] for t in TOOLS}
+TOOLS.extend(t for t in EXTRA_TOOLS if t["function"]["name"] not in _existing_names)
 
 # ---------------------------------------------------------------------------
 # Map tool name -> skill directory name + arg translation
@@ -2247,6 +2248,12 @@ When answering questions:
    - identify drivers of a transition from branch labels or a transition gene signature -> grn_transition_drivers
    - what silencing / knockout changes -> grn_perturbation
    - what GO terms or pathways are enriched -> grn_enrichment
+   - GWAS traits, trait associations, or phenotype associations for a gene -> grn_enrichment with type=trait, not grn_trait_association
+   - data sources, provenance, methods used to build the atlas -> grn_provenance, not grn_citations (citations is for finding published references for specific edges)
+   - "import this gene list" or "map these genes" -> grn_dataset_import, not grn_input_normalization (normalization is a pre-processing step for messy input before import)
+   - upstream regulators that regulate at least N of these genes, or min-overlap upstream -> grn_upstream (not grn_shared_regulators which finds common regulators without overlap thresholds)
+   - promoter/chromatin/enhancer support for one TF→target edge -> grn_cis_support_audit (use grn_multiome_support_audit only when the user explicitly asks for a broader multi-layer audit including expression and perturbation)
+   - in-degree or out-degree centrality -> grn_centrality with metric=in_degree or metric=out_degree (not just degree)
    - if the user names 2 or more genes and asks for the interactions, edges, bidirectional interactions, or subgraph among those named genes, prefer grn_subgraph. Use grn_pathfinding only when the user asks for a path, route, chain, or indirect connection from one gene to another.
 6. Common RNAi chain: if asked whether a dsRNA can be designed and what silencing would do, call grn_dsrna, then grn_perturbation or grn_network, then grn_enrichment.
 7. Common discovery chain: if asked which species support a capability, call grn_species first, choose one matching species from the result, then continue the remaining requested analysis steps in that species.
@@ -2268,6 +2275,21 @@ When answering questions:
 23. In the final answer, explicitly state the requested conclusion words when relevant (for example conserved/not conserved, ortholog, mouse, shared regulators, enriched pathways) instead of implying them.
 24. Synthesize the tool results into a clear, data-backed answer.
 25. Cite specific numbers from the tool outputs.
+
+26. Many tools accept an `--intent` parameter that shifts scoring, ranking, or analysis focus. Always pass it when the tool supports it. Choose the value based on the user's goal:
+   - "experiment" — lab validation, follow-up experiments, qPCR, CRISPR validation, prioritization for bench work
+   - "network" — topology analysis, regulator/target relationships, hub identification, network structure
+   - "rnai" — RNAi/dsRNA knockdown candidate selection, silencing feasibility
+   - "traits" — GWAS associations, phenotype mapping, trait-gene connections
+   - If the user says "rank for experiments", "prioritize for validation", or "experiment candidates", use intent=experiment
+   - If the user says "knockdown targets" or "RNAi candidates", use intent=rnai
+   - If unsure, default to "experiment"
+
+27. When the question contains pasted or inline data (CSV rows, TSV tables, gene lists with expression values), pass the raw text to the tool via the `content` parameter. Use grn_dataset_import for import requests and grn_input_normalization for cleanup/normalization requests. Do not parse the data yourself.
+28. When a parameter in the question looks like a placeholder (e.g. {dataset_id}), pass it literally as the argument value. The tool will resolve it.
+29. For gene_ids parameters, always use comma-separated format (TP53,BAX,BCL2), never JSON array format.
+30. For the types parameter on grn_network_patterns, use short codes: ffl, fbl, bi — not the long forms (feed-forward, feedback-loop, bidirectional).
+31. For the action parameter on grn_perturbation, use short codes: ko, kd, oe — not the long forms (knockout, knockdown, overexpression).
 
 Key gene IDs to know:
 - Human genes use symbols directly: TP53, MYC, BAX, NFKB1, E2F1, etc.

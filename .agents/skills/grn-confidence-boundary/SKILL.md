@@ -14,5 +14,7 @@ backend/venv/bin/python .agents/skills/grn-confidence-boundary/scripts/run.py --
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - use this when the researcher needs explicit guardrails on what the atlas can and cannot justify
 - the output is conservative by design and treats missing layers as uncertainty, not negative evidence

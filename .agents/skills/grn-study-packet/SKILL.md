@@ -14,5 +14,7 @@ backend/venv/bin/python .agents/skills/grn-study-packet/scripts/run.py --gene-id
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - use this when the result needs to be handed to a collaborator or preserved as a self-contained packet
 - includes provenance and citation context so downstream reporting can stay reproducible

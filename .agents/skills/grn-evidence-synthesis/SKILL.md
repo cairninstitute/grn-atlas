@@ -14,5 +14,7 @@ backend/venv/bin/python .agents/skills/grn-evidence-synthesis/scripts/run.py --g
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - use this when the researcher wants a writing-ready evidence summary without pretending the atlas performed a full literature review
 - the PMIDs and citations come only from data already stored in the atlas and its provenance manifest

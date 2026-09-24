@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description="GRN Atlas experiment prioritization")
     common.add_common_args(parser)
     parser.add_argument("--gene-ids", required=True, help="Comma-separated gene IDs")
-    parser.add_argument("--intent", default="experiment")
+    parser.add_argument("--intent", default="experiment", choices=["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], help="Research intent: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)")
     parser.add_argument("--species")
     parser.add_argument("--max-recommendations", type=int, default=5)
     args = parser.parse_args()

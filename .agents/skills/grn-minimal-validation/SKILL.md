@@ -14,6 +14,8 @@ backend/venv/bin/python .agents/skills/grn-minimal-validation/scripts/run.py --g
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - use this when the researcher wants the smallest defensible next action rather than the full validation matrix
 - the output is intentionally compressed from `grn-validation-plan`, not a separate planning system
 - when the user asks for coverage check -> full plan -> minimal next move, this is the final step in that sequence after `grn-validation-plan`

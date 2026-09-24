@@ -15,5 +15,11 @@ backend/venv/bin/python .agents/skills/grn-candidate-triage/scripts/run.py --gen
 ## Notes
 
 - use this before deeper follow-up when the user has several plausible genes
-- `--intent` shifts the scoring weights toward network, traits, RNAi, or general experiment planning
+- **always pass `--intent`** — it shifts scoring weights and is required for correct ranking:
+  - `experiment` — lab validation, follow-up experiments, CRISPR/qPCR planning
+  - `network` — topology analysis, regulator/target relationships, hub genes
+  - `rnai` — RNAi/dsRNA knockdown candidate selection
+  - `traits` — GWAS hits, phenotype associations, trait mapping
+- if the user says "rank for experiments" or "prioritize for validation", use `--intent experiment`
+- if the user says "RNAi candidates" or "knockdown targets", use `--intent rnai`
 - for phenotype-first questions, it is often the ranking step after `grn-literature-review` or gene-set mapping

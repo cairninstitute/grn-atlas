@@ -114,7 +114,7 @@ def main():
     common.add_common_args(parser)
     parser.add_argument("--species", required=True)
     parser.add_argument("--phenotype", required=True)
-    parser.add_argument("--intent", default="experiment")
+    parser.add_argument("--intent", default="experiment", choices=["experiment", "network", "rnai", "traits", "expression", "motif", "perturbation", "orthology"], help="Research intent: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)")
     parser.add_argument("--max-candidates", type=int, default=8)
     parser.add_argument("--years-back", type=int, default=5)
     args = parser.parse_args()

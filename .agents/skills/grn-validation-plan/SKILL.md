@@ -14,6 +14,8 @@ backend/venv/bin/python .agents/skills/grn-validation-plan/scripts/run.py --gene
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - use this when the user wants a go/no-go style plan rather than only a descriptive brief
 - output is structured for downstream rendering into a checklist or validation matrix
 - if the user first asks whether the species is ready for the intent, run `grn-coverage-report` before this skill

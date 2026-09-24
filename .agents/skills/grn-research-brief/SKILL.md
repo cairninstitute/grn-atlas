@@ -14,6 +14,8 @@ backend/venv/bin/python .agents/skills/grn-research-brief/scripts/run.py --gene-
 
 ## Notes
 
+- **always pass `--intent`**: experiment (lab validation), network (topology), rnai (knockdown), traits (GWAS/phenotype)
+
 - use this when the user wants a concrete next-step plan rather than a single lookup
 - the brief is intentionally structured so a downstream agent or UI can render it directly
 - if the user says "analyze this hit list" without asking for a brief or handoff artifact, prefer `grn-user-gene-set-analysis`
