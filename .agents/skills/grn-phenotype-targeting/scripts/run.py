@@ -119,10 +119,6 @@ def main():
     parser.add_argument("--years-back", type=int, default=5)
     args = parser.parse_args()
 
-    if args.http:
-        common.output({"error": "grn-phenotype-targeting currently supports direct mode only", "status_code": 501})
-        return
-
     backend = rw.get_backend()
     domain_info = rw.classify_phenotype_domain(args.phenotype)
     literature_data = _bounded_literature(args.species, args.phenotype, args.years_back)
@@ -195,6 +191,9 @@ def main():
             "mechanism_mentions": (literature_data.get("candidate_summary") or {}).get("mechanisms", []),
         },
         "atlas_grounded_candidates": grounded,
+        # Downstream tools accept comma-separated gene IDs; expose the handoff
+        # explicitly for clients that continue from phenotype discovery.
+        "candidate_gene_ids": grounded_ids,
         "family_level_analog_candidates": rw.family_level_analogs(args.species, (grounded[0]["symbol"] if grounded else None)),
         "unmapped_literature_candidates": unresolved,
         "ranking_table": (consensus or triage or {}).get("ranked_candidates", []),

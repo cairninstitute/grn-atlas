@@ -14,7 +14,7 @@
     "question": "For TP53 and BAX in human, audit the edge support, state the confidence boundary around acting on that edge today, and then turn the result into a concise evidence synthesis for a collaborator.",
     "covers_tools": ["grn_evidence_audit", "grn_confidence_boundary", "grn_evidence_synthesis"],
     "checks_spec": [
-      {"type": "used_tools_all_any", "tool_groups": [["grn_evidence_audit", "grn_multiome_support_audit"], ["grn_confidence_boundary", "grn_decision_boundary"], ["grn_evidence_synthesis"]]},
+      {"type": "used_tools_all_any", "tool_groups": [["grn_evidence_audit", "grn_multiome_support_audit", "grn_cis_support_audit"], ["grn_confidence_boundary", "grn_decision_boundary"], ["grn_evidence_synthesis"]]},
       {"type": "answer_has_any", "terms": ["TP53", "BAX", "confidence", "evidence"]},
       {"type": "n_skills_gte", "value": 3}
     ]
@@ -42,9 +42,9 @@
   {
     "label": "differential expression to workflow chain",
     "question": "In Arabidopsis, compare root versus inflorescence with the differential-expression tool, then use the resulting shifted genes to run the packaged deg-to-regulators workflow and explain whether the atlas recommends an expression-first or regulator-first follow-up.",
-    "covers_tools": ["grn_differential_expression", "grn_workflow", "grn_experiment_optimizer"],
+    "covers_tools": ["grn_differential_expression", "grn_workflow", "grn_diff_regulation"],
     "checks_spec": [
-      {"type": "used_tools_all_any", "tool_groups": [["grn_differential_expression"], ["grn_workflow"], ["grn_experiment_optimizer", "grn_decision_boundary"]]},
+      {"type": "used_tools_all_any", "tool_groups": [["grn_differential_expression"], ["grn_workflow"], ["grn_diff_regulation", "grn_experiment_optimizer", "grn_decision_boundary"]]},
       {"type": "answer_has_any", "terms": ["root", "inflorescence", "workflow", "follow-up"]},
       {"type": "n_skills_gte", "value": 3}
     ]

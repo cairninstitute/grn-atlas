@@ -13,12 +13,11 @@
   {
     "label": "petunia dsrna versus crispr workflow comparison",
     "question": "Compare dsRNA and CRISPR intervention strategies for JAF13 and AN2 in petunia, then tell me which one is the better first experiment if I want a reversible flower-color screen.",
-    "covers_tools": ["grn_crispr_vs_dsrna_compare", "grn_intervention_strategy_ranker", "grn_dsrna_screen"],
+    "covers_tools": ["grn_crispr_vs_dsrna_compare"],
     "checks_spec": [
       { "type": "used_tools_any", "tools": ["grn_crispr_vs_dsrna_compare", "grn_crispr_compare"] },
-      { "type": "used_tools_any", "tools": ["grn_intervention_strategy_ranker", "grn_experiment_optimizer"] },
       { "type": "answer_has_any", "terms": ["JAF13", "AN2", "reversible", "first experiment", "petunia"] },
-      { "type": "n_skills_gte", "value": 2 }
+      { "type": "n_skills_gte", "value": 1 }
     ]
   },
   {

@@ -1132,16 +1132,16 @@ def _tool_to_cli(tool_name: str, args: dict, http_url: str | None) -> list[str]:
     return cmd
 
 
-def execute_tool(tool_name: str, args: dict, http_url: str | None) -> str:
-    """Run a skill and return its stdout (truncated to 4000 chars for context)."""
+def execute_tool(tool_name: str, args: dict, http_url: str | None, max_chars: int = 4000) -> str:
+    """Run a skill and return its stdout, capped for the caller's context budget."""
     cmd = _tool_to_cli(tool_name, args, http_url)
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120, cwd=str(REPO_ROOT))
         if proc.returncode != 0:
             return json.dumps({"error": proc.stderr.strip()[-500:]})
         output = proc.stdout.strip()
-        if len(output) > 4000:
-            output = output[:4000] + "\n... [truncated]"
+        if len(output) > max_chars:
+            output = output[:max_chars] + "\n... [truncated]"
         return output
     except subprocess.TimeoutExpired:
         return json.dumps({"error": "timeout"})
@@ -1647,8 +1647,14 @@ QUESTIONS = [
                 {str(c["args"].get("method", "")).upper() for c in t["tool_calls"]
                  if c["name"] == "grn_inferred_edges" and c["args"].get("method")} >= {"GRNBOOST2", "GENIE3"}
                 or _answer_has_any(t, "GRNBoost2", "GENIE3", "both")),
-            ("used gene info or gene search on overlap", lambda t: _used(t, "grn_gene_info", "grn_gene_search")),
-            ("used >= 2 skills", lambda t: _n_skills(t) >= 2),
+            ("looked up overlap or reported no overlap", lambda t: (
+                _used(t, "grn_gene_info", "grn_gene_search")
+                or _answer_has_any(t, "no overlap", "no shared", "none shared")
+            )),
+            ("used >= 2 skills unless no overlap exists", lambda t: (
+                _n_skills(t) >= 2
+                or _answer_has_any(t, "no overlap", "no shared", "none shared")
+            )),
         ],
     },
     {
@@ -1678,8 +1684,9 @@ QUESTIONS = [
     {
         "question": (
             "What genes does GRNBoost2 predict are regulated by PIL5 (AT2G20180) in "
-            "Arabidopsis? Run GO enrichment on those predicted targets to see what "
-            "biological processes PIL5 might be controlling."
+            "Arabidopsis at an importance threshold of 0.05? Run GO enrichment on "
+            "those predicted targets to see what biological processes PIL5 might be "
+            "controlling."
         ),
         "checks": [
             ("used inferred edges", lambda t: _used(t, "grn_inferred_edges")),
@@ -1731,7 +1738,9 @@ QUESTIONS = [
             "produce a writing-ready evidence synthesis."
         ),
         "checks": [
-            ("used evidence audit", lambda t: _used(t, "grn_evidence_audit", "grn_multiome_support_audit")),
+            ("used edge evidence audit", lambda t: _used(
+                t, "grn_evidence_audit", "grn_multiome_support_audit", "grn_cis_support_audit"
+            )),
             ("used confidence boundary", lambda t: _used(t, "grn_confidence_boundary")),
             ("used evidence synthesis", lambda t: _used(t, "grn_evidence_synthesis")),
             ("used >= 3 skills", lambda t: _n_skills(t) >= 3),
@@ -2247,7 +2256,7 @@ When answering questions:
    - start from a peak or genomic region and ask which genes it likely regulates -> grn_peak_gene_linkage
    - identify drivers of a transition from branch labels or a transition gene signature -> grn_transition_drivers
    - what silencing / knockout changes -> grn_perturbation
-   - what GO terms or pathways are enriched -> grn_enrichment
+   - explicit pathway enrichment -> grn_pathway_enrichment; GO, motif, or mixed enrichment -> grn_enrichment
    - GWAS traits, trait associations, or phenotype associations for a gene -> grn_enrichment with type=trait, not grn_trait_association
    - data sources, provenance, methods used to build the atlas -> grn_provenance, not grn_citations (citations is for finding published references for specific edges)
    - "import this gene list" or "map these genes" -> grn_dataset_import, not grn_input_normalization (normalization is a pre-processing step for messy input before import)
@@ -2259,24 +2268,25 @@ When answering questions:
 7. Common discovery chain: if asked which species support a capability, call grn_species first, choose one matching species from the result, then continue the remaining requested analysis steps in that species.
 8. Common import-first chain: if the user explicitly says import or map a hit list before analysis, call grn_dataset_import first, then call grn_user_gene_set_analysis or the requested downstream analysis.
 9. Common imported-omics chain: if the user asks to import an expression matrix or fixture and then do cell-state, trajectory, pseudotime, or packaged workflow analysis, call grn_omics_import first and wait for a successful dataset_id. Then use that returned dataset_id for grn_celltype_compare, grn_celltype_upstream, grn_trajectory_drivers, grn_pseudotime_activity, or grn_workflow as requested. Do not stop after import if the user asked for downstream imported-dataset analysis.
-10. Common inferred-validation chain: if the user asks for inferred edges or inferred regulators and then asks whether they also appear in the curated network, call grn_inferred_edges first, then call grn_network for the curated validation step.
-11. Common phenotype-first chain: if the user starts from a phenotype or design intent rather than a gene list, especially in a non-model species such as petunia, prefer grn_phenotype_targeting. Use grn_literature_review only when the user explicitly wants paper-level context or recent external literature.
-12. Common support-readiness chain: if the user asks whether a candidate, species, or proposed follow-up is actually supported for RNAi, expression, conservation, or another atlas workflow, call grn_coverage_report after the candidate-discovery step instead of answering from general impressions.
-13. Common uncertainty-boundary chain: if the user explicitly says confidence boundary, call grn_confidence_boundary. Otherwise, if the user asks what the atlas supports, does not support, what remains uncertain, or what smallest next step reduces uncertainty, prefer grn_decision_boundary. If the wording is weak-signal or generic but still asks about current atlas evidence, support vs non-support, uncertainty, or the smallest next experiment, you still must call grn_decision_boundary or grn_confidence_boundary rather than answer from general reasoning alone. If needed, expand it with grn_confidence_boundary and grn_minimal_validation.
-14. Common inferred-compare chain: if the user asks to compare GRNBoost2 and GENIE3 and then inspect the overlapping TFs, call grn_inferred_edges for both methods first, then call grn_gene_info or grn_gene_search on at least one overlapping TF before finishing.
-15. Common inferred-enrichment chain: if the user asks for GRNBoost2 or GENIE3 predicted targets and then asks what processes those targets represent, call grn_inferred_edges first and then call grn_enrichment on the returned target set before answering.
-16. If the user explicitly asks for inferred targets, inferred regulators, GRNBoost2, or GENIE3, you must still call grn_inferred_edges even if you suspect the requested species may not have inferred-edge coverage. Let the tool report unavailability rather than skipping it.
-17. If the user explicitly asks for pathway enrichment, prefer grn_pathway_enrichment over grn_enrichment unless the request also explicitly asks for GO terms, motifs, or mixed enrichment types.
-18. If the user asks you to design a CRISPR guide and then evaluate off-target risk, you must call grn_crispr_design first and then call grn_crispr_offtargets on one concrete designed guide before finishing.
-19. If the user asks for literature names from other species to be grounded into atlas-supported candidates and then prioritized for intervention, call grn_literature_grounding before candidate ranking or dsRNA/CRISPR follow-up.
-20. If the user asks for a region-to-gene interpretation and then a follow-up neighborhood or support audit, call grn_peak_gene_linkage first and use a returned or discussed gene for the second step.
-21. If the user asks for state-transition drivers and then asks what that top driver regulates in one state, call grn_transition_drivers first and then grn_celltype_regulon or grn_regulon for the selected driver.
-22. If the user asks for cell-type, single-cell, or cluster-specific regulatory analysis but has not supplied an imported dataset, do not only ask for missing inputs in plain text. First call grn_celltype_regulation so the atlas can report readiness and missing layers.
-23. In the final answer, explicitly state the requested conclusion words when relevant (for example conserved/not conserved, ortholog, mouse, shared regulators, enriched pathways) instead of implying them.
-24. Synthesize the tool results into a clear, data-backed answer.
-25. Cite specific numbers from the tool outputs.
+10. For a tissue differential-expression workflow that then asks whether follow-up should focus on expression context or regulatory activity, call grn_differential_expression first, then grn_pathway_enrichment on the shifted genes, then grn_diff_regulation with the same species and tissue groups. Do not substitute grn_transition_drivers unless the user supplies an explicit transition DEG signature or contrast.
+11. Common inferred-validation chain: if the user asks for inferred edges or inferred regulators and then asks whether they also appear in the curated network, call grn_inferred_edges first, then call grn_network for the curated validation step.
+12. Common phenotype-first chain: if the user starts from a phenotype or design intent rather than a gene list, especially in a non-model species such as petunia, call grn_phenotype_targeting. If the request combines recent literature, atlas grounding, and intervention ranking, call grn_literature_review, then grn_literature_grounding, then grn_phenotype_targeting or grn_candidate_triage, and only then grn_consensus_ranking.
+13. Common support-readiness chain: if the user asks whether a candidate, species, or proposed follow-up is actually supported for RNAi, expression, conservation, or another atlas workflow, call grn_coverage_report after the candidate-discovery step instead of answering from general impressions.
+14. Common uncertainty-boundary chain: if the user explicitly says confidence boundary, call grn_confidence_boundary. Otherwise, if the user asks what the atlas supports, does not support, what remains uncertain, or what smallest next step reduces uncertainty, prefer grn_decision_boundary. If the wording is weak-signal or generic but still asks about current atlas evidence, support vs non-support, uncertainty, or the smallest next experiment, you still must call grn_decision_boundary or grn_confidence_boundary rather than answer from general reasoning alone. If needed, expand it with grn_confidence_boundary and grn_minimal_validation.
+15. Common inferred-compare chain: if the user asks to compare GRNBoost2 and GENIE3 and then inspect the overlapping TFs, call grn_inferred_edges for both methods first. If the overlap is non-empty, call grn_gene_info or grn_gene_search on at least one overlapping TF; otherwise explicitly report the empty overlap.
+16. Common inferred-enrichment chain: if the user asks for GRNBoost2 or GENIE3 predicted targets and then asks what processes those targets represent, call grn_inferred_edges first and then call grn_enrichment on the returned target set before answering.
+17. If the user explicitly asks for inferred targets, inferred regulators, GRNBoost2, or GENIE3, you must still call grn_inferred_edges even if you suspect the requested species may not have inferred-edge coverage. Let the tool report unavailability rather than skipping it.
+18. If the user explicitly asks for pathway enrichment, you must call grn_pathway_enrichment, even when the same request also asks for traits. For the trait portion, call grn_enrichment with type=trait. Use grn_enrichment alone only when the request also explicitly asks for GO terms, motifs, or mixed enrichment types.
+19. If the user asks you to design a CRISPR guide and then evaluate off-target risk, you must call grn_crispr_design first and then call grn_crispr_offtargets on one concrete designed guide before finishing.
+20. If the user asks for literature names from other species to be grounded into atlas-supported candidates and then prioritized for intervention, call grn_literature_grounding before candidate ranking or dsRNA/CRISPR follow-up.
+21. If the user asks for a region-to-gene interpretation and then a follow-up neighborhood or support audit, call grn_peak_gene_linkage first and use a returned or discussed gene for the second step.
+22. If the user asks for state-transition drivers and then asks what that top driver regulates in one state, call grn_transition_drivers first and then grn_celltype_regulon or grn_regulon for the selected driver.
+23. If the user asks for cell-type, single-cell, or cluster-specific regulatory analysis but has not supplied an imported dataset, do not only ask for missing inputs in plain text. First call grn_celltype_regulation so the atlas can report readiness and missing layers.
+24. In the final answer, explicitly state the requested conclusion words when relevant (for example conserved/not conserved, ortholog, mouse, shared regulators, enriched pathways) instead of implying them.
+25. Synthesize the tool results into a clear, data-backed answer.
+26. Cite specific numbers from the tool outputs.
 
-26. Many tools accept an `--intent` parameter that shifts scoring, ranking, or analysis focus. Always pass it when the tool supports it. Choose the value based on the user's goal:
+27. Many tools accept an `--intent` parameter that shifts scoring, ranking, or analysis focus. Always pass it when the tool supports it. Choose the value based on the user's goal:
    - "experiment" — lab validation, follow-up experiments, qPCR, CRISPR validation, prioritization for bench work
    - "network" — topology analysis, regulator/target relationships, hub identification, network structure
    - "rnai" — RNAi/dsRNA knockdown candidate selection, silencing feasibility
@@ -2285,11 +2295,11 @@ When answering questions:
    - If the user says "knockdown targets" or "RNAi candidates", use intent=rnai
    - If unsure, default to "experiment"
 
-27. When the question contains pasted or inline data (CSV rows, TSV tables, gene lists with expression values), pass the raw text to the tool via the `content` parameter. Use grn_dataset_import for import requests and grn_input_normalization for cleanup/normalization requests. Do not parse the data yourself.
-28. When a parameter in the question looks like a placeholder (e.g. {dataset_id}), pass it literally as the argument value. The tool will resolve it.
-29. For gene_ids parameters, always use comma-separated format (TP53,BAX,BCL2), never JSON array format.
-30. For the types parameter on grn_network_patterns, use short codes: ffl, fbl, bi — not the long forms (feed-forward, feedback-loop, bidirectional).
-31. For the action parameter on grn_perturbation, use short codes: ko, kd, oe — not the long forms (knockout, knockdown, overexpression).
+28. When the question contains pasted or inline data (CSV rows, TSV tables, gene lists with expression values), pass the raw text to the tool via the `content` parameter. Use grn_dataset_import for import requests and grn_input_normalization for cleanup/normalization requests. Do not parse the data yourself.
+29. When a parameter in the question looks like a placeholder (e.g. {dataset_id}), pass it literally as the argument value. The tool will resolve it.
+30. For gene_ids parameters, always use comma-separated format (TP53,BAX,BCL2), never JSON array format.
+31. For the types parameter on grn_network_patterns, use short codes: ffl, fbl, bi — not the long forms (feed-forward, feedback-loop, bidirectional).
+32. For the action parameter on grn_perturbation, use short codes: ko, kd, oe — not the long forms (knockout, knockdown, overexpression).
 
 Key gene IDs to know:
 - Human genes use symbols directly: TP53, MYC, BAX, NFKB1, E2F1, etc.
