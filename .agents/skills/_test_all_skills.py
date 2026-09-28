@@ -258,8 +258,8 @@ results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "TP53"], "network: TP53 both")
 grade(r, [
-    ("31 regulators", lambda d: len(d.get("regulators", [])) == 31),
-    ("106 targets", lambda d: len(d.get("targets", [])) == 106),
+    ("42 regulators", lambda d: len(d.get("regulators", [])) == 42),
+    ("518 targets", lambda d: len(d.get("targets", [])) == 518),
     ("BAX in targets", lambda d: any(t.get("id") == "BAX" or t.get("symbol") == "BAX" for t in d["targets"])),
     ("SIRT1 in regulators", lambda d: any(r.get("id") == "SIRT1" or r.get("symbol") == "SIRT1" for r in d["regulators"])),
 ])
@@ -268,7 +268,7 @@ results.append(r)
 r = run_skill("grn-network", ["--gene-id", "TP53", "--direction", "regulators"],
               "network: TP53 regulators only")
 grade(r, [
-    ("has regulators", lambda d: len(d["regulators"]) == 31),
+    ("has regulators", lambda d: len(d["regulators"]) == 42),
     ("no targets", lambda d: len(d["targets"]) == 0),
 ])
 results.append(r)
@@ -276,7 +276,7 @@ results.append(r)
 r = run_skill("grn-network", ["--gene-id", "TP53", "--direction", "targets"],
               "network: TP53 targets only")
 grade(r, [
-    ("has targets", lambda d: len(d["targets"]) == 106),
+    ("has targets", lambda d: len(d["targets"]) == 518),
     ("no regulators", lambda d: len(d["regulators"]) == 0),
 ])
 results.append(r)
@@ -284,36 +284,36 @@ results.append(r)
 r = run_skill("grn-network", ["--gene-id", "TP53", "--min-confidence", "0.7"],
               "network: TP53 confidence >= 0.7")
 grade(r, [
-    ("9 regulators at conf>=0.7", lambda d: len(d["regulators"]) == 9),
-    ("22 targets at conf>=0.7", lambda d: len(d["targets"]) == 22),
+    ("28 regulators at conf>=0.7", lambda d: len(d["regulators"]) == 28),
+    ("502 targets at conf>=0.7", lambda d: len(d["targets"]) == 502),
 ])
 results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "AT1G49720", "--direction", "targets"],
               "network: ABF1 targets")
 grade(r, [
-    ("1458 targets", lambda d: len(d["targets"]) == 1458),
+    ("9407 targets", lambda d: len(d["targets"]) == 9407),
 ])
 results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "AT1G49720", "--direction", "regulators"],
               "network: ABF1 regulators")
 grade(r, [
-    ("2 regulators", lambda d: len(d["regulators"]) == 2),
+    ("61 regulators", lambda d: len(d["regulators"]) == 61),
 ])
 results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "MYC"], "network: MYC both")
 grade(r, [
-    ("45 regulators", lambda d: len(d["regulators"]) == 45),
-    ("69 targets", lambda d: len(d["targets"]) == 69),
+    ("73 regulators", lambda d: len(d["regulators"]) == 73),
+    ("432 targets", lambda d: len(d["targets"]) == 432),
     ("STAT3 regulates MYC", lambda d: any(r.get("symbol") == "STAT3" or r.get("id") == "STAT3" for r in d["regulators"])),
 ])
 results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "AT5G11260"], "network: HY5 both")
 grade(r, [
-    ("32 regulators", lambda d: len(d["regulators"]) == 32),
+    ("65 regulators", lambda d: len(d["regulators"]) == 65),
     ("231 targets", lambda d: len(d["targets"]) == 231),
     ("PIF4 regulates HY5", lambda d: any(r.get("symbol") == "PIF4" or r.get("id") == "AT2G43010" for r in d["regulators"])),
 ])
@@ -321,15 +321,15 @@ results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "NFKB1"], "network: NFKB1")
 grade(r, [
-    ("22 regulators", lambda d: len(d["regulators"]) == 22),
-    ("176 targets", lambda d: len(d["targets"]) == 176),
+    ("30 regulators", lambda d: len(d["regulators"]) == 30),
+    ("251 targets", lambda d: len(d["targets"]) == 251),
 ])
 results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "E2F1"], "network: E2F1")
 grade(r, [
-    ("20 regulators", lambda d: len(d["regulators"]) == 20),
-    ("94 targets", lambda d: len(d["targets"]) == 94),
+    ("26 regulators", lambda d: len(d["regulators"]) == 26),
+    ("540 targets", lambda d: len(d["targets"]) == 540),
 ])
 results.append(r)
 
@@ -342,7 +342,7 @@ results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "AT5G13930"], "network: gene with 0 targets")
 grade(r, [
-    ("10 regulators", lambda d: len(d["regulators"]) == 10),
+    ("92 regulators", lambda d: len(d["regulators"]) == 92),
     ("0 targets", lambda d: len(d["targets"]) == 0),
 ])
 results.append(r)
@@ -359,7 +359,7 @@ grade(r, [
     ("path has 2 genes", lambda d: len(d["paths"][0]["genes"]) == 2),
     ("starts with TP53", lambda d: d["paths"][0]["genes"][0]["symbol"] == "TP53"),
     ("ends with BAX", lambda d: d["paths"][0]["genes"][-1]["symbol"] == "BAX"),
-    ("confidence 0.95", lambda d: d["paths"][0]["overall_confidence"] == 0.95),
+    ("confidence 0.99", lambda d: d["paths"][0]["overall_confidence"] == 0.99),
 ])
 results.append(r)
 
@@ -409,18 +409,18 @@ grade(r, [
 results.append(r)
 
 r = run_skill("grn-pathfinding", ["--source", "MYC", "--target", "CDKN1A", "--max-depth", "1"],
-              "path: MYC->CDKN1A (repression, conf=0.95)")
+              "path: MYC->CDKN1A (repression, conf=0.99)")
 grade(r, [
     ("finds path", lambda d: len(d.get("paths", [])) > 0),
-    ("conf 0.95", lambda d: d["paths"][0]["overall_confidence"] == 0.95),
+    ("conf 0.99", lambda d: d["paths"][0]["overall_confidence"] == 0.99),
 ])
 results.append(r)
 
 r = run_skill("grn-pathfinding", ["--source", "NFKB1", "--target", "MYC", "--max-depth", "1"],
-              "path: NFKB1->MYC (activation, conf=0.7)")
+              "path: NFKB1->MYC (activation, conf=0.95)")
 grade(r, [
     ("finds path", lambda d: len(d.get("paths", [])) > 0),
-    ("conf 0.7", lambda d: abs(d["paths"][0]["overall_confidence"] - 0.7) < 0.01),
+    ("conf 0.95", lambda d: abs(d["paths"][0]["overall_confidence"] - 0.95) < 0.01),
 ])
 results.append(r)
 

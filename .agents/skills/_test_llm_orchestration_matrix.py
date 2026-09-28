@@ -77,7 +77,11 @@ def main():
     parser = argparse.ArgumentParser(description="Exhaustive isolated orchestration runner")
     parser.add_argument("--model", default=orch.DEFAULT_MODEL)
     parser.add_argument("--provider", default="auto", choices=["auto", "openrouter", "openai"])
-    parser.add_argument("--http", default=None)
+    parser.add_argument(
+        "--http",
+        required=True,
+        help="Backend base URL. Required because the orchestration inventory includes HTTP-only skills.",
+    )
     parser.add_argument("--retries", type=int, default=1, help="Retries after the first attempt for non-pass cases")
     parser.add_argument("--timeout", type=int, default=420, help="Per-question timeout in seconds")
     parser.add_argument("--sleep-between", type=float, default=0.0, help="Sleep between questions to avoid rate limits")
@@ -89,8 +93,7 @@ def main():
     env = os.environ.copy()
     env["LLM_TEST_MODEL"] = args.model
     env["LLM_TEST_PROVIDER"] = args.provider
-    if args.http:
-        env["LLM_TEST_HTTP"] = args.http
+    env["LLM_TEST_HTTP"] = args.http
     results = []
     out_path = Path(args.out)
 

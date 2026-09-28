@@ -1,8 +1,22 @@
 """Tests for TF activity, pathway activity, and RNAi enhancement endpoints."""
+import importlib
+import os
+import pytest
 from starlette.testclient import TestClient
-from main import app
+import main
 
-client = TestClient(app)
+client = None
+
+
+@pytest.fixture(autouse=True)
+def current_client():
+    """Use the current app after fixture modules reload ``main``."""
+    global client
+    os.environ.pop("GRN_DB", None)
+    importlib.reload(main)
+    client = TestClient(main.app)
+    yield
+    client.close()
 
 
 def test_tf_activity_ulm():
@@ -99,6 +113,7 @@ def test_isoform_coverage():
     resp = client.post("/api/v1/dsrna/isoform-coverage", json={
         "target_gene_id": "Peaxi162Scf00047g01225",
         "species": "petunia",
+        "sequence": "ATGGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTA",
     })
     assert resp.status_code == 200
     data = resp.json()

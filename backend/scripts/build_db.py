@@ -462,6 +462,16 @@ def build():
         CREATE INDEX idx_genes_synonyms ON genes(synonyms COLLATE NOCASE);
         CREATE INDEX idx_genes_species ON genes(species);
 
+        -- Searchable aliases are materialized from the synonym field during the
+        -- build so runtime lookups do not depend on a separate migration.
+        CREATE TABLE gene_aliases (
+            gene_id TEXT NOT NULL,
+            alias TEXT NOT NULL,
+            source TEXT NOT NULL DEFAULT 'synonym',
+            PRIMARY KEY (gene_id, alias)
+        );
+        CREATE INDEX idx_alias_name ON gene_aliases(alias COLLATE NOCASE);
+
         CREATE TABLE interactions (
             source_id TEXT NOT NULL,
             target_id TEXT NOT NULL,
@@ -1069,6 +1079,22 @@ def build():
             "UPDATE genes SET symbol = ?, symbol_source = ? WHERE id = ? AND species = ? AND symbol = id",
             [(info["symbol"], info["source"], gid, sp) for gid, info in curated.items()])
 
+    # Materialize semicolon-delimited synonyms as exact aliases. This keeps the
+    # runtime search query fast and makes every fresh build self-contained.
+    alias_rows = []
+    for gene_id, symbol, synonyms in conn.execute(
+        "SELECT id, symbol, synonyms FROM genes WHERE synonyms IS NOT NULL AND synonyms != ''"
+    ):
+        for alias in synonyms.split(";"):
+            alias = alias.strip()
+            if alias and alias.casefold() != symbol.casefold():
+                alias_rows.append((gene_id, alias, "synonym"))
+    conn.executemany(
+        "INSERT OR IGNORE INTO gene_aliases (gene_id, alias, source) VALUES (?, ?, ?)",
+        alias_rows,
+    )
+    n_aliases = len(alias_rows)
+
     # GO annotations (optional; for enrichment analysis).
     go_data = {}
     if GO_JSON.exists():
@@ -1164,6 +1190,7 @@ def build():
     if any(seqctx_counts.values()):
         print(f"  Sequence context: {seqctx_counts}")
     print(f"  Inferred Arabidopsis-symbol synonyms on {n_syn} tomato/petunia genes")
+    print(f"  Search aliases materialized from synonyms: {n_aliases}")
     print(f"  BLAST-curated regulator symbols: {n_curated}")
     print(f"  Genome: {len(loc_rows)} locations, {len(orth_rows)} ortholog pairs, "
           f"{len(chrom_rows)} chromosomes")

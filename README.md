@@ -371,9 +371,10 @@ venv/bin/python .agents/skills/_test_all_skills_http.py  # 83 HTTP tests across 
 venv/bin/python .agents/skills/_test_integration.py      # 49 integration tests (cross-skill, adversarial, perf, idempotency)
 npx playwright test                                       # 22 browser e2e tests (server must be running)
 
-# Current LLM routing/orchestration matrices
+# Current LLM routing/orchestration matrices (requires `make backend` in another terminal)
 venv/bin/python .agents/skills/_test_llm_single_matrix.py --provider openai --model gpt-5.4
-venv/bin/python .agents/skills/_test_llm_orchestration_matrix.py --provider openai --model gpt-5.4
+venv/bin/python .agents/skills/_test_llm_orchestration_matrix.py --provider openai --model gpt-5.4 \\
+  --http http://localhost:8000
 ```
 
 ## LLM orchestration testing

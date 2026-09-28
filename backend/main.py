@@ -565,12 +565,18 @@ async def find_paths(request: PathFindingRequest):
     Find regulatory paths between two genes using BFS algorithm
     """
     source = db.get_gene(request.source_gene_id)
-    target_results = db.search_genes(request.target_symbol, limit=1)
-    
-    if not source or not target_results:
+    # Resolve an exact target in the source species before a global search.
+    # This avoids routing a human path to an identically named plant gene.
+    target_gene = (
+        db.find_gene_by_symbol_species(request.target_symbol, source.species)
+        if source else None
+    )
+    target_results = [] if target_gene else db.search_genes(request.target_symbol, limit=1)
+
+    if not source or (not target_gene and not target_results):
         raise HTTPException(status_code=404, detail="Gene not found")
-    
-    target_gene = target_results[0]
+
+    target_gene = target_gene or target_results[0]
     
     paths = []
     queue = [(request.source_gene_id, [source], [], [], [], {request.source_gene_id})]
@@ -2685,9 +2691,9 @@ async def export_edges(request: ExportRequest):
                      "start": w["start"], "end": w["end"], "strand": w["strand"]})
             for h in db.conn.execute(
                 f"SELECT h.ext_gene_id, h.motif_id, h.window_type, h.chromosome, h.start, h.end, "
-                f"h.strand, h.score, h.pvalue, h.tier, h.site_confidence, m.tf_gene_id, m.tf_symbol "
+                f"h.strand, h.score, h.p_value, h.tier, h.site_confidence, m.tf_gene_id, m.tf_symbol "
                 f"FROM motif_hits h JOIN motifs m ON m.motif_id = h.motif_id "
-                f"WHERE h.ext_gene_id IN ({eph}) AND h.window_type IN ({wtph}) AND h.pvalue <= ?",
+                f"WHERE h.ext_gene_id IN ({eph}) AND h.window_type IN ({wtph}) AND h.p_value <= ?",
                 ext_ids + wt + [request.max_site_pvalue]
             ).fetchall():
                 hits_by_ext.setdefault(h["ext_gene_id"], []).append(dict(h))
@@ -3846,9 +3852,9 @@ async def motif_query(request: MotifQueryRequest):
     ext2atlas = {v: k for k, v in atlas2ext.items()}
 
     base_sql = ("SELECT h.ext_gene_id, h.motif_id, m.jaspar_id, m.tf_gene_id, m.tf_symbol, "
-                "h.chromosome, h.start, h.end, h.strand, h.score, h.pvalue, h.tier, h.site_confidence "
+                "h.chromosome, h.start, h.end, h.strand, h.score, h.p_value, h.tier, h.site_confidence "
                 "FROM motif_hits h JOIN motifs m ON h.motif_id = m.motif_id "
-                "WHERE h.assembly = ? AND h.pvalue <= ? AND h.score >= ?")
+                "WHERE h.assembly = ? AND h.p_value <= ? AND h.score >= ?")
     params: list = [assembly, request.max_pvalue, request.min_score]
 
     if request.gene_id:
@@ -3859,7 +3865,7 @@ async def motif_query(request: MotifQueryRequest):
         base_sql += " AND m.tf_gene_id = ?"
         params.append(request.tf_gene_id)
 
-    base_sql += " ORDER BY h.pvalue ASC LIMIT ?"
+    base_sql += " ORDER BY h.p_value ASC LIMIT ?"
     params.append(request.top)
 
     rows = db.conn.execute(base_sql, params).fetchall()
@@ -5731,11 +5737,11 @@ async def cis_support_audit(req: CisSupportAuditRequest):
     }
 
     motif_hits = conn.execute(
-        "SELECT h.motif_id, h.score, h.pvalue, m.tf_gene_id "
+        "SELECT h.motif_id, h.score, h.p_value, m.tf_gene_id "
         "FROM motif_hits h JOIN motifs m ON h.motif_id = m.motif_id "
         "JOIN gene_id_crosswalk x ON x.ext_gene_id = h.ext_gene_id "
         "WHERE x.atlas_gene_id = ? AND m.tf_gene_id = ? "
-        "ORDER BY h.pvalue ASC LIMIT 5",
+        "ORDER BY h.p_value ASC LIMIT 5",
         (req.target_id, req.source_id)
     ).fetchall()
     layers["promoter_motif"] = {
@@ -5824,7 +5830,7 @@ async def enhancer_network(req: EnhancerNetworkRequest):
     enhancer_regulators = []
     for lk in links:
         motifs = conn.execute(
-            "SELECT m.tf_gene_id, m.tf_symbol, h.score, h.pvalue "
+            "SELECT m.tf_gene_id, m.tf_symbol, h.score, h.p_value "
             "FROM peak_motif_hits h JOIN motifs m ON h.motif_id = m.motif_id "
             "WHERE h.peak_id = ? ORDER BY h.score DESC LIMIT 5",
             (lk["peak_id"],)
@@ -6048,11 +6054,11 @@ async def edit_consequence(req: EditConsequenceRequest):
             })
     elif req.edit_type == "motif_disruption" and req.motif_id:
         hits = conn.execute(
-            "SELECT m.tf_gene_id, m.tf_symbol, h.score, h.pvalue "
+            "SELECT m.tf_gene_id, m.tf_symbol, h.score, h.p_value "
             "FROM motif_hits h JOIN motifs m ON h.motif_id = m.motif_id "
             "JOIN gene_id_crosswalk x ON x.ext_gene_id = h.ext_gene_id "
             "WHERE x.atlas_gene_id = ? AND h.motif_id = ? "
-            "ORDER BY h.pvalue ASC LIMIT 5",
+            "ORDER BY h.p_value ASC LIMIT 5",
             (gene_id, req.motif_id)
         ).fetchall()
         for h in hits:

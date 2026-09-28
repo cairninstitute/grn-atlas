@@ -132,9 +132,10 @@
   {
     "label": "trait and pathway enrichment chain",
     "question": "For TP53,BAX,MDM2,CDKN1A in human, run pathway enrichment and trait association analysis together, then summarize what diseases or phenotypes are most consistent with the pathway story.",
-    "covers_tools": ["grn_pathway_enrichment", "grn_trait_association"],
+    "covers_tools": ["grn_pathway_enrichment", "grn_enrichment"],
     "checks_spec": [
-      {"type": "used_tools_all_any", "tool_groups": [["grn_pathway_enrichment", "grn_enrichment"], ["grn_trait_association"]]},
+      {"type": "used_tools_any", "tools": ["grn_pathway_enrichment"]},
+      {"type": "used_tool_arg_contains", "tool": "grn_enrichment", "arg": "type", "value": "trait"},
       {"type": "answer_has_any", "terms": ["pathway", "trait", "disease", "phenotype"]},
       {"type": "n_skills_gte", "value": 2}
     ]
