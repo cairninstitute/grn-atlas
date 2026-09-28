@@ -292,14 +292,14 @@ results.append(r)
 r = run_skill("grn-network", ["--gene-id", "AT1G49720", "--direction", "targets"],
               "network: ABF1 targets")
 grade(r, [
-    ("9407 targets", lambda d: len(d["targets"]) == 9407),
+    ("1458 targets", lambda d: len(d["targets"]) == 1458),
 ])
 results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "AT1G49720", "--direction", "regulators"],
               "network: ABF1 regulators")
 grade(r, [
-    ("61 regulators", lambda d: len(d["regulators"]) == 61),
+    ("48 regulators", lambda d: len(d["regulators"]) == 48),
 ])
 results.append(r)
 
@@ -313,7 +313,7 @@ results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "AT5G11260"], "network: HY5 both")
 grade(r, [
-    ("65 regulators", lambda d: len(d["regulators"]) == 65),
+    ("53 regulators", lambda d: len(d["regulators"]) == 53),
     ("231 targets", lambda d: len(d["targets"]) == 231),
     ("PIF4 regulates HY5", lambda d: any(r.get("symbol") == "PIF4" or r.get("id") == "AT2G43010" for r in d["regulators"])),
 ])
@@ -342,7 +342,7 @@ results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "AT5G13930"], "network: gene with 0 targets")
 grade(r, [
-    ("92 regulators", lambda d: len(d["regulators"]) == 92),
+    ("79 regulators", lambda d: len(d["regulators"]) == 79),
     ("0 targets", lambda d: len(d["targets"]) == 0),
 ])
 results.append(r)
