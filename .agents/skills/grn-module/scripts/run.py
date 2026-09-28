@@ -39,6 +39,21 @@ def main():
         import main as backend
         data = common.run_async(backend.get_modules(backend.ModuleRequest(**payload)))
 
+    if args.gene_id and data.get("query_gene_module"):
+        query_module = data["query_gene_module"]
+        # MCP clients cap large responses. Put the requested gene's module
+        # summary before the full module listings so it is never truncated out.
+        data = {
+            "query_gene_module_summary": {
+                "gene_id": query_module.get("gene_id"),
+                "module_id": query_module.get("module_id"),
+                "module_size": query_module.get("module_size"),
+                "num_tfs": query_module.get("num_tfs"),
+                "hub_tf": query_module.get("hub_tf"),
+            },
+            **data,
+        }
+
     common.output(data)
 
 

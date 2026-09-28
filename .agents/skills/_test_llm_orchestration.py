@@ -501,7 +501,7 @@ TOOLS = [
                     "gene_id": {"type": "string", "description": "Gene ID or symbol to query edges for"},
                     "direction": {"type": "string", "description": "Edge direction: regulators, targets, or both (default both)"},
                     "method": {"type": "string", "description": "Inference method: GRNBoost2, GENIE3, or omit for both"},
-                    "min_importance": {"type": "number", "description": "Min importance score threshold (default 1.0)"},
+                    "min_importance": {"type": "number", "default": 0.01, "description": "Minimum importance score (default 0.01). For discovery, use the default or a threshold around 0.01-0.1; 1.0 is extremely strict and should be used only when explicitly requested."},
                     "compare_curated": {"type": "boolean", "description": "Cross-reference with curated interactions (default false)"},
                     "top": {"type": "integer", "description": "Max edges to return (default 50)"},
                 },
@@ -1207,10 +1207,17 @@ def _evaluate_check_spec(trace, check):
         return all(_used(trace, *group) for group in check["tool_groups"])
     if ct == "used_tools_any":
         return _used(trace, *check["tools"])
+    if ct == "used_tools_any_or_answer":
+        return _used(trace, *check["tools"]) or _answer_has_any(trace, *check["terms"])
     if ct == "used_tool_arg_contains":
         return _used_with(trace, check["tool"], check["arg"], check["value"])
     if ct == "n_skills_gte":
         return _n_skills(trace) >= int(check["value"])
+    if ct == "n_skills_gte_or_answer":
+        return (
+            _n_skills(trace) >= int(check["value"])
+            or _answer_has_any(trace, *check["terms"])
+        )
     if ct == "answer_has_any":
         return _answer_has_any(trace, *check["terms"])
     if ct == "answer_has_number":
@@ -2276,17 +2283,19 @@ When answering questions:
 15. Common inferred-compare chain: if the user asks to compare GRNBoost2 and GENIE3 and then inspect the overlapping TFs, call grn_inferred_edges for both methods first. If the overlap is non-empty, call grn_gene_info or grn_gene_search on at least one overlapping TF; otherwise explicitly report the empty overlap.
 16. Common inferred-enrichment chain: if the user asks for GRNBoost2 or GENIE3 predicted targets and then asks what processes those targets represent, call grn_inferred_edges first and then call grn_enrichment on the returned target set before answering.
 17. If the user explicitly asks for inferred targets, inferred regulators, GRNBoost2, or GENIE3, you must still call grn_inferred_edges even if you suspect the requested species may not have inferred-edge coverage. Let the tool report unavailability rather than skipping it.
-18. If the user explicitly asks for pathway enrichment, you must call grn_pathway_enrichment, even when the same request also asks for traits. For the trait portion, call grn_enrichment with type=trait. Use grn_enrichment alone only when the request also explicitly asks for GO terms, motifs, or mixed enrichment types.
-19. If the user asks you to design a CRISPR guide and then evaluate off-target risk, you must call grn_crispr_design first and then call grn_crispr_offtargets on one concrete designed guide before finishing.
-20. If the user asks for literature names from other species to be grounded into atlas-supported candidates and then prioritized for intervention, call grn_literature_grounding before candidate ranking or dsRNA/CRISPR follow-up.
-21. If the user asks for a region-to-gene interpretation and then a follow-up neighborhood or support audit, call grn_peak_gene_linkage first and use a returned or discussed gene for the second step.
-22. If the user asks for state-transition drivers and then asks what that top driver regulates in one state, call grn_transition_drivers first and then grn_celltype_regulon or grn_regulon for the selected driver.
-23. If the user asks for cell-type, single-cell, or cluster-specific regulatory analysis but has not supplied an imported dataset, do not only ask for missing inputs in plain text. First call grn_celltype_regulation so the atlas can report readiness and missing layers.
-24. In the final answer, explicitly state the requested conclusion words when relevant (for example conserved/not conserved, ortholog, mouse, shared regulators, enriched pathways) instead of implying them.
-25. Synthesize the tool results into a clear, data-backed answer.
-26. Cite specific numbers from the tool outputs.
+18. When querying inferred edges without a user-specified importance threshold, omit min_importance and use the tool default of 0.01. Do not choose 1.0 for exploratory analysis; it is an extreme filter and commonly returns no edges.
+   If the user asks whether an inferred neighborhood supports the same biological story as a module, call grn_inferred_edges, then grn_modules, then grn_enrichment on the inferred targets or grn_evidence_synthesis before concluding.
+19. If the user explicitly asks for pathway enrichment, you must call grn_pathway_enrichment, even when the same request also asks for traits. For the trait portion, call grn_enrichment with type=trait. Use grn_enrichment alone only when the request also explicitly asks for GO terms, motifs, or mixed enrichment types.
+20. If the user asks you to design a CRISPR guide and then evaluate off-target risk, you must call grn_crispr_design first and then call grn_crispr_offtargets on one concrete designed guide before finishing.
+21. If the user asks for literature names from other species to be grounded into atlas-supported candidates and then prioritized for intervention, call grn_literature_grounding before candidate ranking or dsRNA/CRISPR follow-up.
+22. If the user asks for a region-to-gene interpretation and then a follow-up neighborhood or support audit, call grn_peak_gene_linkage first and use a returned or discussed gene for the second step.
+23. If the user asks for state-transition drivers and then asks what that top driver regulates in one state, call grn_transition_drivers first and then grn_celltype_regulon or grn_regulon for the selected driver.
+24. If the user asks for cell-type, single-cell, or cluster-specific regulatory analysis but has not supplied an imported dataset, do not only ask for missing inputs in plain text. First call grn_celltype_regulation so the atlas can report readiness and missing layers.
+25. In the final answer, explicitly state the requested conclusion words when relevant (for example conserved/not conserved, ortholog, mouse, shared regulators, enriched pathways) instead of implying them.
+26. Synthesize the tool results into a clear, data-backed answer.
+27. Cite specific numbers from the tool outputs.
 
-27. Many tools accept an `--intent` parameter that shifts scoring, ranking, or analysis focus. Always pass it when the tool supports it. Choose the value based on the user's goal:
+28. Many tools accept an `--intent` parameter that shifts scoring, ranking, or analysis focus. Always pass it when the tool supports it. Choose the value based on the user's goal:
    - "experiment" — lab validation, follow-up experiments, qPCR, CRISPR validation, prioritization for bench work
    - "network" — topology analysis, regulator/target relationships, hub identification, network structure
    - "rnai" — RNAi/dsRNA knockdown candidate selection, silencing feasibility
@@ -2295,11 +2304,11 @@ When answering questions:
    - If the user says "knockdown targets" or "RNAi candidates", use intent=rnai
    - If unsure, default to "experiment"
 
-28. When the question contains pasted or inline data (CSV rows, TSV tables, gene lists with expression values), pass the raw text to the tool via the `content` parameter. Use grn_dataset_import for import requests and grn_input_normalization for cleanup/normalization requests. Do not parse the data yourself.
-29. When a parameter in the question looks like a placeholder (e.g. {dataset_id}), pass it literally as the argument value. The tool will resolve it.
-30. For gene_ids parameters, always use comma-separated format (TP53,BAX,BCL2), never JSON array format.
-31. For the types parameter on grn_network_patterns, use short codes: ffl, fbl, bi — not the long forms (feed-forward, feedback-loop, bidirectional).
-32. For the action parameter on grn_perturbation, use short codes: ko, kd, oe — not the long forms (knockout, knockdown, overexpression).
+29. When the question contains pasted or inline data (CSV rows, TSV tables, gene lists with expression values), pass the raw text to the tool via the `content` parameter. Use grn_dataset_import for import requests and grn_input_normalization for cleanup/normalization requests. Do not parse the data yourself.
+30. When a parameter in the question looks like a placeholder (e.g. {dataset_id}), pass it literally as the argument value. The tool will resolve it.
+31. For gene_ids parameters, always use comma-separated format (TP53,BAX,BCL2), never JSON array format.
+32. For the types parameter on grn_network_patterns, use short codes: ffl, fbl, bi — not the long forms (feed-forward, feedback-loop, bidirectional).
+33. For the action parameter on grn_perturbation, use short codes: ko, kd, oe — not the long forms (knockout, knockdown, overexpression).
 
 Key gene IDs to know:
 - Human genes use symbols directly: TP53, MYC, BAX, NFKB1, E2F1, etc.

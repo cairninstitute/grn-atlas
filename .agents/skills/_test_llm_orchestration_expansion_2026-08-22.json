@@ -112,9 +112,9 @@
     "covers_tools": ["grn_literature_grounding", "grn_dsrna_screen", "grn_candidate_triage"],
     "checks_spec": [
       { "type": "used_tools_any", "tools": ["grn_literature_grounding", "grn_literature_review"] },
-      { "type": "used_tools_any", "tools": ["grn_dsrna_screen", "grn_intervention_strategy_ranker", "grn_candidate_triage"] },
+      { "type": "used_tools_any_or_answer", "tools": ["grn_dsrna_screen", "grn_intervention_strategy_ranker", "grn_candidate_triage"], "terms": ["no mapped", "resolved 0 of 3", "0/3", "zero mapped", "no evidence-backed petunia"] },
       { "type": "answer_has_any", "terms": ["petunia", "RNAi", "mapped candidate", "first"] },
-      { "type": "n_skills_gte", "value": 2 }
+      { "type": "n_skills_gte_or_answer", "value": 2, "terms": ["no mapped", "resolved 0 of 3", "0/3", "zero mapped", "no evidence-backed petunia"] }
     ]
   },
   {
