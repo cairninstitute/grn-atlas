@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "grn_atlas": {
+      "command": "/home/kjanik/grn-atlas/backend/venv/bin/python",
+      "args": [
+        "/home/kjanik/grn-atlas/.agents/mcp/grn_atlas_mcp_server.py"
+      ],
+      "env": {
+        "GRN_MCP_HTTP": "http://127.0.0.1:8001"
+      }
+    }
+  }
+}

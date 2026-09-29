@@ -50,15 +50,26 @@ plus successful replay and regrading of the two corrected calls.
 
 ## Other model status
 
-| Model | Orchestration | Status |
-|---|---:|---|
-| GPT-5.6 Terra | 111/111 | Validated composite result |
-| Nemotron-3 Ultra | 95/111 (85.6%) | Final run; 16 failures, primarily incomplete multi-step work or synthesis rather than endpoint outages |
-| Opus 4.6 | 111/111 historical | Re-run pending available credits |
+| Model | Orchestration | Single-skill | Status |
+|---|---:|---:|---|
+| GPT-5.6 Terra | 111/111 (100%) | 386/386 (100%) | Validated composite result |
+| Opus 4.6 | 107/111 (96.4%) | 373/386 (96.6%) | Full MCP re-run; 4 orchestration failures are incomplete multi-step chains |
+| Nemotron-3 Ultra | 95/111 (85.6%) | — | Final run; 16 failures, primarily incomplete multi-step work or synthesis |
+
+### Opus 4.6 detail
+
+Opus 4.6 was tested via the `claude -p` CLI with native MCP tool transport.
+The 4 orchestration failures are multi-step chain questions where the model
+routes to a semantically similar but wrong tool (`confidence_boundary` instead
+of `counterfactual_analysis`, `edit_consequence` instead of `variant_effect`)
+or stops one tool short of the expected chain. The 13 single-skill failures
+break down as: 6 empty-data checks (correct tool call, no data in test DB),
+4 arg-value mismatches, 2 inline-data passthrough failures, and 1 timeout.
 
 ## Suggested public phrasing
 
 > In our structured-tool evaluation, GPT-5.6 Terra completed all 111
 > multi-step GRN Atlas research workflows and all 386 single-skill requests.
+> Opus 4.6 achieved 107/111 orchestration and 373/386 single-skill.
 > The evaluation measures reliable use of GRN Atlas tools; it is not a claim of
 > independently validated biological discovery accuracy.
