@@ -2033,17 +2033,17 @@
     ]
   },
   {
-    "skill": "grn-combinatorial-perturbation",
+    "skill": "grn-perturbation",
     "label": "perturb: TP53 KO",
     "question": "What would happen if TP53 were knocked out? Simulate the perturbation.",
     "expected_tools": [
-      "grn_combinatorial_perturbation"
+      "grn_perturbation"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-        "grn_combinatorial_perturbation"
+        "grn_perturbation"
         ]
       },
       {
