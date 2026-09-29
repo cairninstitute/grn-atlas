@@ -36,9 +36,11 @@ OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 DEFAULT_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free"
 MAX_TOOL_ROUNDS = 10
-API_RETRIES = 6
+API_RETRIES = int(os.environ.get("LLM_TEST_API_RETRIES", "6"))
 API_BACKOFF_S = 5
-API_TIMEOUT_S = 180
+# Keep the normal request bound, but allow degraded providers to be retried with
+# a longer bound without changing the baseline benchmark configuration.
+API_TIMEOUT_S = int(os.environ.get("LLM_TEST_API_TIMEOUT_S", "180"))
 
 try:
     from _test_llm_tool_extensions import EXTRA_ARG_MAP, EXTRA_TOOLS, EXTRA_TOOL_TO_SKILL
