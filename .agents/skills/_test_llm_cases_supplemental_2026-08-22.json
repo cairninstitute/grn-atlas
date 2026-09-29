@@ -116,7 +116,7 @@
       {
         "type": "arg_equals",
         "arg": "intent",
-        "value": "knockdown"
+        "value": "rnai"
       }
     ]
   },

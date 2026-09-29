@@ -17,6 +17,12 @@ from _test_llm_single_skill import _execute_full, evaluate_check
 
 DEFAULT_MODEL = "gpt-5.6-terra"
 MAX_TIMEOUT_S = 600
+TOOL_ALIASES = {
+    # Shell fallback events use skill-directory names; grade them against the
+    # canonical MCP names exposed by the orchestration inventory.
+    "grn_module": "grn_modules",
+    "grn_infer": "grn_inferred_edges",
+}
 
 
 def choose_tool(question: str, model: str) -> dict:
@@ -51,7 +57,11 @@ Question: {question}
     if not calls:
         return {"name": None, "args": {}, "error": error or "no_tool_call"}
     first = calls[0]
-    return {"name": first["name"], "args": first["args"], "error": error}
+    return {
+        "name": TOOL_ALIASES.get(first["name"], first["name"]),
+        "args": first["args"],
+        "error": error,
+    }
 
 
 def main() -> None:

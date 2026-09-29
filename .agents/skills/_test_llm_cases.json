@@ -4,13 +4,15 @@
     "label": "atlas overview: supported species and analyses",
     "question": "What species and kinds of analyses are supported by the GRN Atlas?",
     "expected_tools": [
-      "grn_atlas_overview"
+      "grn_atlas_overview",
+      "grn_species"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_atlas_overview"
+        "grn_atlas_overview",
+        "grn_species"
         ]
       }
     ]
@@ -2031,17 +2033,17 @@
     ]
   },
   {
-    "skill": "grn-perturbation",
+    "skill": "grn-combinatorial-perturbation",
     "label": "perturb: TP53 KO",
     "question": "What would happen if TP53 were knocked out? Simulate the perturbation.",
     "expected_tools": [
-      "grn_perturbation"
+      "grn_combinatorial_perturbation"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_perturbation"
+        "grn_combinatorial_perturbation"
         ]
       },
       {
@@ -2648,7 +2650,7 @@
   {
     "skill": "grn-dsrna",
     "label": "dsrna: analyze AT-rich in tomato",
-    "question": "Analyze this AT-rich sequence for off-targets in tomato: ATATATATATATATATATATATATATATATATATATATATATATATATATA",
+    "question": "Analyze this AT-rich dsRNA sequence for RNAi off-targets in tomato: ATATATATATATATATATATATATATATATATATATATATATATATATATA",
     "expected_tools": [
       "grn_dsrna"
     ],
@@ -7255,14 +7257,16 @@
     "question": "Audit the evidence supporting the TP53 to BAX regulatory edge in humans.",
     "expected_tools": [
       "grn_evidence_audit",
-      "grn_multiome_support_audit"
+      "grn_multiome_support_audit",
+      "grn_cis_support_audit"
     ],
     "checks": [
       {
         "type": "tool_in",
         "tools": [
-          "grn_evidence_audit",
-          "grn_multiome_support_audit"
+        "grn_evidence_audit",
+        "grn_multiome_support_audit",
+        "grn_cis_support_audit"
         ]
       },
       {
