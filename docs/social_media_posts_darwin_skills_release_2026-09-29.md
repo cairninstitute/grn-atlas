@@ -1,8 +1,24 @@
 # Social Media Copy - Darwin Structured Skills Release
 
-Use Unicode bold characters where emphasis is desired. Do not use Markdown asterisks in platform copy. Replace [BLOG URL] with the published blog link and attach a workflow or skill-map graphic.
+Use Unicode bold characters where emphasis is desired. Do not use Markdown asterisks in platform copy. Replace [BLOG URL] with the published blog link.
+
+## Included Graphics
+
+| Asset | Dimensions | Best use |
+| --- | ---: | --- |
+| `public/darwin-gene-regulation-skills-blog/social/darwin-skills-landscape-1200x630.png` | 1200x630 | LinkedIn, Facebook, X, Bluesky, Threads |
+| `public/darwin-gene-regulation-skills-blog/social/darwin-skills-square-1080x1080.png` | 1080x1080 | Instagram feed, LinkedIn, Facebook |
+| `public/darwin-gene-regulation-skills-blog/social/darwin-skills-portrait-1080x1350.png` | 1080x1350 | Instagram feed, Threads |
+| `public/darwin-gene-regulation-skills-blog/social/darwin-skills-story-1080x1920.png` | 1080x1920 | Instagram Stories, Facebook Stories |
+
+The visuals are deliberately text-free. Use the exact benchmark figures in the
+caption or native platform text rather than adding generated image typography.
 
 ## LinkedIn
+
+**Image:** `darwin-skills-landscape-1200x630.png`
+
+**Length:** Under LinkedIn's 3,000-character limit, including the published URL.
 
 𝗚𝗲𝗻𝗲 𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀, 𝗻𝗼𝘄 𝘄𝗶𝘁𝗵 𝗖𝗹𝗮𝘂𝗱𝗲, 𝗖𝗼𝗱𝗲𝘅, 𝗮𝗻𝗱 𝗡𝗲𝗺𝗼𝘁𝗿𝗼𝗻 𝘀𝘂𝗽𝗽𝗼𝗿𝘁.
 
@@ -29,6 +45,8 @@ Explore Darwin: https://www.cairninstitute.com/Darwin/
 
 ## Facebook
 
+**Image:** `darwin-skills-landscape-1200x630.png`
+
 𝗚𝗲𝗻𝗲 𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀, 𝗻𝗼𝘄 𝘄𝗶𝘁𝗵 𝗖𝗹𝗮𝘂𝗱𝗲, 𝗖𝗼𝗱𝗲𝘅, 𝗮𝗻𝗱 𝗡𝗲𝗺𝗼𝘁𝗿𝗼𝗻 𝘀𝘂𝗽𝗽𝗼𝗿𝘁.
 
 Darwin can now guide structured workflows across gene networks, regulons, expression, promoter and chromatin evidence, RNAi and CRISPR planning, cross-species comparison, and validation planning.
@@ -45,6 +63,10 @@ Explore Darwin: https://www.cairninstitute.com/Darwin/
 #Genomics #GeneRegulation #Bioinformatics #AIforScience #SystemsBiology #PlantScience
 
 ## X / Twitter Thread
+
+**Image:** `darwin-skills-landscape-1200x630.png` on Post 1.
+
+Each post is within X's 280-character limit after normal URL shortening.
 
 ### Post 1
 
@@ -69,7 +91,7 @@ Examples: import expression data → identify active regulators; inspect a motif
 
 ### Post 4
 
-These are tool-use reliability results, not proof that AI has independently validated biology. The purpose is transparent, atlas-grounded hypothesis building.
+Tool-use reliability, not independently validated biology. The goal: transparent, atlas-grounded hypothesis building.
 
 [BLOG URL]
 https://www.cairninstitute.com/Darwin/
@@ -77,6 +99,10 @@ https://www.cairninstitute.com/Darwin/
 @CAIRNInstitute #Genomics #GeneRegulation #AIforScience #Bioinformatics
 
 ## Bluesky Thread
+
+**Image:** `darwin-skills-landscape-1200x630.png` on Post 1.
+
+Each post is within Bluesky's 300-character limit.
 
 ### Post 1
 
@@ -103,6 +129,10 @@ The goal is not a fluent black-box answer. It is an inspectable route from a res
 
 ## Threads
 
+**Image:** `darwin-skills-portrait-1080x1350.png` on Post 1.
+
+Each post is within Threads' 500-character limit.
+
 ### Post 1
 
 𝗚𝗲𝗻𝗲 𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀, 𝗻𝗼𝘄 𝘄𝗶𝘁𝗵 𝗖𝗹𝗮𝘂𝗱𝗲, 𝗖𝗼𝗱𝗲𝘅, 𝗮𝗻𝗱 𝗡𝗲𝗺𝗼𝘁𝗿𝗼𝗻 𝘀𝘂𝗽𝗽𝗼𝗿𝘁.
@@ -124,6 +154,10 @@ Read more: [BLOG URL]
 #Genomics #Bioinformatics #AIforScience #SystemsBiology #PlantScience
 
 ## Instagram
+
+**Images:** Use the square graphic as the lead carousel slide, portrait graphic
+as slide two, and Story graphic for Stories. The caption is within Instagram's
+2,200-character limit.
 
 ### Carousel
 
@@ -153,11 +187,16 @@ Link in bio. [BLOG URL]
 
 #Genomics #GeneRegulation #Bioinformatics #SystemsBiology #AIforScience #ComputationalBiology #PlantScience #PlantBiology #CRISPR #RNAi #TranscriptionFactors #OpenScience #AgenticAI
 
-## Suggested Graphics
+## Suggested Native Overlay Copy
 
-- A landscape workflow map: question → structured skills → evidence → testable hypothesis.
-- A square skill-family map showing the eight workflow areas in the blog table.
-- A landscape benchmark graphic with the three orchestration results and the GPT single-skill result.
+Use native platform text or a platform editor for these exact overlays if desired:
+
+- Main headline: `Gene Regulation Skills`
+- Supporting line: `Now supporting Claude, Codex, and Nemotron`
+- Benchmark line: `GPT-5.6 Terra: 386/386 skills | 111/111 workflows`
+
+Do not put the Opus or Nemotron scores in an image overlay unless the full
+qualifying caption is also included; the text copy provides that context.
 
 ## Tagging Reference
 
