@@ -1,4 +1,4 @@
-# Darwin Skills: Structured AI Workflows for Gene Regulation
+# Gene Regulation Skills: Now Supporting Claude, Codex, and Nemotron
 
 Author: CAIRN Institute
 
@@ -12,7 +12,7 @@ Read time: 8-10 minutes
 
 Darwin is a research system for working with gene regulatory networks: who regulates a gene, what evidence supports an edge, which regulators explain a gene set, what might change after perturbation, and which experiment is most useful next.
 
-This release makes that system available as a structured skill layer for AI agents. Darwin now provides **100 documented skills**: **99 callable research skills** and one overview/router. The skills expose the atlas through defined tools rather than asking a model to improvise database queries or biological claims from memory.
+This release makes that system available as a structured skill layer for AI agents. Darwin now provides **100 documented skills**: **99 callable research skills** and one overview/router. The skills can be used through Claude, Codex, and Nemotron model workflows, while exposing the atlas through defined tools rather than asking a model to improvise database queries or biological claims from memory.
 
 We tested two different things:
 
@@ -98,4 +98,3 @@ The strongest current tool-use result is GPT-5.6 Terra at **386/386** single-ski
 Explore Darwin: https://www.cairninstitute.com/Darwin/
 
 Learn more about CAIRN Institute: https://www.cairninstitute.com/
-

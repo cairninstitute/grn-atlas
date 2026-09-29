@@ -4,7 +4,7 @@ Use Unicode bold characters where emphasis is desired. Do not use Markdown aster
 
 ## LinkedIn
 
-𝗗𝗮𝗿𝘄𝗶𝗻 𝗻𝗼𝘄 𝗼𝗳𝗳𝗲𝗿𝘀 𝟭𝟬𝟬 𝘀𝘁𝗿𝘂𝗰𝘁𝘂𝗿𝗲𝗱 𝗴𝗲𝗻𝗲-𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀.
+𝗚𝗲𝗻𝗲 𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀, 𝗻𝗼𝘄 𝘄𝗶𝘁𝗵 𝗖𝗹𝗮𝘂𝗱𝗲, 𝗖𝗼𝗱𝗲𝘅, 𝗮𝗻𝗱 𝗡𝗲𝗺𝗼𝘁𝗿𝗼𝗻 𝘀𝘂𝗽𝗽𝗼𝗿𝘁.
 
 Gene regulation research is rarely a single lookup. A useful workflow may need to move from a gene list to upstream regulators, evidence for an edge, a cross-species comparison, an RNAi or CRISPR option, and a defensible next experiment.
 
@@ -29,7 +29,7 @@ Explore Darwin: https://www.cairninstitute.com/Darwin/
 
 ## Facebook
 
-𝗡𝗲𝘄 𝗶𝗻 𝗗𝗮𝗿𝘄𝗶𝗻: 𝟭𝟬𝟬 𝘀𝘁𝗿𝘂𝗰𝘁𝘂𝗿𝗲𝗱 𝗴𝗲𝗻𝗲-𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀.
+𝗚𝗲𝗻𝗲 𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀, 𝗻𝗼𝘄 𝘄𝗶𝘁𝗵 𝗖𝗹𝗮𝘂𝗱𝗲, 𝗖𝗼𝗱𝗲𝘅, 𝗮𝗻𝗱 𝗡𝗲𝗺𝗼𝘁𝗿𝗼𝗻 𝘀𝘂𝗽𝗽𝗼𝗿𝘁.
 
 Darwin can now guide structured workflows across gene networks, regulons, expression, promoter and chromatin evidence, RNAi and CRISPR planning, cross-species comparison, and validation planning.
 
@@ -48,7 +48,7 @@ Explore Darwin: https://www.cairninstitute.com/Darwin/
 
 ### Post 1
 
-𝗗𝗮𝗿𝘄𝗶𝗻 𝗻𝗼𝘄 𝗵𝗮𝘀 𝟭𝟬𝟬 𝘀𝘁𝗿𝘂𝗰𝘁𝘂𝗿𝗲𝗱 𝗴𝗲𝗻𝗲-𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀.
+𝗚𝗲𝗻𝗲 𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀, 𝗻𝗼𝘄 𝘄𝗶𝘁𝗵 𝗖𝗹𝗮𝘂𝗱𝗲, 𝗖𝗼𝗱𝗲𝘅, 𝗮𝗻𝗱 𝗡𝗲𝗺𝗼𝘁𝗿𝗼𝗻 𝘀𝘂𝗽𝗽𝗼𝗿𝘁.
 
 From gene lists to upstream TFs, promoter evidence, RNAi/CRISPR choices, cross-species transfer, and validation plans: each step is an inspectable tool, not an improvised answer.
 
@@ -80,7 +80,7 @@ https://www.cairninstitute.com/Darwin/
 
 ### Post 1
 
-𝗗𝗮𝗿𝘄𝗶𝗻 𝗻𝗼𝘄 𝗼𝗳𝗳𝗲𝗿𝘀 𝟭𝟬𝟬 𝘀𝘁𝗿𝘂𝗰𝘁𝘂𝗿𝗲𝗱 𝗴𝗲𝗻𝗲-𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀.
+𝗚𝗲𝗻𝗲 𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀, 𝗻𝗼𝘄 𝘄𝗶𝘁𝗵 𝗖𝗹𝗮𝘂𝗱𝗲, 𝗖𝗼𝗱𝗲𝘅, 𝗮𝗻𝗱 𝗡𝗲𝗺𝗼𝘁𝗿𝗼𝗻 𝘀𝘂𝗽𝗽𝗼𝗿𝘁.
 
 They support network analysis, gene-set interpretation, chromatin and promoter evidence, RNAi/CRISPR planning, cross-species transfer, and validation design.
 
@@ -105,7 +105,7 @@ The goal is not a fluent black-box answer. It is an inspectable route from a res
 
 ### Post 1
 
-𝗗𝗮𝗿𝘄𝗶𝗻 𝗻𝗼𝘄 𝗵𝗮𝘀 𝟭𝟬𝟬 𝘀𝘁𝗿𝘂𝗰𝘁𝘂𝗿𝗲𝗱 𝘀𝗸𝗶𝗹𝗹𝘀 𝗳𝗼𝗿 𝗴𝗲𝗻𝗲-𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝗿𝗲𝘀𝗲𝗮𝗿𝗰𝗵.
+𝗚𝗲𝗻𝗲 𝗿𝗲𝗴𝘂𝗹𝗮𝘁𝗶𝗼𝗻 𝘀𝗸𝗶𝗹𝗹𝘀, 𝗻𝗼𝘄 𝘄𝗶𝘁𝗵 𝗖𝗹𝗮𝘂𝗱𝗲, 𝗖𝗼𝗱𝗲𝘅, 𝗮𝗻𝗱 𝗡𝗲𝗺𝗼𝘁𝗿𝗼𝗻 𝘀𝘂𝗽𝗽𝗼𝗿𝘁.
 
 They cover gene networks and regulons, expression and cell-state analysis, promoter and chromatin evidence, RNAi/CRISPR planning, cross-species transfer, and validation planning.
 
@@ -169,4 +169,3 @@ Link in bio. [BLOG URL]
 | Bluesky | No verified handle assumed |
 | Threads | No verified handle assumed |
 | Instagram | No verified handle assumed |
-

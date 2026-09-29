@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gene Regulation Skills: Now Supporting Claude, Codex, and Nemotron</title>
+  <style>
+    :root { --fg:#111827; --muted:#4b5563; --border:#d1d5db; --bg:#fff; --accent:#0f766e; --code-bg:#f3f4f6; }
+    html, body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.65; }
+    main { max-width:920px; margin:0 auto; padding:40px 24px 80px; }
+    h1,h2,h3 { line-height:1.25; margin-top:1.6em; margin-bottom:.6em; }
+    h1:first-child { margin-top:0; }
+    p,ul,table,blockquote { margin:0 0 1em; }
+    .meta { color:var(--muted); margin-bottom:.4em; }
+    .tags { color:var(--accent); font-weight:600; margin-bottom:1.4em; }
+    table { width:100%; border-collapse:collapse; font-size:.96rem; }
+    th,td { border:1px solid var(--border); padding:10px 12px; text-align:left; vertical-align:top; }
+    th { background:#f9fafb; }
+    code { background:var(--code-bg); padding:.1em .35em; border-radius:4px; font-size:.95em; }
+    .hero-link { display:inline-block; margin:.4em 0 1.2em; color:var(--accent); font-weight:700; text-decoration:none; }
+    .hero-link:hover { text-decoration:underline; }
+    .site-header { display:flex; align-items:center; justify-content:space-between; max-width:920px; margin:0 auto; padding:16px 24px; }
+    .site-header a { color:var(--fg); text-decoration:none; }
+    .logo-group { display:flex; align-items:center; gap:12px; }
+    .logo-group img { width:40px; height:40px; border-radius:6px; }
+    .logo-group span { font-size:1.1rem; font-weight:700; }
+    .site-header nav { display:flex; gap:24px; font-size:.95rem; }
+    .site-header nav a { color:var(--muted); }
+    .site-header nav a:hover { color:var(--accent); }
+    .header-rule { max-width:920px; margin:0 auto; border:0; border-top:1px solid var(--border); }
+    .callout { border-left:4px solid var(--accent); background:#f0fdfa; padding:14px 18px; margin:1.25em 0; }
+    .footer { margin-top:2.5em; color:var(--muted); font-size:.95rem; }
+    @media (max-width:640px) {
+      main { padding:28px 18px 56px; }
+      .site-header { padding:14px 18px; }
+      .site-header nav { gap:12px; font-size:.85rem; }
+      .site-header nav a:nth-child(2), .site-header nav a:nth-child(3) { display:none; }
+      table { font-size:.88rem; }
+      th,td { padding:8px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="https://www.cairninstitute.com/" class="logo-group">
+      <img src="https://www.cairninstitute.com/blogs/Darwin/darwin-release-update-blog/cairn-logo.jpg" alt="CAIRN Institute" />
+      <span>CAIRN Institute</span>
+    </a>
+    <nav>
+      <a href="https://www.cairninstitute.com/">Home</a>
+      <a href="https://www.cairninstitute.com/about">About</a>
+      <a href="https://www.cairninstitute.com/projects">Projects</a>
+      <a href="mailto:info@cairninstitute.com">Contact</a>
+    </nav>
+  </header>
+  <hr class="header-rule" />
+  <main>
+    <h1>Gene Regulation Skills: Now Supporting Claude, Codex, and Nemotron</h1>
+    <p class="meta">Author: CAIRN Institute</p>
+    <p class="meta">Published: September 29, 2026</p>
+    <p class="meta">Read time: 8&ndash;10 minutes</p>
+    <p class="tags">#Genomics #GeneRegulation #Bioinformatics #SystemsBiology #AIforScience #PlantScience</p>
+    <a class="hero-link" href="https://www.cairninstitute.com/Darwin/">Explore Darwin &rarr;</a>
+    <p class="meta"><em>Darwin is powered by the CAIRN Institute GRN Atlas.</em></p>
+
+    <h2>Quick Summary</h2>
+    <p>Darwin is a research system for working with gene regulatory networks: who regulates a gene, what evidence supports an edge, which regulators explain a gene set, what might change after perturbation, and which experiment is most useful next.</p>
+    <p>This release makes that system available as a structured skill layer for AI agents. Darwin now provides <strong>100 documented skills</strong>: <strong>99 callable research skills</strong> and one overview/router. The skills can be used through Claude, Codex, and Nemotron model workflows while exposing the atlas through defined tools rather than asking a model to improvise database queries or biological claims from memory.</p>
+
+    <table>
+      <thead><tr><th>Evaluation</th><th>What it measures</th><th>GPT-5.6 Terra</th></tr></thead>
+      <tbody>
+        <tr><td>Single-skill evaluation</td><td>Can the model choose and execute the right tool for one natural-language request?</td><td>386/386 (100%)</td></tr>
+        <tr><td>Orchestration evaluation</td><td>Can the model complete a multi-step research workflow, use the required tool chain, and produce the requested conclusion?</td><td>111/111 (100%)</td></tr>
+      </tbody>
+    </table>
+
+    <p>On the 111-task orchestration suite, Opus 4.6 reached <strong>107/111 (96.4%)</strong> and Nemotron-3 Ultra reached <strong>95/111 (85.6%)</strong>.</p>
+    <div class="callout"><strong>Scope:</strong> these are tool-use and workflow-reliability results. They do not establish that every network prediction is biologically correct. Biological validity requires the separate evidence, benchmark, and experimental layers in the atlas.</div>
+
+    <h2>Why a Skill Layer</h2>
+    <p>Gene-regulation questions are rarely one lookup. A researcher may begin with a set of differentially expressed genes, ask which transcription factors explain it, check whether the conclusion transfers to a different species, assess evidence for a candidate edge, and then choose between RNAi, CRISPR, or a promoter edit.</p>
+    <p>Darwin gives the agent specific operations, arguments, and return values for each task. That makes the work inspectable and lets us test the workflow rather than relying on an answer that merely sounds plausible.</p>
+
+    <h2>What Researchers Can Do</h2>
+    <table>
+      <thead><tr><th>Workflow area</th><th>What the skills support</th><th>Representative skills</th></tr></thead>
+      <tbody>
+        <tr><td>Find and inspect</td><td>Resolve gene names; retrieve networks, regulons, paths, subgraphs, modules, and network motifs.</td><td><code>gene search</code>, <code>network</code>, <code>regulon</code>, <code>pathfinding</code></td></tr>
+        <tr><td>Interpret a gene set</td><td>Import and normalize lists; identify upstream regulators; run GO, pathway, and trait enrichment; score TF or pathway activity.</td><td><code>dataset import</code>, <code>upstream</code>, <code>enrichment</code>, <code>TF activity</code></td></tr>
+        <tr><td>Add biological context</td><td>Retrieve expression and coexpression; compare tissues or cell types; analyze trajectories; inspect signaling-to-TF relationships.</td><td><code>expression</code>, <code>cell-type regulation</code>, <code>trajectory drivers</code></td></tr>
+        <tr><td>Evaluate evidence</td><td>Audit network, motif, chromatin, enhancer, perturbation, and multi-omic support for a gene or edge.</td><td><code>evidence audit</code>, <code>cis-support audit</code>, <code>multiome audit</code></td></tr>
+        <tr><td>Work with regulatory DNA</td><td>Query promoter motifs, map peaks to genes, inspect genomic context, prioritize promoter edits, and assess variants.</td><td><code>motif query</code>, <code>peak-gene linkage</code>, <code>variant effect</code></td></tr>
+        <tr><td>Design interventions</td><td>Predict perturbation consequences; compare combinations and modalities; design dsRNA or CRISPR guides; assess off-target risk.</td><td><code>perturbation</code>, <code>dsRNA</code>, <code>CRISPR design</code></td></tr>
+        <tr><td>Compare species</td><td>Find orthologs, assess edge conservation, quantify transfer risk, rescue sparse evidence, and assess readiness.</td><td><code>orthology</code>, <code>conservation</code>, <code>transferability</code></td></tr>
+        <tr><td>Decide and hand off</td><td>Rank candidates, identify the smallest defensible validation step, build plans, and preserve provenance.</td><td><code>candidate triage</code>, <code>decision boundary</code>, <code>validation plan</code></td></tr>
+      </tbody>
+    </table>
+
+    <h2>Single-Skill Testing</h2>
+    <p>The single-skill matrix contains <strong>386 natural-language cases</strong> spanning the full documented skill inventory. Each case checks whether the model selected the appropriate tool, supplied required arguments, successfully executed the tool against the atlas, and met task-specific output constraints where relevant.</p>
+    <p>GPT-5.6 Terra completed <strong>386/386</strong> cases. This is a validated composite result: 384 cases passed in the matrix run, and the final two were replayed after correcting a species-name boundary issue. The dsRNA API and grader now canonicalize standard scientific species synonyms; the dsRNA regression suite passed 10/10.</p>
+
+    <h2>Orchestration Testing</h2>
+    <p>The orchestration suite contains <strong>111 multi-step questions</strong>. They require the agent to select a sequence of skills, carry information from one step to the next, and state the requested conclusion in its final answer.</p>
+    <ul>
+      <li>Gene discovery followed by network, regulon, evidence, or enrichment analysis.</li>
+      <li>Imported omics data followed by differential, cell-state, trajectory, or TF activity analysis.</li>
+      <li>Promoter, motif, chromatin, and variant or edit-consequence follow-up.</li>
+      <li>RNAi or CRISPR design followed by off-target, perturbation, and pathway analysis.</li>
+      <li>Inferred-edge comparison followed by curated-network or module validation.</li>
+      <li>Orthology, conservation, transferability, and family-rescue analysis.</li>
+      <li>Phenotype-first candidate discovery, literature grounding, prioritization, readiness assessment, and validation planning.</li>
+      <li>Decision-boundary, counterfactual, calibration, and collaborator-handoff workflows.</li>
+    </ul>
+
+    <h2>Orchestration Results</h2>
+    <table>
+      <thead><tr><th>Model</th><th>Transport</th><th>Result</th><th>Interpretation</th></tr></thead>
+      <tbody>
+        <tr><td>GPT-5.6 Terra</td><td>ChatGPT-authenticated Codex CLI with structured MCP tools</td><td>111/111 (100%)</td><td>Validated composite result on the current routing and MCP configuration.</td></tr>
+        <tr><td>Opus 4.6</td><td>Claude CLI with native MCP tools</td><td>107/111 (96.4%)</td><td>Four misses were incomplete chains or semantically similar but incorrect tool choices.</td></tr>
+        <tr><td>Nemotron-3 Ultra</td><td>OpenRouter</td><td>95/111 (85.6%)</td><td>More incomplete multi-step work and final-synthesis errors.</td></tr>
+      </tbody>
+    </table>
+
+    <p>These differences are actionable. They identify where routing instructions, tool interfaces, or evaluation cases need further hardening.</p>
+
+    <h2>What These Results Mean</h2>
+    <p>The results support a narrow but important claim: with structured access to Darwin's research tools, models can be evaluated for reliable tool use and workflow completion rather than assessed only by the fluency of their prose.</p>
+    <p>They do not mean that an LLM has independently proved a regulatory edge, predicted an in vivo phenotype, or replaced a biological experiment. Darwin's outputs should be interpreted as atlas-grounded hypotheses with visible evidence, uncertainty, and follow-up steps.</p>
+
+    <h2>Practical Bottom Line</h2>
+    <p>Darwin now offers a structured route from a research question to a regulatory hypothesis, evidence audit, intervention plan, or collaborator-ready report across the atlas's supported species and data layers.</p>
+    <p>The strongest current tool-use result is GPT-5.6 Terra at <strong>386/386</strong> single-skill cases and <strong>111/111</strong> orchestration cases. Opus 4.6 and Nemotron-3 Ultra provide additional evidence that the skill layer is portable across model families, while also showing where longer research chains remain challenging.</p>
+
+    <p class="footer">Explore <a href="https://www.cairninstitute.com/Darwin/">Darwin</a> and learn more about the <a href="https://www.cairninstitute.com/">CAIRN Institute</a>.</p>
+  </main>
+</body>
+</html>
+
