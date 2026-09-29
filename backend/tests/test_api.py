@@ -374,6 +374,15 @@ def test_dsrna_design_mode(client):
     assert "sequence" in r["design"]
 
 
+def test_dsrna_normalizes_scientific_species_name(client):
+    _inject_transcripts(client)
+    r = client.post("/api/v1/dsrna", json={
+        "target_gene_id": "GX", "species": "Petunia axillaris",
+        "design_window": 40, "predict_effect": False}).json()
+    assert r["available"] is True
+    assert r["species"] == "petunia"
+
+
 def test_dsrna_screen_gene_set(client):
     _inject_transcripts(client)
     r = client.post("/api/v1/dsrna/screen", json={

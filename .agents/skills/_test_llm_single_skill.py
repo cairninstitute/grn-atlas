@@ -43,6 +43,14 @@ API_RETRIES = 6
 API_BACKOFF_S = 5
 API_TIMEOUT_S = 180
 
+SPECIES_ALIASES = {
+    "homo sapiens": "human",
+    "mus musculus": "mouse",
+    "arabidopsis thaliana": "arabidopsis",
+    "solanum lycopersicum": "tomato",
+    "petunia axillaris": "petunia",
+}
+
 sys.path.insert(0, str(SKILLS_DIR))
 from _test_llm_orchestration import TOOLS, execute_tool, SYSTEM_PROMPT, _tool_to_cli, resolve_provider, get_api_key
 
@@ -120,6 +128,11 @@ def _resolve_field(data, field):
     return obj
 
 
+def _canonical_species(value: str) -> str:
+    normalized = value.strip().lower().replace("_", " ")
+    return SPECIES_ALIASES.get(normalized, normalized)
+
+
 def evaluate_check(check: dict, tool_name: str | None, tool_args: dict, tool_data) -> tuple[str, bool]:
     """Evaluate a single check descriptor. Returns (description, passed)."""
     ct = check["type"]
@@ -134,6 +147,8 @@ def evaluate_check(check: dict, tool_name: str | None, tool_args: dict, tool_dat
         actual = tool_args.get(arg)
         desc = f"arg {arg}={val}"
         if isinstance(val, str) and isinstance(actual, str):
+            if arg == "species":
+                return desc, _canonical_species(actual) == _canonical_species(val)
             return desc, actual.lower() == val.lower()
         return desc, actual == val
 

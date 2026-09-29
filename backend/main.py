@@ -55,7 +55,14 @@ def _normalize_species_input(value: Optional[str]) -> Optional[str]:
     if value is None:
         return None
     normalized = value.strip().lower().replace("_", " ")
-    return normalized or None
+    aliases = {
+        "homo sapiens": "human",
+        "mus musculus": "mouse",
+        "arabidopsis thaliana": "arabidopsis",
+        "solanum lycopersicum": "tomato",
+        "petunia axillaris": "petunia",
+    }
+    return aliases.get(normalized, normalized) or None
 
 # ============= CORS Configuration =============
 app.add_middleware(
@@ -3344,7 +3351,7 @@ async def dsrna_analysis(request: DsRnaRequest):
     real RNAi knockdown also depends on dicing, delivery/SIGS uptake, target
     accessibility, and plant transitivity/amplification (not modelled).
     """
-    species = request.species
+    species = _normalize_species_input(request.species)
     if not species and request.target_gene_id:
         species = _species_of(request.target_gene_id)
     if not species:
@@ -3433,7 +3440,7 @@ async def dsrna_screen(request: DsRnaScreenRequest):
     ranked cleanest-first — so you can choose the best RNAi target(s) to alter a pathway.
     Optionally reports the predicted downstream effect of silencing the whole set.
     """
-    species = request.species
+    species = _normalize_species_input(request.species)
     genes = list(request.gene_ids or [])
     if request.pathway_id:
         rows = db.conn.execute(
@@ -3513,7 +3520,7 @@ class IsoformCoverageRequest(BaseModel):
 @app.post("/api/v1/dsrna/isoform-coverage")
 async def dsrna_isoform_coverage(request: IsoformCoverageRequest):
     """Check isoform-level coverage of a dsRNA on a target gene."""
-    species = request.species or _species_of(request.target_gene_id)
+    species = _normalize_species_input(request.species) or _species_of(request.target_gene_id)
     if not species:
         raise HTTPException(status_code=400, detail="species required")
 
