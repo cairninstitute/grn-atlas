@@ -11,8 +11,9 @@ Use Unicode bold characters where emphasis is desired. Do not use Markdown aster
 | `public/darwin-gene-regulation-skills-blog/social/darwin-skills-portrait-1080x1350.png` | 1080x1350 | Instagram feed, Threads |
 | `public/darwin-gene-regulation-skills-blog/social/darwin-skills-story-1080x1920.png` | 1080x1920 | Instagram Stories, Facebook Stories |
 
-The visuals are deliberately text-free. Use the exact benchmark figures in the
-caption or native platform text rather than adding generated image typography.
+The visuals are deliberately text-free and use a restrained methods-figure
+style rather than rendered molecular imagery. Use the exact benchmark figures
+in the caption or native platform text rather than adding generated typography.
 
 ## LinkedIn
 
