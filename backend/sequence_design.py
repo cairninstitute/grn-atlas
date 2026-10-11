@@ -2,7 +2,31 @@
 
 from __future__ import annotations
 
+import gzip
+import json
+from pathlib import Path
 from typing import Any
+
+_DATA_DIR = Path(__file__).parent / "data"
+_PWM_CACHE_PATH = _DATA_DIR / "motif_pwms.json.gz"
+_PWM_CACHE: dict | None = None
+
+_BASE_IDX = {"A": 0, "C": 1, "G": 2, "T": 3}
+_COMPLEMENT = {"A": "T", "T": "A", "C": "G", "G": "C", "N": "N"}
+
+
+def _load_pwm_cache() -> dict:
+    """Lazy-load the JASPAR log-odds cache produced by cache_motif_pwms.py."""
+    global _PWM_CACHE
+    if _PWM_CACHE is None:
+        if _PWM_CACHE_PATH.exists():
+            try:
+                _PWM_CACHE = json.loads(gzip.open(_PWM_CACHE_PATH, "rt").read())
+            except Exception:
+                _PWM_CACHE = {}
+        else:
+            _PWM_CACHE = {}
+    return _PWM_CACHE
 
 
 def variant_effect(db, gene_id: str, position: int, assembly: str | None = None,
@@ -55,6 +79,147 @@ def variant_effect(db, gene_id: str, position: int, assembly: str | None = None,
         "alt": alt,
         "results": hits,
         "warnings": [] if hits else ["no motif-supported promoter sites overlapped the requested position"],
+    }
+
+
+def allele_affinity(db, gene_id: str, position: int, ref: str, alt: str,
+                    assembly: str | None = None, window_type: str = "promoter",
+                    top: int = 20) -> dict[str, Any]:
+    """Quantitative allele-specific effect of a single-base promoter variant.
+
+    For every motif-supported site overlapping `position`, rescores the site with the
+    alternate base using the JASPAR log-odds matrix and reports the change in binding
+    score (delta_lod). Where the TF->gene edge sign is known, predicts the direction of
+    the resulting expression change. Degrades to overlap-only reporting when the PWM
+    cache is unavailable, so the answer never silently fabricates a score.
+    """
+    gene = db.get_gene(gene_id)
+    if not gene:
+        return {"gene_id": gene_id, "results": [], "warnings": ["gene not found"]}
+
+    ref = (ref or "").strip().upper()
+    alt = (alt or "").strip().upper()
+    if ref not in _BASE_IDX or alt not in _BASE_IDX:
+        return {"gene_id": gene_id, "results": [],
+                "warnings": ["ref and alt must each be a single DNA base (A/C/G/T)"]}
+
+    pwms = _load_pwm_cache()
+    rows = db.conn.execute(
+        "SELECT x.ext_gene_id, x.ext_assembly AS assembly, h.chromosome, h.start, h.end, "
+        "h.strand, h.motif_id, h.score, h.p_value, m.tf_gene_id, m.tf_symbol "
+        "FROM gene_id_crosswalk x "
+        "JOIN motif_hits h ON h.ext_gene_id = x.ext_gene_id AND h.assembly = x.ext_assembly "
+        "JOIN motifs m ON m.motif_id = h.motif_id "
+        "WHERE x.atlas_gene_id = ? AND h.window_type = ?",
+        (gene_id, window_type),
+    ).fetchall()
+    if assembly:
+        rows = [r for r in rows if r["assembly"] == assembly]
+
+    results = []
+    scored = 0
+    for r in rows:
+        if not (r["start"] <= position <= r["end"]):
+            continue
+        strand = r["strand"]
+        entry = {
+            "motif_id": r["motif_id"],
+            "tf_gene_id": r["tf_gene_id"],
+            "tf_symbol": r["tf_symbol"],
+            "assembly": r["assembly"],
+            "chromosome": r["chromosome"],
+            "site_start": r["start"],
+            "site_end": r["end"],
+            "strand": strand,
+            "ref_site_score": r["score"],
+            "p_value": r["p_value"],
+        }
+
+        pwm = pwms.get(r["motif_id"])
+        # Map variant position to a PWM column, oriented to the site's strand.
+        col = (position - r["start"]) if strand != -1 else (r["end"] - position)
+        if pwm and 0 <= col < pwm["width"]:
+            ref_b = ref if strand != -1 else _COMPLEMENT[ref]
+            alt_b = alt if strand != -1 else _COMPLEMENT[alt]
+            lom_col = pwm["lom"][col]
+            ref_lod = lom_col[_BASE_IDX[ref_b]]
+            alt_lod = lom_col[_BASE_IDX[alt_b]]
+            delta = round(alt_lod - ref_lod, 4)
+            alt_score = round(r["score"] + delta, 4)
+            if delta <= -0.5:
+                call = "weakens_binding"
+            elif delta >= 0.5:
+                call = "strengthens_binding"
+            else:
+                call = "little_effect"
+            # Below-background alt score on a previously-bound site => likely loss of the site.
+            likely_loss = bool(alt_score < 0 and delta < 0)
+            entry.update({
+                "scored": True,
+                "pwm_column": col,
+                "ref_lod": round(ref_lod, 4),
+                "alt_lod": round(alt_lod, 4),
+                "delta_lod": delta,
+                "alt_site_score": alt_score,
+                "call": call,
+                "likely_site_loss": likely_loss,
+            })
+            scored += 1
+
+            # Predicted expression direction, only when the edge sign is curated (measured).
+            # Expression correlation is NOT used to assert a direction (validated as
+            # uninformative); it is surfaced as weak context only.
+            sign = db.get_edge_sign(r["tf_gene_id"], gene_id)
+            if (sign and sign["sign"] in ("activation", "repression")
+                    and sign["sign_evidence"] in ("measured", "perturbation")
+                    and call != "little_effect"):
+                weaker = call == "weakens_binding"
+                if sign["sign"] == "activation":
+                    direction = "decrease" if weaker else "increase"
+                else:
+                    direction = "increase" if weaker else "decrease"
+                entry["predicted_target_effect"] = {
+                    "direction": direction,
+                    "edge_sign": sign["sign"],
+                    "sign_evidence": sign["sign_evidence"],
+                }
+            else:
+                entry["predicted_target_effect"] = {
+                    "direction": "unknown",
+                    "coexpression_r": sign["coexpression_r"] if sign else None,
+                    "note": "No curated TF->gene regulatory sign; only the binding-change "
+                            "magnitude is asserted (coexpression_r is weak context, not a direction)",
+                }
+        else:
+            entry["scored"] = False
+            entry["note"] = ("PWM not cached for this motif" if not pwm
+                             else "variant maps outside the motif matrix columns")
+        results.append(entry)
+
+    results.sort(key=lambda e: (not e.get("scored"), -abs(e.get("delta_lod", 0.0))))
+    warnings = []
+    if not pwms:
+        warnings.append("PWM cache unavailable (run cache_motif_pwms.py); overlap-only, no scores computed")
+    if not results:
+        warnings.append("no motif-supported promoter sites overlapped the requested position")
+
+    return {
+        "gene_id": gene_id,
+        "symbol": gene.symbol,
+        "species": gene.species,
+        "position": position,
+        "assembly": assembly,
+        "ref": ref,
+        "alt": alt,
+        "n_sites": len(results),
+        "n_scored": scored,
+        "results": results[:top],
+        "method": "JASPAR log-odds single-base rescoring (uniform 0.25 background, pseudocount 0.8)",
+        "caveats": [
+            "The reference base is assumed to match the site; genomic sequence is not re-verified here.",
+            "delta_lod is the change in log2 binding odds at the variant column; it is a predicted, not measured, effect.",
+        ],
+        "warnings": warnings,
     }
 
 

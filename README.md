@@ -35,37 +35,55 @@ that local build.
 
 ## Quick start (a fresh clone)
 
-Prereqs: **Python 3.10+**, **Node 18+**, `git`, network access (for the source fetch).
+Prereqs: **Python 3.10+**, **Node 18+**, `git`, `curl`, network access.
+
+**One command builds everything:**
 
 ```bash
 git clone <this-repo> grn-atlas && cd grn-atlas
-
-# 1. Backend deps
-python3 -m venv venv
-venv/bin/pip install -r backend/requirements.txt
-
-# 2. Fetch the source data (this repo does NOT redistribute third-party data), then build the DB
-venv/bin/python backend/scripts/fetch_sources.py --tier light   # pulls sources into backend/data/ and bootstraps an intermediate DB on fresh clones
-venv/bin/python backend/scripts/build_db.py                      # final rebuild -> backend/data/grn.sqlite3 (gitignored)
-
-# 3. Enrich: ConnecTF edges (~309K), display names, curated pathway overrides
-#    Download ConnecTF data first (one-time, ~200 MB — optional but recommended):
-#    curl -L -o /tmp/connectf_data.tar.gz https://connectf.s3.amazonaws.com/connectf_data_release_v1.tar.gz
-#    tar xzf /tmp/connectf_data.tar.gz -C /tmp
-make enrich
-
-# 4. Run the API (http://localhost:8000, docs at /docs)
-cd backend && ../venv/bin/python -m uvicorn main:app --port 8000
-
-# 5. In another shell: run the UI (http://localhost:3001, proxies /api to :8000)
-npm install && npm run dev
+make bootstrap        # venv + deps, fetch sources, build DB, signs, perturbation ground-truth,
+                      # tissue weights, ConnecTF edges+perturbations, JASPAR PWMs, DAP-seq peaks
 ```
 
-Or with the Makefile: `make setup && make fetch && make db && make enrich && make tissue-weights`, then
-`make backend` and (elsewhere) `make frontend`. To add inferred regulatory edges from
-expression data: `make infer` (runs GRNBoost2 + GENIE3, ~15 min), then `make db` again to
-load them. After building: `make validate` (network validation) and `make benchmark`
-(AUROC/AUPRC benchmarks).
+`make bootstrap` runs, in order: `setup` → `fetch` → `db` → `enrich` → `knocktf` →
+`allele-pwms` → `chromatin-peaks`. Every third-party download (ConnecTF ~200 MB, KnockTF
+~90 MB, Plant Cistrome DAP-seq ~74 MB, JASPAR PWMs) is fetched automatically; the optional network layers self-skip if a
+download is unavailable, so a transient outage never hard-fails the build (the atlas still
+works, just with that layer empty). Each step is independently re-runnable (see `make help`).
+
+This yields a working atlas with every skill functional. Two things are **not** in the
+automatic build and remain as documented optional steps: the full-size **measured Arabidopsis
+network** (one manual file) and the **heavy expression/motif layers** (kallisto/BLAST, hours) —
+see [Caveats](#️-caveats-know-these-before-relying-on-a-fresh-clone). Without them the atlas is
+reduced, not broken.
+
+Then run the app:
+
+```bash
+make backend          # FastAPI on http://localhost:8000 (docs at /docs)
+make frontend         # in another shell: Vite UI on http://localhost:3001 (proxies /api)
+```
+
+Verify the build: `make test-backend` (expect **342 passed**) and
+`make test-skills` (expect **342 passed**).
+
+<details><summary>Equivalent step-by-step (if you prefer to run stages individually)</summary>
+
+```bash
+make setup                                                       # venv + backend/frontend deps
+venv/bin/python backend/scripts/fetch_sources.py --tier light    # third-party sources -> backend/data/
+make db            # build_db + infer_edge_signs + validate_edge_signs + load_perturbation_truth + tissue-weights
+make enrich        # auto-downloads ConnecTF, loads edges + TF-perturbation observations + perturbation signs
+make knocktf       # auto-downloads KnockTF loss-of-function perturbations; re-derives perturbation signs
+make allele-pwms   # cache JASPAR PWMs for grn-allele-affinity
+make chromatin-peaks   # auto-downloads Plant Cistrome DAP-seq peaks (GSE60143)
+```
+
+</details>
+
+To add inferred regulatory edges from expression data: `make infer` (runs GRNBoost2 + GENIE3,
+~15 min), then `make db` again to load them. After building: `make validate` (network
+validation) and `make benchmark` (AUROC/AUPRC benchmarks).
 
 > **Data is not committed.** Third-party data (each under its own upstream licence — see
 > LICENSE) is fetched from source by `fetch_sources.py`; the ~420 MB SQLite DB is then built
@@ -126,7 +144,9 @@ confirm the build is complete.
 | light | `fetch_sources.py --tier light` | + pathways, traits, PlantRegMap regulation (tomato/petunia/potato/tobacco/rice), curated symbols, tobacco BLAST orthologs | mostly | network; BLAST+ for petunia symbols + tobacco orthologs |
 | manual core | *(see below)* | **measured Arabidopsis network** + ATRM direction labels → Arabidopsis multi-evidence + tomato/petunia/pepper/rice projection | **no** | manual download |
 | heavy | `fetch_expression.py`, `motif_scan.py` | expression + predicted binding | **no** | kallisto / BLAST+, hours, GBs |
-| enrich | `make enrich` | ConnecTF edges (~309K), display names, curated pathway overrides | mostly | built DB; ConnecTF tarball in `/tmp` (optional) |
+| enrich | `make enrich` | ConnecTF edges (~309K) + TF-perturbation DEGs (~116K observations), display names, curated pathway overrides | mostly | built DB; ConnecTF tarball in `/tmp` (optional) |
+| chromatin-peaks | `make chromatin-peaks` | Arabidopsis DAP-seq peaks (Plant Cistrome GSE60143): ~179K peaks, peak-gene links, cis-support edges (389 TFs) | yes | built DB + network (~74 MB) |
+| knocktf | `make knocktf` | KnockTF 2.0 loss-of-function TF-perturbation DEGs (~107K obs); re-derives perturbation signs | yes | built DB + network (~90 MB) |
 | tissue-weights | `make tissue-weights` | per-tissue coexpression weights for edges (petunia, tomato, arabidopsis) | yes | built DB + expression data |
 | validate | `make validate` | gold-standard recall/specificity + population-level statistical validation | yes | built DB |
 | benchmark | `make benchmark` | BEELINE-style AUROC/AUPRC against independent ground truth | yes | built DB |
@@ -297,13 +317,13 @@ complementary algorithms:
 - **GENIE3** — random forest regression per target gene (~4 min/species)
 
 Both use the existing RNA-seq expression matrices (arabidopsis 18 samples, tomato 20,
-petunia 29) with known TFs as candidate regulators. Edges are precomputed by
+petunia 43 — all P. axillaris) with known TFs as candidate regulators. Edges are precomputed by
 `backend/scripts/infer_grn.py`, stored in the `inferred_edges` SQLite table (100K edges
 per method per species, 600K total), and queryable by gene, direction, method, and
 importance threshold. The `--compare-curated` flag cross-references inferred edges against
 the curated network to identify which predictions have independent experimental support.
 
-**Caveat:** With only 18–29 samples, these predictions are noisy. Feature importance scores
+**Caveat:** With only 18–43 samples, these predictions are noisy. Feature importance scores
 range 0–0.73 (not the unbounded scores from dask-based GRNBoost2). All inferred edges are
 clearly labeled `Inferred:GRNBoost2` or `Inferred:GENIE3` and never mixed with curated
 edges without distinction.
@@ -344,9 +364,9 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 
 ### Complete skill inventory
 
-The repository currently contains **100 documented GRN Atlas skills**:
+The repository currently contains **106 documented GRN Atlas skills**:
 
-- **99 callable analysis/workflow skills**
+- **105 callable analysis/workflow skills**
 - **1 overview/router skill**: `grn-atlas-overview`
 
 The full live inventory, with every skill name and current description, is maintained in:
@@ -366,7 +386,7 @@ venv/bin/python .agents/skills/grn-upstream/scripts/run.py --http http://localho
   --gene-ids "BAX,BCL2,CDKN1A,MDM2"
 
 # Run legacy skill harnesses
-venv/bin/python .agents/skills/_test_all_skills.py       # 319 direct tests across 41 skills
+venv/bin/python .agents/skills/_test_all_skills.py       # 342 direct tests across 48 skills
 venv/bin/python .agents/skills/_test_all_skills_http.py  # 83 HTTP tests across 41 skills (server must be running)
 venv/bin/python .agents/skills/_test_integration.py      # 49 integration tests (cross-skill, adversarial, perf, idempotency)
 npx playwright test                                       # 22 browser e2e tests (server must be running)
@@ -397,13 +417,13 @@ orchestration. The current repo status as of **Saturday, August 22, 2026** is:
 | **Multi-skill orchestration (GPT-5.4 full rerun)** | 111 | 111 | 100% (111/111) | Latest full GPT-5.4 rerun on Saturday, August 22, 2026 across the current 111-question orchestration matrix |
 | **Multi-skill orchestration (Nemotron partial rerun)** | 40 | 37 | 92.5% (37/40) | Latest Saturday, August 22, 2026 paced partial rerun before provider/model exit; useful as a health check, not a full benchmark |
 
-All **100 documented skills** are documented in-repo. The older direct/HTTP harnesses still
+All **106 documented skills** are documented in-repo. The older direct/HTTP harnesses still
 cover the legacy 41-skill subset, while the current skill inventory, coverage audit, and LLM matrices
 cover the current expanded surface.
 
 Current automated coverage boundary:
 
-- legacy direct skill harness: **41 callable skills**, **319/319 PASS**
+- direct skill harness: **48 callable skills**, **342/342 PASS**
 - legacy HTTP skill harness: **41 callable skills**, **83/83 PASS**
 - historical direct HTTP all-skill pass: **90/90 PASS** on the Aug. 21, 2026 90-skill inventory snapshot
 - natural-language single-skill inventory: **386 cases**, **100/100 skills covered**

@@ -18,13 +18,13 @@ Every cell in this heatmap is a story. The bright ones tell you where regulatory
 
 The dark cells are just as interesting. WRKY and NAC — two of the largest plant TF families — are completely absent in human and mouse. Plants invented entire regulatory systems that animals never evolved. Meanwhile, E2F and GATA span both kingdoms, pointing to ancient regulatory architecture that predates the plant-animal split.
 
-Toggle from TF count to "Targets" and the picture shifts. Some small families regulate thousands of genes — punching far above their weight. NF-Y has only 3 members in Arabidopsis but controls over 19,000 targets. Other large families have surprisingly narrow regulatory footprints.
+Toggle from TF count to "Targets" and the picture shifts. Some small families regulate thousands of genes — punching far above their weight. NF-Y has only 3 members in Arabidopsis but controls over 2,300 targets. Other large families have surprisingly narrow regulatory footprints.
 
 Toggle to "Edges" and you see wiring density — which families are deeply connected vs. sparsely wired.
 
 The conservation column reveals which families are universal (8/8 species) vs. lineage-specific (plant-only, or even single-species). That's the difference between conserved biology and evolutionary innovation.
 
-This isn't a static figure from a paper. It's a live query across 1.78 million regulatory interactions. Every number is backed by traceable evidence.
+This isn't a static figure from a paper. It's a live query across 1.47 million regulatory interactions. Every number is backed by traceable evidence.
 
 Why it matters: if you're working on a TF family, this view tells you instantly which species have data, how active that family is, and whether cross-species comparisons are possible. In 30 seconds, you get the context that would take hours of literature review.
 
@@ -53,7 +53,7 @@ Meanwhile, E2F and GATA are shared across both kingdoms, pointing to regulatory 
 
 Toggle between TF count, target count, and edge count to see which families are large vs. which are actually the most active regulators. Some small families punch way above their weight.
 
-This is a live query against 1.78 million regulatory interactions — not a static figure.
+This is a live query against 1.47 million regulatory interactions — not a static figure.
 
 Try it: https://cairninstitute.com/Darwin/
 Source: https://github.com/cairninstitute/grn-atlas
@@ -79,13 +79,13 @@ Plants invented entire regulatory systems animals never evolved. You can see it 
 **Post 3:**
 Toggle to "Targets" and the picture shifts:
 
-NF-Y: only 3 TFs in Arabidopsis, but 19,000+ targets
+NF-Y: only 3 TFs in Arabidopsis, but 2,300+ targets
 Some huge families have surprisingly narrow footprints
 
 Size ≠ regulatory activity. Now you can see both.
 
 **Post 4:**
-Live query across 1.78M regulatory interactions. Not a static figure.
+Live query across 1.47M regulatory interactions. Not a static figure.
 
 cairninstitute.com/Darwin/
 github.com/cairninstitute/grn-atlas
@@ -108,9 +108,9 @@ WRKY and NAC — absent in animals. E2F and GATA — shared across kingdoms.
 cairninstitute.com/Darwin/
 
 **Post 2:**
-Toggle between TF count, targets, and edges. Some small families regulate thousands of genes. NF-Y: 3 TFs in Arabidopsis → 19K targets. Size ≠ regulatory activity.
+Toggle between TF count, targets, and edges. Some small families regulate thousands of genes. NF-Y: 3 TFs in Arabidopsis → 2,300+ targets. Size ≠ regulatory activity.
 
-1.78M interactions, live query. Not a static figure.
+1.47M interactions, live query. Not a static figure.
 
 github.com/cairninstitute/grn-atlas
 
@@ -141,10 +141,10 @@ What does the regulatory architecture of life look like?
 What you'll see:
 - Plants invented entire TF families (WRKY, NAC) that animals never evolved
 - E2F and GATA span both kingdoms — ancient regulatory machinery predating the plant-animal split
-- Toggle to "Targets" to see which families punch above their weight: NF-Y has only 3 TFs in Arabidopsis but controls 19,000+ genes
+- Toggle to "Targets" to see which families punch above their weight: NF-Y has only 3 TFs in Arabidopsis but controls 2,300+ genes
 - Conservation column shows which families are universal (8/8) vs. lineage-specific
 
-This is a live query across 1.78 million regulatory interactions, not a static figure from a paper. Every number is backed by traceable evidence in Darwin.
+This is a live query across 1.47 million regulatory interactions, not a static figure from a paper. Every number is backed by traceable evidence in Darwin.
 
 If you work on transcription factors, this view tells you in 30 seconds which species have data for your family and whether cross-species comparison is possible.
 
@@ -170,14 +170,14 @@ cairninstitute.com/Darwin/
 **Post 2:**
 The real insight comes when you toggle views.
 
-TF count shows family size. But switch to "Targets" and the picture changes — some small families regulate thousands of genes. NF-Y: 3 TFs in Arabidopsis → 19,000+ targets. Switch to "Edges" and you see wiring density.
+TF count shows family size. But switch to "Targets" and the picture changes — some small families regulate thousands of genes. NF-Y: 3 TFs in Arabidopsis → 2,300+ targets. Switch to "Edges" and you see wiring density.
 
 Size, activity, and connectivity tell three different stories. Now you can see all three.
 
 github.com/cairninstitute/grn-atlas
 
 **Post 3:**
-This isn't a static figure from a review paper. It's a live query across 1.78 million regulatory interactions.
+This isn't a static figure from a review paper. It's a live query across 1.47 million regulatory interactions.
 
 If you work on a TF family, this view tells you in 30 seconds which species have data and whether cross-species comparisons are viable.
 

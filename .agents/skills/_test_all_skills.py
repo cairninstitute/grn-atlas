@@ -291,15 +291,18 @@ results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "AT1G49720", "--direction", "targets"],
               "network: ABF1 targets")
+# Floors, not exact counts: the optional ConnecTF enrich layer legitimately adds Arabidopsis
+# edges, so these grow in a bootstrapped atlas. >= catches under-counting while staying robust
+# to which optional layers are loaded.
 grade(r, [
-    ("1458 targets", lambda d: len(d["targets"]) == 1458),
+    (">=1458 targets", lambda d: len(d["targets"]) >= 1458),
 ])
 results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "AT1G49720", "--direction", "regulators"],
               "network: ABF1 regulators")
 grade(r, [
-    ("48 regulators", lambda d: len(d["regulators"]) == 48),
+    (">=48 regulators", lambda d: len(d["regulators"]) >= 48),
 ])
 results.append(r)
 
@@ -313,8 +316,8 @@ results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "AT5G11260"], "network: HY5 both")
 grade(r, [
-    ("53 regulators", lambda d: len(d["regulators"]) == 53),
-    ("231 targets", lambda d: len(d["targets"]) == 231),
+    (">=53 regulators", lambda d: len(d["regulators"]) >= 53),
+    (">=231 targets", lambda d: len(d["targets"]) >= 231),
     ("PIF4 regulates HY5", lambda d: any(r.get("symbol") == "PIF4" or r.get("id") == "AT2G43010" for r in d["regulators"])),
 ])
 results.append(r)
@@ -342,7 +345,7 @@ results.append(r)
 
 r = run_skill("grn-network", ["--gene-id", "AT5G13930"], "network: gene with 0 targets")
 grade(r, [
-    ("79 regulators", lambda d: len(d["regulators"]) == 79),
+    (">=79 regulators", lambda d: len(d["regulators"]) >= 79),
     ("0 targets", lambda d: len(d["targets"]) == 0),
 ])
 results.append(r)
@@ -2796,6 +2799,269 @@ r = run_skill("grn-evidence-synthesis",
 grade(r, [
     ("has overall caveats", lambda d: len(d.get("overall_caveats", [])) > 0),
     ("candidate has reporting caveats", lambda d: len(d.get("candidate_syntheses", [{}])[0].get("reporting_caveats", [])) > 0),
+])
+results.append(r)
+
+# =====================================================================
+# grn-allele-affinity (6 tests)
+# =====================================================================
+
+r = run_skill("grn-allele-affinity",
+              ["--gene-id", "AT1G01020", "--position", "11100", "--ref", "C", "--alt", "A"],
+              "allele-affinity: ERF2 site C>A weakens binding")
+grade(r, [
+    ("at least one site scored", lambda d: d["n_scored"] >= 1),
+    ("top site was scored", lambda d: d["results"][0]["scored"] is True),
+    ("top site weakens binding", lambda d: d["results"][0]["call"] == "weakens_binding"),
+    ("delta_lod is negative", lambda d: d["results"][0]["delta_lod"] < 0),
+    ("reports JASPAR rescoring method", lambda d: "JASPAR" in d["method"]),
+])
+results.append(r)
+
+r = run_skill("grn-allele-affinity",
+              ["--gene-id", "AT1G04400", "--position", "1190200", "--ref", "A", "--alt", "T"],
+              "allele-affinity: measured-sign predicted expression direction")
+grade(r, [
+    ("sites scored", lambda d: d["n_scored"] >= 1),
+    ("a measured-sign site predicts a direction",
+     lambda d: any(s.get("predicted_target_effect", {}).get("direction") in ("increase", "decrease")
+                   and s["predicted_target_effect"].get("sign_evidence") == "measured"
+                   for s in d["results"])),
+])
+results.append(r)
+
+r = run_skill("grn-allele-affinity",
+              ["--gene-id", "AT1G01020", "--position", "11100", "--ref", "C", "--alt", "C"],
+              "allele-affinity: ref==alt is little/no effect")
+grade(r, [
+    ("no-change variant has ~zero delta",
+     lambda d: all(abs(s.get("delta_lod", 0.0)) < 1e-6 for s in d["results"] if s.get("scored"))),
+])
+results.append(r)
+
+r = run_skill("grn-allele-affinity",
+              ["--gene-id", "AT1G01020", "--position", "11100", "--ref", "X", "--alt", "A"],
+              "allele-affinity: invalid base warns")
+grade(r, [
+    ("invalid base produces a warning", lambda d: len(d.get("warnings", [])) > 0),
+    ("no results for invalid base", lambda d: len(d.get("results", [])) == 0),
+])
+results.append(r)
+
+r = run_skill("grn-allele-affinity",
+              ["--gene-id", "AT1G01020", "--position", "999999999", "--ref", "C", "--alt", "A"],
+              "allele-affinity: position overlapping nothing")
+grade(r, [
+    ("no overlapping sites", lambda d: d["n_sites"] == 0),
+    ("warns about no overlap", lambda d: len(d.get("warnings", [])) > 0),
+])
+results.append(r)
+
+r = run_skill("grn-allele-affinity",
+              ["--gene-id", "NOT_A_GENE_XYZ", "--position", "100", "--ref", "C", "--alt", "A"],
+              "allele-affinity: unknown gene handled")
+grade(r, [
+    ("unknown gene warns", lambda d: len(d.get("warnings", [])) > 0),
+])
+results.append(r)
+
+# =====================================================================
+# grn-gwas-to-mechanism (4 tests)
+# =====================================================================
+
+r = run_skill("grn-gwas-to-mechanism", ["--gene", "HY5", "--species", "arabidopsis", "--top", "5"],
+              "gwas-mechanism: HY5 TF downstream program")
+grade(r, [
+    ("resolves HY5", lambda d: d["symbol"] == "HY5"),
+    ("is a TF", lambda d: d["is_tf"] is True),
+    ("has a downstream program", lambda d: d["n_downstream_total"] > 0),
+    ("downstream entries carry a sign field", lambda d: all("sign_evidence" in t for t in d["downstream_program"])),
+    ("has upstream regulators", lambda d: d["n_upstream_total"] > 0),
+])
+results.append(r)
+
+r = run_skill("grn-gwas-to-mechanism", ["--gene", "APOE", "--species", "human", "--top", "5"],
+              "gwas-mechanism: APOE trait associations present")
+grade(r, [
+    ("resolves APOE", lambda d: d["symbol"] == "APOE"),
+    ("has trait associations", lambda d: d["n_trait_associations"] > 0),
+    ("trait link interpretation mentions GWAS", lambda d: "GWAS" in d["interpretation"]["trait_link"]),
+])
+results.append(r)
+
+r = run_skill("grn-gwas-to-mechanism", ["--gene", "APOE", "--species", "human"],
+              "gwas-mechanism: non-TF has no downstream program")
+grade(r, [
+    ("APOE is not a TF", lambda d: d["is_tf"] is False),
+    ("no downstream program", lambda d: len(d["downstream_program"]) == 0),
+])
+results.append(r)
+
+r = run_skill("grn-gwas-to-mechanism", ["--gene", "TP53", "--species", "human", "--top", "5"],
+              "gwas-mechanism: TP53 regulators and targets")
+grade(r, [
+    ("resolves TP53", lambda d: d["symbol"] == "TP53"),
+    ("has caveats", lambda d: len(d.get("caveats", [])) >= 1),
+])
+results.append(r)
+
+# =====================================================================
+# grn-biosafety-screen (4 tests)
+# =====================================================================
+
+r = run_skill("grn-biosafety-screen",
+              ["--target-gene-id", "AT1G01060", "--intended-species", "arabidopsis"],
+              "biosafety: design + cross-species screen")
+grade(r, [
+    ("has an overall risk class", lambda d: d["overall_risk"] in ("none", "low", "moderate", "high")),
+    ("intended species is screened and flagged intended",
+     lambda d: any(s["species"] == "arabidopsis" and s["intended"] for s in d["species_screened"])),
+    ("other plant transcriptomes are screened",
+     lambda d: {s["species"] for s in d["species_screened"]} >= {"arabidopsis", "tomato", "petunia"}),
+    ("species without transcriptomes are listed unscreened",
+     lambda d: "human" in d["species_not_screened"]),
+    ("coverage note states non-target organisms are not assessed",
+     lambda d: "NOT assessed" in d["coverage_note"]),
+])
+results.append(r)
+
+r = run_skill("grn-biosafety-screen",
+              ["--sequence", "A" * 60, "--intended-species", "arabidopsis"],
+              "biosafety: explicit sequence screened")
+grade(r, [
+    ("reports dsrna length", lambda d: d["dsrna_length"] == 60),
+    ("screened at least one transcriptome", lambda d: len(d["species_screened"]) >= 1),
+])
+results.append(r)
+
+r = run_skill("grn-biosafety-screen",
+              ["--sequence", "ACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGT",
+               "--intended-species", "tomato"],
+              "biosafety: tomato intended species")
+grade(r, [
+    ("tomato flagged intended",
+     lambda d: any(s["species"] == "tomato" and s["intended"] for s in d["species_screened"])),
+    ("has caveats about non-guarantee",
+     lambda d: any("guarantee" in c.lower() for c in d["caveats"])),
+])
+results.append(r)
+
+r = run_skill("grn-biosafety-screen",
+              ["--intended-species", "arabidopsis"],
+              "biosafety: missing sequence and target errors cleanly")
+grade(r, [
+    ("errors without a sequence or target", lambda d: "error" in d or "detail" in d),
+])
+results.append(r)
+
+# =====================================================================
+# grn-phenotype-targeting (2 tests)
+# =====================================================================
+
+r = run_skill("grn-phenotype-targeting",
+              ["--species", "petunia", "--phenotype", "flower color", "--max-candidates", "3"],
+              "phenotype-targeting: petunia flower color")
+grade(r, [
+    ("echoes species", lambda d: d.get("species") == "petunia"),
+    ("returns atlas-grounded candidate structure", lambda d: "atlas_grounded_candidates" in d),
+    ("returns a candidate gene id list", lambda d: isinstance(d.get("candidate_gene_ids"), list)),
+])
+results.append(r)
+
+r = run_skill("grn-phenotype-targeting",
+              ["--species", "arabidopsis", "--phenotype", "drought tolerance",
+               "--intent", "rnai", "--max-candidates", "3"],
+              "phenotype-targeting: arabidopsis drought, rnai intent")
+grade(r, [
+    ("echoes intent", lambda d: d.get("intent") == "rnai"),
+    ("has a ranking profile or candidates", lambda d: "ranking_profile" in d or "atlas_grounded_candidates" in d),
+])
+results.append(r)
+
+# =====================================================================
+# grn-network-control (3 tests)
+# =====================================================================
+
+r = run_skill("grn-network-control",
+              ["--target-genes", "AT2G42540,AT1G20440,AT5G52310,AT3G26830,AT2G30770",
+               "--species", "arabidopsis", "--max-drivers", "5", "--min-confidence", "0.0"],
+              "network-control: cover a 5-gene arabidopsis program")
+grade(r, [
+    ("resolves 5 targets", lambda d: d["n_targets"] == 5),
+    ("covers at least one target", lambda d: d["n_targets_covered"] >= 1),
+    ("returns a driver set", lambda d: d["driver_set_size"] >= 1),
+    ("each covered target has a recommendation",
+     lambda d: all("recommendation" in t for drv in d["driver_set"] for t in drv["targets"])),
+])
+results.append(r)
+
+r = run_skill("grn-network-control",
+              ["--target-genes", "ABCA1,ABCB1,ABCB8", "--species", "human",
+               "--desired-direction", "down", "--max-drivers", "3", "--min-confidence", "0.0"],
+              "network-control: sign-aware direction (human, push down)")
+grade(r, [
+    ("has a driver set", lambda d: d["driver_set_size"] >= 1),
+    ("reports desired direction", lambda d: d["desired_direction"] == "down"),
+    ("any recommendation is a concrete action or unresolved",
+     lambda d: all(t["recommendation"].get("action") in ("overexpress", "knockdown", "perturb")
+                   for drv in d["driver_set"] for t in drv["targets"])),
+])
+results.append(r)
+
+r = run_skill("grn-network-control",
+              ["--target-genes", "NOT_A_GENE_XYZ,AT5G11260", "--species", "arabidopsis",
+               "--min-confidence", "0.0"],
+              "network-control: unresolved input reported")
+grade(r, [
+    ("unresolved input listed", lambda d: "NOT_A_GENE_XYZ" in d.get("unresolved_inputs", [])),
+])
+results.append(r)
+
+# =====================================================================
+# grn-differential-network (2 tests)
+# =====================================================================
+
+r = run_skill("grn-differential-network",
+              ["--species", "petunia", "--tissue-a", "corolla_lobes", "--tissue-b", "style_long"],
+              "differential-network: petunia corolla vs style")
+grade(r, [
+    ("compares edges", lambda d: d["n_edges_compared"] > 0),
+    ("reports gained/strengthened counts",
+     lambda d: "n_gained_in_a" in d and "n_strengthened_in_a" in d),
+    ("no error", lambda d: "error" not in d),
+])
+results.append(r)
+
+r = run_skill("grn-differential-network",
+              ["--species", "petunia", "--tissue-a", "bogus_tissue", "--tissue-b", "style_long"],
+              "differential-network: invalid tissue lists options")
+grade(r, [
+    ("reports tissue not available", lambda d: d.get("error") == "tissue not available"),
+    ("returns available tissues", lambda d: isinstance(d.get("available_tissues"), list) and len(d["available_tissues"]) > 0),
+])
+results.append(r)
+
+# =====================================================================
+# grn-dynamics (2 tests)
+# =====================================================================
+
+r = run_skill("grn-dynamics",
+              ["--genes", "AT5G04760,AT1G01780,AT1G03360,AT1G07830,AT1G09800,AT1G10360,AT1G13550",
+               "--species", "arabidopsis"],
+              "dynamics: signed module reaches an attractor")
+grade(r, [
+    ("has signed edges", lambda d: d.get("n_signed_edges", 0) >= 1),
+    ("reports an attractor type",
+     lambda d: d.get("attractor", {}).get("type") in ("fixed_point", "cycle", "no_convergence")),
+    ("reports signed coverage", lambda d: 0.0 <= d.get("signed_coverage", -1) <= 1.0),
+])
+results.append(r)
+
+r = run_skill("grn-dynamics", ["--genes", "AT5G11260", "--species", "arabidopsis"],
+              "dynamics: single gene errors cleanly")
+grade(r, [
+    ("errors or notes insufficient genes",
+     lambda d: "error" in d or "detail" in d or d.get("n_signed_edges", 0) == 0 or "note" in d),
 ])
 results.append(r)
 

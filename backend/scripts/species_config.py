@@ -55,6 +55,14 @@ SPECIES = {
             "SRR33679193": ["larger_bud_18wk", "PRJNA1267051"], "SRR33679190": ["young_bud_18wk", "PRJNA1267051"],
             "SRR8930520": ["style_small", "PRJNA533335"], "SRR8930518": ["style_long", "PRJNA533335"],
             "SRR8930523": ["style_medium", "PRJNA533335"], "SRR8930526": ["style_medium", "PRJNA533335"],
+            # Expanded P. axillaris runs from the same BioProjects (axillaris-only, RNA-Seq mRNA).
+            "SRR8644909": ["corolla_lobes_tz", "PRJNA524676"], "SRR8644911": ["corolla_lobes_tz", "PRJNA524676"],
+            "SRR8644912": ["corolla_tube_tz", "PRJNA524676"], "SRR8644914": ["corolla_tube_tz", "PRJNA524676"],
+            "SRR8930500": ["style_long", "PRJNA533335"], "SRR8930501": ["style_long", "PRJNA533335"],
+            "SRR8930502": ["style_long", "PRJNA533335"], "SRR8930503": ["style_long", "PRJNA533335"],
+            "SRR8930517": ["style_medium", "PRJNA533335"], "SRR8930527": ["style_medium", "PRJNA533335"],
+            "SRR8930524": ["style_medium", "PRJNA533335"], "SRR8930525": ["style_medium", "PRJNA533335"],
+            "SRR8930521": ["style_small", "PRJNA533335"], "SRR8930522": ["style_small", "PRJNA533335"],
         },
     },
     "tomato": {

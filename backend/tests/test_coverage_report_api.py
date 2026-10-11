@@ -23,7 +23,8 @@ def _build_fixture(path):
         ("H1", "TP53", "human gene", "human", 1, "protein_coding", None, None),
         ("A1", "HY5", "arabidopsis gene", "arabidopsis", 1, "protein_coding", None, None),
     ])
-    db.execute("INSERT INTO interactions VALUES (?,?,?,?,?,?)", ("H1", "H1", "activation", 0.9, '["TRRUST"]', '[]'))
+    db.execute("INSERT INTO interactions (source_id,target_id,regulation_type,confidence,sources,pmids) "
+               "VALUES (?,?,?,?,?,?)", ("H1", "H1", "activation", 0.9, '["TRRUST"]', '[]'))
     db.execute("INSERT INTO pathway_annotations VALUES (?,?)", ("H1", "P1"))
     db.execute("INSERT INTO trait_associations (gene_id,trait,pubmed_id,source) VALUES (?,?,?,?)", ("H1", "Trait A", "111", "GWAS Catalog"))
     db.commit()

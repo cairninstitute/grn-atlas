@@ -125,6 +125,9 @@ class GeneInteraction(BaseModel):
     label_inferred: bool = False   # True when `symbol` is an inferred ortholog name
     common_name: Optional[str] = None
     symbol_source: Optional[str] = None
+    sign: Optional[str] = None  # 'activation'/'repression', set ONLY for curated (measured) edges
+    sign_evidence: Optional[str] = None  # 'measured' | 'unknown'
+    sign_r: Optional[float] = None  # TF-target coexpression correlation (context only, NOT a sign)
 
 class NetworkEdge(BaseModel):
     source_id: str
@@ -340,13 +343,17 @@ class GeneDatabase:
             pmids=pmids, inferred=any(s.startswith("Inferred") for s in sources),
             label_inferred=label_inf, common_name=common,
             symbol_source=row["symbol_source"] if "symbol_source" in keys else None,
+            sign=row["sign"] if "sign" in keys else None,
+            sign_evidence=row["sign_evidence"] if "sign_evidence" in keys else None,
+            sign_r=row["sign_r"] if "sign_r" in keys else None,
         )
 
     def get_regulators(self, gene_id: str, min_confidence: float = 0.0,
                        include_inferred: bool = True) -> List[GeneInteraction]:
         """Get regulators of a gene"""
         sql = """
-            SELECT g.*, i.regulation_type, i.confidence, i.sources, i.pmids
+            SELECT g.*, i.regulation_type, i.confidence, i.sources, i.pmids,
+                   i.sign, i.sign_evidence, i.sign_r
             FROM interactions i JOIN genes g ON g.id = i.source_id
             WHERE i.target_id = ? AND i.confidence >= ?
         """
@@ -359,7 +366,8 @@ class GeneDatabase:
                     include_inferred: bool = True) -> List[GeneInteraction]:
         """Get targets of a gene"""
         sql = """
-            SELECT g.*, i.regulation_type, i.confidence, i.sources, i.pmids
+            SELECT g.*, i.regulation_type, i.confidence, i.sources, i.pmids,
+                   i.sign, i.sign_evidence, i.sign_r
             FROM interactions i JOIN genes g ON g.id = i.target_id
             WHERE i.source_id = ? AND i.confidence >= ?
         """
@@ -367,6 +375,32 @@ class GeneDatabase:
             sql += " AND i.sources NOT LIKE '%Inferred%'"
         rows = self.conn.execute(sql, (gene_id, min_confidence)).fetchall()
         return [self._row_to_interaction(r) for r in rows]
+
+    def get_edge_sign(self, source_id: str, target_id: str) -> Optional[dict]:
+        """Return the directional sign for a TF->target edge, or None if the edge is absent.
+
+        A directional sign is only reported when it is curated ('measured'); expression
+        correlation is NOT used to assert a sign (validated as uninformative — see
+        backend/data/sign_validation_report.json). `coexpression_r` is returned as weak
+        context only, never as a direction.
+        """
+        rows = self.conn.execute(
+            "SELECT sign, sign_evidence, sign_r FROM interactions "
+            "WHERE source_id = ? AND target_id = ?",
+            (source_id, target_id),
+        ).fetchall()
+        if not rows:
+            return None
+        # Directional signs come from curated ('measured') or experiment-derived
+        # ('perturbation') evidence; correlation is never a sign.
+        signed = next((r for r in rows if r["sign_evidence"] in ("measured", "perturbation")
+                       and r["sign"] in ("activation", "repression")), None)
+        coexpr = next((r["sign_r"] for r in rows if r["sign_r"] is not None), None)
+        return {
+            "sign": signed["sign"] if signed else None,
+            "sign_evidence": signed["sign_evidence"] if signed else "unknown",
+            "coexpression_r": coexpr,
+        }
 
 # Initialize database
 db = GeneDatabase(DB_PATH)
@@ -2183,6 +2217,421 @@ async def variant_effect(request: VariantEffectRequest):
     )
 
 
+class AlleleAffinityRequest(BaseModel):
+    gene_id: str
+    position: int = Field(..., ge=0)
+    ref: str
+    alt: str
+    assembly: Optional[str] = None
+    window_type: str = "promoter"
+    top: int = Field(20, ge=1, le=100)
+
+
+@app.post("/api/v1/variants/allele-affinity")
+async def allele_affinity(request: AlleleAffinityRequest):
+    """Quantitatively rescore a promoter variant's effect on TF binding (ref vs alt)."""
+    return sequence_design.allele_affinity(
+        db,
+        gene_id=request.gene_id,
+        position=request.position,
+        ref=request.ref,
+        alt=request.alt,
+        assembly=request.assembly,
+        window_type=request.window_type,
+        top=request.top,
+    )
+
+
+class BiosafetyScreenRequest(BaseModel):
+    sequence: Optional[str] = None
+    target_gene_id: Optional[str] = None
+    intended_species: Optional[str] = None
+    k: int = Field(21, ge=15, le=30)
+    design_window: int = Field(250, ge=50, le=1000)
+    top_hits: int = Field(10, ge=1, le=50)
+
+
+@app.post("/api/v1/rnai/biosafety-screen")
+async def rnai_biosafety_screen(request: BiosafetyScreenRequest):
+    """Screen a dsRNA for off-target silencing across every atlas transcriptome.
+
+    PREDICTED, NOT A SAFETY GUARANTEE: this is k-mer (siRNA) sequence matching against
+    the transcriptomes the atlas actually holds. It flags self off-targets in the
+    intended crop and drift risk to other atlas species. It does NOT cover organisms
+    with no loaded transcriptome (pollinators, humans, soil microbes, crops not in the
+    atlas), which are listed explicitly as unscreened.
+    """
+    intended = _normalize_species_input(request.intended_species) if request.intended_species else None
+    if not intended and request.target_gene_id:
+        intended = _species_of(request.target_gene_id)
+    if not intended:
+        raise HTTPException(status_code=400, detail="intended_species (or a target_gene_id) required")
+
+    # Resolve the dsRNA: use the provided sequence, else design one in the intended species.
+    dsrna = clean_dsrna(request.sequence, request.k) if request.sequence else None
+    if not dsrna:
+        if not request.target_gene_id:
+            raise HTTPException(status_code=400, detail="provide a sequence or a target_gene_id")
+        tx = rnai.get_transcripts(intended, DATA_DIR)
+        if tx is None:
+            raise HTTPException(status_code=400,
+                                detail=f"no transcript store for intended species {intended}")
+        design = rnai.design(request.target_gene_id, tx, k=request.k, window=request.design_window)
+        if "error" in design:
+            raise HTTPException(status_code=404, detail=design["error"])
+        dsrna = design["sequence"]
+
+    all_species = [r[0] for r in db.conn.execute("SELECT DISTINCT species FROM genes ORDER BY species")]
+    screened, unscreened = [], []
+    _severity = {"none": 0, "low": 1, "moderate": 2, "high": 3}
+    worst = "none"
+    for sp in all_species:
+        tx = rnai.get_transcripts(sp, DATA_DIR)
+        if tx is None:
+            unscreened.append(sp)
+            continue
+        target = request.target_gene_id if sp == intended else None
+        res = rnai.scan(dsrna, tx, k=request.k, target_gene=target)
+        shown = res["off_targets"][:request.top_hits]
+        meta = _gene_meta([o["gene_id"] for o in shown])
+        hits = [{"gene_id": o["gene_id"], "symbol": meta.get(o["gene_id"], {}).get("symbol", o["gene_id"]),
+                 "sites": o["sites"]} for o in shown]
+        n_off = res["off_target_gene_count"]
+        is_intended = (sp == intended)
+        if is_intended:
+            risk = "high" if n_off >= 10 else "moderate" if n_off >= 1 else "low"
+            kind = "self_off_target"
+        else:
+            risk = "high" if n_off >= 5 else "moderate" if n_off >= 1 else "low"
+            kind = "cross_species_drift"
+        if _severity[risk] > _severity[worst]:
+            worst = risk
+        screened.append({
+            "species": sp, "intended": is_intended, "risk_class": kind,
+            "on_target_sites": res["on_target_sites"] if is_intended else None,
+            "off_target_gene_count": n_off,
+            "off_target_total_sites": res["off_target_total_sites"],
+            "top_off_targets": hits,
+            "risk": risk,
+        })
+
+    return {
+        "intended_species": intended,
+        "target_gene_id": request.target_gene_id,
+        "dsrna_length": len(dsrna),
+        "k": request.k,
+        "overall_risk": worst,
+        "species_screened": screened,
+        "species_not_screened": unscreened,
+        "coverage_note": (
+            "Screened only against atlas transcriptomes: "
+            f"{', '.join(s['species'] for s in screened) or 'none'}. "
+            "No transcriptome is loaded for: "
+            f"{', '.join(unscreened) or 'none'}. Non-target organisms such as pollinators, "
+            "humans, and soil microbes are NOT assessed by this screen."
+        ),
+        "caveats": [
+            "k-mer sequence matching is a specificity heuristic, not a measured silencing outcome.",
+            "Absence of a hit here is not a safety guarantee; it only means no match in the loaded transcriptomes.",
+        ],
+    }
+
+
+class NetworkControlRequest(BaseModel):
+    target_genes: List[str]
+    species: Optional[str] = None
+    desired_direction: Optional[str] = None  # 'up' | 'down' — the program shift you want
+    max_drivers: int = Field(10, ge=1, le=50)
+    min_confidence: float = 0.4
+
+
+@app.post("/api/v1/network/control")
+async def network_control(request: NetworkControlRequest):
+    """Find a minimal set of TF interventions to steer a target gene program.
+
+    Greedy set-cover over regulatory reachability: picks the fewest upstream TFs that together
+    regulate the most of the requested targets. Where the TF->target edge sign is known
+    (curated or experiment-derived), it recommends the perturbation (overexpress / knock down)
+    that pushes each target in the desired direction.
+
+    PREDICTED, not a control guarantee: this is directed-network reachability plus known edge
+    signs, not a dynamical simulation. Unsigned edges are reported as direction-unresolved
+    rather than guessed.
+    """
+    sp = _normalize_species_input(request.species) if request.species else None
+    # Resolve targets to atlas gene ids.
+    targets, unresolved = [], []
+    for tok in request.target_genes:
+        g = db.get_gene(tok) or (db.find_gene_by_symbol_species(tok, sp) if sp else None)
+        if not g:
+            cand = db.search_genes(tok, limit=1, species=sp)
+            g = cand[0] if cand else None
+        (targets.append(g) if g else unresolved.append(tok))
+    if not targets:
+        raise HTTPException(status_code=404, detail="No target genes resolved")
+    species = sp or targets[0].species
+    target_ids = {g.id for g in targets}
+
+    # Map each candidate driver TF -> targets it regulates, with sign/direction.
+    driver_cov = {}  # tf_id -> {target_id: {sign, sign_evidence, confidence}}
+    tf_meta = {}
+    for g in targets:
+        for reg in db.get_regulators(g.id, min_confidence=request.min_confidence):
+            if reg.species != species:
+                continue
+            driver_cov.setdefault(reg.id, {})[g.id] = {
+                "sign": reg.sign, "sign_evidence": reg.sign_evidence, "confidence": reg.confidence,
+            }
+            tf_meta[reg.id] = reg.symbol
+
+    def recommend(sign, sign_evidence):
+        if request.desired_direction not in ("up", "down") or sign not in ("activation", "repression"):
+            return {"action": "perturb", "note": "direction unresolved (no desired direction or no known sign)"}
+        want_up = request.desired_direction == "up"
+        # activation: overexpress to raise target / knock down to lower it; repression inverts.
+        raise_target = (sign == "activation")
+        action = "overexpress" if (want_up == raise_target) else "knockdown"
+        return {"action": action, "edge_sign": sign, "sign_evidence": sign_evidence}
+
+    # Greedy set cover: most uncovered targets first, tie-break by summed confidence.
+    uncovered = set(target_ids)
+    chosen = []
+    while uncovered and len(chosen) < request.max_drivers:
+        best_tf, best_hit = None, None
+        for tf, cov in driver_cov.items():
+            if tf in (c["tf_id"] for c in chosen):
+                continue
+            hit = uncovered & set(cov)
+            if not hit:
+                continue
+            score = (len(hit), sum(cov[t]["confidence"] for t in hit))
+            if best_hit is None or score > best_hit:
+                best_hit, best_tf = score, tf
+        if best_tf is None:
+            break
+        cov = driver_cov[best_tf]
+        newly = sorted(uncovered & set(cov))
+        chosen.append({
+            "tf_id": best_tf, "tf_symbol": tf_meta.get(best_tf, best_tf),
+            "n_targets_covered": len(newly),
+            "targets": [{"target_id": t, "sign": cov[t]["sign"],
+                         "sign_evidence": cov[t]["sign_evidence"], "confidence": cov[t]["confidence"],
+                         "recommendation": recommend(cov[t]["sign"], cov[t]["sign_evidence"])}
+                        for t in newly],
+        })
+        uncovered -= set(cov)
+
+    return {
+        "species": species,
+        "n_targets": len(target_ids),
+        "n_targets_covered": len(target_ids) - len(uncovered),
+        "uncovered_targets": sorted(uncovered),
+        "unresolved_inputs": unresolved,
+        "desired_direction": request.desired_direction,
+        "driver_set": chosen,
+        "driver_set_size": len(chosen),
+        "method": "greedy set-cover over 1-hop regulatory reachability; sign-aware recommendations",
+        "caveats": [
+            "Directed-network reachability + known edge signs, NOT a dynamical control guarantee.",
+            "Unsigned edges yield a direction-unresolved recommendation rather than a guess.",
+            "Coverage is limited to TFs with atlas edges to the targets at the given confidence.",
+        ],
+    }
+
+
+class DifferentialNetworkRequest(BaseModel):
+    species: str
+    tissue_a: str
+    tissue_b: str
+    min_delta: float = 0.3
+    top: int = Field(40, ge=1, le=200)
+
+
+@app.post("/api/v1/network/differential")
+async def differential_network(request: DifferentialNetworkRequest):
+    """Compare regulatory-edge activity between two tissues/conditions.
+
+    Uses per-tissue TF-target coexpression (edge_tissue_weights) as a proxy for context-specific
+    edge activity: edges coexpressed in tissue A but not B are 'gained in A', etc. This is a
+    coexpression-based activity contrast, not measured physical rewiring.
+    """
+    species = _normalize_species_input(request.species) or request.species
+    avail = [r[0] for r in db.conn.execute(
+        "SELECT DISTINCT tissue FROM edge_tissue_weights WHERE species=? AND tissue!='_global' ORDER BY tissue",
+        (species,))]
+    if request.tissue_a not in avail or request.tissue_b not in avail:
+        return {"species": species, "error": "tissue not available",
+                "available_tissues": avail}
+
+    rows = db.conn.execute(
+        "SELECT source_id, target_id, tissue, coexpression FROM edge_tissue_weights "
+        "WHERE species=? AND tissue IN (?,?)", (species, request.tissue_a, request.tissue_b)).fetchall()
+    edges = {}
+    for s, t, tis, w in rows:
+        e = edges.setdefault((s, t), {})
+        e[tis] = w
+
+    ids = {g for pair in edges for g in pair}
+    meta = _gene_meta(list(ids))
+
+    def label(gid):
+        return meta.get(gid, {}).get("symbol", gid)
+
+    gained_a, gained_b, strengthened, weakened = [], [], [], []
+    for (s, t), w in edges.items():
+        wa, wb = w.get(request.tissue_a), w.get(request.tissue_b)
+        sign = db.get_edge_sign(s, t)
+        rec = {"source_id": s, "source": label(s), "target_id": t, "target": label(t),
+               "coexpr_a": wa, "coexpr_b": wb,
+               "sign": sign["sign"] if sign else None,
+               "sign_evidence": sign["sign_evidence"] if sign else None}
+        if wa is not None and wb is None:
+            gained_a.append(rec)
+        elif wb is not None and wa is None:
+            gained_b.append(rec)
+        else:
+            delta = round(wa - wb, 4)
+            rec["delta"] = delta
+            if abs(delta) >= request.min_delta:
+                (strengthened if delta > 0 else weakened).append(rec)
+
+    gained_a.sort(key=lambda r: -(abs(r["coexpr_a"] or 0)))
+    gained_b.sort(key=lambda r: -(abs(r["coexpr_b"] or 0)))
+    strengthened.sort(key=lambda r: -r["delta"])
+    weakened.sort(key=lambda r: r["delta"])
+    return {
+        "species": species, "tissue_a": request.tissue_a, "tissue_b": request.tissue_b,
+        "n_edges_compared": len(edges),
+        "n_gained_in_a": len(gained_a), "n_gained_in_b": len(gained_b),
+        "n_strengthened_in_a": len(strengthened), "n_weakened_in_a": len(weakened),
+        f"gained_in_{request.tissue_a}": gained_a[:request.top],
+        f"gained_in_{request.tissue_b}": gained_b[:request.top],
+        "strengthened_in_a": strengthened[:request.top],
+        "weakened_in_a": weakened[:request.top],
+        "method": "per-tissue TF-target coexpression contrast (edge_tissue_weights, |r|>=0.3 to be active)",
+        "caveats": [
+            "Coexpression-based edge activity per tissue — a context proxy, not measured physical rewiring.",
+            "An edge is 'active' in a tissue only if |coexpression r| >= 0.3 there.",
+            "Edge signs shown where known (measured/perturbation); correlation is not a sign.",
+        ],
+    }
+
+
+class NetworkDynamicsRequest(BaseModel):
+    genes: List[str]
+    species: Optional[str] = None
+    perturb: Optional[Dict[str, int]] = None  # gene -> 0/1 clamped state (knockout/overexpression)
+    initial: str = "on"                        # 'on' | 'off' default state for unclamped nodes
+    max_steps: int = Field(50, ge=1, le=500)
+
+
+@app.post("/api/v1/network/dynamics")
+async def network_dynamics(request: NetworkDynamicsRequest):
+    """Qualitative Boolean/threshold dynamics on a bounded signed subnetwork.
+
+    Builds the induced subgraph over the requested genes using only SIGNED edges
+    (measured or experiment-derived), then runs synchronous threshold updates until a fixed
+    point or cycle (attractor). Each node turns ON when the signed sum of its active regulators
+    is positive, OFF when negative. Perturbed genes are clamped (knockout=0, overexpression=1).
+
+    PREDICTED, qualitative: a Boolean abstraction over the signed subnetwork, NOT a
+    quantitative/kinetic simulation. Unsigned edges among the genes are excluded and reported
+    as coverage so the limitation is explicit.
+    """
+    sp = _normalize_species_input(request.species) if request.species else None
+    nodes, unresolved = [], []
+    for tok in request.genes:
+        g = db.get_gene(tok) or (db.find_gene_by_symbol_species(tok, sp) if sp else None)
+        if not g:
+            cand = db.search_genes(tok, limit=1, species=sp)
+            g = cand[0] if cand else None
+        (nodes.append(g.id) if g else unresolved.append(tok))
+    node_set = set(nodes)
+    if len(node_set) < 2:
+        raise HTTPException(status_code=400, detail="provide at least 2 resolvable genes")
+
+    placeholders = ",".join("?" * len(node_set))
+    params = list(node_set) + list(node_set)
+    all_edges = db.conn.execute(
+        f"SELECT source_id, target_id, sign, sign_evidence FROM interactions "
+        f"WHERE source_id IN ({placeholders}) AND target_id IN ({placeholders})", params).fetchall()
+    adj = {}  # target -> [(source, +1/-1)]
+    n_signed = n_unsigned = 0
+    for s, t, sign, sev in all_edges:
+        if s == t:
+            continue
+        if sev in ("measured", "perturbation") and sign in ("activation", "repression"):
+            adj.setdefault(t, []).append((s, 1 if sign == "activation" else -1))
+            n_signed += 1
+        else:
+            n_unsigned += 1
+    if n_signed == 0:
+        return {"genes": sorted(node_set), "n_signed_edges": 0,
+                "note": "no signed edges among these genes; cannot simulate dynamics",
+                "unresolved_inputs": unresolved}
+
+    clamp = {}
+    for gtok, val in (request.perturb or {}).items():
+        g = db.get_gene(gtok) or (db.find_gene_by_symbol_species(gtok, sp) if sp else None)
+        if g and g.id in node_set:
+            clamp[g.id] = 1 if val else 0
+    init_val = 0 if request.initial == "off" else 1
+    state = {g: clamp.get(g, init_val) for g in node_set}
+    ordered = sorted(node_set)
+
+    def snapshot(st):
+        return tuple(st[g] for g in ordered)
+
+    seen = {snapshot(state): 0}
+    trajectory = [state.copy()]
+    attractor = {"type": "no_convergence", "period": None, "steps": request.max_steps}
+    for step in range(1, request.max_steps + 1):
+        new = {}
+        for g in ordered:
+            if g in clamp:
+                new[g] = clamp[g]
+                continue
+            inputs = adj.get(g, [])
+            if not inputs:
+                new[g] = state[g]
+                continue
+            net = sum(sgn * state[src] for src, sgn in inputs)
+            new[g] = 1 if net > 0 else 0 if net < 0 else state[g]
+        state = new
+        snap = snapshot(state)
+        if snap in seen:
+            period = step - seen[snap]
+            attractor = {"type": "fixed_point" if period == 1 else "cycle",
+                         "period": period, "steps": step}
+            break
+        seen[snap] = step
+        trajectory.append(state.copy())
+
+    meta = _gene_meta(ordered)
+    init_state = trajectory[0]
+    on_genes = [g for g in ordered if state[g] == 1]
+    changed = [g for g in ordered if state[g] != init_state[g]]
+    return {
+        "species": sp or (db.get_gene(ordered[0]).species if ordered else None),
+        "n_nodes": len(node_set),
+        "n_signed_edges": n_signed,
+        "n_unsigned_edges_excluded": n_unsigned,
+        "signed_coverage": round(n_signed / (n_signed + n_unsigned), 3) if (n_signed + n_unsigned) else 0.0,
+        "perturbation": {meta.get(g, {}).get("symbol", g): v for g, v in clamp.items()},
+        "attractor": attractor,
+        "final_state": {meta.get(g, {}).get("symbol", g): state[g] for g in ordered},
+        "genes_on_at_steady_state": [meta.get(g, {}).get("symbol", g) for g in on_genes],
+        "genes_changed_from_initial": [meta.get(g, {}).get("symbol", g) for g in changed],
+        "unresolved_inputs": unresolved,
+        "method": "synchronous Boolean threshold dynamics on the signed induced subnetwork",
+        "caveats": [
+            "Qualitative Boolean abstraction over SIGNED edges only — not a kinetic simulation.",
+            "Unsigned edges among these genes are excluded (see signed_coverage).",
+            "Synchronous updates; attractor type/period can depend on update scheme.",
+        ],
+    }
+
+
 class PromoterEditPrioritizationRequest(BaseModel):
     gene_id: str
     top: int = Field(10, ge=1, le=50)
@@ -3118,6 +3567,84 @@ async def gene_traits(gene_id: str):
             "traits": [{"trait": r["trait"], "pubmed_id": r["pubmed_id"], "source": r["source"]}
                        for r in rows],
             "note": "GWAS associations (SNP→mapped gene→trait), not mechanistic regulation."}
+
+
+class GwasMechanismRequest(BaseModel):
+    gene: str
+    species: Optional[str] = None
+    min_confidence: float = 0.4
+    top: int = Field(15, ge=1, le=100)
+
+
+@app.post("/api/v1/traits/mechanism")
+async def gwas_to_mechanism(request: GwasMechanismRequest):
+    """Turn a trait-associated gene into a regulatory mechanism sketch.
+
+    Chains: documented trait associations -> upstream regulators (whose variation could
+    drive the trait through this gene) -> the gene's own downstream program (if it is a
+    TF). Edge signs (measured or expression-inferred) are reported so the direction of
+    each regulatory link is explicit.
+    """
+    gene = db.get_gene(request.gene)
+    if not gene and request.species:
+        gene = db.find_gene_by_symbol_species(request.gene, _normalize_species_input(request.species) or request.species)
+    if not gene:
+        cand = db.search_genes(request.gene, limit=1, species=request.species)
+        gene = cand[0] if cand else None
+    if not gene:
+        raise HTTPException(status_code=404, detail=f"Gene not found: {request.gene}")
+
+    try:
+        trait_rows = db.conn.execute(
+            "SELECT trait, pubmed_id, source FROM trait_associations WHERE gene_id = ? ORDER BY trait",
+            (gene.id,)).fetchall()
+    except sqlite3.OperationalError:
+        trait_rows = []
+    traits = [{"trait": r["trait"], "pubmed_id": r["pubmed_id"], "source": r["source"]} for r in trait_rows]
+
+    def _sign_fields(it):
+        return {"sign": it.sign, "sign_evidence": it.sign_evidence, "sign_r": it.sign_r}
+
+    regulators = sorted(db.get_regulators(gene.id, min_confidence=request.min_confidence),
+                        key=lambda i: -i.confidence)
+    upstream = [{"tf_id": r.id, "tf_symbol": r.symbol, "confidence": r.confidence,
+                 "regulation_type": r.regulation_type, **_sign_fields(r)}
+                for r in regulators[:request.top]]
+
+    downstream = []
+    if gene.is_tf:
+        targets = sorted(db.get_targets(gene.id, min_confidence=request.min_confidence),
+                         key=lambda i: -i.confidence)
+        downstream = [{"target_id": t.id, "target_symbol": t.symbol, "confidence": t.confidence,
+                       "regulation_type": t.regulation_type, **_sign_fields(t)}
+                      for t in targets[:request.top]]
+
+    n_targets_total = 0
+    if gene.is_tf:
+        n_targets_total = db.conn.execute(
+            "SELECT COUNT(*) FROM interactions WHERE source_id = ? AND confidence >= ?",
+            (gene.id, request.min_confidence)).fetchone()[0]
+
+    return {
+        "gene_id": gene.id, "symbol": gene.symbol, "species": gene.species, "is_tf": gene.is_tf,
+        "n_trait_associations": len(traits),
+        "trait_associations": traits,
+        "upstream_regulators": upstream,
+        "n_upstream_total": len(regulators),
+        "downstream_program": downstream,
+        "n_downstream_total": n_targets_total,
+        "interpretation": {
+            "trait_link": ("statistical GWAS association (SNP->mapped gene->trait)" if traits
+                           else "no GWAS trait association recorded for this gene in the atlas"),
+            "upstream_role": "TFs that regulate this gene; their natural/engineered variation can propagate to the trait through it",
+            "downstream_role": ("the regulatory program this gene controls (mechanism by which it can affect the phenotype)"
+                                if gene.is_tf else "this gene is not a TF; it has no downstream regulon in the atlas"),
+        },
+        "caveats": [
+            "Trait associations are statistical, not mechanistic proof.",
+            "Edge signs marked 'inferred' come from expression correlation, not curated direction.",
+        ],
+    }
 
 
 @app.post("/api/v1/trait_enrichment")
@@ -5205,21 +5732,56 @@ async def perturbation_compare(req: PerturbationCompareRequest):
         raise HTTPException(status_code=404, detail="Gene not found")
     gene_id, symbol, species = gene
     predicted = conn.execute(
-        "SELECT target_id, confidence, regulation_type FROM interactions "
+        "SELECT target_id, confidence, regulation_type, sign, sign_evidence FROM interactions "
         "WHERE source_id = ? AND confidence >= ?", (gene_id, req.min_confidence)
     ).fetchall()
-    predicted_targets = {r[0]: {"confidence": r[1], "regulation_type": r[2]} for r in predicted}
+    # Calibration must stay independent of the observations: only curated ('measured')
+    # signs count as a directional prediction here. 'perturbation'-tier signs are derived
+    # from the same TARGET DEGs we score against, so using them would be self-validation;
+    # they fall back to the raw regulation_type (usually 'regulation'/unknown).
+    # A pair can have several edge rows (multiple sources); keep the measured one if any so a
+    # curated sign is not clobbered by an unsigned duplicate.
+    predicted_targets = {}
+    for tgt, conf, regtype, sign, sev in predicted:
+        use_measured = (sev == "measured")
+        entry = {"confidence": conf, "regulation_type": regtype,
+                 "sign": sign if use_measured else regtype,
+                 "sign_evidence": "measured" if use_measured else "unknown"}
+        prev = predicted_targets.get(tgt)
+        if prev is None:
+            predicted_targets[tgt] = entry
+            continue
+        prev_measured = prev["sign_evidence"] == "measured"
+        # Prefer a measured row; among same evidence, prefer higher confidence.
+        if (use_measured and not prev_measured) or \
+           (use_measured == prev_measured and conf > prev["confidence"]):
+            predicted_targets[tgt] = entry
     existing = set(r[0] for r in conn.execute(
         "SELECT name FROM sqlite_master WHERE type='table'"
     ).fetchall())
     observed = {}
     if "perturbation_observations" in existing:
         obs_rows = conn.execute(
-            "SELECT affected_gene, observed_log2fc, observed_significant "
+            "SELECT affected_gene, observed_log2fc, observed_significant, perturbation_type, dataset_label "
             "FROM perturbation_observations WHERE perturbed_gene = ? AND species = ?",
             (gene_id, species)
         ).fetchall()
-        observed = {r[0]: {"log2fc": r[1], "significant": bool(r[2])} for r in obs_rows}
+        observed = {r[0]: {"log2fc": r[1], "significant": bool(r[2]),
+                           "perturbation_type": r[3], "dataset_label": r[4]} for r in obs_rows}
+
+    # Loss-of-function lowers an activated target; gain-of-function (overexpression/induction)
+    # raises it. Expected observed direction depends on both the edge sign and which way the
+    # TF was perturbed.
+    lof_types = {"knockout", "knockdown", "crispr_ko", "ko", "kd"}
+
+    def expected_direction(sign, ptype):
+        if sign not in ("activation", "repression"):
+            return "unknown"
+        is_lof = (ptype or "").lower() in lof_types
+        if sign == "activation":
+            return "down" if is_lof else "up"
+        return "up" if is_lof else "down"
+
     both = set(predicted_targets.keys()) & set(observed.keys())
     pred_only = set(predicted_targets.keys()) - set(observed.keys())
     obs_only = set(observed.keys()) - set(predicted_targets.keys())
@@ -5229,24 +5791,31 @@ async def perturbation_compare(req: PerturbationCompareRequest):
     for g in both:
         pred = predicted_targets[g]
         obs = observed[g]
-        pred_dir = "down" if pred["regulation_type"] == "activation" else "up" if pred["regulation_type"] == "repression" else "unknown"
+        pred_dir = expected_direction(pred["sign"], obs["perturbation_type"])
         obs_dir = "down" if obs["log2fc"] < -0.5 else "up" if obs["log2fc"] > 0.5 else "unchanged"
         match = (pred_dir == "down" and obs_dir == "down") or (pred_dir == "up" and obs_dir == "up")
         if match:
             concordant += 1
-        elif obs_dir != "unchanged":
+        elif obs_dir != "unchanged" and pred_dir != "unknown":
             discordant += 1
         comparisons.append({
             "gene_id": g, "predicted_regulation": pred["regulation_type"],
+            "predicted_sign": pred["sign"], "sign_evidence": pred["sign_evidence"],
             "predicted_confidence": pred["confidence"],
+            "perturbation_type": obs["perturbation_type"], "dataset_label": obs["dataset_label"],
+            "expected_direction": pred_dir,
             "observed_log2fc": obs["log2fc"], "observed_significant": obs["significant"],
             "concordant": match,
         })
     n_total = concordant + discordant
+    # Surface the scored (curated-sign) comparisons first — they are the informative ones and
+    # must not be hidden behind the many unsigned overlaps when the list is truncated.
+    comparisons.sort(key=lambda c: (c["sign_evidence"] != "measured", not c["concordant"]))
     return {
         "perturbed_gene": gene_id, "symbol": symbol, "species": species,
         "n_predicted": len(predicted_targets), "n_observed": len(observed),
         "n_both": len(both), "n_pred_only": len(pred_only), "n_obs_only": len(obs_only),
+        "n_scored": n_total,
         "concordant": concordant, "discordant": discordant,
         "concordance_rate": round(concordant / max(1, n_total), 3),
         "comparisons": comparisons[:50],

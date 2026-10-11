@@ -59,6 +59,12 @@ GRN Atlas is a multi-species gene regulatory network database covering the speci
 | `grn-consensus-ranking` | Rank competing candidates by a weighted consensus across atlas evidence layers |
 | `grn-counterfactual-analysis` | Explain what evidence shifts would most likely overturn the current lead candidate |
 | `grn-variant-effect` | Assess whether a promoter-region variant overlaps motif-supported regulatory sites |
+| `grn-allele-affinity` | Quantitatively rescore a promoter variant (ref vs alt) for TF-binding change and predicted expression direction |
+| `grn-gwas-to-mechanism` | Turn a trait/GWAS-associated gene into a regulatory mechanism sketch (traits + upstream + downstream, sign-aware) |
+| `grn-biosafety-screen` | Screen a dsRNA for self and cross-species off-target silencing across atlas transcriptomes |
+| `grn-network-control` | Find the minimal set of TFs to perturb to steer a target gene program, with sign-aware direction recommendations |
+| `grn-differential-network` | Compare regulatory-edge activity between two tissues/conditions (gained/strengthened/weakened edges) |
+| `grn-dynamics` | Boolean/attractor simulation of a signed regulatory module (fixed point vs cycle; steady-state ON/OFF after a perturbation) |
 | `grn-promoter-edit-prioritization` | Prioritize motif-supported promoter sites as editing targets |
 | `grn-crispr-design` | Suggest sequence-only heuristic CRISPR guides |
 | `grn-primer-design` | Suggest sequence-only heuristic primer pairs |
@@ -66,6 +72,59 @@ GRN Atlas is a multi-species gene regulatory network database covering the speci
 | `grn-trajectory-regulation` | Report readiness and missing layers for trajectory / time-series analysis |
 | `grn-combinatorial-perturbation` | Rank pairwise or triple perturbation combinations by predicted downstream impact |
 | `grn-species-onboarding-plan` | Generate a staged plan for onboarding a new species |
+
+## Additional skills
+
+The table above highlights the most common entry points. The remaining callable skills
+below complete the catalog; the authoritative, always-current list is every
+`.agents/skills/grn-*/SKILL.md` (also cataloged in `docs/SKILL_INVENTORY.md`).
+
+| Skill | What it does |
+|---|---|
+| `grn-benchmark-status` | View the living validation dashboard: atlas stats, BEELINE AUROC/AUPRC, per-species reports |
+| `grn-organism-overview` | Comprehensive per-species overview: gene/interaction counts, TF coverage, sources, capabilities |
+| `grn-shared-regulators` | Find TFs regulating two or more genes in common, with per-target direction and evidence |
+| `grn-diff-regulation` | Which TFs/regulatory programs shift between two tissues or conditions (regulator-centric) |
+| `grn-regulon-enrichment` | Which TF regulons are enriched in a gene list (hypergeometric + BH FDR) |
+| `grn-pathway-enrichment` | Which pathways are over-represented in a gene list (hypergeometric) |
+| `grn-pathway-activity` | Score pathway activity from gene-level statistics |
+| `grn-tf-activity` | Infer TF activity from gene-level stats (log2FC/z-scores) via ULM/weighted mean |
+| `grn-module` | Detect co-regulated modules/communities in a species network (leiden/louvain/infomap) |
+| `grn-motif` / `grn-motif-query` | Query TF binding-motif hits in promoters (JASPAR 2024 PWMs) |
+| `grn-signaling-to-tf` | Trace a receptor/ligand to downstream TF targets through the network |
+| `grn-ligand-receptor` | Find candidate ligand-receptor signaling pairs from the network |
+| `grn-family-rescue` | Rescue sparse edges by aggregating ortholog evidence across species (reduced confidence) |
+| `grn-transfer-risk` | Assess orthology transfer risk for a gene across species |
+| `grn-genome-browser` | Query genome coordinates, chromosomal positions, and cross-species ortholog mappings |
+| `grn-infer` | Expression-inferred edges (GRNBoost2 / GENIE3): predicted regulators/targets of a gene |
+| `grn-trait-association` | Query GWAS trait associations for a gene, or trait enrichment for a gene set |
+| `grn-phenotype-targeting` | Turn a phenotype/trait/design objective into atlas-grounded candidate genes |
+| `grn-decision-boundary` | One decision-ready summary: what's supported, ambiguous, what would flip it, smallest next step |
+| `grn-dataset-import` / `grn-omics-import` | Map a gene list / import an expression matrix (bulk, pseudobulk, scRNA) |
+| `grn-input-normalization` | Clean and normalize messy pasted input before atlas import |
+| `grn-peak-import` / `grn-perturbation-import` | Import chromatin peaks / observed perturbation results |
+| `grn-chromatin-support` | Chromatin peaks, enhancer-gene links, motif-in-peak, cis-support for a gene's edges |
+| `grn-cis-support-audit` | Is a TF→target edge cis-supported (motif + peak + enhancer + prior)? Confidence tier + gaps |
+| `grn-enhancer-network` | A gene's enhancer-linked neighborhood: linked peaks, TF motifs, co-linked targets |
+| `grn-peak-gene-linkage` | Which gene(s) a region/peak likely regulates (peak_id or chr:start-end) |
+| `grn-multiome-support-audit` | Multi-layer evidence triangulation for a TF→target claim; conflict-aware confidence |
+| `grn-celltype-compare` | Compare TF activity between two cell types/clusters |
+| `grn-celltype-upstream` | Upstream TFs for a gene set, constrained to those expressed in a cell type |
+| `grn-celltype-regulon` | A TF's regulon filtered to a cell-type/state context vs the global regulon |
+| `grn-trajectory-drivers` / `grn-transition-drivers` | TF drivers of state transitions / branch points |
+| `grn-pseudotime-activity` | Score TF activity along a pseudotime-ordered gradient |
+| `grn-crispr-compare` | Compare CRISPR strategies (KO, CRISPRi, CRISPRa) for a target |
+| `grn-crispr-offtargets` | Scan the transcriptome for CRISPR guide off-targets (mismatch-tolerant) |
+| `grn-crispr-vs-dsrna-compare` | Compare RNAi vs CRISPR for the same candidates; recommend a first modality |
+| `grn-intervention-strategy-ranker` | Rank intervention modes (dsRNA/CRISPR/promoter edit) by feasibility, specificity, cost |
+| `grn-edit-consequence` | Predicted regulatory/network consequences of a promoter/motif/coding edit |
+| `grn-sirna-pool` | Score siRNAs in a dsRNA window for efficacy (Reynolds/Ui-Tei rules) |
+| `grn-isoform-coverage` | Which transcript isoforms a dsRNA hits, and siRNA sites per isoform |
+| `grn-perturbation-calibration` | Compare predicted downstream effects with observed perturbation data |
+| `grn-literature-grounding` | Score how external literature terms map to atlas genes (exact/synonym/partial/ortholog) |
+| `grn-tissue-coexpression` | Tissue-specific coexpression weights for regulatory edges |
+| `grn-species-onboarding-status` | Per-species onboarding readiness score (genes, edges, TFs, transcriptome, orthologs) |
+| `grn-workflow` | Run a packaged end-to-end workflow (deg-to-regulators, target-to-perturbation, import-to-activity) |
 
 ## Typical Workflows
 
@@ -92,6 +151,12 @@ GRN Atlas is a multi-species gene regulatory network database covering the speci
 21. **Get a robust winner and ask what would flip it**: `grn-consensus-ranking` → `grn-counterfactual-analysis`
 22. **Move from regulatory site to assay design**: `grn-variant-effect` → `grn-promoter-edit-prioritization` → `grn-crispr-design` / `grn-primer-design`
 23. **Explore advanced future workflows honestly**: `grn-celltype-regulation` / `grn-trajectory-regulation` / `grn-combinatorial-perturbation` / `grn-species-onboarding-plan`
+24. **Quantify a promoter variant's regulatory effect**: `grn-variant-effect` → `grn-allele-affinity` (ref vs alt binding change + predicted expression direction)
+25. **Explain a trait/GWAS hit mechanistically**: `grn-gwas-to-mechanism` → `grn-enrichment` / `grn-evidence-synthesis`
+26. **Check RNAi cross-species safety before synthesis**: `grn-dsrna` → `grn-biosafety-screen`
+27. **Steer a whole gene program with the fewest interventions**: `grn-upstream` / `grn-shared-regulators` → `grn-network-control`
+28. **Compare regulatory wiring between two tissues/conditions**: `grn-tissue-coexpression` → `grn-differential-network`
+29. **Simulate a circuit's steady state / attractor after a perturbation**: `grn-regulon` → `grn-dynamics`
 
 ## Execution Modes
 

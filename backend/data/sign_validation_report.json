@@ -1,0 +1,115 @@
+{
+  "description": "Edge-sign methods validated against curated measured signs in arabidopsis/tomato/petunia.",
+  "total_measured_edges_evaluated": 4891,
+  "majority_class_baseline_accuracy": 0.6911,
+  "correlation_rule": {
+    "per_species": {
+      "arabidopsis": {
+        "evaluated": 1433,
+        "correct": 822,
+        "accuracy": 0.5736
+      },
+      "tomato": {
+        "evaluated": 2055,
+        "correct": 1044,
+        "accuracy": 0.508
+      },
+      "petunia": {
+        "evaluated": 1403,
+        "correct": 772,
+        "accuracy": 0.5502
+      }
+    },
+    "threshold_sweep": [
+      {
+        "min_abs_r": 0.0,
+        "edges_covered": 4891,
+        "coverage_frac": 1.0,
+        "accuracy": 0.5394,
+        "activation_accuracy": 0.5882,
+        "repression_accuracy": 0.4302,
+        "n_activation": 3380,
+        "n_repression": 1511
+      },
+      {
+        "min_abs_r": 0.1,
+        "edges_covered": 3647,
+        "coverage_frac": 0.7457,
+        "accuracy": 0.5744,
+        "activation_accuracy": 0.675,
+        "repression_accuracy": 0.3608,
+        "n_activation": 2480,
+        "n_repression": 1167
+      },
+      {
+        "min_abs_r": 0.2,
+        "edges_covered": 2680,
+        "coverage_frac": 0.5479,
+        "accuracy": 0.6142,
+        "activation_accuracy": 0.7832,
+        "repression_accuracy": 0.2497,
+        "n_activation": 1831,
+        "n_repression": 849
+      },
+      {
+        "min_abs_r": 0.3,
+        "edges_covered": 1991,
+        "coverage_frac": 0.4071,
+        "accuracy": 0.66,
+        "activation_accuracy": 0.89,
+        "repression_accuracy": 0.1595,
+        "n_activation": 1364,
+        "n_repression": 627
+      },
+      {
+        "min_abs_r": 0.4,
+        "edges_covered": 1535,
+        "coverage_frac": 0.3138,
+        "accuracy": 0.6795,
+        "activation_accuracy": 0.9458,
+        "repression_accuracy": 0.0994,
+        "n_activation": 1052,
+        "n_repression": 483
+      },
+      {
+        "min_abs_r": 0.5,
+        "edges_covered": 1173,
+        "coverage_frac": 0.2398,
+        "accuracy": 0.7042,
+        "activation_accuracy": 0.9782,
+        "repression_accuracy": 0.0491,
+        "n_activation": 827,
+        "n_repression": 346
+      },
+      {
+        "min_abs_r": 0.6,
+        "edges_covered": 900,
+        "coverage_frac": 0.184,
+        "accuracy": 0.7078,
+        "activation_accuracy": 0.989,
+        "repression_accuracy": 0.0229,
+        "n_activation": 638,
+        "n_repression": 262
+      }
+    ],
+    "verdict": "uninformative \u2014 at/below base rate; not used as a sign"
+  },
+  "perturbation_rule": {
+    "datasets": [
+      "connectf_target",
+      "knocktf"
+    ],
+    "evaluated": 39,
+    "agreement_all": 0.7436,
+    "agreement_strong_log2fc_ge_1": 0.8636,
+    "n_strong": 22,
+    "baseline": 0.6911,
+    "verdict": "experiment-backed; used as the 'perturbation' sign tier at |log2FC|>=1"
+  },
+  "current_inference_threshold": 0.3,
+  "caveats": [
+    "Expression panels are shallow (18-43 samples); correlation is a weak estimator.",
+    "Curated signs are activation-heavy, so accuracy near the majority-class baseline is weak evidence.",
+    "The perturbation-vs-curated overlap is small; treat its agreement as indicative."
+  ]
+}

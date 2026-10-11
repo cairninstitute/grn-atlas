@@ -23,8 +23,8 @@ venv/bin/python -m pytest backend -q      # backend: unit + DB-invariant + API-c
 npx vitest run                            # frontend
 npx vite build                            # production build sanity
 npx oxlint src/...                        # lint
-venv/bin/python .agents/skills/_test_all_skills.py       # 319 direct skill-harness tests across 41 legacy skills
-venv/bin/python .agents/skills/_test_all_skills_http.py  # 83 HTTP skill-harness tests across the same 41 skills
+venv/bin/python .agents/skills/_test_all_skills.py       # 342 direct skill-harness tests across 48 skills
+venv/bin/python .agents/skills/_test_all_skills_http.py  # 83 HTTP skill-harness tests across a 41-skill subset
 venv/bin/python .agents/skills/_test_llm_single_matrix.py --provider openai --model gpt-5.4
 venv/bin/python .agents/skills/_test_llm_orchestration_matrix.py --provider openai --model gpt-5.4
 ```
@@ -36,8 +36,10 @@ then-current 90 documented skills were executed individually through their own
 `scripts/run.py --http` surface. As of **Saturday, August 22, 2026**, the current broad
 LLM/coverage status is:
 
-- **100 documented skills** in the current inventory (**99 callable + 1 overview/router**)
-- **386** natural-language single-skill cases covering **100/100** skills
+- **106 documented skills** in the current inventory (**105 callable + 1 overview/router**)
+- **386** natural-language single-skill cases covering the original **100-skill** matrix snapshot
+  (the most recently added skills are covered by the direct skill harness and backend pytest,
+  not yet folded into the single-skill routing matrix)
 - **386/386 PASS** on the latest GPT-5.4 single-skill rerun, with **2 retry-recovered flaky passes**
 - **111** orchestration questions in the current chained-workflow inventory
 - **111/111 PASS** on the latest GPT-5.4 orchestration rerun
@@ -47,15 +49,71 @@ LLM/coverage status is:
 
 ## Fetch source data, then build the database
 
-Third-party data is **not committed** (see LICENSE). Fetch it, then build:
+Third-party data is **not committed** (see LICENSE). The one-command path is **`make bootstrap`**
+(`setup` → `fetch` → `db` → `enrich` → `knocktf` → `allele-pwms` → `chromatin-peaks`), which fetches every
+third-party download automatically. The individual stages, for reference:
 
 ```bash
 venv/bin/python backend/scripts/fetch_sources.py --tier light   # sources -> backend/data/; bootstraps an intermediate DB on fresh clones
 venv/bin/python backend/scripts/build_db.py                     # final rebuild of grn.sqlite3 (~10 s)
+venv/bin/python backend/scripts/infer_edge_signs.py             # set measured edge signs + coexpression context
+venv/bin/python backend/scripts/validate_edge_signs.py          # validate the correlation sign rule -> sign_validation_report.json
+venv/bin/python backend/scripts/load_perturbation_truth.py      # literature-grounded perturbation ground-truth
 venv/bin/python backend/scripts/compute_tissue_weights.py       # per-tissue coexpression (needs expression data)
+# optional network layers (all auto-downloaded by the make targets):
+venv/bin/python backend/scripts/cache_motif_pwms.py             # JASPAR PWM cache for grn-allele-affinity
+venv/bin/python backend/scripts/load_connectf_perturbations.py /tmp/connectf_data_release_v1   # ConnecTF TF-perturbation DEGs
+venv/bin/python backend/scripts/load_dapseq_peaks.py /tmp/GSE60143_RAW.tar                     # DAP-seq chromatin peaks
 ```
 
-Or equivalently: `make fetch && make db && make enrich && make tissue-weights`.
+`make db` runs `build_db.py` **and** `infer_edge_signs.py` + `validate_edge_signs.py` +
+`load_perturbation_truth.py` + `compute_tissue_weights.py`. `make enrich` auto-downloads
+ConnecTF and loads its edges + perturbation observations; `make chromatin-peaks` auto-downloads
+the Plant Cistrome DAP-seq peaks.
+
+### Derived layers added on top of the core build
+
+- **Edge signs** (`infer_edge_signs.py` + `validate_edge_signs.py` + `derive_perturbation_signs.py`):
+  every edge gets `sign` / `sign_evidence` / `sign_r` columns, with three directional tiers:
+  `'measured'` (curated regulation_type), `'perturbation'` (derived from ConnecTF induction DEGs
+  at |log2FC|≥1 — experiment-backed; validated ~0.90 agreement with curated signs vs a ~0.77
+  base rate), and `'unknown'`. `derive_perturbation_signs.py` runs in `make enrich` (it needs the
+  perturbation observations) and never overwrites a curated sign. Expression correlation is
+  **not** a sign tier (validated uninformative); it stays in `sign_r` as coexpression context only.
+  grn-allele-affinity predicts an expression direction from measured OR perturbation signs; the
+  perturbation-calibration scorer deliberately uses **only** curated `'measured'` signs, so it
+  never self-validates against the same ConnecTF DEGs the perturbation tier came from.
+  `validate_edge_signs.py` tested expression-correlation as a sign predictor against the
+  4,913 plant edges that also carry a curated sign and found it **uninformative** — the
+  "activation" call precision just equals the activation base rate (~0.69) and "repression"
+  calls are wrong more than half the time (see `backend/data/sign_validation_report.json`).
+  So correlation is **not** used to claim a direction; it is retained in `sign_r` as
+  **coexpression context only** (never a sign). Consumed by network edges, perturbation
+  calibration, and grn-allele-affinity (which predicts an expression direction only from a
+  measured sign). Re-run after any `build_db.py`; `make db` does so automatically.
+  Expanding the petunia panel from 29 to 43 P. axillaris samples left the sign-rule
+  accuracy unchanged (0.554 → 0.550, vs a 0.69 base rate), confirming the limitation is
+  biological (co-expression does not encode direction), not sample size.
+- **Perturbation ground-truth** (`load_perturbation_truth.py`, `load_connectf_perturbations.py`,
+  `load_knocktf_perturbations.py`): `grn-perturbation-calibration` is scored against three
+  corpora. (1) Committed, PMID-backed `literature_edges_*.tsv` → ~52 literature-documented
+  knockdown directions (`literature_curated`). (2) ConnecTF inducible-TARGET DESeq2 (PMID
+  33631799) → ~116K measured DEG log2FCs, 51 TFs, gain-of-function (`connectf_target`, via
+  `make enrich`). (3) KnockTF 2.0 (PMID 37956336) → ~107K knockdown/knockout DEGs, loss-of-function
+  (`knocktf`, via `make knocktf`); independent of the atlas edges, so the cleanest calibration
+  ground truth. `perturbation_compare` is direction-aware by perturbation type (GOF: activation→up;
+  LOF: activation→down) and scores concordance only on edges carrying a curated `measured` sign.
+- **DAP-seq chromatin peaks** (`load_dapseq_peaks.py`, `make chromatin-peaks`): downloads the
+  Plant Cistrome DB peaks (O'Malley 2016, GEO GSE60143 — the assay behind the DAP-seq edges)
+  and populates `chromatin_peaks`, `peak_gene_links` (peak→promoter overlap), `cis_support_edges`
+  (measured TF→target DAP-seq support), and `peak_motif_hits`. This lights up
+  `grn-cis-support-audit`, `grn-chromatin-support`, `grn-peak-gene-linkage`,
+  `grn-enhancer-network`, and `grn-multiome-support-audit`. Optional heavy layer (~74 MB
+  download); skipped gracefully if the archive is absent.
+- **Motif PWM cache** (`cache_motif_pwms.py`): fetches JASPAR PFMs for every motif the atlas
+  references and stores log-odds matrices in `backend/data/motif_pwms.json.gz` (regenerated,
+  gitignored). grn-allele-affinity needs it to rescore ref vs alt; without it that skill
+  degrades to overlap-only. Resumable; skips retired/404 matrices.
 
 `build_db.py` is stdlib-only and glob-loads whatever caches are present in `backend/data/`
 (sequence context, motif hits, pathways, traits, curated symbols) — **missing caches just
@@ -143,7 +201,8 @@ make enrich
 All three scripts are idempotent — safe to re-run. If ConnecTF data is not downloaded,
 `make enrich` skips that step and prints download instructions.
 
-The full bootstrap sequence is: `make fetch && make db && make enrich && make tissue-weights`.
+The full bootstrap sequence is a single command: `make bootstrap`
+(`setup` → `fetch` → `db` → `enrich` → `knocktf` → `allele-pwms` → `chromatin-peaks`).
 
 ## Compute dependencies (only for regenerating derived data)
 

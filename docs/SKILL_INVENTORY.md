@@ -1,15 +1,18 @@
 # GRN Atlas Skill Inventory
 
-Date: Saturday, August 22, 2026
+Date: Friday, October 9, 2026
 
-This is the canonical current inventory of the GRN Atlas skill layer.
+This is the descriptive catalog of the GRN Atlas skill layer. The authoritative list
+is the set of `.agents/skills/<skill>/SKILL.md` files; this document is kept in step with
+that directory.
 
-Total documented skills: **100**
+Skills in `.agents/skills/`: **106** — **105 callable analysis/workflow skills** plus
+**1 overview/router skill** (`grn-atlas-overview`).
 
-- **99 callable analysis/workflow skills**
-- **1 overview/router skill**: `grn-atlas-overview`
-
-Every skill below has a corresponding `SKILL.md` in `.agents/skills/<skill>/SKILL.md`.
+Every skill has a corresponding `SKILL.md` in `.agents/skills/<skill>/SKILL.md`. The table
+below describes the most commonly used skills; a few specialized skills added after the
+original inventory snapshot are documented in their own `SKILL.md` and registered in
+`grn-atlas-overview`.
 
 | Skill | Description |
 |---|---|
@@ -102,4 +105,28 @@ Every skill below has a corresponding `SKILL.md` in `.agents/skills/<skill>/SKIL
 | `grn-user-gene-set-analysis` | Use when the researcher wants the atlas to interpret a hit list directly: run first-pass analysis over a user-provided gene set or imported table, including enrichment, upstream regulators, candidate triage, and a local subgraph. Trigger on requests like 'analyze my hit list', 'what does the atlas say about these genes', 'triage these hits', 'summarize this gene set biologically', or 'analyze this hit list for experiment follow-up'. Prefer this over grn-research-brief when the user wants analysis results rather than a structured collaborator-ready brief. |
 | `grn-validation-plan` | Use when the user wants an execution-ready follow-up plan for a gene list and intent: what to do next, in what order, with decision gates, blockers, and success criteria. Good for requests like 'build a validation plan', 'how should I follow this up', or 'what experiments should I run next'. Often follows grn-coverage-report and can be reduced with grn-minimal-validation. |
 | `grn-variant-effect` | Use when the user wants to know whether a promoter-region variant overlaps motif-supported regulatory sites for a gene. Good for prompts like 'does this SNP disrupt a TF site?' or 'which TFs might be affected by this promoter variant?'. Current implementation is overlap-based, not full allele-specific affinity rescoring. |
+| `grn-allele-affinity` | Quantitatively rescore a single-base promoter variant (ref vs alt) against the JASPAR log-odds matrix: per-site delta log-odds, weakens/strengthens/little-effect call, likely site loss, and — when the TF→gene sign is known — the predicted expression direction. The magnitude upgrade to grn-variant-effect; needs the motif PWM cache (cache_motif_pwms.py). |
+| `grn-gwas-to-mechanism` | Turn a trait/GWAS-associated gene into a regulatory mechanism sketch: documented trait associations, upstream regulators, and (if a TF) the downstream program, showing the curated (measured) sign of each edge where one exists. Prefer over grn-trait-association when the user wants mechanism rather than the bare association. |
+| `grn-biosafety-screen` | Screen a dsRNA (or an RNAi target gene) for self and cross-species off-target silencing across every atlas transcriptome, with an overall risk class and an explicit list of organisms NOT screened. Prefer over grn-dsrna/grn-dsrna-screen when the concern is cross-species safety rather than single-transcriptome designability. |
+| `grn-network-control` | Find a minimal set of TFs to perturb to steer a target gene program (greedy set-cover over regulatory reachability), with sign-aware overexpress/knockdown recommendations where the edge sign is known. Reachability + known signs, not a dynamical control guarantee. |
+| `grn-differential-network` | Compare regulatory-edge activity between two tissues/conditions using per-tissue TF-target coexpression: edges gained in each tissue, strengthened/weakened edges, with edge sign where known. A coexpression-based activity contrast, not measured physical rewiring. |
+| `grn-dynamics` | Boolean/threshold attractor simulation on the signed induced subnetwork of a gene module: reports fixed point vs cycle and steady-state ON/OFF after clamped perturbations. Qualitative abstraction over signed edges only; unsigned edges excluded and reported as coverage. |
 | `grn-workflow` | Run a packaged end-to-end research workflow. Available: deg-to-regulators (DEG list → upstream TFs), target-to-perturbation (gene → RNAi/CRISPR strategy), import-to-activity (dataset → TF scoring). |
+
+## Chromatin, cell-state, and intervention skills
+
+Shipped after the original table snapshot; each has a `SKILL.md` and is registered in
+`grn-atlas-overview`.
+
+| Skill | Description |
+|---|---|
+| `grn-cis-support-audit` | Assess whether a TF→target edge is supported by promoter motif, chromatin peak, enhancer linkage, and prior regulatory evidence. Returns a confidence tier (strong/moderate/weak/minimal) and lists missing evidence layers. |
+| `grn-enhancer-network` | Inspect a gene's enhancer-linked regulatory neighborhood: linked peaks, TFs with motifs in those peaks, and co-linked target genes — enhancer-mediated regulation beyond promoter-local reasoning. |
+| `grn-peak-gene-linkage` | Query which gene(s) a genomic region or chromatin peak likely regulates. Accepts a peak_id or region (chr:start-end) and returns linked genes with scores and overlapping TF motifs. |
+| `grn-multiome-support-audit` | Multi-layer evidence triangulation for a TF→target claim across network, motif, chromatin, expression, and perturbation layers; flags conflicting evidence and returns an evidence-weighted confidence score. |
+| `grn-celltype-regulon` | Extract a TF's regulon filtered by cell-type/state expression context, showing which targets are active in a specific state vs the global regulon, with overlap statistics. |
+| `grn-transition-drivers` | Identify TF drivers of a cell-state transition or developmental branch point from transition DEGs via regulon enrichment. |
+| `grn-edit-consequence` | Predict regulatory/network consequences of a promoter edit, motif disruption, or coding edit: which TF→target relationships are affected and the expected downstream cascade. |
+| `grn-crispr-vs-dsrna-compare` | Compare RNAi and CRISPR strategies for the same candidates — feasibility, specificity, complexity, and a recommended first modality for the research intent. |
+| `grn-intervention-strategy-ranker` | Rank intervention modes (dsRNA, CRISPR knockout, promoter editing) across candidates by feasibility, specificity, and cost under intent and budget constraints. |
+| `grn-literature-grounding` | Score how external literature terms map to atlas genes: exact, synonym, partial, and ortholog match types with a confidence score per mapping path. |

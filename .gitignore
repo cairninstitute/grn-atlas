@@ -64,5 +64,6 @@ backend/data/*.assembly.gz
 !backend/data/network_stats_*.json
 !backend/data/quality_report_*.json
 !backend/data/beeline_benchmark_report.json
+!backend/data/sign_validation_report.json
 
 test-results/
