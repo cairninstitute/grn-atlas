@@ -1,0 +1,41 @@
+{
+  "algorithm": "bounded-feedback-control",
+  "results": [
+    {
+      "nodes": 50000,
+      "edges": 25000,
+      "build_seconds": 0.036,
+      "analysis_seconds": 0.141,
+      "peak_rss_mib": 113.1,
+      "feedback_cores": 1,
+      "feedback_genes": 500,
+      "circuits_returned": 12,
+      "search_truncated": true,
+      "scale": 1
+    },
+    {
+      "nodes": 50000,
+      "edges": 250000,
+      "build_seconds": 0.379,
+      "analysis_seconds": 0.55,
+      "peak_rss_mib": 194.4,
+      "feedback_cores": 1,
+      "feedback_genes": 500,
+      "circuits_returned": 12,
+      "search_truncated": true,
+      "scale": 10
+    },
+    {
+      "nodes": 50000,
+      "edges": 2500000,
+      "build_seconds": 4.597,
+      "analysis_seconds": 4.943,
+      "peak_rss_mib": 485.9,
+      "feedback_cores": 1,
+      "feedback_genes": 500,
+      "circuits_returned": 12,
+      "search_truncated": true,
+      "scale": 100
+    }
+  ]
+}

@@ -27,6 +27,7 @@ const GeneWorkflow = lazy(() => import('./components/workflows/GeneWorkflow'));
 const CrossSpeciesView = lazy(() => import('./components/CrossSpeciesView'));
 const DiseaseToPlantDemo = lazy(() => import('./components/DiseaseToPlantDemo'));
 const RegulatoryWeatherMap = lazy(() => import('./components/RegulatoryWeatherMap'));
+const FeedbackControlView = lazy(() => import('./components/FeedbackControlView'));
 
 const SPECIES_TO_KINGDOM = {
   human: 'Animalia',
@@ -37,11 +38,12 @@ const SPECIES_TO_KINGDOM = {
   rice: 'Plantae',
 };
 
-const LEGACY_VIEW_IDS = new Set(['network', 'organism', 'pathways', 'comparison', 'genome', 'design', 'analysis', 'crossview']);
+const LEGACY_VIEW_IDS = new Set(['network', 'organism', 'pathways', 'comparison', 'genome', 'design', 'analysis', 'crossview', 'feedback']);
 const ADVANCED_TABS = [
   { id: 'network', label: 'Explorer', icon: '🔗' },
   { id: 'crossview', label: 'Cross-species', icon: '🌍' },
   { id: 'organism', label: 'Organism', icon: '🌐' },
+  { id: 'feedback', label: 'Feedback', icon: '↻' },
   { id: 'pathways', label: 'Paths', icon: '🛤️' },
   { id: 'comparison', label: 'Orthology', icon: '⚖️' },
   { id: 'genome', label: 'Genome', icon: '🧬' },
@@ -357,6 +359,16 @@ function ExplorerInner() {
           onSelectGene={(symbol) => { handleGeneSearch(symbol); setAdvancedView('network'); }}
         />,
         'Loading organism view…',
+      );
+    }
+    if (advancedView === 'feedback') {
+      return renderWithSuspense(
+        <FeedbackControlView
+          initialSpecies={filters?.species?.[0] || 'arabidopsis'}
+          onSpeciesChange={handleSpeciesChange}
+          onSelectGene={(symbol) => { handleGeneSearch(symbol); setAdvancedView('network'); }}
+        />,
+        'Loading feedback architecture…',
       );
     }
 

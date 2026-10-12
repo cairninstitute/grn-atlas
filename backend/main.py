@@ -29,6 +29,7 @@ import literature
 import consensus
 import sequence_design
 import advanced
+import feedback_control
 from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -242,6 +243,28 @@ class NetworkPatternRequest(BaseModel):
     pattern_types: List[str] = ["ffl", "autoregulation", "bifan"]
     min_confidence: float = 0.0
     limit: int = 100
+
+
+class FeedbackControlRequest(BaseModel):
+    species: str
+    min_confidence: float = Field(0.5, ge=0.0, le=1.0)
+    evidence_tiers: List[str] = Field(default_factory=lambda: ["measured", "perturbation"])
+    max_loop_length: int = Field(6, ge=2, le=10)
+    max_cores: int = Field(50, ge=1, le=200)
+    max_circuits: int = Field(100, ge=1, le=500)
+    circuits_per_core: int = Field(12, ge=1, le=50)
+    max_search_states: int = Field(100_000, ge=1_000, le=2_000_000)
+    max_controllers: int = Field(30, ge=1, le=200)
+    refresh: bool = False
+
+    @field_validator("evidence_tiers")
+    @classmethod
+    def validate_evidence_tiers(cls, values):
+        allowed = {"measured", "perturbation"}
+        cleaned = list(dict.fromkeys(values))
+        if not cleaned or any(value not in allowed for value in cleaned):
+            raise ValueError("evidence_tiers must contain measured and/or perturbation")
+        return cleaned
 
 class CentralityRequest(BaseModel):
     species: Optional[str] = None
@@ -1337,6 +1360,58 @@ async def network_patterns(request: NetworkPatternRequest):
         summary["truncated"] = True
     results["summary"] = summary
     return results
+
+
+@app.post("/api/v1/network/feedback-control")
+async def feedback_control_analysis(request: FeedbackControlRequest):
+    """Discover bounded signed feedback circuits and structural control points.
+
+    The analysis is exhaustive for feedback cores, self-regulation, and reciprocal
+    pairs. Longer cycles are representative and search-bounded; truncation is
+    always returned explicitly. Controller sets are exact only for small cores.
+    """
+    species = _normalize_species_input(request.species)
+    exists = db.conn.execute(
+        "SELECT 1 FROM genes WHERE species = ? LIMIT 1", (species,)
+    ).fetchone()
+    if not exists:
+        raise HTTPException(status_code=404, detail=f"Unknown species: {request.species}")
+    params = feedback_control.FeedbackParameters(
+        min_confidence=request.min_confidence,
+        evidence_tiers=tuple(request.evidence_tiers),
+        max_loop_length=request.max_loop_length,
+        max_cores=request.max_cores,
+        max_circuits=request.max_circuits,
+        circuits_per_core=request.circuits_per_core,
+        max_search_states=request.max_search_states,
+        max_controllers=request.max_controllers,
+    )
+    store_path = FilePath(
+        os.environ.get("GRN_FEEDBACK_DB") or (DATA_DIR / "feedback_analysis.sqlite3")
+    )
+    try:
+        store = feedback_control.FeedbackStore(store_path)
+        return feedback_control.analyze_and_store(
+            db.conn, store, species, params, refresh=request.refresh,
+        )
+    except sqlite3.Error as exc:
+        logger.exception("Feedback-control analysis failed")
+        raise HTTPException(status_code=500, detail=f"Feedback analysis storage failed: {exc}") from exc
+
+
+@app.get("/api/v1/network/feedback-control/{species}/latest")
+async def latest_feedback_control_analysis(species: str):
+    """Return the most recently persisted bounded analysis for a species."""
+    normalized = _normalize_species_input(species)
+    store_path = FilePath(
+        os.environ.get("GRN_FEEDBACK_DB") or (DATA_DIR / "feedback_analysis.sqlite3")
+    )
+    store = feedback_control.FeedbackStore(store_path)
+    result = store.latest(normalized)
+    if result is None:
+        raise HTTPException(status_code=404, detail=f"No feedback analysis stored for {normalized}")
+    result["storage"] = {"status": "cached", "backend": "versioned_sidecar"}
+    return result
 
 
 @app.post("/api/v1/network/centrality")

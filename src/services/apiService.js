@@ -610,6 +610,28 @@ export const analysisAPI = {
     return response.json();
   },
 
+  feedbackControl: async (species, options = {}) => {
+    const response = await fetch(`${API_BASE}/network/feedback-control`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        species,
+        min_confidence: options.minConfidence ?? 0.5,
+        evidence_tiers: options.evidenceTiers || ['measured', 'perturbation'],
+        max_loop_length: options.maxLoopLength || 6,
+        max_cores: options.maxCores || 50,
+        max_circuits: options.maxCircuits || 100,
+        circuits_per_core: options.circuitsPerCore || 12,
+        max_search_states: options.maxSearchStates || 100000,
+        max_controllers: options.maxControllers || 30,
+        refresh: options.refresh || false,
+      }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Feedback analysis failed');
+    return data;
+  },
+
   centrality: async (options = {}) => {
     const response = await fetch(`${API_BASE}/network/centrality`, {
       method: 'POST',
