@@ -2541,7 +2541,13 @@ async def network_dynamics(request: NetworkDynamicsRequest):
     sp = _normalize_species_input(request.species) if request.species else None
     nodes, unresolved = [], []
     for tok in request.genes:
-        g = db.get_gene(tok) or (db.find_gene_by_symbol_species(tok, sp) if sp else None)
+        direct = db.get_gene(tok)
+        # A symbol such as PRR9 can be an exact gene ID in another species. When
+        # the caller supplies a species, never let that global match override the
+        # species-scoped symbol lookup.
+        if direct and sp and direct.species != sp:
+            direct = None
+        g = direct or (db.find_gene_by_symbol_species(tok, sp) if sp else None)
         if not g:
             cand = db.search_genes(tok, limit=1, species=sp)
             g = cand[0] if cand else None
@@ -2572,7 +2578,10 @@ async def network_dynamics(request: NetworkDynamicsRequest):
 
     clamp = {}
     for gtok, val in (request.perturb or {}).items():
-        g = db.get_gene(gtok) or (db.find_gene_by_symbol_species(gtok, sp) if sp else None)
+        direct = db.get_gene(gtok)
+        if direct and sp and direct.species != sp:
+            direct = None
+        g = direct or (db.find_gene_by_symbol_species(gtok, sp) if sp else None)
         if g and g.id in node_set:
             clamp[g.id] = 1 if val else 0
     init_val = 0 if request.initial == "off" else 1

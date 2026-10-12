@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Clock Needs Time: An Arabidopsis Circadian Demonstration in Darwin</title>
+  <meta name="description" content="A Darwin demonstration that keeps GRN Atlas signed regulatory evidence separate from the continuous model needed to represent the Arabidopsis circadian clock." />
+  <link rel="canonical" href="https://www.cairninstitute.com/blogs/Darwin/darwin-circadian-clock-demo-blog/" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A Clock Needs Time: An Arabidopsis Circadian Demonstration in Darwin" />
+  <meta property="og:description" content="12 atlas-resolved genes, 19 measured signed edges, and a separate continuous model that makes the evidence-to-dynamics boundary explicit." />
+  <meta property="og:url" content="https://www.cairninstitute.com/blogs/Darwin/darwin-circadian-clock-demo-blog/" />
+  <meta property="og:image" content="https://www.cairninstitute.com/blogs/Darwin/darwin-circadian-clock-demo-blog/social/darwin-clock-landscape-1200x630.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="A Clock Needs Time: An Arabidopsis Circadian Demonstration in Darwin" />
+  <meta name="twitter:description" content="Darwin evidence plus a separate time-aware model of the Arabidopsis circadian clock." />
+  <meta name="twitter:image" content="https://www.cairninstitute.com/blogs/Darwin/darwin-circadian-clock-demo-blog/social/darwin-clock-landscape-1200x630.png" />
+  <style>
+    :root { --fg:#111827; --muted:#4b5563; --border:#d1d5db; --bg:#fff; --accent:#0f766e; --code-bg:#f3f4f6; }
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.65; }
+    main { max-width:920px; margin:0 auto; padding:40px 24px 80px; }
+    h1,h2,h3 { line-height:1.25; margin-top:1.6em; margin-bottom:.6em; }
+    h1:first-child { margin-top:0; }
+    p,ul,ol,table,blockquote { margin:0 0 1em; }
+    .meta { color:var(--muted); margin-bottom:.4em; }
+    .tags { color:var(--accent); font-weight:600; margin-bottom:1.4em; }
+    table { width:100%; border-collapse:collapse; font-size:.96rem; }
+    th,td { border:1px solid var(--border); padding:10px 12px; text-align:left; vertical-align:top; }
+    th { background:#f9fafb; }
+    code { background:var(--code-bg); padding:.16em .38em; border-radius:4px; font-size:.94em; }
+    .hero-link { display:inline-block; margin:.4em 0 1.2em; color:var(--accent); font-weight:700; text-decoration:none; }
+    .hero-link:hover { text-decoration:underline; }
+    .site-header { display:flex; align-items:center; justify-content:space-between; max-width:920px; margin:0 auto; padding:16px 24px; }
+    .site-header a { color:var(--fg); text-decoration:none; }
+    .logo-group { display:flex; align-items:center; gap:12px; }
+    .logo-group img { width:40px; height:40px; border-radius:6px; }
+    .logo-group span { font-size:1.1rem; font-weight:700; }
+    .site-header nav { display:flex; gap:24px; font-size:.95rem; }
+    .site-header nav a { color:var(--muted); }
+    .site-header nav a:hover { color:var(--accent); }
+    .header-rule { max-width:920px; margin:0 auto; border:0; border-top:1px solid var(--border); }
+    .callout { border-left:4px solid var(--accent); background:#f0fdfa; padding:14px 18px; margin:1.25em 0; }
+    .footer { margin-top:2.5em; color:var(--muted); font-size:.95rem; }
+    figure { margin:1.35em 0 1.7em; }
+    figure img { width:100%; border:1px solid var(--border); border-radius:10px; display:block; }
+    figcaption { color:var(--muted); font-size:.95rem; margin-top:.55em; }
+    .equation { overflow-x:auto; background:var(--code-bg); border-radius:8px; padding:14px 16px; margin:1.25em 0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    @media (max-width:640px) {
+      main { padding:28px 18px 56px; }
+      .site-header { padding:14px 18px; }
+      .site-header nav { gap:12px; font-size:.85rem; }
+      .site-header nav a:nth-child(2),.site-header nav a:nth-child(3) { display:none; }
+      table { font-size:.88rem; }
+      th,td { padding:8px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="https://www.cairninstitute.com/" class="logo-group">
+      <img src="cairn-logo.jpg" alt="CAIRN Institute" />
+      <span>CAIRN Institute</span>
+    </a>
+    <nav>
+      <a href="https://www.cairninstitute.com/">Home</a>
+      <a href="https://www.cairninstitute.com/about">About</a>
+      <a href="https://www.cairninstitute.com/projects">Projects</a>
+      <a href="mailto:info@cairninstitute.com">Contact</a>
+    </nav>
+  </header>
+  <hr class="header-rule" />
+  <main>
+    <h1>A Clock Needs Time: An Arabidopsis Circadian Demonstration in Darwin</h1>
+    <p class="meta">Author: CAIRN Institute</p>
+    <p class="meta">Published: October 12, 2026</p>
+    <p class="meta">Read time: 7&ndash;9 minutes</p>
+    <p class="tags">#GeneRegulation #CircadianBiology #Arabidopsis #SystemsBiology #PlantScience #AIforScience</p>
+    <a class="hero-link" href="https://www.cairninstitute.com/Darwin/">Explore Darwin &rarr;</a>
+    <p class="meta"><em>Darwin is powered by the CAIRN Institute GRN Atlas.</em></p>
+
+    <h2>Quick Summary</h2>
+    <p>Darwin can now analyze the qualitative dynamics of a signed gene-regulatory module. Given a set of genes, it retrieves supported activation and repression edges, reports how much of the module has signed evidence, and tests whether a Boolean abstraction reaches a fixed point or a cycle.</p>
+    <p>The Arabidopsis circadian clock is a useful demonstration&mdash;and an important boundary test. A signed wiring diagram is not enough to reproduce a biological clock. Oscillation also requires time: delayed feedback, accumulation, turnover and phase relationships.</p>
+    <p>We therefore built this demonstration in two explicitly separate layers:</p>
+    <ul>
+      <li>Darwin resolves <strong>12 Arabidopsis clock genes</strong> and retrieves <strong>19 measured signed regulatory edges</strong>, including confidence and provenance.</li>
+      <li>A compact continuous model adds the temporal assumptions needed to produce a repeating morning-to-evening cycle.</li>
+    </ul>
+    <p>The result is a <strong>24.2-hour illustrative limit cycle</strong> and a qualitative CCA1-overexpression test in which rhythmicity collapses. The period and amplitudes are model outputs, not expression measurements or parameters inferred by GRN Atlas.</p>
+
+    <div class="callout"><strong>Evidence boundary:</strong> GRN Atlas supplies the gene identities and signed regulatory evidence. The plotted trajectories come from a separate literature-structured demonstration model.</div>
+
+    <h2>The Goal</h2>
+    <p>Our broader goal is to move from a regulatory network that can be inspected to one that can be used to formulate testable dynamic hypotheses.</p>
+    <p>A static network can identify regulators, regulatory signs, supporting sources and plausible downstream responses. A clock asks harder questions: in what order do regulators become active, how long do their effects persist, does feedback settle or oscillate, and does a perturbation change phase, period, amplitude or rhythmicity?</p>
+    <p>Those questions cannot be answered from connectivity alone.</p>
+
+    <h2>Why the First Simulation Was Not a Clock</h2>
+    <p>Darwin's general <code>grn-dynamics</code> operation uses synchronous Boolean threshold updates. An active activator contributes a positive input, an active repressor contributes a negative input, and all genes update together. This is useful for qualitative attractor and perturbation analysis.</p>
+    <p>For the clock genes, however, an all-ON starting state reaches a fixed point after three update steps. It does not oscillate. That result is not a failed biological clock; it is the correct answer to a different question: what attractor does this particular Boolean abstraction reach?</p>
+    <p>Presenting that fixed point as circadian behavior would conflate regulatory signs with kinetic dynamics. The new demonstration preserves the Boolean result as a comparison and introduces a separate time-aware model for the clock.</p>
+
+    <h2>What Darwin Contributes</h2>
+    <p>The demonstration begins with stable Arabidopsis locus identifiers for CCA1, LHY, RVE8, PRR9, PRR7, PRR5, ZTL, GI, TOC1, ELF3, ELF4 and LUX/PCL1.</p>
+    <p>Darwin then retrieves the signed subnetwork among those genes from the rebuilt GRN Atlas:</p>
+    <table>
+      <thead><tr><th>Evidence result</th><th>Current demonstration</th></tr></thead>
+      <tbody>
+        <tr><td>Atlas-resolved clock genes</td><td>12</td></tr>
+        <tr><td>Non-self measured signed edges</td><td>19</td></tr>
+        <tr><td>Edges represented in ATRM and PlantRegMap</td><td>19</td></tr>
+        <tr><td>Edges with additional DAP-seq support</td><td>4</td></tr>
+        <tr><td>Signed coverage of the induced atlas subnetwork</td><td>70.4%</td></tr>
+      </tbody>
+    </table>
+    <p>The solid arrows in the animation are those atlas edges. Green denotes activation, red denotes repression, and edge brightness follows the modeled activity of the source regulator. Confidence, source databases, identifiers and available publication links remain attached to the evidence record rather than being collapsed into the animation.</p>
+
+    <figure>
+      <img src="clock_demo.gif" alt="Animated Arabidopsis circadian clock network with simultaneous gene activity and continuous trajectories" />
+      <figcaption>The 12-gene network cycles alongside four representative trajectories. The ring communicates phase order; the traces carry quantitative model timing.</figcaption>
+    </figure>
+
+    <h2>Adding the Time Dimension</h2>
+    <p>The continuous layer is a compact three-module repressilator based on established Arabidopsis clock architecture:</p>
+    <ol>
+      <li>A morning module represents CCA1/LHY-associated activity.</li>
+      <li>A daytime module represents the sequential PRR program.</li>
+      <li>An evening module represents TOC1/GI and evening-complex activity.</li>
+    </ol>
+    <p>The modules form a delayed sequence of repression: morning represses evening, evening represses the daytime PRR program, and the PRR program represses morning activity.</p>
+    <div class="equation">d(morning)/dt = basal + alpha / (1 + day<sup>hill</sup>) - decay &times; morning</div>
+    <p>The same form is rotated through the three modules. Gene-level phase offsets spread the signals into the expected progression from dawn-associated CCA1/LHY through PRR9, PRR7, PRR5, TOC1 and the evening complex.</p>
+    <p>The parameters were selected to create a stable free-running demonstration with a 24.2-hour period. They were not fitted to an Arabidopsis time course. The trajectories should therefore be read as a mechanistic illustration of delayed feedback, not as predicted transcript abundance.</p>
+
+    <figure>
+      <img src="clock_demo.png" alt="Static comparison of the Arabidopsis clock limit cycle and CCA1 overexpression proxy" />
+      <figcaption>Top: ordered activity in the free-running model. Bottom: the CCA1-OX proxy clamps the combined morning module high at hour 24 and the oscillation collapses.</figcaption>
+    </figure>
+
+    <h2>A Perturbation With a Known Direction</h2>
+    <p>Constitutive CCA1 expression is a useful qualitative check because CCA1-overexpressing Arabidopsis plants are known to lose normal circadian rhythmicity.</p>
+    <p>At hour 24, the demonstration clamps the combined morning module high. Evening activity falls, the PRR-associated state becomes fixed and the repeating cycle collapses. The direction of the result is consistent with the known phenotype.</p>
+    <p>This is still a proxy. The compact model groups CCA1 and LHY and does not reproduce a specific transgenic line, tissue, light regime or expression magnitude. Its defensible claim is narrower: a known clock-disrupting intervention also disrupts the modeled feedback cycle.</p>
+
+    <h2>What Is New in Darwin</h2>
+    <p>This work adds a clearer route from atlas evidence to dynamic hypothesis generation:</p>
+    <ul>
+      <li>species-aware resolution of regulatory modules;</li>
+      <li>retrieval of activation and repression signs with provenance;</li>
+      <li>qualitative Boolean attractor analysis for general signed subnetworks;</li>
+      <li>explicit separation between atlas evidence and external kinetic assumptions;</li>
+      <li>reproducible dynamic demonstrations with evidence manifests and perturbation comparisons.</li>
+    </ul>
+    <p>The separation is the important design choice. Darwin can supply a defensible regulatory graph, but a dynamic model must state where its delays, rates, initial conditions and perturbation rules come from.</p>
+
+    <h2>What This Demonstration Does&mdash;and Does Not&mdash;Show</h2>
+    <p>It shows that Darwin can assemble and audit the evidence layer for a biologically recognizable regulatory system, pass that layer into a separate dynamic model, and preserve the distinction between observed edges and modeled behavior.</p>
+    <p>It does not show that 19 signed edges are sufficient to infer a circadian clock, that the plotted curves are measured expression, or that a 24.2-hour period was learned from sequence. A predictive clock model would require time-series expression, protein abundance and turnover, light and temperature inputs, tissue context, fitted kinetic parameters, and validation against independent perturbations.</p>
+    <p>That boundary is not a limitation to hide. It is the line between a plausible animation and a testable systems-biology model.</p>
+
+    <h2>Next Steps</h2>
+    <p>The next scientific step is calibration rather than additional visual complexity. We plan to fit phase and amplitude against public Arabidopsis time courses, separate mRNA and protein states, represent evening-complex assembly and ZTL-mediated turnover, model entrainment explicitly, and score multiple perturbations against held-out measurements.</p>
+    <p>The current demonstration establishes the architecture for that work: Darwin supplies the traceable regulatory evidence, while the dynamic layer remains explicit, replaceable and independently testable.</p>
+
+    <h2>References</h2>
+    <ul>
+      <li>Pokhilko et al. (2012), <a href="https://doi.org/10.1038/msb.2012.6">The clock gene circuit in Arabidopsis includes a repressilator with additional feedback loops</a>.</li>
+      <li>Fogelmark and Troein (2014), <a href="https://doi.org/10.1371/journal.pcbi.1003705">Rethinking Transcriptional Activation in the Arabidopsis Circadian Clock</a>.</li>
+      <li>Wang and Tobin (1998), <a href="https://pubmed.ncbi.nlm.nih.gov/9657153/">Constitutive expression of CCA1 disrupts circadian rhythms and suppresses its own expression</a>.</li>
+    </ul>
+
+    <p class="footer">Explore <a href="https://www.cairninstitute.com/Darwin/">Darwin</a> and learn more about the <a href="https://www.cairninstitute.com/">CAIRN Institute</a>.</p>
+  </main>
+</body>
+</html>

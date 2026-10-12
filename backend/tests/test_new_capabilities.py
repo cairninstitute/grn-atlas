@@ -458,6 +458,17 @@ def test_network_dynamics_needs_two_genes():
         _run(main.network_dynamics(main.NetworkDynamicsRequest(genes=["AT5G11260"], species="arabidopsis")))
 
 
+def test_network_dynamics_prefers_species_scoped_symbols():
+    """Plant symbols that are human IDs must remain in the requested species."""
+    res = _run(main.network_dynamics(main.NetworkDynamicsRequest(
+        genes=["CCA1", "PRR9", "PRR7"], species="arabidopsis",
+        perturb={"PRR9": 0})))
+    assert res["species"] == "arabidopsis"
+    assert set(res["final_state"]) == {"CCA1", "PRR9", "PRR7"}
+    assert res["perturbation"] == {"PRR9": 0}
+    assert res["n_signed_edges"] >= 2
+
+
 def test_biosafety_screen_requires_input():
     with pytest.raises(Exception):
         _run(main.rnai_biosafety_screen(main.BiosafetyScreenRequest(intended_species="arabidopsis")))

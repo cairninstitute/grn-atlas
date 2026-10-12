@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arabidopsis Circadian Clock · Darwin</title>
+<style>
+:root{--paper:#f4f0e7;--ink:#132a32;--muted:#60747a;--cyan:#00a7b5;--red:#cb5548}
+*{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:Georgia,'Times New Roman',serif}
+main{max-width:1120px;margin:auto;padding:64px 28px 88px} .kicker{font:700 12px/1.2 sans-serif;letter-spacing:.16em;color:var(--cyan)}
+h1{font-size:clamp(42px,7vw,78px);line-height:.95;max-width:980px;margin:18px 0 24px;letter-spacing:-.04em}
+.lead{font-size:21px;line-height:1.55;max-width:820px;color:var(--muted)} img{width:100%;display:block;border:1px solid #d8d2c5;margin:42px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:48px 0} article{border-top:4px solid var(--cyan);padding:20px 4px}
+article:last-child{border-color:var(--red)} h2{font-size:27px;margin:0 0 12px} p,li{font-size:17px;line-height:1.55}
+.stats{display:flex;gap:36px;flex-wrap:wrap;margin:32px 0} .stat strong{display:block;font:700 34px/1 sans-serif} .stat span{font:12px sans-serif;color:var(--muted)}
+a{color:var(--ink);text-decoration-thickness:1px} .note{background:#e6ece9;padding:24px 28px;margin-top:40px}
+@media(max-width:720px){main{padding:40px 18px}.grid{grid-template-columns:1fr}}
+</style></head><body><main>
+<div class="kicker">DARWIN · GRN ATLAS DEMONSTRATION</div>
+<h1>A clock needs time, not only wiring.</h1>
+<p class="lead">Darwin identifies the Arabidopsis clock genes and retrieves the experimentally signed regulatory edges among them. A separate continuous model adds the delays and feedback needed to demonstrate a repeating circadian rhythm.</p>
+<div class="stats"><div class="stat"><strong>12</strong><span>ATLAS-RESOLVED GENES</span></div><div class="stat"><strong>19</strong><span>MEASURED SIGNED EDGES</span></div><div class="stat"><strong>24.2 h</strong><span>MODEL PERIOD</span></div></div>
+<img src="clock_demo.gif" alt="Animated Arabidopsis clock network and expression trajectories">
+<div class="grid"><article><h2>What Darwin contributes</h2><p>Stable Arabidopsis identifiers, signed edge retrieval, confidence and provenance, plus a Boolean attractor result used as a comparison. The solid arrows in the animation come directly from the rebuilt GRN Atlas database.</p></article><article><h2>What the clock model contributes</h2><p>A compact morning–PRR–evening repressilator supplies continuous activity and delayed negative feedback. It is literature-structured and explanatory, not fitted expression data and not inferred from edge signs alone.</p></article></div>
+<img src="clock_demo.png" alt="Static summary of the clock network, wild-type rhythm and CCA1 overexpression proxy">
+<div class="note"><strong>Truth boundary.</strong> The wild-type trajectory is a demonstration model. The CCA1-OX panel clamps the combined CCA1/LHY morning module high, so it is a qualitative proxy rather than a genotype-exact prediction. The biologically supported expectation is loss of rhythmicity; the plotted magnitude is not an experimental measurement.</div>
+<p><a href="clock_timeseries.csv">Download trajectories (CSV)</a> · <a href="clock_evidence.json">Inspect evidence and assumptions (JSON)</a></p>
+</main></body></html>

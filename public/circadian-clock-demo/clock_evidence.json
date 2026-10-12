@@ -1,0 +1,473 @@
+{
+  "truth_boundary": {
+    "atlas": "gene identities and measured/perturbation signed edges",
+    "model": "unfitted three-module continuous repressilator with explicit phase assumptions",
+    "not_claimed": "GRN Atlas edge signs alone predict a quantitative circadian rhythm"
+  },
+  "genes": [
+    {
+      "symbol": "CCA1",
+      "locus": "AT2G46830",
+      "atlas_symbol": "CCA1",
+      "module": "morning",
+      "phase_label": "dawn",
+      "model_peak_hours": 0.0
+    },
+    {
+      "symbol": "LHY",
+      "locus": "AT1G01060",
+      "atlas_symbol": "LHY",
+      "module": "morning",
+      "phase_label": "dawn",
+      "model_peak_hours": 0.5
+    },
+    {
+      "symbol": "RVE8",
+      "locus": "AT3G09600",
+      "atlas_symbol": "RVE8",
+      "module": "morning",
+      "phase_label": "morning",
+      "model_peak_hours": 3.0
+    },
+    {
+      "symbol": "PRR9",
+      "locus": "AT2G46790",
+      "atlas_symbol": "PRR9",
+      "module": "day",
+      "phase_label": "early day",
+      "model_peak_hours": 4.05
+    },
+    {
+      "symbol": "PRR7",
+      "locus": "AT5G02810",
+      "atlas_symbol": "PRR7",
+      "module": "day",
+      "phase_label": "midday",
+      "model_peak_hours": 8.05
+    },
+    {
+      "symbol": "PRR5",
+      "locus": "AT5G24470",
+      "atlas_symbol": "PRR5",
+      "module": "day",
+      "phase_label": "afternoon",
+      "model_peak_hours": 11.55
+    },
+    {
+      "symbol": "ZTL",
+      "locus": "AT5G57360",
+      "atlas_symbol": "ZTL",
+      "module": "day",
+      "phase_label": "afternoon",
+      "model_peak_hours": 10.05
+    },
+    {
+      "symbol": "GI",
+      "locus": "AT1G22770",
+      "atlas_symbol": "GI",
+      "module": "evening",
+      "phase_label": "late day",
+      "model_peak_hours": 14.1
+    },
+    {
+      "symbol": "TOC1",
+      "locus": "AT5G61380",
+      "atlas_symbol": "TOC1",
+      "module": "evening",
+      "phase_label": "evening",
+      "model_peak_hours": 16.1
+    },
+    {
+      "symbol": "ELF3",
+      "locus": "AT2G25930",
+      "atlas_symbol": "ELF3",
+      "module": "evening",
+      "phase_label": "evening",
+      "model_peak_hours": 16.6
+    },
+    {
+      "symbol": "ELF4",
+      "locus": "AT2G40080",
+      "atlas_symbol": "ELF4",
+      "module": "evening",
+      "phase_label": "evening",
+      "model_peak_hours": 16.1
+    },
+    {
+      "symbol": "LUX",
+      "locus": "AT3G46640",
+      "atlas_symbol": "PCL1",
+      "module": "evening",
+      "phase_label": "early night",
+      "model_peak_hours": 17.1
+    }
+  ],
+  "atlas_signed_edges": [
+    {
+      "source_id": "AT2G46830",
+      "source": "CCA1",
+      "target_id": "AT2G40080",
+      "target": "ELF4",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT2G46830",
+      "source": "CCA1",
+      "target_id": "AT1G22770",
+      "target": "GI",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT2G46830",
+      "source": "CCA1",
+      "target_id": "AT1G01060",
+      "target": "LHY",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT2G46830",
+      "source": "CCA1",
+      "target_id": "AT3G46640",
+      "target": "LUX",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT2G46830",
+      "source": "CCA1",
+      "target_id": "AT5G02810",
+      "target": "PRR7",
+      "sign": "activation",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT2G46830",
+      "source": "CCA1",
+      "target_id": "AT2G46790",
+      "target": "PRR9",
+      "sign": "activation",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT2G46830",
+      "source": "CCA1",
+      "target_id": "AT5G61380",
+      "target": "TOC1",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT2G46830",
+      "source": "CCA1",
+      "target_id": "AT5G57360",
+      "target": "ZTL",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT1G01060",
+      "source": "LHY",
+      "target_id": "AT2G40080",
+      "target": "ELF4",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.99,
+      "sources": [
+        "ATRM",
+        "DAP-seq",
+        "PlantRegMap"
+      ],
+      "pmids": [
+        "27203113"
+      ]
+    },
+    {
+      "source_id": "AT1G01060",
+      "source": "LHY",
+      "target_id": "AT1G22770",
+      "target": "GI",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT1G01060",
+      "source": "LHY",
+      "target_id": "AT3G46640",
+      "target": "LUX",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.99,
+      "sources": [
+        "ATRM",
+        "DAP-seq",
+        "PlantRegMap"
+      ],
+      "pmids": [
+        "27203113"
+      ]
+    },
+    {
+      "source_id": "AT1G01060",
+      "source": "LHY",
+      "target_id": "AT5G02810",
+      "target": "PRR7",
+      "sign": "activation",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT1G01060",
+      "source": "LHY",
+      "target_id": "AT2G46790",
+      "target": "PRR9",
+      "sign": "activation",
+      "sign_evidence": "measured",
+      "confidence": 0.99,
+      "sources": [
+        "ATRM",
+        "DAP-seq",
+        "PlantRegMap"
+      ],
+      "pmids": [
+        "27203113"
+      ]
+    },
+    {
+      "source_id": "AT1G01060",
+      "source": "LHY",
+      "target_id": "AT5G61380",
+      "target": "TOC1",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.99,
+      "sources": [
+        "ATRM",
+        "DAP-seq",
+        "PlantRegMap"
+      ],
+      "pmids": [
+        "27203113"
+      ]
+    },
+    {
+      "source_id": "AT3G46640",
+      "source": "LUX",
+      "target_id": "AT2G46830",
+      "target": "CCA1",
+      "sign": "activation",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT3G46640",
+      "source": "LUX",
+      "target_id": "AT2G40080",
+      "target": "ELF4",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT3G46640",
+      "source": "LUX",
+      "target_id": "AT1G22770",
+      "target": "GI",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT3G46640",
+      "source": "LUX",
+      "target_id": "AT1G01060",
+      "target": "LHY",
+      "sign": "activation",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    },
+    {
+      "source_id": "AT3G46640",
+      "source": "LUX",
+      "target_id": "AT5G61380",
+      "target": "TOC1",
+      "sign": "repression",
+      "sign_evidence": "measured",
+      "confidence": 0.97,
+      "sources": [
+        "ATRM",
+        "PlantRegMap"
+      ],
+      "pmids": []
+    }
+  ],
+  "atlas_edge_sources": {
+    "ATRM": 19,
+    "PlantRegMap": 19,
+    "DAP-seq": 4
+  },
+  "continuous_model": {
+    "name": "three-module continuous repressilator",
+    "modules": [
+      "CCA1/LHY morning",
+      "PRR daytime",
+      "evening complex"
+    ],
+    "architecture": "morning represses evening; evening represses PRR; PRR represses morning",
+    "parameters": {
+      "alpha": 10.0,
+      "hill": 3.0,
+      "decay_per_hour": 0.3,
+      "basal": 0.05
+    },
+    "fitted_to_data": false,
+    "perturbation_note": "CCA1-OX is represented by clamping the combined morning module high",
+    "period_hours": 24.21666666666668
+  },
+  "boolean_comparison": {
+    "species": "arabidopsis",
+    "n_nodes": 12,
+    "n_signed_edges": 19,
+    "n_unsigned_edges_excluded": 8,
+    "signed_coverage": 0.704,
+    "perturbation": {},
+    "attractor": {
+      "type": "fixed_point",
+      "period": 1,
+      "steps": 3
+    },
+    "final_state": {
+      "LHY": 0,
+      "GI": 0,
+      "ELF3": 1,
+      "ELF4": 0,
+      "PRR9": 1,
+      "CCA1": 1,
+      "RVE8": 1,
+      "PCL1": 0,
+      "PRR7": 1,
+      "PRR5": 1,
+      "ZTL": 0,
+      "TOC1": 0
+    },
+    "genes_on_at_steady_state": [
+      "ELF3",
+      "PRR9",
+      "CCA1",
+      "RVE8",
+      "PRR7",
+      "PRR5"
+    ],
+    "genes_changed_from_initial": [
+      "LHY",
+      "GI",
+      "ELF4",
+      "PCL1",
+      "ZTL",
+      "TOC1"
+    ],
+    "unresolved_inputs": [],
+    "method": "synchronous Boolean threshold dynamics on the signed induced subnetwork",
+    "caveats": [
+      "Qualitative Boolean abstraction over SIGNED edges only \u2014 not a kinetic simulation.",
+      "Unsigned edges among these genes are excluded (see signed_coverage).",
+      "Synchronous updates; attractor type/period can depend on update scheme."
+    ]
+  },
+  "references": [
+    {
+      "title": "The clock gene circuit in Arabidopsis includes a repressilator with additional feedback loops",
+      "doi": "10.1038/msb.2012.6"
+    },
+    {
+      "title": "Revised Morning Loops of the Arabidopsis Circadian Clock Based on Analyses of Direct Regulatory Interactions",
+      "doi": "10.1371/journal.pone.0143943"
+    },
+    {
+      "title": "Constitutive expression of CCA1 disrupts circadian rhythms",
+      "pmid": "9657153",
+      "doi": "10.1016/S0092-8674(00)81464-6"
+    }
+  ]
+}
