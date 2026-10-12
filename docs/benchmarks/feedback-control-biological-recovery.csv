@@ -1,0 +1,7 @@
+name,species,expected_family,expected_polarity,edge_coverage_complete,core_recovered,circuit_recovered,attribution
+human NF-kB inhibitor feedback,human,negative_feedback,negative,True,True,True,recovered
+human E2F-MYC mutual activation,human,mutual_activation,positive,True,True,True,recovered
+human E2F-RB negative feedback,human,negative_feedback,negative,True,True,True,recovered
+mouse p53-Mdm2 negative feedback,mouse,negative_feedback,negative,True,True,True,recovered
+Arabidopsis LHY-LUX/PCL1 negative feedback,arabidopsis,negative_feedback,negative,True,True,True,recovered
+Arabidopsis CCA1-LUX/PCL1 negative feedback,arabidopsis,negative_feedback,negative,True,True,True,recovered

@@ -87,6 +87,20 @@ Runtime and memory depend on hardware and graph topology. An unusually large,
 dense feedback core remains bounded and reports incomplete representative circuit
 or controller results rather than running an unbounded exhaustive search.
 
+## Verification gate
+
+Independent structural truth tests, known-circuit recovery, exact and approximate
+controller comparisons, pathological graph checks, score behavior, and persistence
+validation are documented in `docs/FEEDBACK_CONTROL_VERIFICATION.md`. Reproduce the
+machine-readable verification artifacts with:
+
+```bash
+venv/bin/python backend/scripts/verify_feedback_control.py \
+  --json docs/benchmarks/feedback-control-verification.json \
+  --csv docs/benchmarks/feedback-control-biological-recovery.csv \
+  --markdown docs/FEEDBACK_CONTROL_VERIFICATION.md
+```
+
 ## Evidence boundary
 
 Topology can prioritize plausible switches, amplifiers, homeostatic loops,

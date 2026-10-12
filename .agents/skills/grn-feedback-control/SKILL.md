@@ -37,6 +37,14 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - A feedback vertex set identifies structural intervention points. It does not establish perturbation direction or guarantee attractor control.
 - Exact controller sets are used only for small cores. Large cores use a bounded greedy approximation and report whether all detected feedback was broken.
 
+### Verification boundary
+
+- The current verification report is `docs/FEEDBACK_CONTROL_VERIFICATION.md`; machine-readable details are in `docs/benchmarks/feedback-control-verification.json`.
+- Small-graph feedback cores, cycles through length 6, polarity, and exact controller sets are checked against independent NetworkX or brute-force truth.
+- Known-circuit recovery is measured only when every required signed edge exists in the filtered atlas.
+- Circuit scores are monotonic heuristic rankings, not calibrated probabilities.
+- The current atlas does not contain all three signed arms needed to recover the complete Arabidopsis three-module clock loop from topology alone.
+
 ### Routing notes
 
 - Use this skill for species-wide feedback discovery or control-loop questions.

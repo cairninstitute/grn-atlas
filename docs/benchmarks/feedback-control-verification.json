@@ -1,0 +1,418 @@
+{
+  "verification_version": "feedback-verification-v1",
+  "generated_at": "2026-10-12T22:20:19.083445+00:00",
+  "algorithm_parameters": {
+    "min_confidence": 0.5,
+    "evidence_tiers": [
+      "measured",
+      "perturbation"
+    ],
+    "max_loop_length": 6,
+    "max_cores": 50,
+    "max_circuits": 100,
+    "circuits_per_core": 12,
+    "max_search_states": 100000,
+    "exact_controller_max_nodes": 18,
+    "max_controllers": 30
+  },
+  "status": "pass",
+  "gates": {
+    "core_recall_complete": true,
+    "core_precision_complete": true,
+    "cycle_recall_complete": true,
+    "cycle_precision_complete": true,
+    "polarity_exact": true,
+    "exact_fvs_optimal": true,
+    "exact_fvs_acyclic": true,
+    "greedy_fvs_acyclic": true,
+    "covered_biological_circuits_recovered": true,
+    "pathological_cases_bounded": true,
+    "score_behavior_consistent": true,
+    "persistence_consistent": true
+  },
+  "structural_truth": {
+    "fixture_count": 35,
+    "expected_cores": 50,
+    "returned_cores": 50,
+    "expected_cycles": 323,
+    "returned_cycles": 323,
+    "matched_cores": 50,
+    "matched_cycles": 323,
+    "matched_polarity": 323,
+    "exact_fvs_cases": 50,
+    "exact_fvs_optimal": 50,
+    "exact_fvs_acyclic": 50,
+    "greedy_fvs_cases": 50,
+    "greedy_fvs_acyclic": 50,
+    "core_recall": 1.0,
+    "core_precision": 1.0,
+    "cycle_recall": 1.0,
+    "cycle_precision": 1.0,
+    "polarity_accuracy": 1.0,
+    "exact_fvs_optimal_rate": 1.0,
+    "greedy_fvs_mean_size_ratio": 1.005,
+    "greedy_fvs_max_size_ratio": 1.25,
+    "failures": []
+  },
+  "biological_recovery": {
+    "reference_circuits": [
+      {
+        "name": "human NF-kB inhibitor feedback",
+        "species": "human",
+        "expected_family": "negative_feedback",
+        "expected_polarity": "negative",
+        "edge_coverage_complete": true,
+        "core_recovered": true,
+        "circuit_recovered": true,
+        "attribution": "recovered",
+        "edges": [
+          {
+            "source": "NFKB1",
+            "target": "NFKBIA",
+            "expected_sign": "activation",
+            "observed_sign": "activation",
+            "present_with_expected_sign": true
+          },
+          {
+            "source": "NFKBIA",
+            "target": "NFKB1",
+            "expected_sign": "repression",
+            "observed_sign": "repression",
+            "present_with_expected_sign": true
+          }
+        ]
+      },
+      {
+        "name": "human E2F-MYC mutual activation",
+        "species": "human",
+        "expected_family": "mutual_activation",
+        "expected_polarity": "positive",
+        "edge_coverage_complete": true,
+        "core_recovered": true,
+        "circuit_recovered": true,
+        "attribution": "recovered",
+        "edges": [
+          {
+            "source": "E2F1",
+            "target": "MYC",
+            "expected_sign": "activation",
+            "observed_sign": "activation",
+            "present_with_expected_sign": true
+          },
+          {
+            "source": "MYC",
+            "target": "E2F1",
+            "expected_sign": "activation",
+            "observed_sign": "activation",
+            "present_with_expected_sign": true
+          }
+        ]
+      },
+      {
+        "name": "human E2F-RB negative feedback",
+        "species": "human",
+        "expected_family": "negative_feedback",
+        "expected_polarity": "negative",
+        "edge_coverage_complete": true,
+        "core_recovered": true,
+        "circuit_recovered": true,
+        "attribution": "recovered",
+        "edges": [
+          {
+            "source": "E2F1",
+            "target": "RB1",
+            "expected_sign": "activation",
+            "observed_sign": "activation",
+            "present_with_expected_sign": true
+          },
+          {
+            "source": "RB1",
+            "target": "E2F1",
+            "expected_sign": "repression",
+            "observed_sign": "repression",
+            "present_with_expected_sign": true
+          }
+        ]
+      },
+      {
+        "name": "mouse p53-Mdm2 negative feedback",
+        "species": "mouse",
+        "expected_family": "negative_feedback",
+        "expected_polarity": "negative",
+        "edge_coverage_complete": true,
+        "core_recovered": true,
+        "circuit_recovered": true,
+        "attribution": "recovered",
+        "edges": [
+          {
+            "source": "Trp53",
+            "target": "Mdm2",
+            "expected_sign": "activation",
+            "observed_sign": "activation",
+            "present_with_expected_sign": true
+          },
+          {
+            "source": "Mdm2",
+            "target": "Trp53",
+            "expected_sign": "repression",
+            "observed_sign": "repression",
+            "present_with_expected_sign": true
+          }
+        ]
+      },
+      {
+        "name": "Arabidopsis LHY-LUX/PCL1 negative feedback",
+        "species": "arabidopsis",
+        "expected_family": "negative_feedback",
+        "expected_polarity": "negative",
+        "edge_coverage_complete": true,
+        "core_recovered": true,
+        "circuit_recovered": true,
+        "attribution": "recovered",
+        "edges": [
+          {
+            "source": "LHY",
+            "target": "PCL1",
+            "expected_sign": "repression",
+            "observed_sign": "repression",
+            "present_with_expected_sign": true
+          },
+          {
+            "source": "PCL1",
+            "target": "LHY",
+            "expected_sign": "activation",
+            "observed_sign": "activation",
+            "present_with_expected_sign": true
+          }
+        ]
+      },
+      {
+        "name": "Arabidopsis CCA1-LUX/PCL1 negative feedback",
+        "species": "arabidopsis",
+        "expected_family": "negative_feedback",
+        "expected_polarity": "negative",
+        "edge_coverage_complete": true,
+        "core_recovered": true,
+        "circuit_recovered": true,
+        "attribution": "recovered",
+        "edges": [
+          {
+            "source": "CCA1",
+            "target": "PCL1",
+            "expected_sign": "repression",
+            "observed_sign": "repression",
+            "present_with_expected_sign": true
+          },
+          {
+            "source": "PCL1",
+            "target": "CCA1",
+            "expected_sign": "activation",
+            "observed_sign": "activation",
+            "present_with_expected_sign": true
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "cases": 6,
+      "fully_covered": 6,
+      "recovered": 6,
+      "recovery_rate_when_covered": 1.0
+    },
+    "arabidopsis_clock_architecture": {
+      "arms": [
+        {
+          "name": "morning represses evening",
+          "supported": true,
+          "alternatives": [
+            {
+              "source": "CCA1",
+              "target": "TOC1",
+              "expected_sign": "repression",
+              "observed_sign": "repression",
+              "supported": true
+            },
+            {
+              "source": "LHY",
+              "target": "TOC1",
+              "expected_sign": "repression",
+              "observed_sign": "repression",
+              "supported": true
+            },
+            {
+              "source": "CCA1",
+              "target": "PCL1",
+              "expected_sign": "repression",
+              "observed_sign": "repression",
+              "supported": true
+            },
+            {
+              "source": "LHY",
+              "target": "PCL1",
+              "expected_sign": "repression",
+              "observed_sign": "repression",
+              "supported": true
+            }
+          ]
+        },
+        {
+          "name": "evening regulates daytime PRRs",
+          "supported": false,
+          "alternatives": [
+            {
+              "source": "PCL1",
+              "target": "PRR9",
+              "expected_sign": "repression",
+              "observed_sign": null,
+              "supported": false
+            },
+            {
+              "source": "PCL1",
+              "target": "PRR7",
+              "expected_sign": "repression",
+              "observed_sign": null,
+              "supported": false
+            }
+          ]
+        },
+        {
+          "name": "daytime PRRs repress morning",
+          "supported": false,
+          "alternatives": [
+            {
+              "source": "PRR9",
+              "target": "CCA1",
+              "expected_sign": "repression",
+              "observed_sign": null,
+              "supported": false
+            },
+            {
+              "source": "PRR9",
+              "target": "LHY",
+              "expected_sign": "repression",
+              "observed_sign": null,
+              "supported": false
+            },
+            {
+              "source": "PRR7",
+              "target": "CCA1",
+              "expected_sign": "repression",
+              "observed_sign": null,
+              "supported": false
+            },
+            {
+              "source": "PRR7",
+              "target": "LHY",
+              "expected_sign": "repression",
+              "observed_sign": null,
+              "supported": false
+            },
+            {
+              "source": "PRR5",
+              "target": "CCA1",
+              "expected_sign": "repression",
+              "observed_sign": null,
+              "supported": false
+            },
+            {
+              "source": "PRR5",
+              "target": "LHY",
+              "expected_sign": "repression",
+              "observed_sign": null,
+              "supported": false
+            }
+          ]
+        }
+      ],
+      "supported_arms": 1,
+      "total_arms": 3,
+      "closed_three_module_loop_recoverable": false
+    }
+  },
+  "robustness": {
+    "cases": [
+      {
+        "name": "large-scc",
+        "nodes": 1000,
+        "edges": 3000,
+        "seconds": 0.0238,
+        "feedback_cores": 1,
+        "circuits_returned": 0,
+        "truncation": {
+          "cores": false,
+          "circuits": true,
+          "search": true
+        },
+        "bounded": true
+      },
+      {
+        "name": "many-small-sccs",
+        "nodes": 600,
+        "edges": 600,
+        "seconds": 0.0113,
+        "feedback_cores": 300,
+        "circuits_returned": 100,
+        "truncation": {
+          "cores": true,
+          "circuits": true,
+          "search": false
+        },
+        "bounded": true
+      },
+      {
+        "name": "dense-core",
+        "nodes": 30,
+        "edges": 870,
+        "seconds": 0.0081,
+        "feedback_cores": 1,
+        "circuits_returned": 12,
+        "truncation": {
+          "cores": false,
+          "circuits": true,
+          "search": true
+        },
+        "bounded": true
+      },
+      {
+        "name": "acyclic",
+        "nodes": 200,
+        "edges": 199,
+        "seconds": 0.001,
+        "feedback_cores": 0,
+        "circuits_returned": 0,
+        "truncation": {
+          "cores": false,
+          "circuits": false,
+          "search": false
+        },
+        "bounded": true
+      }
+    ],
+    "all_bounded": true
+  },
+  "scoring": {
+    "confidence_monotonic": true,
+    "measured_scores_above_perturbation": true,
+    "independent_sources_increase_score": true,
+    "labels_consistent": true,
+    "example_scores": {
+      "lower_confidence": 0.662,
+      "higher_confidence": 0.8121,
+      "perturbation_evidence": 0.7761,
+      "additional_sources": 0.8455
+    },
+    "calibration": "heuristic_not_probability"
+  },
+  "persistence": {
+    "cache_reused": true,
+    "parameter_change_invalidates": true,
+    "graph_change_invalidates": true,
+    "foreign_keys_consistent_after_concurrent_writes": true,
+    "complete_core_membership_persisted": true
+  },
+  "limitations": [
+    "Circuit confidence scores are heuristic rankings, not calibrated probabilities.",
+    "Complete small-graph recall does not make bounded large-graph cycle output exhaustive.",
+    "Structural feedback does not establish switching, homeostasis, or oscillation dynamics."
+  ]
+}
