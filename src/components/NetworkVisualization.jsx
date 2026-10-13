@@ -733,6 +733,32 @@ export function getCytoscapeStyle() {
 export function getLayout(layoutName = 'preset') {
   const layouts = {
     preset: { name: 'preset' },
+    circle: {
+      name: 'circle',
+      fit: true,
+      padding: 42,
+      avoidOverlap: true,
+      nodeDimensionsIncludeLabels: true,
+      spacingFactor: 1.35,
+      animate: false,
+    },
+    cose: {
+      name: 'cose',
+      fit: true,
+      padding: 42,
+      randomize: true,
+      animate: false,
+      nodeDimensionsIncludeLabels: true,
+      nodeRepulsion: 450000,
+      idealEdgeLength: 110,
+      edgeElasticity: 80,
+      nestingFactor: 1.2,
+      gravity: 0.2,
+      numIter: 1500,
+      initialTemp: 200,
+      coolingFactor: 0.95,
+      minTemp: 1,
+    },
     concentric: {
       name: 'concentric',
       concentric: (node) => {

@@ -20,9 +20,9 @@ export default function SubgraphGraph({ nodes, edges, onNodeClick, tfStyle = 'de
           type: tfStyle === 'circle' && n.is_tf ? 'subgraph-tf-circle' : 'target',
         },
       })),
-      ...edges.map((e) => ({
+      ...edges.map((e, index) => ({
         data: {
-          id: `${e.source}->${e.target}`,
+          id: `${e.source}->${e.target}:${e.regulation_type || 'unknown'}:${index}`,
           source: e.source, target: e.target,
           regulation_type: e.regulation_type || 'unknown',
           confidence: e.confidence || 0.5,
@@ -39,20 +39,28 @@ export default function SubgraphGraph({ nodes, edges, onNodeClick, tfStyle = 'de
         style: {
           'background-color': '#7F77DD',
           'border-color': '#534AB7',
-          'color': 'white',
+          'color': '#17323a',
           'width': '48px',
           'height': '48px',
           'shape': 'ellipse',
+          'font-size': '11px',
+          'font-weight': '700',
+          'text-margin-y': '7px',
+          'text-outline-width': 0,
+          'text-background-color': '#f8f5ed',
+          'text-background-opacity': 0.88,
+          'text-background-padding': '2px',
           'z-index': '5'
         }
       }] : []),
     ];
 
+    const layoutName = nodes.length <= 12 ? 'circle' : 'cose';
     const cy = cytoscape({
       container: containerRef.current,
       elements,
       style,
-      layout: getLayout('cose'),
+      layout: getLayout(layoutName),
       wheelSensitivity: 0.1,
       boxSelectionEnabled: false,
     });
