@@ -31,6 +31,14 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
   const [selectedSystemId, setSelectedSystemId] = useState(null);
   const [selectedCoreId, setSelectedCoreId] = useState(null);
   const [selectedCircuitId, setSelectedCircuitId] = useState(null);
+  const [selectedGroupId, setSelectedGroupId] = useState(null);
+  const [coreView, setCoreView] = useState('backbone');
+  const [backbone, setBackbone] = useState(null);
+  const [backboneLoading, setBackboneLoading] = useState(false);
+  const [cycleResult, setCycleResult] = useState(null);
+  const [cycleLoading, setCycleLoading] = useState(false);
+  const [cyclePolarity, setCyclePolarity] = useState('');
+  const [cycleMaxLength, setCycleMaxLength] = useState(6);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -56,6 +64,9 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
         const firstCore = data.cores?.[0];
         setSelectedCoreId(firstCore?.core_id || null);
         setSelectedCircuitId(firstCore?.circuits?.[0]?.circuit_id || null);
+        setSelectedGroupId(data.core_groups?.[0]?.group_id || null);
+        setBackbone(null);
+        setCycleResult(null);
       })
       .catch((err) => { if (!cancelled) setError(err.message); })
       .finally(() => { if (!cancelled) setLoading(false); });
@@ -70,16 +81,72 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
     () => result?.systems?.find((system) => system.system_id === selectedSystemId) || result?.systems?.[0],
     [result, selectedSystemId],
   );
-  const selectedCircuit = useMemo(
-    () => selectedCore?.circuits?.find((circuit) => circuit.circuit_id === selectedCircuitId)
-      || selectedCore?.circuits?.[0],
+  const selectedGroup = useMemo(
+    () => result?.core_groups?.find((group) => group.group_id === selectedGroupId)
+      || result?.core_groups?.[0],
+    [result, selectedGroupId],
+  );
+  const selectedCoverCircuit = useMemo(
+    () => selectedCore?.cycle_cover?.circuits?.find((circuit) => circuit.circuit_id === selectedCircuitId)
+      || selectedCore?.cycle_cover?.circuits?.[0],
     [selectedCore, selectedCircuitId],
   );
+  const selectedQueriedCircuit = useMemo(
+    () => cycleResult?.cycles?.find((circuit) => circuit.circuit_id === selectedCircuitId)
+      || cycleResult?.cycles?.[0],
+    [cycleResult, selectedCircuitId],
+  );
   const maxCoreNodes = Math.max(1, ...(result?.cores || []).map((core) => core.node_count));
+
+  const groupRelationships = useMemo(() => {
+    const ids = new Set(selectedGroup?.relationship_ids || []);
+    return (result?.core_relationships || []).filter((row) => ids.has(row.relationship_id));
+  }, [result, selectedGroup]);
+  const groupGraph = useMemo(() => ({
+    nodes: (selectedGroup?.cores || []).map((core) => ({
+      id: core.core_id,
+      symbol: `CORE ${core.rank}`,
+      name: `${core.node_count} genes; ${(core.top_genes || []).map((gene) => gene.symbol).join(', ')}`,
+      is_tf: true,
+    })),
+    edges: groupRelationships.map((row) => ({
+      source: row.source_core_id,
+      target: row.target_core_id,
+      regulation_type: row.net_sign,
+      confidence: row.score,
+    })),
+  }), [selectedGroup, groupRelationships]);
+
+  useEffect(() => {
+    if (!result?.run_id || !selectedCore?.core_id || coreView !== 'backbone') return;
+    let cancelled = false;
+    setBackboneLoading(true);
+    analysisAPI.feedbackBackbone(result.run_id, selectedCore.core_id)
+      .then((data) => { if (!cancelled) setBackbone(data); })
+      .catch((err) => { if (!cancelled) setError(err.message); })
+      .finally(() => { if (!cancelled) setBackboneLoading(false); });
+    return () => { cancelled = true; };
+  }, [result?.run_id, selectedCore?.core_id, coreView]);
 
   const chooseCore = (core) => {
     setSelectedCoreId(core.core_id);
     setSelectedCircuitId(core.circuits?.[0]?.circuit_id || null);
+    setBackbone(null);
+    setCycleResult(null);
+  };
+
+  const loadCycles = (cursor = 0, append = false) => {
+    if (!result?.run_id || !selectedCore?.core_id) return;
+    setCycleLoading(true);
+    analysisAPI.feedbackCycles(result.run_id, selectedCore.core_id, {
+      cursor, polarity: cyclePolarity || null, maxLength: cycleMaxLength, limit: 50,
+    }).then((data) => {
+      setCycleResult((previous) => append && previous ? {
+        ...data,
+        cycles: [...previous.cycles, ...data.cycles],
+      } : data);
+      if (!append) setSelectedCircuitId(data.cycles?.[0]?.circuit_id || null);
+    }).catch((err) => setError(err.message)).finally(() => setCycleLoading(false));
   };
 
   return (
@@ -123,11 +190,11 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
       {result && !loading && (
         <>
           <section className="feedback-summary">
-            <div><strong>{number(result.graph?.edges)}</strong><span>signed edges analyzed</span></div>
             <div><strong>{number(result.summary?.biological_systems)}</strong><span>candidate control systems</span></div>
             <div><strong>{number(result.summary?.feedback_cores)}</strong><span>feedback cores</span></div>
+            <div><strong>{number(result.summary?.core_groups)}</strong><span>linked core groups</span></div>
+            <div><strong>{number(result.summary?.feedback_edges)}</strong><span>feedback-capable edges</span></div>
             <div><strong>{number(result.summary?.feedback_genes)}</strong><span>genes inside feedback</span></div>
-            <div><strong>{number(result.summary?.circuits_returned)}</strong><span>representative circuits</span></div>
             <div className="feedback-run-state">
               <strong>{result.storage?.status === 'cached' ? 'REUSED' : 'STORED'}</strong>
               <span>versioned analysis</span>
@@ -216,12 +283,52 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
             <div className="feedback-boundary">No biological system passed the annotation and signed-feedback criteria.</div>
           )}
 
+          {result.core_groups?.length > 0 && (
+            <section className="core-groups-workspace">
+              <div className="structural-heading">
+                <span>Higher-order control architecture</span>
+                <h2>Connected groups of feedback cores</h2>
+                <p>Short signed regulatory paths chain independently closed cores without merging them into one feedback component.</p>
+              </div>
+              <div className="core-groups-layout">
+                <aside className="core-group-list">
+                  {result.core_groups.map((group) => (
+                    <button key={group.group_id}
+                      className={group.group_id === selectedGroup?.group_id ? 'active' : ''}
+                      onClick={() => setSelectedGroupId(group.group_id)}>
+                      <strong>Group {group.rank}</strong>
+                      <span>{group.core_count} cores · {group.relationship_count} relationships</span>
+                      <small>{group.gene_count} feedback genes · {group.bridge_gene_count} bridge genes</small>
+                    </button>
+                  ))}
+                </aside>
+                <div className="core-group-detail">
+                  <div className="core-group-metrics">
+                    <strong>Group {selectedGroup?.rank}</strong>
+                    <span>{selectedGroup?.core_count} cores connected by measured signed paths</span>
+                    <b>{selectedGroup?.score?.toFixed(2)}</b>
+                  </div>
+                  <SubgraphGraph nodes={groupGraph.nodes} edges={groupGraph.edges} tfStyle="circle" />
+                  <div className="core-relationship-list">
+                    {groupRelationships.map((row) => (
+                      <div key={row.relationship_id}>
+                        <strong>Core {row.source_core_rank} → Core {row.target_core_rank}</strong>
+                        <span>{row.path_genes.map((gene) => gene.symbol).join(' → ')}</span>
+                        <small>{row.relationship_type.replaceAll('_', ' ')} · {row.net_sign} · {row.score.toFixed(2)}</small>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+
           {result.cores?.length ? (
             <>
             <div className="structural-heading">
               <span>Structural analysis</span>
-              <h2>Feedback cores and representative circuits</h2>
-              <p>The systems above interpret these topology-first results. Inspect the underlying cores and loops here.</p>
+              <h2>Complete feedback backbones and cycles</h2>
+              <p>Every internal core edge is cycle-capable. Inspect the full backbone, a compact edge-covering cycle set, or enumerate individual loops.</p>
             </div>
             <main className="feedback-workspace">
               <aside className="feedback-core-index">
@@ -271,50 +378,114 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
                   </div>
                 </div>
 
-                <div className="feedback-circuit-area">
-                  <div className="feedback-circuit-list">
-                    <div className="feedback-section-title">
-                      <span>Representative circuits</span>
-                      <small>{selectedCore?.circuit_search?.truncated ? 'bounded sample' : 'complete at this bound'}</small>
-                    </div>
-                    {(selectedCore?.circuits || []).map((circuit) => (
-                      <button key={circuit.circuit_id}
-                        className={circuit.circuit_id === selectedCircuit?.circuit_id ? 'active' : ''}
-                        onClick={() => setSelectedCircuitId(circuit.circuit_id)}>
-                        <span className={`feedback-polarity ${circuit.polarity}`} />
-                        <span>
-                          <strong>{FAMILY_LABELS[circuit.family] || circuit.family}</strong>
-                          <small>{circuit.genes.map((gene) => gene.symbol).join(' → ')}</small>
-                        </span>
-                        <b>{circuit.score.toFixed(2)}</b>
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="feedback-circuit-visual">
-                    {selectedCircuit ? (
-                      <>
-                        <div className="feedback-circuit-caption">
-                          <div>
-                            <span className={`feedback-badge ${selectedCircuit.confidence_label}`}>{selectedCircuit.confidence_label}</span>
-                            <h3>{FAMILY_LABELS[selectedCircuit.family] || selectedCircuit.family}</h3>
-                            <p>{selectedCircuit.behavior_hypothesis}</p>
-                          </div>
-                          <div className="feedback-circuit-score">
-                            <strong>{selectedCircuit.score.toFixed(2)}</strong><span>circuit score</span>
-                          </div>
-                        </div>
-                        <SubgraphGraph nodes={selectedCircuit.genes} edges={selectedCircuit.edges}
-                          tfStyle="circle" onNodeClick={(gene) => onSelectGene?.(gene.symbol)} />
-                        <div className="feedback-legend">
-                          <span><i className="activation" /> activation</span>
-                          <span><i className="repression" /> repression</span>
-                          <span>Score is limited by the weakest edge.</span>
-                        </div>
-                      </>
-                    ) : <div className="feedback-notice">No representative circuit was retained for this core.</div>}
-                  </div>
+                <div className="feedback-layer-tabs">
+                  <button className={coreView === 'backbone' ? 'active' : ''} onClick={() => setCoreView('backbone')}>
+                    Complete backbone
+                  </button>
+                  <button className={coreView === 'cover' ? 'active' : ''} onClick={() => {
+                    setCoreView('cover');
+                    setSelectedCircuitId(selectedCore?.cycle_cover?.circuits?.[0]?.circuit_id || null);
+                  }}>
+                    Compact cycle cover
+                  </button>
+                  <button className={coreView === 'cycles' ? 'active' : ''} onClick={() => setCoreView('cycles')}>
+                    Cycle explorer
+                  </button>
                 </div>
+
+                {coreView === 'backbone' && (
+                  <div className="feedback-backbone-view">
+                    <div className="feedback-backbone-caption">
+                      <div>
+                        <strong>Complete cycle-capable backbone</strong>
+                        <span>All {number(selectedCore?.backbone?.cycle_capable_nodes)} genes and {number(selectedCore?.backbone?.cycle_capable_edges)} internal edges belong to at least one directed cycle.</span>
+                      </div>
+                      <b>COMPLETE</b>
+                    </div>
+                    {backboneLoading && <div className="feedback-notice">Loading complete backbone…</div>}
+                    {backbone && !backboneLoading && (
+                      <>
+                        <SubgraphGraph nodes={backbone.nodes} edges={backbone.edges}
+                          tfStyle="circle" onNodeClick={(gene) => onSelectGene?.(gene.symbol)} />
+                        {!backbone.complete && (
+                          <div className="feedback-boundary">The graph shows the first {number(backbone.edges.length)} of {number(backbone.edge_count)} indexed edges.</div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {coreView === 'cover' && (
+                  <div className="feedback-circuit-area">
+                    <div className="feedback-circuit-list">
+                      <div className="feedback-section-title">
+                        <span>Edge-covering cycles</span>
+                        <small>{Math.round((selectedCore?.cycle_cover?.coverage || 0) * 100)}% of backbone edges covered</small>
+                      </div>
+                      {(selectedCore?.cycle_cover?.circuits || []).map((circuit) => (
+                        <button key={circuit.circuit_id}
+                          className={circuit.circuit_id === selectedCoverCircuit?.circuit_id ? 'active' : ''}
+                          onClick={() => setSelectedCircuitId(circuit.circuit_id)}>
+                          <span className={`feedback-polarity ${circuit.polarity}`} />
+                          <span><strong>{FAMILY_LABELS[circuit.family] || circuit.family}</strong>
+                            <small>{circuit.genes.map((gene) => gene.symbol).join(' → ')}</small></span>
+                          <b>{circuit.score.toFixed(2)}</b>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="feedback-circuit-visual">
+                      {selectedCoverCircuit ? (
+                        <>
+                          <div className="feedback-circuit-caption">
+                            <div><span className={`feedback-badge ${selectedCoverCircuit.confidence_label}`}>{selectedCoverCircuit.confidence_label}</span>
+                              <h3>{FAMILY_LABELS[selectedCoverCircuit.family] || selectedCoverCircuit.family}</h3>
+                              <p>Shortest witness cycle selected to cover the feedback backbone.</p></div>
+                          </div>
+                          <SubgraphGraph nodes={selectedCoverCircuit.genes} edges={selectedCoverCircuit.edges}
+                            tfStyle="circle" onNodeClick={(gene) => onSelectGene?.(gene.symbol)} />
+                        </>
+                      ) : <div className="feedback-notice">Cycle-cover witnesses were not materialized for this large core.</div>}
+                    </div>
+                  </div>
+                )}
+
+                {coreView === 'cycles' && (
+                  <div className="feedback-cycle-explorer">
+                    <div className="cycle-query-controls">
+                      <label><span>Polarity</span><select value={cyclePolarity} onChange={(event) => setCyclePolarity(event.target.value)}>
+                        <option value="">Positive and negative</option><option value="positive">Positive</option><option value="negative">Negative</option>
+                      </select></label>
+                      <label><span>Maximum length</span><select value={cycleMaxLength} onChange={(event) => setCycleMaxLength(Number(event.target.value))}>
+                        {[3, 4, 5, 6, 8, 10, 20].map((length) => <option key={length} value={length}>{length} genes</option>)}
+                      </select></label>
+                      <button onClick={() => loadCycles(0, false)} disabled={cycleLoading}>{cycleLoading ? 'Searching…' : 'Find cycles'}</button>
+                      <span>{selectedCore?.cycle_catalog?.exact ? `${number(selectedCore.cycle_catalog.cataloged_cycles)} cycles cataloged exactly` : 'resumable on-demand enumeration'}</span>
+                    </div>
+                    {cycleResult && (
+                      <div className="feedback-circuit-area">
+                        <div className="feedback-circuit-list">
+                          <div className="feedback-section-title"><span>Matching cycles</span><small>{cycleResult.mode.replaceAll('_', ' ')}</small></div>
+                          {cycleResult.cycles.map((circuit) => (
+                            <button key={circuit.circuit_id}
+                              className={circuit.circuit_id === selectedQueriedCircuit?.circuit_id ? 'active' : ''}
+                              onClick={() => setSelectedCircuitId(circuit.circuit_id)}>
+                              <span className={`feedback-polarity ${circuit.polarity}`} />
+                              <span><strong>{FAMILY_LABELS[circuit.family] || circuit.family}</strong>
+                                <small>{circuit.genes.map((gene) => gene.symbol).join(' → ')}</small></span>
+                              <b>{circuit.length}</b>
+                            </button>
+                          ))}
+                          {cycleResult.next_cursor != null && <button className="load-more-cycles" onClick={() => loadCycles(cycleResult.next_cursor, true)}>Continue enumeration</button>}
+                        </div>
+                        <div className="feedback-circuit-visual">
+                          {selectedQueriedCircuit ? <SubgraphGraph nodes={selectedQueriedCircuit.genes} edges={selectedQueriedCircuit.edges}
+                            tfStyle="circle" onNodeClick={(gene) => onSelectGene?.(gene.symbol)} />
+                            : <div className="feedback-notice">No cycle matches the current filters.</div>}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </section>
             </main>
             </>

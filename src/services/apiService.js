@@ -626,12 +626,50 @@ export const analysisAPI = {
         max_controllers: options.maxControllers || 30,
         max_systems: options.maxSystems || 20,
         max_system_genes: options.maxSystemGenes || 80,
+        exact_cycle_max_nodes: options.exactCycleMaxNodes || 10,
+        exact_cycle_max_edges: options.exactCycleMaxEdges || 30,
+        exact_cycle_limit: options.exactCycleLimit || 50000,
+        cycle_cover_max_edges: options.cycleCoverMaxEdges || 1000,
+        max_bridge_hops: options.maxBridgeHops || 3,
         discover_systems: options.discoverSystems ?? true,
         refresh: options.refresh || false,
       }),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.detail || 'Feedback analysis failed');
+    return data;
+  },
+
+  feedbackBackbone: async (runId, coreId, options = {}) => {
+    const params = new URLSearchParams({
+      edge_cursor: String(options.edgeCursor || 0),
+      edge_limit: String(options.edgeLimit || 2000),
+    });
+    const response = await fetch(
+      `${API_BASE}/network/feedback-control/runs/${encodeURIComponent(runId)}`
+      + `/cores/${encodeURIComponent(coreId)}/backbone?${params}`,
+    );
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Feedback backbone query failed');
+    return data;
+  },
+
+  feedbackCycles: async (runId, coreId, options = {}) => {
+    const params = new URLSearchParams({
+      cursor: String(options.cursor || 0),
+      limit: String(options.limit || 50),
+      min_length: String(options.minLength || 1),
+      max_examined: String(options.maxExamined || 100000),
+    });
+    if (options.maxLength) params.set('max_length', String(options.maxLength));
+    if (options.polarity) params.set('polarity', options.polarity);
+    if (options.geneId) params.set('gene_id', options.geneId);
+    const response = await fetch(
+      `${API_BASE}/network/feedback-control/runs/${encodeURIComponent(runId)}`
+      + `/cores/${encodeURIComponent(coreId)}/cycles?${params}`,
+    );
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Feedback cycle query failed');
     return data;
   },
 

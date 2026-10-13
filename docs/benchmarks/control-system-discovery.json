@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-13T04:35:35.736763+00:00",
-  "algorithm_version": "feedback-control-v2",
+  "generated_at": "2026-10-13T23:38:40.184391+00:00",
+  "algorithm_version": "feedback-control-v3",
   "species_count": 8,
   "checks": {
     "all_species_completed": true,
@@ -11,9 +11,14 @@
     "arabidopsis": {
       "summary": {
         "species": "arabidopsis",
-        "seconds": 18.534,
+        "seconds": 18.48,
         "signed_edges": 24945,
         "feedback_cores": 12,
+        "feedback_edges": 581,
+        "exact_cycle_catalogs": 11,
+        "cataloged_cycles": 11,
+        "core_relationships": 11,
+        "core_groups": 1,
         "systems": 20,
         "annotation_supported": 19,
         "de_novo": 1,
@@ -26,6 +31,270 @@
         "oscillator_scaffold": 1,
         "reinforcing_switch": 10
       },
+      "core_groups": [
+        {
+          "group_id": "01a8aa8800e5925dbcb4",
+          "rank": 1,
+          "core_ids": [
+            "26aee05cc8cbafaa6a59",
+            "1059e1f7e7f5f1595fb4",
+            "4f6e7715cc53d63c1c9f",
+            "9998f36acfa9dde0d5ec",
+            "a4e09773feb2131f9f06",
+            "0bd58450bd4ffea441e6",
+            "4c96c9bf12ce283c59d5",
+            "57274ec28c0d773c8c5a",
+            "ba543ebe68bfcae13f7b",
+            "bde096f3f0e3662a7cf2",
+            "f1cae76b66c5595d2875"
+          ],
+          "core_count": 11,
+          "relationship_count": 11,
+          "gene_count": 155,
+          "bridge_gene_count": 2,
+          "score": 0.7981,
+          "cores": [
+            {
+              "core_id": "26aee05cc8cbafaa6a59",
+              "rank": 1,
+              "score": 0.926,
+              "node_count": 142,
+              "edge_count": 567,
+              "top_genes": [
+                {
+                  "id": "AT4G18960",
+                  "symbol": "AG",
+                  "name": "K-box region and MADS-box transcription factor family protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                },
+                {
+                  "id": "AT3G54340",
+                  "symbol": "AP3",
+                  "name": "K-box region and MADS-box transcription factor family protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                },
+                {
+                  "id": "AT1G69120",
+                  "symbol": "AP1",
+                  "name": "K-box region and MADS-box transcription factor family protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                },
+                {
+                  "id": "AT2G22540",
+                  "symbol": "SVP",
+                  "name": "K-box region and MADS-box transcription factor family protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                },
+                {
+                  "id": "AT5G61850",
+                  "symbol": "LFY",
+                  "name": "floral meristem identity control protein LEAFY (LFY)",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                }
+              ]
+            },
+            {
+              "core_id": "1059e1f7e7f5f1595fb4",
+              "rank": 2,
+              "score": 0.6876,
+              "node_count": 2,
+              "edge_count": 2,
+              "top_genes": [
+                {
+                  "id": "AT1G26870",
+                  "symbol": "FEZ",
+                  "name": "NAC (No Apical Meristem) domain transcriptional regulator superfamily protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                },
+                {
+                  "id": "AT1G79580",
+                  "symbol": "SMB",
+                  "name": "NAC (No Apical Meristem) domain transcriptional regulator superfamily protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                }
+              ]
+            },
+            {
+              "core_id": "4f6e7715cc53d63c1c9f",
+              "rank": 3,
+              "score": 0.6826,
+              "node_count": 2,
+              "edge_count": 2,
+              "top_genes": [
+                {
+                  "id": "AT5G03150",
+                  "symbol": "JKD",
+                  "name": "C2H2-like zinc finger protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                },
+                {
+                  "id": "AT3G54220",
+                  "symbol": "SCR",
+                  "name": "GRAS family transcription factor",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                }
+              ]
+            },
+            {
+              "core_id": "9998f36acfa9dde0d5ec",
+              "rank": 4,
+              "score": 0.6826,
+              "node_count": 2,
+              "edge_count": 2,
+              "top_genes": [
+                {
+                  "id": "AT4G16780",
+                  "symbol": "HB-2",
+                  "name": "homeobox protein 2",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                },
+                {
+                  "id": "AT1G02340",
+                  "symbol": "HFR1",
+                  "name": "basic helix-loop-helix (bHLH) DNA-binding superfamily protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                }
+              ]
+            },
+            {
+              "core_id": "a4e09773feb2131f9f06",
+              "rank": 5,
+              "score": 0.675,
+              "node_count": 1,
+              "edge_count": 1,
+              "top_genes": [
+                {
+                  "id": "AT4G23550",
+                  "symbol": "WRKY29",
+                  "name": "WRKY family transcription factor",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                }
+              ]
+            },
+            {
+              "core_id": "0bd58450bd4ffea441e6",
+              "rank": 6,
+              "score": 0.665,
+              "node_count": 1,
+              "edge_count": 1,
+              "top_genes": [
+                {
+                  "id": "AT4G08150",
+                  "symbol": "KNAT1",
+                  "name": "homeobox knotted-like protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                }
+              ]
+            },
+            {
+              "core_id": "4c96c9bf12ce283c59d5",
+              "rank": 7,
+              "score": 0.665,
+              "node_count": 1,
+              "edge_count": 1,
+              "top_genes": [
+                {
+                  "id": "AT2G40220",
+                  "symbol": "ABI4",
+                  "name": "Integrase-type DNA-binding superfamily protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                }
+              ]
+            },
+            {
+              "core_id": "57274ec28c0d773c8c5a",
+              "rank": 8,
+              "score": 0.665,
+              "node_count": 1,
+              "edge_count": 1,
+              "top_genes": [
+                {
+                  "id": "AT1G19850",
+                  "symbol": "MP",
+                  "name": "Transcriptional factor B3 family protein / auxin-responsive factor AUX/IAA-like protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                }
+              ]
+            },
+            {
+              "core_id": "ba543ebe68bfcae13f7b",
+              "rank": 10,
+              "score": 0.665,
+              "node_count": 1,
+              "edge_count": 1,
+              "top_genes": [
+                {
+                  "id": "AT1G62300",
+                  "symbol": "WRKY6",
+                  "name": "WRKY family transcription factor",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                }
+              ]
+            },
+            {
+              "core_id": "bde096f3f0e3662a7cf2",
+              "rank": 11,
+              "score": 0.665,
+              "node_count": 1,
+              "edge_count": 1,
+              "top_genes": [
+                {
+                  "id": "AT4G38620",
+                  "symbol": "MYB4",
+                  "name": "myb domain protein 4",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                }
+              ]
+            },
+            {
+              "core_id": "f1cae76b66c5595d2875",
+              "rank": 12,
+              "score": 0.665,
+              "node_count": 1,
+              "edge_count": 1,
+              "top_genes": [
+                {
+                  "id": "AT1G46768",
+                  "symbol": "RAP2.1",
+                  "name": "uncharacterized protein",
+                  "is_tf": true,
+                  "species": "arabidopsis"
+                }
+              ]
+            }
+          ],
+          "relationship_ids": [
+            "bc74c564f76ec88e53f2",
+            "993b964c04e5a3299648",
+            "20acf3cd025b6dd3cfe0",
+            "e33df5ed9f9c8f267aa9",
+            "aefe6eda6541c88c232e",
+            "f25d7592f75e51fc766d",
+            "ad87334122a729d3524f",
+            "91c26312a17a123d6245",
+            "60fbc1875aa87208e52f",
+            "0e0f47ac61373051f665",
+            "5a951ed4e37dd3dd7aab"
+          ]
+        }
+      ],
       "top_systems": [
         {
           "rank": 1,
@@ -45,6 +314,14 @@
         },
         {
           "rank": 3,
+          "name": "meristem structural organization",
+          "architecture": "reinforcing_switch",
+          "score": 0.8898,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 4,
           "name": "Circadian rhythm",
           "architecture": "oscillator_scaffold",
           "score": 0.8886,
@@ -52,7 +329,7 @@
           "completeness": "partial_architecture"
         },
         {
-          "rank": 4,
+          "rank": 5,
           "name": "meristem determinacy",
           "architecture": "oscillator_candidate",
           "score": 0.8863,
@@ -60,15 +337,15 @@
           "completeness": "closed_signed_feedback"
         },
         {
-          "rank": 5,
-          "name": "meristem structural organization",
-          "architecture": "reinforcing_switch",
-          "score": 0.8857,
+          "rank": 6,
+          "name": "MAPK cascade",
+          "architecture": "oscillator_candidate",
+          "score": 0.8826,
           "discovery_mode": "annotation_supported",
           "completeness": "closed_signed_feedback"
         },
         {
-          "rank": 6,
+          "rank": 7,
           "name": "Auxin signalling",
           "architecture": "reinforcing_switch",
           "score": 0.8818,
@@ -76,15 +353,15 @@
           "completeness": "closed_signed_feedback"
         },
         {
-          "rank": 7,
-          "name": "MAPK cascade",
-          "architecture": "oscillator_candidate",
-          "score": 0.8815,
+          "rank": 8,
+          "name": "cell fate specification",
+          "architecture": "reinforcing_switch",
+          "score": 0.8804,
           "discovery_mode": "annotation_supported",
           "completeness": "closed_signed_feedback"
         },
         {
-          "rank": 8,
+          "rank": 9,
           "name": "plant ovule development",
           "architecture": "reinforcing_switch",
           "score": 0.8794,
@@ -92,18 +369,10 @@
           "completeness": "closed_signed_feedback"
         },
         {
-          "rank": 9,
-          "name": "specification of floral organ identity",
-          "architecture": "mixed_feedback",
-          "score": 0.8786,
-          "discovery_mode": "annotation_supported",
-          "completeness": "closed_signed_feedback"
-        },
-        {
           "rank": 10,
           "name": "formation of anatomical boundary",
           "architecture": "negative_feedback",
-          "score": 0.8771,
+          "score": 0.8788,
           "discovery_mode": "annotation_supported",
           "completeness": "closed_signed_feedback"
         }
@@ -112,9 +381,14 @@
     "human": {
       "summary": {
         "species": "human",
-        "seconds": 23.823,
+        "seconds": 24.202,
         "signed_edges": 9414,
         "feedback_cores": 4,
+        "feedback_edges": 1339,
+        "exact_cycle_catalogs": 3,
+        "cataloged_cycles": 3,
+        "core_relationships": 2,
+        "core_groups": 1,
         "systems": 20,
         "annotation_supported": 20,
         "de_novo": 0,
@@ -125,6 +399,104 @@
         "negative_feedback": 3,
         "toggle_switch": 15
       },
+      "core_groups": [
+        {
+          "group_id": "cac54e29c0d68cc72ab1",
+          "rank": 1,
+          "core_ids": [
+            "0dc93b415f37596ec31f",
+            "0da08c94ac7da6e64348",
+            "75889c5f15867d44253d"
+          ],
+          "core_count": 3,
+          "relationship_count": 2,
+          "gene_count": 287,
+          "bridge_gene_count": 0,
+          "score": 0.75,
+          "cores": [
+            {
+              "core_id": "0dc93b415f37596ec31f",
+              "rank": 1,
+              "score": 0.8987,
+              "node_count": 285,
+              "edge_count": 1336,
+              "top_genes": [
+                {
+                  "id": "E2F1",
+                  "symbol": "E2F1",
+                  "name": "E2F transcription factor 1",
+                  "is_tf": true,
+                  "species": "human"
+                },
+                {
+                  "id": "ETS1",
+                  "symbol": "ETS1",
+                  "name": "ETS proto-oncogene 1, transcription factor",
+                  "is_tf": true,
+                  "species": "human"
+                },
+                {
+                  "id": "MYC",
+                  "symbol": "MYC",
+                  "name": "MYC proto-oncogene, bHLH transcription factor",
+                  "is_tf": true,
+                  "species": "human"
+                },
+                {
+                  "id": "TP53",
+                  "symbol": "TP53",
+                  "name": "tumor protein p53",
+                  "is_tf": true,
+                  "species": "human"
+                },
+                {
+                  "id": "WT1",
+                  "symbol": "WT1",
+                  "name": "WT1 transcription factor",
+                  "is_tf": true,
+                  "species": "human"
+                }
+              ]
+            },
+            {
+              "core_id": "0da08c94ac7da6e64348",
+              "rank": 2,
+              "score": 0.48,
+              "node_count": 1,
+              "edge_count": 1,
+              "top_genes": [
+                {
+                  "id": "RARB",
+                  "symbol": "RARB",
+                  "name": "retinoic acid receptor beta",
+                  "is_tf": true,
+                  "species": "human"
+                }
+              ]
+            },
+            {
+              "core_id": "75889c5f15867d44253d",
+              "rank": 3,
+              "score": 0.48,
+              "node_count": 1,
+              "edge_count": 1,
+              "top_genes": [
+                {
+                  "id": "NR5A2",
+                  "symbol": "NR5A2",
+                  "name": "nuclear receptor subfamily 5 group A member 2",
+                  "is_tf": true,
+                  "species": "human"
+                }
+              ]
+            }
+          ],
+          "relationship_ids": [
+            "79db5b5555c5bf5b6660",
+            "27c99977465f02cee8e2"
+          ]
+        }
+      ],
       "top_systems": [
         {
           "rank": 1,
@@ -211,9 +583,14 @@
     "mouse": {
       "summary": {
         "species": "mouse",
-        "seconds": 0.311,
+        "seconds": 0.351,
         "signed_edges": 9817,
         "feedback_cores": 2,
+        "feedback_edges": 1611,
+        "exact_cycle_catalogs": 1,
+        "cataloged_cycles": 1,
+        "core_relationships": 1,
+        "core_groups": 1,
         "systems": 4,
         "annotation_supported": 0,
         "de_novo": 4,
@@ -224,6 +601,93 @@
         "negative_feedback": 2,
         "toggle_switch": 1
       },
+      "core_groups": [
+        {
+          "group_id": "c137cf4fe1c48fbaba2f",
+          "rank": 1,
+          "core_ids": [
+            "2a40a995acf3c7a13820",
+            "7054751c65ec36f34817"
+          ],
+          "core_count": 2,
+          "relationship_count": 1,
+          "gene_count": 350,
+          "bridge_gene_count": 0,
+          "score": 0.6,
+          "cores": [
+            {
+              "core_id": "2a40a995acf3c7a13820",
+              "rank": 1,
+              "score": 0.8701,
+              "node_count": 348,
+              "edge_count": 1609,
+              "top_genes": [
+                {
+                  "id": "mouse:A0A979HLR9",
+                  "symbol": "A0A979HLR9",
+                  "name": "A0A979HLR9",
+                  "is_tf": true,
+                  "species": "mouse"
+                },
+                {
+                  "id": "mouse:Esr1",
+                  "symbol": "Esr1",
+                  "name": "estrogen receptor 1 (alpha)",
+                  "is_tf": true,
+                  "species": "mouse"
+                },
+                {
+                  "id": "mouse:Cebpa",
+                  "symbol": "Cebpa",
+                  "name": "CCAAT/enhancer binding protein alpha",
+                  "is_tf": true,
+                  "species": "mouse"
+                },
+                {
+                  "id": "mouse:Pgr",
+                  "symbol": "Pgr",
+                  "name": "progesterone receptor",
+                  "is_tf": true,
+                  "species": "mouse"
+                },
+                {
+                  "id": "mouse:Hnf4a",
+                  "symbol": "Hnf4a",
+                  "name": "hepatic nuclear factor 4, alpha",
+                  "is_tf": true,
+                  "species": "mouse"
+                }
+              ]
+            },
+            {
+              "core_id": "7054751c65ec36f34817",
+              "rank": 2,
+              "score": 0.5226,
+              "node_count": 2,
+              "edge_count": 2,
+              "top_genes": [
+                {
+                  "id": "mouse:Gsc",
+                  "symbol": "Gsc",
+                  "name": "goosecoid homeobox",
+                  "is_tf": true,
+                  "species": "mouse"
+                },
+                {
+                  "id": "mouse:Mixl1",
+                  "symbol": "Mixl1",
+                  "name": "Mix paired-like homeobox",
+                  "is_tf": true,
+                  "species": "mouse"
+                }
+              ]
+            }
+          ],
+          "relationship_ids": [
+            "e8a97465e15eed5e6719"
+          ]
+        }
+      ],
       "top_systems": [
         {
           "rank": 1,
@@ -262,9 +726,14 @@
     "pepper": {
       "summary": {
         "species": "pepper",
-        "seconds": 0.026,
+        "seconds": 0.027,
         "signed_edges": 34,
         "feedback_cores": 3,
+        "feedback_edges": 6,
+        "exact_cycle_catalogs": 3,
+        "cataloged_cycles": 3,
+        "core_relationships": 0,
+        "core_groups": 0,
         "systems": 3,
         "annotation_supported": 0,
         "de_novo": 3,
@@ -274,6 +743,7 @@
         "negative_feedback": 2,
         "toggle_switch": 1
       },
+      "core_groups": [],
       "top_systems": [
         {
           "rank": 1,
@@ -304,9 +774,14 @@
     "petunia": {
       "summary": {
         "species": "petunia",
-        "seconds": 6.603,
+        "seconds": 6.731,
         "signed_edges": 1403,
         "feedback_cores": 9,
+        "feedback_edges": 248,
+        "exact_cycle_catalogs": 7,
+        "cataloged_cycles": 51,
+        "core_relationships": 4,
+        "core_groups": 1,
         "systems": 16,
         "annotation_supported": 11,
         "de_novo": 5,
@@ -319,6 +794,186 @@
         "reinforcing_switch": 6,
         "toggle_switch": 3
       },
+      "core_groups": [
+        {
+          "group_id": "a7bf61ee64937ea9c17f",
+          "rank": 1,
+          "core_ids": [
+            "a386688851f0f22289f7",
+            "c9e1224b356be47dfb39",
+            "1c4637be710d30931557",
+            "01ca3f5dbba73fb77708"
+          ],
+          "core_count": 4,
+          "relationship_count": 4,
+          "gene_count": 52,
+          "bridge_gene_count": 1,
+          "score": 0.6048,
+          "cores": [
+            {
+              "core_id": "a386688851f0f22289f7",
+              "rank": 1,
+              "score": 0.7697,
+              "node_count": 34,
+              "edge_count": 190,
+              "top_genes": [
+                {
+                  "id": "Peaxi162Scf00022g00098",
+                  "symbol": "AG1",
+                  "name": "MADS-box transcription factor 3",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00083g01812",
+                  "symbol": "Peaxi162Scf00083g01812",
+                  "name": "MADS-box transcription factor 16",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00314g00633",
+                  "symbol": "ALF",
+                  "name": "Floricaula/leafy homolog 1",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00017g03265",
+                  "symbol": "Peaxi162Scf00017g03265",
+                  "name": "MADS-box transcription factor 1",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00922g00026",
+                  "symbol": "PI",
+                  "name": "MADS-box transcription factor 2",
+                  "is_tf": true,
+                  "species": "petunia"
+                }
+              ]
+            },
+            {
+              "core_id": "c9e1224b356be47dfb39",
+              "rank": 3,
+              "score": 0.6954,
+              "node_count": 11,
+              "edge_count": 20,
+              "top_genes": [
+                {
+                  "id": "Peaxi162Scf00052g00147",
+                  "symbol": "Peaxi162Scf00052g00147",
+                  "name": "B3 domain-containing transcription factor ABI3",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00305g00129",
+                  "symbol": "Peaxi162Scf00305g00129",
+                  "name": "GRAS family transcription factor family protein",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00420g00827",
+                  "symbol": "Peaxi162Scf00420g00827",
+                  "name": "AP2/B3-like transcriptional factor family protein",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00648g10013",
+                  "symbol": "Peaxi162Scf00648g10013",
+                  "name": "Dehydration-responsive element-binding protein 1D",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00543g00414",
+                  "symbol": "Peaxi162Scf00543g00414",
+                  "name": "myb domain protein 15",
+                  "is_tf": true,
+                  "species": "petunia"
+                }
+              ]
+            },
+            {
+              "core_id": "1c4637be710d30931557",
+              "rank": 4,
+              "score": 0.6751,
+              "node_count": 3,
+              "edge_count": 6,
+              "top_genes": [
+                {
+                  "id": "Peaxi162Scf00045g00011",
+                  "symbol": "Peaxi162Scf00045g00011",
+                  "name": "Transcription factor MYC2",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00460g00011",
+                  "symbol": "Peaxi162Scf00460g00011",
+                  "name": "Transcription factor MYC2",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00767g00043",
+                  "symbol": "Peaxi162Scf00767g00043",
+                  "name": "basic helix-loop-helix (bHLH) DNA-binding superfamily protein",
+                  "is_tf": true,
+                  "species": "petunia"
+                }
+              ]
+            },
+            {
+              "core_id": "01ca3f5dbba73fb77708",
+              "rank": 5,
+              "score": 0.6097,
+              "node_count": 4,
+              "edge_count": 6,
+              "top_genes": [
+                {
+                  "id": "Peaxi162Scf00052g01817",
+                  "symbol": "Peaxi162Scf00052g01817",
+                  "name": "phytochrome interacting factor 3-like 5",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00030g00519",
+                  "symbol": "Peaxi162Scf00030g00519",
+                  "name": "homeobox-leucine zipper protein 3",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00102g00931",
+                  "symbol": "Peaxi162Scf00102g00931",
+                  "name": "homeobox-leucine zipper protein 4",
+                  "is_tf": true,
+                  "species": "petunia"
+                },
+                {
+                  "id": "Peaxi162Scf00346g00073",
+                  "symbol": "Peaxi162Scf00346g00073",
+                  "name": "homeobox-leucine zipper protein 3",
+                  "is_tf": true,
+                  "species": "petunia"
+                }
+              ]
+            }
+          ],
+          "relationship_ids": [
+            "e1b0424b5ac17bbfc296",
+            "965e15122943d9a97b55",
+            "e982754711068126ac6c",
+            "628673bb95c40a2e091c"
+          ]
+        }
+      ],
       "top_systems": [
         {
           "rank": 1,
@@ -330,6 +985,14 @@
         },
         {
           "rank": 2,
+          "name": "floral organ formation",
+          "architecture": "reinforcing_switch",
+          "score": 0.7215,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 3,
           "name": "plant ovule development",
           "architecture": "reinforcing_switch",
           "score": 0.7159,
@@ -337,23 +1000,31 @@
           "completeness": "closed_signed_feedback"
         },
         {
-          "rank": 3,
-          "name": "floral organ formation",
-          "architecture": "reinforcing_switch",
-          "score": 0.714,
-          "discovery_mode": "annotation_supported",
-          "completeness": "closed_signed_feedback"
-        },
-        {
           "rank": 4,
           "name": "regulation of cell proliferation",
           "architecture": "reinforcing_switch",
-          "score": 0.7124,
+          "score": 0.7155,
           "discovery_mode": "annotation_supported",
           "completeness": "closed_signed_feedback"
         },
         {
           "rank": 5,
+          "name": "maintenance of cell number",
+          "architecture": "mixed_feedback",
+          "score": 0.7141,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 6,
+          "name": "meristem determinacy",
+          "architecture": "mixed_feedback",
+          "score": 0.713,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 7,
           "name": "meristem growth",
           "architecture": "reinforcing_switch",
           "score": 0.7114,
@@ -361,26 +1032,10 @@
           "completeness": "closed_signed_feedback"
         },
         {
-          "rank": 6,
-          "name": "maintenance of cell number",
-          "architecture": "mixed_feedback",
-          "score": 0.71,
-          "discovery_mode": "annotation_supported",
-          "completeness": "closed_signed_feedback"
-        },
-        {
-          "rank": 7,
-          "name": "meristem determinacy",
-          "architecture": "mixed_feedback",
-          "score": 0.7099,
-          "discovery_mode": "annotation_supported",
-          "completeness": "closed_signed_feedback"
-        },
-        {
           "rank": 8,
-          "name": "H3 histone acetyltransferase activity",
-          "architecture": "negative_feedback",
-          "score": 0.7093,
+          "name": "RNA polymerase II regulatory region DNA binding",
+          "architecture": "mixed_feedback",
+          "score": 0.7103,
           "discovery_mode": "annotation_supported",
           "completeness": "closed_signed_feedback"
         },
@@ -388,15 +1043,15 @@
           "rank": 9,
           "name": "transcription regulatory region sequence-specific DNA binding",
           "architecture": "toggle_switch",
-          "score": 0.7064,
+          "score": 0.7102,
           "discovery_mode": "annotation_supported",
           "completeness": "closed_signed_feedback"
         },
         {
           "rank": 10,
-          "name": "RNA polymerase II regulatory region DNA binding",
-          "architecture": "mixed_feedback",
-          "score": 0.7063,
+          "name": "regulation of transcription from RNA polymerase II promoter",
+          "architecture": "oscillator_candidate",
+          "score": 0.7095,
           "discovery_mode": "annotation_supported",
           "completeness": "closed_signed_feedback"
         }
@@ -405,23 +1060,34 @@
     "potato": {
       "summary": {
         "species": "potato",
-        "seconds": 0.054,
+        "seconds": 0.04,
         "signed_edges": 0,
         "feedback_cores": 0,
+        "feedback_edges": 0,
+        "exact_cycle_catalogs": 0,
+        "cataloged_cycles": 0,
+        "core_relationships": 0,
+        "core_groups": 0,
         "systems": 0,
         "annotation_supported": 0,
         "de_novo": 0,
         "partial_architectures": 0
       },
       "architecture_counts": {},
+      "core_groups": [],
       "top_systems": []
     },
     "rice": {
       "summary": {
         "species": "rice",
-        "seconds": 0.047,
+        "seconds": 0.074,
         "signed_edges": 503,
         "feedback_cores": 5,
+        "feedback_edges": 115,
+        "exact_cycle_catalogs": 4,
+        "cataloged_cycles": 79,
+        "core_relationships": 3,
+        "core_groups": 1,
         "systems": 6,
         "annotation_supported": 0,
         "de_novo": 6,
@@ -432,12 +1098,198 @@
         "oscillator_candidate": 3,
         "toggle_switch": 1
       },
+      "core_groups": [
+        {
+          "group_id": "9219aed53e90e00269fb",
+          "rank": 1,
+          "core_ids": [
+            "b491e64952e63ac121d5",
+            "e86425a2085ff5f59621",
+            "e1cd6b0127301e62199b",
+            "e1dfeb11643b0429bb21"
+          ],
+          "core_count": 4,
+          "relationship_count": 3,
+          "gene_count": 32,
+          "bridge_gene_count": 1,
+          "score": 0.5964,
+          "cores": [
+            {
+              "core_id": "b491e64952e63ac121d5",
+              "rank": 1,
+              "score": 0.7294,
+              "node_count": 13,
+              "edge_count": 60,
+              "top_genes": [
+                {
+                  "id": "LOC_Os08g41950",
+                  "symbol": "LOC_Os08g41950",
+                  "name": "OsMADS7 - MADS-box family gene with MIKCc type-box, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os01g10504",
+                  "symbol": "LOC_Os01g10504",
+                  "name": "OsMADS3 - MADS-box family gene with MIKCc type-box, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os03g11614",
+                  "symbol": "LOC_Os03g11614",
+                  "name": "OsMADS1 - MADS-box family gene with MIKCc type-box, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os03g54160",
+                  "symbol": "LOC_Os03g54160",
+                  "name": "OsMADS14 - MADS-box family gene with MIKCc type-box, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os02g52340",
+                  "symbol": "LOC_Os02g52340",
+                  "name": "OsMADS22 - MADS-box family gene with MIKCc type-box, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                }
+              ]
+            },
+            {
+              "core_id": "e86425a2085ff5f59621",
+              "rank": 2,
+              "score": 0.7189,
+              "node_count": 10,
+              "edge_count": 27,
+              "top_genes": [
+                {
+                  "id": "LOC_Os07g03770",
+                  "symbol": "LOC_Os07g03770",
+                  "name": "Homeobox domain containing protein, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os12g38400",
+                  "symbol": "LOC_Os12g38400",
+                  "name": "MYB family transcription factor, putative, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os03g47016",
+                  "symbol": "LOC_Os03g47016",
+                  "name": "homeobox protein knotted-1-like 10, putative, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os03g51690",
+                  "symbol": "LOC_Os03g51690",
+                  "name": "Homeobox domain containing protein, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os02g42950",
+                  "symbol": "LOC_Os02g42950",
+                  "name": "YABBY domain containing protein, putative, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                }
+              ]
+            },
+            {
+              "core_id": "e1cd6b0127301e62199b",
+              "rank": 3,
+              "score": 0.6993,
+              "node_count": 6,
+              "edge_count": 20,
+              "top_genes": [
+                {
+                  "id": "LOC_Os09g36730",
+                  "symbol": "LOC_Os09g36730",
+                  "name": "MYB family transcription factor, putative, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os08g43550",
+                  "symbol": "LOC_Os08g43550",
+                  "name": "MYB family transcription factor, putative, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os01g43180",
+                  "symbol": "LOC_Os01g43180",
+                  "name": "MYB family transcription factor, putative, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os01g55549",
+                  "symbol": "LOC_Os01g55549",
+                  "name": "homeobox and START domains containing protein, putative, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os01g65370",
+                  "symbol": "LOC_Os01g65370",
+                  "name": "MYB family transcription factor, putative, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                }
+              ]
+            },
+            {
+              "core_id": "e1dfeb11643b0429bb21",
+              "rank": 4,
+              "score": 0.6751,
+              "node_count": 3,
+              "edge_count": 6,
+              "top_genes": [
+                {
+                  "id": "LOC_Os04g48350",
+                  "symbol": "LOC_Os04g48350",
+                  "name": "dehydration-responsive element-binding protein, putative, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os06g03670",
+                  "symbol": "LOC_Os06g03670",
+                  "name": "dehydration-responsive element-binding protein, putative, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                },
+                {
+                  "id": "LOC_Os08g43200",
+                  "symbol": "LOC_Os08g43200",
+                  "name": "dehydration-responsive element-binding protein, putative, expressed",
+                  "is_tf": true,
+                  "species": "rice"
+                }
+              ]
+            }
+          ],
+          "relationship_ids": [
+            "59da39031268fc1602c9",
+            "9f701d8a9692d2b411cb",
+            "04d10d3652ca947b0387"
+          ]
+        }
+      ],
       "top_systems": [
         {
           "rank": 1,
           "name": "LOC_Os02g42950 / LOC_Os03g47016 / LOC_Os03g51690 control module",
           "architecture": "oscillator_candidate",
-          "score": 0.4135,
+          "score": 0.4171,
           "discovery_mode": "de_novo_topology",
           "completeness": "closed_signed_feedback"
         },
@@ -445,7 +1297,7 @@
           "rank": 2,
           "name": "LOC_Os01g10504 / LOC_Os02g52340 / LOC_Os03g08754 control module",
           "architecture": "toggle_switch",
-          "score": 0.4132,
+          "score": 0.4148,
           "discovery_mode": "de_novo_topology",
           "completeness": "closed_signed_feedback"
         },
@@ -486,9 +1338,14 @@
     "tomato": {
       "summary": {
         "species": "tomato",
-        "seconds": 7.47,
+        "seconds": 7.603,
         "signed_edges": 2076,
         "feedback_cores": 13,
+        "feedback_edges": 370,
+        "exact_cycle_catalogs": 12,
+        "cataloged_cycles": 87,
+        "core_relationships": 6,
+        "core_groups": 1,
         "systems": 18,
         "annotation_supported": 10,
         "de_novo": 8,
@@ -501,6 +1358,229 @@
         "reinforcing_switch": 4,
         "toggle_switch": 2
       },
+      "core_groups": [
+        {
+          "group_id": "722e85fad67ad8ecb779",
+          "rank": 1,
+          "core_ids": [
+            "0e3d6350f7dc92f9629c",
+            "6337802cc0a17d6388d6",
+            "d95ee1a32602ebbbb049",
+            "403e37efe83656e4fe5a",
+            "0f4530d7052bc9b0233e",
+            "b18cad6a32e7df4787f9"
+          ],
+          "core_count": 6,
+          "relationship_count": 6,
+          "gene_count": 80,
+          "bridge_gene_count": 1,
+          "score": 0.6132,
+          "cores": [
+            {
+              "core_id": "0e3d6350f7dc92f9629c",
+              "rank": 1,
+              "score": 0.7952,
+              "node_count": 62,
+              "edge_count": 300,
+              "top_genes": [
+                {
+                  "id": "Solyc04g081000.2",
+                  "symbol": "AP3",
+                  "name": "MADS box transcription factor (AHRD V1 ***- Q8L5F5_DAUCA); contains Interpro domain(s)  IPR002100  Transcription factor, MADS-box  IPR002487  Transcription factor, K-box",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc02g071730.2",
+                  "symbol": "AG",
+                  "name": "MADS-box transcription factor AGAMOUS (AHRD V1 **-* Q8GTY3_HELAN); contains Interpro domain(s)  IPR002100  Transcription factor, MADS-box  IPR002487  Transcription factor, K-box",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc02g084630.2",
+                  "symbol": "Solyc02g084630.2",
+                  "name": "MADS-box transcription factor (AHRD V1 ***- Q4LEZ4_ASPOF); contains Interpro domain(s)  IPR002100  Transcription factor, MADS-box",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc08g067230.2",
+                  "symbol": "Solyc08g067230.2",
+                  "name": "MADS box transcription factor (AHRD V1 ***- A7LK41_POPDE); contains Interpro domain(s)  IPR002100  Transcription factor, MADS-box",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc03g114830.2",
+                  "symbol": "FUL2",
+                  "name": "MADS box transcription factor (AHRD V1 ***- Q9SBQ1_PETHY); contains Interpro domain(s)  IPR002487  Transcription factor, K-box",
+                  "is_tf": true,
+                  "species": "tomato"
+                }
+              ]
+            },
+            {
+              "core_id": "6337802cc0a17d6388d6",
+              "rank": 2,
+              "score": 0.7102,
+              "node_count": 8,
+              "edge_count": 26,
+              "top_genes": [
+                {
+                  "id": "Solyc03g120620.2",
+                  "symbol": "Solyc03g120620.2",
+                  "name": "Homeobox-leucine zipper protein ATHB-15 (AHRD V1 *-*- ATB15_ARATH); contains Interpro domain(s)  IPR002913  Lipid-binding START",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc01g005660.1",
+                  "symbol": "PH4",
+                  "name": "Myb transcription factor (AHRD V1 **-- Q6Q789_VITVI); contains Interpro domain(s)  IPR015495  Myb transcription factor",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc01g095640.1",
+                  "symbol": "Solyc01g095640.1",
+                  "name": "Myb family transcription factor (AHRD V1 **** D7LC50_ARALY); contains Interpro domain(s)  IPR015495  Myb transcription factor",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc05g008250.1",
+                  "symbol": "Solyc05g008250.1",
+                  "name": "Myb-like transcription factor 6 (AHRD V1 **** Q8H256_GOSHI); contains Interpro domain(s)  IPR015495  Myb transcription factor",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc08g081140.2",
+                  "symbol": "JAF13",
+                  "name": "Myc-like anthocyanin regulatory protein (AHRD V1 ***- Q675M5_9ASTE); contains Interpro domain(s)  IPR001092  Basic helix-loop-helix dimerisation region bHLH",
+                  "is_tf": true,
+                  "species": "tomato"
+                }
+              ]
+            },
+            {
+              "core_id": "d95ee1a32602ebbbb049",
+              "rank": 5,
+              "score": 0.6251,
+              "node_count": 3,
+              "edge_count": 5,
+              "top_genes": [
+                {
+                  "id": "Solyc06g065100.2",
+                  "symbol": "Solyc06g065100.2",
+                  "name": "Myb-like transcription factor 1 (AHRD V1 **** Q8H271_GOSHI); contains Interpro domain(s)  IPR015495  Myb transcription factor",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc01g111500.2",
+                  "symbol": "Solyc01g111500.2",
+                  "name": "MYB transcription factor (AHRD V1 **** B9H191_POPTR); contains Interpro domain(s)  IPR015495  Myb transcription factor",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc10g055410.1",
+                  "symbol": "Solyc10g055410.1",
+                  "name": "MYB transcription factor (AHRD V1 **-- B9H191_POPTR); contains Interpro domain(s)  IPR017930  Myb-type HTH DNA-binding domain",
+                  "is_tf": true,
+                  "species": "tomato"
+                }
+              ]
+            },
+            {
+              "core_id": "403e37efe83656e4fe5a",
+              "rank": 9,
+              "score": 0.5751,
+              "node_count": 3,
+              "edge_count": 4,
+              "top_genes": [
+                {
+                  "id": "Solyc03g007410.2",
+                  "symbol": "Solyc03g007410.2",
+                  "name": "BHLH transcription factor (AHRD V1 *-** Q401N4_9LILI); contains Interpro domain(s)  IPR011598  Helix-loop-helix DNA-binding",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc03g118310.2",
+                  "symbol": "Solyc03g118310.2",
+                  "name": "BHLH transcription factor (AHRD V1 *-** A9YWR2_MEDTR); contains Interpro domain(s)  IPR011598  Helix-loop-helix DNA-binding",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc06g068870.2",
+                  "symbol": "Solyc06g068870.2",
+                  "name": "BHLH transcription factor (AHRD V1 *-** A9YWR2_MEDTR); contains Interpro domain(s)  IPR011598  Helix-loop-helix DNA-binding",
+                  "is_tf": true,
+                  "species": "tomato"
+                }
+              ]
+            },
+            {
+              "core_id": "0f4530d7052bc9b0233e",
+              "rank": 11,
+              "score": 0.5126,
+              "node_count": 2,
+              "edge_count": 2,
+              "top_genes": [
+                {
+                  "id": "Solyc06g005680.2",
+                  "symbol": "Solyc06g005680.2",
+                  "name": "Transcription factor (Fragment) (AHRD V1 **-* D6MKQ8_9ASPA); contains Interpro domain(s)  IPR006447  Myb-like DNA-binding region, SHAQKYF class",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc10g005080.2",
+                  "symbol": "Solyc10g005080.2",
+                  "name": "Late elongated hypocotyl and circadian clock associated-1-like",
+                  "is_tf": true,
+                  "species": "tomato"
+                }
+              ]
+            },
+            {
+              "core_id": "b18cad6a32e7df4787f9",
+              "rank": 13,
+              "score": 0.5126,
+              "node_count": 2,
+              "edge_count": 2,
+              "top_genes": [
+                {
+                  "id": "Solyc08g076930.1",
+                  "symbol": "MYC2",
+                  "name": "Transcription factor (AHRD V1 *-** Q9M4A8_MAIZE); contains Interpro domain(s)  IPR011598  Helix-loop-helix DNA-binding",
+                  "is_tf": true,
+                  "species": "tomato"
+                },
+                {
+                  "id": "Solyc08g005050.2",
+                  "symbol": "Solyc08g005050.2",
+                  "name": "Transcription factor (AHRD V1 *--* Q9M4A8_MAIZE); contains Interpro domain(s)  IPR001092  Basic helix-loop-helix dimerisation region bHLH",
+                  "is_tf": true,
+                  "species": "tomato"
+                }
+              ]
+            }
+          ],
+          "relationship_ids": [
+            "f2cb3a4a850e19394060",
+            "59465f9249160c16f10c",
+            "40c699b7bf301c07c67b",
+            "93726e3b0f424fde3e59",
+            "6cba58de0e353790ebd4",
+            "c03d1433165966e64196"
+          ]
+        }
+      ],
       "top_systems": [
         {
           "rank": 1,
@@ -514,12 +1594,44 @@
           "rank": 2,
           "name": "Jasmonic acid signaling",
           "architecture": "toggle_switch",
-          "score": 0.7124,
+          "score": 0.7218,
           "discovery_mode": "annotation_supported",
           "completeness": "closed_signed_feedback"
         },
         {
           "rank": 3,
+          "name": "Regulation of seed germination and coleoptile growth under submergence and normal gravity environment",
+          "architecture": "oscillator_candidate",
+          "score": 0.7218,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 4,
+          "name": "regulation of transcription from RNA polymerase II promoter",
+          "architecture": "toggle_switch",
+          "score": 0.714,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 5,
+          "name": "RNA polymerase II regulatory region DNA binding",
+          "architecture": "mixed_feedback",
+          "score": 0.7137,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 6,
+          "name": "meristem determinacy",
+          "architecture": "negative_feedback",
+          "score": 0.7123,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 7,
           "name": "cell fate specification",
           "architecture": "mixed_feedback",
           "score": 0.7105,
@@ -527,31 +1639,15 @@
           "completeness": "closed_signed_feedback"
         },
         {
-          "rank": 4,
-          "name": "meristem determinacy",
-          "architecture": "negative_feedback",
-          "score": 0.7103,
+          "rank": 8,
+          "name": "plant ovule development",
+          "architecture": "reinforcing_switch",
+          "score": 0.7087,
           "discovery_mode": "annotation_supported",
           "completeness": "closed_signed_feedback"
         },
         {
-          "rank": 5,
-          "name": "regulation of transcription from RNA polymerase II promoter",
-          "architecture": "toggle_switch",
-          "score": 0.7078,
-          "discovery_mode": "annotation_supported",
-          "completeness": "closed_signed_feedback"
-        },
-        {
-          "rank": 6,
-          "name": "RNA polymerase II regulatory region DNA binding",
-          "architecture": "mixed_feedback",
-          "score": 0.7074,
-          "discovery_mode": "annotation_supported",
-          "completeness": "closed_signed_feedback"
-        },
-        {
-          "rank": 7,
+          "rank": 9,
           "name": "regulation of cell differentiation",
           "architecture": "mixed_feedback",
           "score": 0.7063,
@@ -559,26 +1655,10 @@
           "completeness": "closed_signed_feedback"
         },
         {
-          "rank": 8,
-          "name": "plant ovule development",
-          "architecture": "reinforcing_switch",
-          "score": 0.7032,
-          "discovery_mode": "annotation_supported",
-          "completeness": "closed_signed_feedback"
-        },
-        {
-          "rank": 9,
+          "rank": 10,
           "name": "meristem growth",
           "architecture": "reinforcing_switch",
           "score": 0.695,
-          "discovery_mode": "annotation_supported",
-          "completeness": "closed_signed_feedback"
-        },
-        {
-          "rank": 10,
-          "name": "Regulation of seed germination and coleoptile growth under submergence and normal gravity environment",
-          "architecture": "oscillator_candidate",
-          "score": 0.6905,
           "discovery_mode": "annotation_supported",
           "completeness": "closed_signed_feedback"
         }

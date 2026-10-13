@@ -258,6 +258,11 @@ class FeedbackControlRequest(BaseModel):
     max_controllers: int = Field(30, ge=1, le=200)
     max_systems: int = Field(20, ge=1, le=100)
     max_system_genes: int = Field(80, ge=5, le=250)
+    exact_cycle_max_nodes: int = Field(10, ge=1, le=20)
+    exact_cycle_max_edges: int = Field(30, ge=1, le=100)
+    exact_cycle_limit: int = Field(50_000, ge=100, le=200_000)
+    cycle_cover_max_edges: int = Field(1_000, ge=10, le=10_000)
+    max_bridge_hops: int = Field(3, ge=1, le=5)
     discover_systems: bool = True
     refresh: bool = False
 
@@ -1391,6 +1396,11 @@ async def feedback_control_analysis(request: FeedbackControlRequest):
         max_controllers=request.max_controllers,
         max_systems=request.max_systems,
         max_system_genes=request.max_system_genes,
+        exact_cycle_max_nodes=request.exact_cycle_max_nodes,
+        exact_cycle_max_edges=request.exact_cycle_max_edges,
+        exact_cycle_limit=request.exact_cycle_limit,
+        cycle_cover_max_edges=request.cycle_cover_max_edges,
+        max_bridge_hops=request.max_bridge_hops,
         discover_systems=request.discover_systems,
     )
     store_path = FilePath(
@@ -1404,6 +1414,88 @@ async def feedback_control_analysis(request: FeedbackControlRequest):
     except sqlite3.Error as exc:
         logger.exception("Feedback-control analysis failed")
         raise HTTPException(status_code=500, detail=f"Feedback analysis storage failed: {exc}") from exc
+
+
+@app.get("/api/v1/network/feedback-control/runs/{run_id}/cores/{core_id}/backbone")
+async def feedback_core_backbone(
+    run_id: str,
+    core_id: str,
+    edge_cursor: int = Query(0, ge=0),
+    edge_limit: int = Query(2_000, ge=1, le=10_000),
+):
+    """Return the complete cycle-capable nodes and a page of internal core edges."""
+    store_path = FilePath(
+        os.environ.get("GRN_FEEDBACK_DB") or (DATA_DIR / "feedback_analysis.sqlite3")
+    )
+    result = feedback_control.FeedbackStore(store_path).backbone(
+        run_id, core_id, edge_cursor=edge_cursor, edge_limit=edge_limit,
+    )
+    if result is None:
+        raise HTTPException(status_code=404, detail="Feedback run or core not found")
+    for node in result["nodes"]:
+        gene = db.get_gene(node["id"])
+        if gene is not None:
+            node.update({
+                "symbol": gene.symbol,
+                "name": gene.name,
+                "species": gene.species,
+                "is_tf": bool(gene.is_tf),
+            })
+    return result
+
+
+@app.get("/api/v1/network/feedback-control/runs/{run_id}/cores/{core_id}/cycles")
+async def feedback_core_cycles(
+    run_id: str,
+    core_id: str,
+    polarity: Optional[str] = Query(None),
+    gene_id: Optional[str] = Query(None),
+    min_length: int = Query(1, ge=1),
+    max_length: Optional[int] = Query(None, ge=1, le=100),
+    cursor: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=250),
+    max_examined: int = Query(100_000, ge=1_000, le=2_000_000),
+):
+    """Query exact cataloged cycles or resume bounded enumeration for a large core."""
+    if polarity not in (None, "positive", "negative"):
+        raise HTTPException(status_code=400, detail="polarity must be positive or negative")
+    if max_length is not None and max_length < min_length:
+        raise HTTPException(status_code=400, detail="max_length must be >= min_length")
+    store_path = FilePath(
+        os.environ.get("GRN_FEEDBACK_DB") or (DATA_DIR / "feedback_analysis.sqlite3")
+    )
+    result = feedback_control.FeedbackStore(store_path).query_cycles(
+        run_id, core_id, polarity=polarity, gene_id=gene_id,
+        min_length=min_length, max_length=max_length, cursor=cursor,
+        limit=limit, max_examined=max_examined,
+    )
+    if result is None:
+        raise HTTPException(status_code=404, detail="Feedback run or core not found")
+    gene_ids = sorted({
+        gene["id"]
+        for circuit in result["cycles"]
+        for gene in circuit["genes"]
+    })
+    metadata = {}
+    if gene_ids:
+        placeholders = ",".join("?" for _ in gene_ids)
+        metadata = {
+            row[0]: row
+            for row in db.conn.execute(
+                f"SELECT id, symbol, name, species, is_tf FROM genes "
+                f"WHERE id IN ({placeholders})",
+                gene_ids,
+            ).fetchall()
+        }
+    for circuit in result["cycles"]:
+        for gene in circuit["genes"]:
+            row = metadata.get(gene["id"])
+            if row is not None:
+                gene.update({
+                    "symbol": row[1], "name": row[2],
+                    "species": row[3], "is_tf": bool(row[4]),
+                })
+    return result
 
 
 @app.get("/api/v1/network/feedback-control/{species}/latest")

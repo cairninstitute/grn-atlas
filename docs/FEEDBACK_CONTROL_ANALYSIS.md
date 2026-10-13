@@ -5,8 +5,10 @@ structures and structural intervention points. The implementation deliberately
 separates what graph topology establishes from biological dynamics that require
 kinetic or perturbation evidence.
 
-The workflow now has two layers. The structural layer finds signed cycles, strongly
-connected feedback cores, and feedback-vertex controller candidates. The biological
+The workflow now has three layers. The structural layer finds signed cycles, strongly
+connected feedback cores, complete cycle-capable backbones, and feedback-vertex
+controller candidates. The inter-core layer finds short signed regulatory paths through
+acyclic bridge genes and chains related cores into larger groups. The biological
 discovery layer assembles those loops into interpretable systems using pathway and GO
 enrichment, then scores available cis, perturbation, tissue-coexpression, and signed
 cross-species conservation support.
@@ -48,6 +50,21 @@ every response includes truncation and search-budget fields. A feedback vertex s
 is a structural set of nodes whose removal breaks detected cycles; it does not
 identify perturbation direction or prove control of a biological state.
 
+Every edge internal to a strongly connected core belongs to at least one directed
+cycle, so the stored core backbone is a complete index of cycle-capable genes and
+edges. Small cores receive an exhaustive all-length simple-cycle catalog. Large cores
+receive a compact set of short witness cycles covering their internal edges, plus a
+filtered cursor-based endpoint for resumable simple-cycle enumeration. Explicit cycle
+enumeration remains potentially exponential; completion is reported rather than
+assumed.
+
+Distinct strongly connected cores cannot have regulatory paths in both directions or
+they would be one core. Darwin therefore discovers directional relationships between
+cores: direct signed regulation or short signed paths whose internal nodes are not in
+another returned core. Weakly connected components of this core relationship graph
+are returned as larger control assemblies. These groups establish regulatory chaining,
+not synchronized dynamics.
+
 ## API
 
 Run or retrieve an analysis with:
@@ -55,16 +72,19 @@ Run or retrieve an analysis with:
 ```text
 POST /api/v1/network/feedback-control
 GET  /api/v1/network/feedback-control/{species}/latest
+GET  /api/v1/network/feedback-control/runs/{run_id}/cores/{core_id}/backbone
+GET  /api/v1/network/feedback-control/runs/{run_id}/cores/{core_id}/cycles
 ```
 
 The POST body accepts `species`, `min_confidence`, `evidence_tiers`,
 `max_loop_length`, `max_cores`, `max_circuits`, `circuits_per_core`,
 `max_search_states`, `max_controllers`, `max_systems`, `max_system_genes`,
-`discover_systems`, and `refresh`.
+`exact_cycle_max_nodes`, `exact_cycle_max_edges`, `exact_cycle_limit`,
+`cycle_cover_max_edges`, `max_bridge_hops`, `discover_systems`, and `refresh`.
 
-The Feedback view presents ranked biological systems first, followed by the underlying
-feedback cores, exact or approximate controller candidates, representative signed
-circuits, and all truncation caveats. Edge color communicates activation or repression;
+The Feedback view presents ranked biological systems first, linked groups of cores,
+then the underlying complete backbones, compact cycle covers, filtered cycle queries,
+and exact or approximate controller candidates. Edge color communicates activation or repression;
 it does not imply that a candidate system has demonstrated switching or oscillation.
 
 ## Storage
@@ -72,8 +92,9 @@ it does not imply that a candidate system has demonstrated switching or oscillat
 Results are cached in `backend/data/feedback_analysis.sqlite3`, a derived sidecar
 that is not part of the source atlas database. The cache key includes the algorithm
 version, normalized parameters, and a hash of the filtered graph. Normalized tables
-store runs, cores, core genes, circuits, and circuit edges, while JSON snapshots
-preserve the complete API response for fast retrieval and reproducibility.
+store runs, cores, complete core edges, exact and compact cycle catalogs, inter-core
+relationships, core groups, representative circuits, and circuit edges. JSON snapshots
+preserve the summary response for fast retrieval and reproducibility.
 
 Keeping derived analyses outside `grn.sqlite3` avoids schema coupling and allows the
 sidecar to be deleted and regenerated. The API describes this as a versioned
@@ -82,10 +103,10 @@ sidecar and does not expose its filesystem location.
 ## Scaling
 
 The graph loader streams SQLite rows in batches into compact igraph attributes.
-Full edge provenance is fetched only for the bounded set of circuits returned to
-the user. SCC discovery is linear in nodes plus edges. Cycle enumeration and large
-core controller search are explicitly bounded because exhaustive simple-cycle
-enumeration is exponential.
+Full provenance is fetched for edges inside returned feedback cores and their short
+inter-core paths, but not for unrelated acyclic background edges. SCC discovery is
+linear in nodes plus edges. Cycle enumeration and large-core controller search are
+explicitly bounded because exhaustive simple-cycle enumeration is exponential.
 
 The committed benchmark creates 50,000-node synthetic networks with a fixed
 500-node feedback core and progressively larger acyclic backgrounds. This measures
@@ -94,9 +115,9 @@ is equivalent to ordinary database growth.
 
 | Scale | Signed edges | Analysis time | Peak RSS |
 | ---: | ---: | ---: | ---: |
-| 1x | 25,000 | 0.141 s | 113.1 MiB |
-| 10x | 250,000 | 0.550 s | 194.4 MiB |
-| 100x | 2,500,000 | 4.943 s | 485.9 MiB |
+| 1x | 25,000 | 0.359 s | 125.3 MiB |
+| 10x | 250,000 | 1.312 s | 206.0 MiB |
+| 100x | 2,500,000 | 11.159 s | 497.9 MiB |
 
 Machine-readable results are in `docs/benchmarks/feedback-control-scale.csv` and
 `docs/benchmarks/feedback-control-scale.json`. Reproduce them with:

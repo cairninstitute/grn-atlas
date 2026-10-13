@@ -1,6 +1,6 @@
 ---
 name: grn-feedback-control
-description: "Discover biological control systems, signed feedback cores, representative regulatory loops, and candidate structural controller genes across a species GRN. Use for questions about oscillators, positive or negative feedback, toggle switches, repressilators, control loops, or feedback-vertex intervention points."
+description: "Discover biological control systems, complete feedback-capable backbones, linked groups of feedback cores, signed regulatory loops, and candidate structural controller genes across a species GRN. Use for questions about oscillators, positive or negative feedback, toggle switches, repressilators, control loops, or feedback-vertex intervention points."
 compatibility: Requires the GRN Atlas backend virtualenv or a running GRN Atlas server.
 metadata:
   author: grn-atlas
@@ -27,6 +27,11 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - `--max-controllers` — control candidates retained per core.
 - `--max-systems` — maximum biological control-system hypotheses returned.
 - `--max-system-genes` — largest annotation-defined system considered.
+- `--exact-cycle-max-nodes` — largest core eligible for an exhaustive cycle catalog.
+- `--exact-cycle-max-edges` — edge ceiling for exhaustive cycle cataloging.
+- `--exact-cycle-limit` — safety ceiling; reaching it changes the catalog status to bounded.
+- `--cycle-cover-max-edges` — largest core for which edge-covering witness cycles are materialized.
+- `--max-bridge-hops` — longest signed path used to connect separate feedback cores.
 - `--topology-only` — skip annotation and context synthesis for topology benchmarks.
 - `--refresh` — recompute and replace an identical cached run.
 - `--http URL` — optional running backend URL.
@@ -38,8 +43,12 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - Architecture labels distinguish oscillator scaffolds, oscillator candidates, toggle switches, reinforcing switches, mixed feedback, and negative-feedback controllers.
 - `partial_architecture` means that a relevant loop is present but the filtered atlas does not contain every regulatory arm needed for the proposed system behavior.
 - `feedback_cores` are strongly connected signed regions and are exhaustively identified for the filtered graph.
+- Every internal edge of a returned feedback core is indexed as cycle-capable. The complete backbone is available through the core-backbone endpoint and Feedback view.
+- Small cores have exhaustive, all-length simple-cycle catalogs. Large cores expose resumable filtered enumeration and never imply that representative cycles are exhaustive.
+- `cycle_cover` is a compact set of short witness cycles selected to cover internal feedback edges; it is not a mathematical minimum-cycle basis.
+- `core_relationships` are shortest measured/perturbation signed paths between distinct cores through acyclic bridge genes. `core_groups` are weakly connected assemblies of those relationships.
 - Self-loops and reciprocal loops are exhaustively detected within returned cores.
-- Longer loops are bounded representatives, not an exhaustive cycle list. Always inspect `truncation` and each core's `circuit_search`.
+- The legacy `circuits` field remains a bounded representative ranking. Use `cycle_catalog`, the cycle query endpoint, and its cursor/completion fields for exhaustive work.
 - Positive-loop polarity suggests switch or memory behavior; negative-loop polarity suggests homeostasis, adaptation, or oscillation. These are hypotheses, not demonstrated dynamics.
 - A feedback vertex set identifies structural intervention points. It does not establish perturbation direction or guarantee attractor control.
 - Exact controller sets are used only for small cores. Large cores use a bounded greedy approximation and report whether all detected feedback was broken.

@@ -5,7 +5,7 @@ import { analysisAPI } from '../services/apiService';
 
 
 vi.mock('../services/apiService', () => ({
-  analysisAPI: { feedbackControl: vi.fn() },
+  analysisAPI: { feedbackControl: vi.fn(), feedbackBackbone: vi.fn(), feedbackCycles: vi.fn() },
 }));
 
 vi.mock('./SubgraphGraph', () => ({
@@ -18,7 +18,7 @@ const payload = {
   graph: { nodes: 12, edges: 19 },
   summary: {
     feedback_cores: 1, feedback_genes: 3, circuits_returned: 1, controller_candidates: 1,
-    biological_systems: 1,
+    biological_systems: 1, feedback_edges: 3, core_groups: 1,
   },
   truncation: { cores: false, circuits: true, search: true },
   storage: { status: 'cached', backend: 'versioned_sidecar' },
@@ -41,9 +41,28 @@ const payload = {
     ],
     evidence_boundary: 'Architecture is a mechanistic hypothesis, not proof of dynamics.',
   }],
+  core_groups: [{
+    group_id: 'group-1', rank: 1, core_count: 2, relationship_count: 1,
+    gene_count: 5, bridge_gene_count: 1, score: 0.81,
+    relationship_ids: ['relationship-1'],
+    cores: [
+      { core_id: 'core-1', rank: 1, score: 0.91, node_count: 3, edge_count: 3, top_genes: [] },
+      { core_id: 'core-2', rank: 2, score: 0.8, node_count: 2, edge_count: 2, top_genes: [] },
+    ],
+  }],
+  core_relationships: [{
+    relationship_id: 'relationship-1', source_core_id: 'core-1', target_core_id: 'core-2',
+    source_core_rank: 1, target_core_rank: 2, relationship_type: 'bridged_regulatory_path',
+    hop_count: 2, score: 0.81, net_sign: 'repression',
+    path_genes: [{ symbol: 'CCA1' }, { symbol: 'BRIDGE' }, { symbol: 'TARGET' }],
+    bridge_genes: [{ symbol: 'BRIDGE' }],
+  }],
   cores: [{
     core_id: 'core-1', rank: 1, score: 0.91, node_count: 3, edge_count: 3,
     mean_edge_confidence: 0.9,
+    backbone: { cycle_capable_nodes: 3, cycle_capable_edges: 3, complete: true },
+    cycle_catalog: { exact: true, cataloged_cycles: 1, mode: 'exact' },
+    cycle_cover: { complete: true, coverage: 1, circuits: [] },
     circuit_search: { search_states: 1234, truncated: true },
     controller_analysis: {
       exact: true,
@@ -76,16 +95,21 @@ describe('FeedbackControlView', () => {
       json: async () => ({ species_list: ['arabidopsis', 'human'] }),
     })));
     analysisAPI.feedbackControl.mockResolvedValue(payload);
+    analysisAPI.feedbackBackbone.mockResolvedValue({
+      run_id: 'run-1', core_id: 'core-1', node_count: 3, edge_count: 3, complete: true,
+      nodes: payload.systems[0].genes, edges: payload.systems[0].edges,
+    });
     render(<FeedbackControlView initialSpecies="arabidopsis" />);
 
     await waitFor(() => expect(screen.getByText('Biological control systems')).toBeInTheDocument());
     expect(screen.getAllByText('Circadian rhythm')).toHaveLength(2);
     expect(screen.getByText('PARTIAL ARCHITECTURE')).toBeInTheDocument();
-    expect(screen.getAllByText('Repressilator')).toHaveLength(2);
-    expect(screen.getByText('CCA1')).toBeInTheDocument();
+    expect(screen.getByText('Connected groups of feedback cores')).toBeInTheDocument();
+    expect(screen.getByText('Complete cycle-capable backbone')).toBeInTheDocument();
     expect(screen.getByText(/bounded representative analysis/i)).toBeInTheDocument();
     expect(screen.getByText(/not demonstrated dynamics/i)).toBeInTheDocument();
-    expect(screen.getAllByTestId('circuit-graph')).toHaveLength(2);
+    await waitFor(() => expect(screen.getAllByTestId('circuit-graph')).toHaveLength(3));
+    expect(analysisAPI.feedbackBackbone).toHaveBeenCalledWith('run-1', 'core-1');
     expect(analysisAPI.feedbackControl).toHaveBeenCalledWith('arabidopsis', {
       minConfidence: 0.5, maxLoopLength: 6,
     });

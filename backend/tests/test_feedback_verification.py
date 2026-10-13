@@ -38,7 +38,9 @@ def test_pathological_topologies_are_bounded_and_report_truncation():
     assert cases["large-scc"]["truncation"]["search"]
     assert cases["dense-core"]["truncation"]["search"]
     assert cases["many-small-sccs"]["feedback_cores"] == 300
-    assert cases["many-small-sccs"]["truncation"]["cores"]
+    assert cases["many-small-sccs"]["feedback_cores_returned"] == 300
+    assert not cases["many-small-sccs"]["truncation"]["cores"]
+    assert cases["many-small-sccs"]["truncation"]["circuits"]
     assert not any(cases["acyclic"]["truncation"].values())
 
 

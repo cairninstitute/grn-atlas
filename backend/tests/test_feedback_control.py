@@ -72,6 +72,8 @@ def test_feedback_analysis_reports_species_gene_count_when_no_signed_edges():
     assert result["graph"]["nodes"] == 8
     assert result["graph"]["edges"] == 0
     assert result["summary"]["feedback_cores"] == 0
+    assert result["summary"]["feedback_edges_returned"] == 0
+    assert result["summary"]["cataloged_cycles"] == 0
     assert result["evidence_boundary"].startswith("No signed edges")
 
 
@@ -146,7 +148,41 @@ def test_feedback_search_budget_is_explicit():
         ),
     )
     assert result["summary"]["circuits_returned"] == 1
-    assert result["truncation"]["cores"] or result["truncation"]["circuits"]
+    assert result["summary"]["feedback_cores_returned"] == 3
+    assert result["truncation"]["cores"] is False
+    assert result["truncation"]["circuits"] is True
+    assert all(core["backbone"]["complete"] for core in result["cores"])
+
+
+def test_feedback_backbone_and_exact_cycle_catalog_are_complete_for_small_cores():
+    result = feedback_control.analyze_feedback(_fixture_connection(), "test")
+    mutual = next(core for core in result["cores"] if core["node_count"] == 2)
+    assert mutual["backbone"] == {
+        "cycle_capable_nodes": 2,
+        "cycle_capable_edges": 2,
+        "complete": True,
+    }
+    assert mutual["cycle_catalog"]["exact"] is True
+    assert mutual["cycle_catalog"]["cataloged_cycles"] == 1
+    assert mutual["cycle_cover"]["complete"] is True
+    assert mutual["cycle_cover"]["coverage"] == 1.0
+
+
+def test_feedback_analysis_chains_cores_through_acyclic_bridge_genes():
+    conn = _fixture_connection()
+    conn.executemany(
+        "INSERT INTO interactions VALUES (?,?,?,?,?,?,?,?,?)",
+        [
+            ("B", "G", "activation", 0.9, '["fixture"]', '[]', "activation", "measured", None),
+            ("G", "C", "repression", 0.9, '["fixture"]', '[]', "repression", "measured", None),
+        ],
+    )
+    result = feedback_control.analyze_feedback(conn, "test")
+    relationship = next(row for row in result["core_relationships"] if row["hop_count"] == 2)
+    assert [gene["id"] for gene in relationship["bridge_genes"]] == ["G"]
+    assert relationship["net_sign"] == "repression"
+    assert result["summary"]["core_groups"] == 1
+    assert result["core_groups"][0]["core_count"] == 2
 
 
 def test_feedback_store_normalizes_results_and_reuses_cache(tmp_path):
@@ -163,6 +199,29 @@ def test_feedback_store_normalizes_results_and_reuses_cache(tmp_path):
         assert stored.execute("SELECT COUNT(*) FROM feedback_core_genes").fetchone()[0] == 6
         assert stored.execute("SELECT COUNT(*) FROM feedback_circuits").fetchone()[0] >= 3
         assert stored.execute("SELECT COUNT(*) FROM feedback_circuit_edges").fetchone()[0] >= 6
+        assert stored.execute("SELECT COUNT(*) FROM feedback_core_edges").fetchone()[0] == 6
+        assert stored.execute("SELECT COUNT(*) FROM feedback_cycle_catalog").fetchone()[0] >= 3
+
+    core_id = first["cores"][0]["core_id"]
+    backbone = store.backbone(first["run_id"], core_id)
+    assert backbone["complete"] is True
+    assert len(backbone["edges"]) == backbone["edge_count"]
+    cycles = store.query_cycles(first["run_id"], core_id, limit=10)
+    assert cycles["mode"] == "exact_catalog"
+    assert cycles["exhaustive_catalog"] is True
+    assert cycles["cycles"]
+
+
+def test_feedback_store_resumes_on_demand_cycle_enumeration(tmp_path):
+    conn = _fixture_connection()
+    params = feedback_control.FeedbackParameters(exact_cycle_max_nodes=1)
+    store = feedback_control.FeedbackStore(tmp_path / "feedback.sqlite3")
+    result = feedback_control.analyze_and_store(conn, store, "test", params)
+    core = next(core for core in result["cores"] if core["node_count"] == 3)
+    page = store.query_cycles(result["run_id"], core["core_id"], limit=1)
+    assert page["mode"] == "on_demand_enumeration"
+    assert len(page["cycles"]) == 1
+    assert page["cycles"][0]["polarity"] == "negative"
 
 
 def test_real_api_rejects_unknown_species(monkeypatch, tmp_path):
@@ -176,3 +235,33 @@ def test_real_api_rejects_unknown_species(monkeypatch, tmp_path):
         assert getattr(exc, "status_code", None) == 404
     else:
         raise AssertionError("unknown species should be rejected")
+
+
+def test_feedback_backbone_and_cycle_api_read_persisted_run(monkeypatch, tmp_path):
+    import main
+
+    path = tmp_path / "feedback.sqlite3"
+    conn = _fixture_connection()
+    store = feedback_control.FeedbackStore(path)
+    result = feedback_control.analyze_and_store(conn, store, "test")
+    core = result["cores"][0]
+    monkeypatch.setenv("GRN_FEEDBACK_DB", str(path))
+    conn.row_factory = sqlite3.Row
+    monkeypatch.setattr(main.db, "conn", conn)
+
+    backbone = asyncio.run(main.feedback_core_backbone(
+        result["run_id"], core["core_id"], edge_cursor=0, edge_limit=2_000,
+    ))
+    cycles = asyncio.run(main.feedback_core_cycles(
+        result["run_id"], core["core_id"], polarity=None, gene_id=None,
+        min_length=1, max_length=None, cursor=0, limit=50, max_examined=100_000,
+    ))
+
+    assert backbone["node_count"] == core["node_count"]
+    assert backbone["complete"] is True
+    assert cycles["cycles"]
+    assert cycles["exhaustive_catalog"] is True
+    assert all(
+        gene["species"] == "test" and gene["name"] == gene["id"]
+        for circuit in cycles["cycles"] for gene in circuit["genes"]
+    )

@@ -1,14 +1,17 @@
 {
-  "algorithm": "bounded-feedback-control",
+  "algorithm": "feedback-control-v3",
   "results": [
     {
       "nodes": 50000,
       "edges": 25000,
       "build_seconds": 0.036,
-      "analysis_seconds": 0.141,
-      "peak_rss_mib": 113.1,
+      "analysis_seconds": 0.359,
+      "peak_rss_mib": 125.3,
       "feedback_cores": 1,
       "feedback_genes": 500,
+      "feedback_edges": 1512,
+      "core_relationships": 0,
+      "core_groups": 0,
       "circuits_returned": 12,
       "search_truncated": true,
       "scale": 1
@@ -16,11 +19,14 @@
     {
       "nodes": 50000,
       "edges": 250000,
-      "build_seconds": 0.379,
-      "analysis_seconds": 0.55,
-      "peak_rss_mib": 194.4,
+      "build_seconds": 0.392,
+      "analysis_seconds": 1.312,
+      "peak_rss_mib": 206.0,
       "feedback_cores": 1,
       "feedback_genes": 500,
+      "feedback_edges": 1512,
+      "core_relationships": 0,
+      "core_groups": 0,
       "circuits_returned": 12,
       "search_truncated": true,
       "scale": 10
@@ -28,11 +34,14 @@
     {
       "nodes": 50000,
       "edges": 2500000,
-      "build_seconds": 4.597,
-      "analysis_seconds": 4.943,
-      "peak_rss_mib": 485.9,
+      "build_seconds": 4.648,
+      "analysis_seconds": 11.159,
+      "peak_rss_mib": 497.9,
       "feedback_cores": 1,
       "feedback_genes": 500,
+      "feedback_edges": 1512,
+      "core_relationships": 0,
+      "core_groups": 0,
       "circuits_returned": 12,
       "search_truncated": true,
       "scale": 100

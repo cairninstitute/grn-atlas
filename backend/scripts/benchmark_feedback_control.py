@@ -121,6 +121,9 @@ def run_worker(edge_count: int, node_count: int) -> dict[str, object]:
             "peak_rss_mib": round(peak_rss_kib / 1024, 1),
             "feedback_cores": result["summary"]["feedback_cores"],
             "feedback_genes": result["summary"]["feedback_genes"],
+            "feedback_edges": result["summary"]["feedback_edges"],
+            "core_relationships": result["summary"]["core_relationships"],
+            "core_groups": result["summary"]["core_groups"],
             "circuits_returned": result["summary"]["circuits_returned"],
             "search_truncated": result["truncation"]["search"],
         }
@@ -157,7 +160,7 @@ def main() -> None:
         rows.append(row)
         print(json.dumps(row, sort_keys=True), flush=True)
 
-    payload = {"algorithm": "bounded-feedback-control", "results": rows}
+    payload = {"algorithm": "feedback-control-v3", "results": rows}
     if args.json:
         args.json.parent.mkdir(parents=True, exist_ok=True)
         args.json.write_text(json.dumps(payload, indent=2) + "\n")

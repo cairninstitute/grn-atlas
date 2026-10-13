@@ -41,6 +41,11 @@ def main_cli() -> None:
             "seconds": round(elapsed, 3),
             "signed_edges": result["graph"]["edges"],
             "feedback_cores": result["summary"]["feedback_cores"],
+            "feedback_edges": result["summary"]["feedback_edges"],
+            "exact_cycle_catalogs": result["summary"]["exact_cycle_catalogs"],
+            "cataloged_cycles": result["summary"]["cataloged_cycles"],
+            "core_relationships": result["summary"]["core_relationships"],
+            "core_groups": result["summary"]["core_groups"],
             "systems": len(systems),
             "annotation_supported": sum(
                 system["discovery_mode"] == "annotation_supported" for system in systems
@@ -54,6 +59,7 @@ def main_cli() -> None:
         details[species] = {
             "summary": row,
             "architecture_counts": dict(sorted(architecture_counts.items())),
+            "core_groups": result["core_groups"],
             "top_systems": [
                 {
                     "rank": system["rank"],
@@ -89,7 +95,11 @@ def main_cli() -> None:
         json.dumps(report, indent=2) + "\n", encoding="utf-8"
     )
     with (out_dir / "control-system-discovery.csv").open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]) if rows else ["species"])
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=list(rows[0]) if rows else ["species"],
+            lineterminator="\n",
+        )
         writer.writeheader()
         writer.writerows(rows)
     print(json.dumps(report["checks"], indent=2))

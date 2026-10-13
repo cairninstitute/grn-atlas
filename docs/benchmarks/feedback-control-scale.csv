@@ -1,4 +1,4 @@
-scale,nodes,edges,build_seconds,analysis_seconds,peak_rss_mib,feedback_cores,feedback_genes,circuits_returned,search_truncated
-1,50000,25000,0.036,0.141,113.1,1,500,12,True
-10,50000,250000,0.379,0.55,194.4,1,500,12,True
-100,50000,2500000,4.597,4.943,485.9,1,500,12,True
+scale,nodes,edges,build_seconds,analysis_seconds,peak_rss_mib,feedback_cores,feedback_genes,feedback_edges,core_relationships,core_groups,circuits_returned,search_truncated
+1,50000,25000,0.036,0.359,125.3,1,500,1512,0,0,12,True
+10,50000,250000,0.392,1.312,206.0,1,500,1512,0,0,12,True
+100,50000,2500000,4.648,11.159,497.9,1,500,1512,0,0,12,True
