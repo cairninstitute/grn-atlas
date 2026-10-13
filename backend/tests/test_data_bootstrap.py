@@ -1,4 +1,5 @@
 import importlib.util
+import sys
 from pathlib import Path
 
 
@@ -32,3 +33,19 @@ def test_plantregmap_normalization_keeps_release_supplement(tmp_path):
     assert "AT1G01060\tAT1G01470" not in output.read_text()
     assert rows[0] == "AT1G01060\tAT1G20030\tregulation\t0.65\tFunTFBS, motif"
     assert rows[-1] == "AT2G47460\tAT4G22880\tregulation\t0.85\tliterature"
+
+
+def test_current_plantregmap_download_identifiers():
+    scripts = str(Path(__file__).resolve().parents[1] / "scripts")
+    sys.path.insert(0, scripts)
+    try:
+        import species_config
+        import fetch_plantregmap_regulation
+    finally:
+        sys.path.remove(scripts)
+
+    assert species_config.get("rice")["plantregmap"] == {
+        "species": "Oryza_sativa_Japonica_Group",
+        "suffix": "Osj",
+    }
+    assert fetch_plantregmap_regulation.TOBACCO_PLANTREGMAP["suffix"] == "Nta"

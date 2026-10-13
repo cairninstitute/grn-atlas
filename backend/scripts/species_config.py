@@ -130,7 +130,7 @@ SPECIES = {
         "genome_url": None, "id_style": "strip_isoform", "seqctx_style": "plaza_identity",
         "promoter": (2000, 500), "chrom_norm": "identity",
         "scan_edge_sql": "source_id LIKE 'LOC_Os%'",
-        "plantregmap": {"species": "Oryza_sativa", "suffix": "Osa"},
+        "plantregmap": {"species": "Oryza_sativa_Japonica_Group", "suffix": "Osj"},
         "expr_index": None, "expr_panel": {},
     },
     # ---- Prepared placeholder for the incoming Dahlia collaboration data ----

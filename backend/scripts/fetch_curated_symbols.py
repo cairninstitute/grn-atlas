@@ -61,6 +61,7 @@ def petunia():
     # 1. UniProt P. hybrida reviewed proteins WITH a gene name -> FASTA
     rows = _uniprot_stream("organism_id:4102+AND+reviewed:true", "gene_primary,sequence")
     fa = DATA / "expr" / "uniprot_phyb.faa"
+    fa.parent.mkdir(parents=True, exist_ok=True)
     n = 0
     with open(fa, "w") as f:
         for r in rows:

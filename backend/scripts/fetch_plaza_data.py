@@ -39,6 +39,7 @@ ORTHOLOGS_JSON = DATA_DIR / "orthologs_plaza.json"
 GENES_JSON = DATA_DIR / "genome_genes_plaza.json"
 SYMBOLS_JSON = DATA_DIR / "gene_symbols_plaza.json"
 ORTHOLOG_MAP_JSON = DATA_DIR / "ortholog_map_plaza.json"
+ARABIDOPSIS_NAMES_JSON = DATA_DIR / "gene_names_arabidopsis.json"
 MAX_SYMBOLS_PER_GENE = 8
 MAX_ORTHOLOGS_PER_GENE = 3   # cap plant orthologs per Arabidopsis gene (per species)
 
@@ -398,17 +399,26 @@ def main():
     ath_symbols = load_ath_symbols()
     inferred_symbols, ortholog_map = stream_bhif(ath_symbols, set(genes), arab_ids)
 
+    # build_db and the KnockTF resolver need real Arabidopsis short symbols on a
+    # fresh clone. Previously this file existed only as an ignored local cache.
+    arabidopsis_names = {
+        agi: {"symbol": symbols[0], "name": symbols[0], "aliases": symbols[1:]}
+        for agi, symbols in ath_symbols.items() if symbols
+    }
+
     POSITIONS_JSON.write_text(json.dumps(positions, indent=1, sort_keys=True))
     ORTHOLOGS_JSON.write_text(json.dumps(
         sorted(pairs, key=lambda p: (p["gene_a"], p["gene_b"])), indent=1))
     GENES_JSON.write_text(json.dumps(genes, indent=1, sort_keys=True))
     SYMBOLS_JSON.write_text(json.dumps(inferred_symbols, indent=1, sort_keys=True))
     ORTHOLOG_MAP_JSON.write_text(json.dumps(ortholog_map, indent=1, sort_keys=True))
+    ARABIDOPSIS_NAMES_JSON.write_text(json.dumps(arabidopsis_names, indent=1, sort_keys=True))
     print(f"Wrote {POSITIONS_JSON} ({len(positions)} positions)")
     print(f"Wrote {ORTHOLOGS_JSON} ({len(pairs)} ortholog pairs)")
     print(f"Wrote {GENES_JSON} ({len(genes)} tomato/petunia genes)")
     print(f"Wrote {SYMBOLS_JSON} ({len(inferred_symbols)} genes with inferred symbols)")
     print(f"Wrote {ORTHOLOG_MAP_JSON} ({len(ortholog_map)} Arabidopsis genes mapped)")
+    print(f"Wrote {ARABIDOPSIS_NAMES_JSON} ({len(arabidopsis_names)} Arabidopsis symbols)")
 
 
 if __name__ == "__main__":

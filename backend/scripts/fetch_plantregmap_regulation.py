@@ -125,7 +125,7 @@ def fetch_species(species):
 
 TOBACCO_PLANTREGMAP = {
     "species": "Nicotiana_tabacum",
-    "suffix": "48385",
+    "suffix": "Nta",
 }
 
 
