@@ -128,6 +128,11 @@ TOBACCO_PLANTREGMAP = {
     "suffix": "Nta",
 }
 
+# The release graph uses ConnecTF plus Arabidopsis orthology projection for
+# rice. Keep the now-correct rice endpoint available as an explicit expansion,
+# but do not silently change the release graph when "all" is requested.
+DEFAULT_SPECIES = ("petunia", "tomato", "potato")
+
 
 def fetch_tobacco_raw():
     """Fetch tobacco PlantRegMap edges in raw LOC gene format (no atlas mapping).
@@ -201,9 +206,7 @@ def main():
 
     target = sys.argv[1]
     if target == "all":
-        species_list = [sp for sp, cfg in species_config.SPECIES.items()
-                        if cfg.get("plantregmap")]
-        species_list.append("tobacco")
+        species_list = [*DEFAULT_SPECIES, "tobacco"]
     elif target == "tobacco":
         fetch_tobacco_raw()
         return

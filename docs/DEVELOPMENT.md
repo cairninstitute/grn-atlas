@@ -126,7 +126,7 @@ without a full rebuild.
 
 Fetch tiers (`fetch_sources.py --tier`): `core` (genes/interactions/coords/orthologs/GO/
 DoRothEA/DAP-seq/gene lists, required), `light` (+ pathways/traits/seqctx/curated symbols/
-PlantRegMap including rice/tobacco orthologs), `all` (also attempts the heavy layers below).
+PlantRegMap including tobacco orthologs), `all` (also attempts the heavy layers below).
 
 ### Data sources by species
 
@@ -145,6 +145,11 @@ Additional signed evidence is staged source-by-source in `regulatory_evidence` a
 does not silently mutate the merged graph. Run `make external-regulation` to fetch
 CollecTRI, SIGNOR transcriptional relations, and strict confirmed-direct AGRIS rows.
 See `docs/EXTERNAL_SIGNED_EVIDENCE.md` for evidence-layer boundaries and benchmarks.
+
+Rice PlantRegMap is available as an explicit network expansion with
+`fetch_plantregmap_regulation.py rice`, but is intentionally excluded from the default
+release bootstrap. The release rice graph uses ConnecTF plus Arabidopsis orthology
+projection; silently adding PlantRegMap would change the benchmarked graph definition.
 
 Hand-curated files that are committed (not fetchable): `gold_standard_{species}.tsv`,
 `regulation_petunia.tsv`, `regulation_tomato.tsv`, `curated_symbols_{species}.json`,

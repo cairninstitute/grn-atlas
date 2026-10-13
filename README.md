@@ -142,7 +142,7 @@ confirm the build is complete.
 | Tier / step | Command | Provides | Auto? | Needs |
 |---|---|---|---|---|
 | core | `fetch_sources.py --tier core` | genes, **human** networks (TRRUST + DoRothEA), coords, orthologs, GO, DAP-seq binding, gene lists | mostly | network |
-| light | `fetch_sources.py --tier light` | + pathways, traits, PlantRegMap regulation (tomato/petunia/potato/tobacco/rice), curated symbols, tobacco BLAST orthologs | mostly | network; BLAST+ for petunia symbols + tobacco orthologs |
+| light | `fetch_sources.py --tier light` | + pathways, traits, PlantRegMap regulation (tomato/petunia/potato/tobacco), curated symbols, tobacco BLAST orthologs | mostly | network; BLAST+ for petunia symbols + tobacco orthologs |
 | Arabidopsis core | `fetch_arabidopsis_regulation.py` | **measured Arabidopsis network** + ATRM direction labels → Arabidopsis multi-evidence + tomato/petunia/pepper/rice projection | yes | network |
 | heavy | `fetch_expression.py`, `motif_scan.py` | expression + predicted binding | **no** | kallisto / BLAST+, hours, GBs |
 | enrich | `make enrich` | ConnecTF edges (~309K) + TF-perturbation DEGs (~116K observations), display names, curated pathway overrides | mostly | built DB; ConnecTF tarball in `/tmp` (optional) |

@@ -49,3 +49,4 @@ def test_current_plantregmap_download_identifiers():
         "suffix": "Osj",
     }
     assert fetch_plantregmap_regulation.TOBACCO_PLANTREGMAP["suffix"] == "Nta"
+    assert "rice" not in fetch_plantregmap_regulation.DEFAULT_SPECIES
