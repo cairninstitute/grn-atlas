@@ -139,6 +139,11 @@ PlantRegMap including rice/tobacco orthologs), `all` (also attempts the heavy la
 | Pepper | — | — | Inferred:Arabidopsis, Inferred:Potato, Inferred:Tobacco |
 | Potato | PlantRegMap | — | — |
 
+Additional signed evidence is staged source-by-source in `regulatory_evidence` and
+does not silently mutate the merged graph. Run `make external-regulation` to fetch
+CollecTRI, SIGNOR transcriptional relations, and strict confirmed-direct AGRIS rows.
+See `docs/EXTERNAL_SIGNED_EVIDENCE.md` for evidence-layer boundaries and benchmarks.
+
 Hand-curated files that are committed (not fetchable): `gold_standard_{species}.tsv`,
 `regulation_petunia.tsv`, `regulation_tomato.tsv`, `curated_symbols_{species}.json`,
 `literature_edges_{species}.tsv`.

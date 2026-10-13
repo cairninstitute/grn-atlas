@@ -61,7 +61,7 @@ def parse_edges(path: Path):
         tag = parts[4] if len(parts) > 4 else ""
         pmid = None
         if "literature:" in tag:
-            pmid = tag.split("literature:")[-1].strip()
+            pmid = [value.strip() for value in tag.split("literature:")[-1].split(",") if value.strip()]
         yield source, target, reg, pmid
 
 
@@ -89,7 +89,7 @@ def main():
                 skipped += 1
                 continue
             log2fc = -1.0 if reg == "activation" else 1.0 if reg == "repression" else 0.0
-            meta = json.dumps({"pmid": pmid, "edge_direction": reg,
+            meta = json.dumps({"pmids": pmid or [], "edge_direction": reg,
                                "note": "literature-documented direction (knockdown framing)"})
             rows.append((species, source, "knockdown", target, log2fc, 1, DATASET_LABEL, meta))
         conn.executemany(

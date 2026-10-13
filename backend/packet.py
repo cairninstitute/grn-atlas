@@ -11,7 +11,16 @@ import validation
 
 SOURCE_KEY_BY_NAME = {
     "TRRUST": "trrust2",
+    "DoRothEA": "dorothea",
+    "CollecTRI": "collectri",
+    "SIGNOR": "signor",
     "PlantRegMap": "plantregmap",
+    "ATRM": "atrm",
+    "AGRIS AtRegNet": "agris",
+    "DAP-seq": "plantcistrome",
+    "ConnecTF": "connectf",
+    "KnockTF": "knocktf2",
+    "Literature": "atlasliterature",
     "JASPAR2024": "jaspar2024",
     "GWAS Catalog": "gwascatalog",
     "PlantReactome": "plantreactome",

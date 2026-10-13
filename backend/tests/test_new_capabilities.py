@@ -203,6 +203,7 @@ def test_calibration_lof_direction_aware():
     row = main.db.conn.execute("""
         SELECT i.source_id FROM interactions i
         JOIN perturbation_observations p ON p.perturbed_gene=i.source_id
+            AND p.affected_gene=i.target_id
         WHERE i.sign_evidence='measured' AND p.dataset_label='knocktf' LIMIT 1""").fetchone()
     if not row:
         pytest.skip("no TF with both a measured sign and KnockTF observations")

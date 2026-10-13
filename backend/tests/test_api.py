@@ -5,6 +5,7 @@ a handful of curated rows exercise the endpoints. main.DB_PATH is overridden via
 GRN_DB before importing/reloading main.
 """
 import importlib
+import json
 import os
 import sqlite3
 from pathlib import Path
@@ -210,6 +211,56 @@ def test_provenance_freshness(client):
     assert all(s["status"] in ("current", "stale", "unknown") for s in f["sources"])
     # PLAZA 4.5 is known-stale (dicots 5.0 exists) per the committed audit cache
     assert by["plaza"]["status"] == "stale" and by["plaza"]["latest_version"]
+
+
+def test_external_evidence_endpoints(client):
+    import main
+
+    main.db.conn.execute(
+        "INSERT INTO source_import_runs "
+        "(source_name, source_version, source_url, fetched_at, sha256, status, counts) "
+        "VALUES ('Example', '1', 'https://example.test', '2026-01-01Z', 'abc', 'complete', '{\"stored\": 1}')"
+    )
+    run_id = main.db.conn.execute(
+        "SELECT import_run_id FROM source_import_runs WHERE source_name='Example'"
+    ).fetchone()[0]
+    main.db.conn.execute(
+        "INSERT INTO regulatory_evidence "
+        "(species,source_id,target_id,relation_type,evidence_layer,directness,source_name,"
+        "source_version,record_key,context,pmids,metadata,import_run_id,imported_at) "
+        "VALUES ('human','TF1','TG1','activation','direct_signed','direct','Example','1',"
+        "'one','{}','[\"12345\"]','{}',?,'2026-01-01Z')", (run_id,)
+    )
+    main.db.conn.commit()
+    summary = client.get("/api/v1/evidence/external/summary?species=human").json()
+    assert summary["evidence"][0]["count"] == 1
+    assert summary["legacy_graph_mutated"] is False
+    pair = client.get("/api/v1/evidence/external/pair/TF1/TG1").json()
+    assert pair["evidence"][0]["pmids"] == ["12345"]
+
+
+def test_perturbation_import_preserves_provenance(client):
+    import main
+
+    response = client.post("/api/v1/perturbation/import", json={
+        "species": "human",
+        "perturbation_type": "overexpression",
+        "metadata": {"dataset_label": "E-TEST-1", "source_url": "https://example.test/study"},
+        "observations": [{
+            "perturbed_gene": "TF1", "affected_gene": "TG1", "log2fc": 1.5,
+            "significant": True, "metadata": {"contrast": "treated_vs_control"},
+        }],
+    })
+    assert response.status_code == 200 and response.json()["n_imported"] == 1
+    label, metadata = main.db.conn.execute(
+        "SELECT dataset_label, metadata FROM perturbation_observations "
+        "WHERE perturbed_gene='TF1' AND affected_gene='TG1' ORDER BY obs_id DESC LIMIT 1"
+    ).fetchone()
+    assert label == "E-TEST-1"
+    assert json.loads(metadata) == {
+        "contrast": "treated_vs_control", "dataset_label": "E-TEST-1",
+        "source_url": "https://example.test/study",
+    }
 
 
 def test_citations_bibtex(client):

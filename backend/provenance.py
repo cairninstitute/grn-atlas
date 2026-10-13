@@ -13,29 +13,88 @@ METHODS = {
                    "p-value < 1e-4"),
     "tf_motif_assignment": ("TF→motif by protein-sequence homology (BLASTp) to the "
                             "JASPAR matrix TF, merged with symbol/synonym matches"),
-    "inferred_edges": ("Arabidopsis regulatory network projected onto tomato/petunia "
-                       "via orthology; confidence penalised ×0.7"),
+    "inferred_edges": ("Regulatory networks projected across plant species through PLAZA/BLAST "
+                       "orthology; source species and confidence penalty retained per edge"),
     "regulator_identification": "BLASTp vs characterised regulator proteins (best hit, %id + coverage)",
     "enrichment": "hypergeometric over-representation with Benjamini–Hochberg FDR",
     "coordinate_systems": ("gene coordinates on each species' atlas assembly (GFF 1-based); "
                            "sequence-context windows/sites on the ingest assembly (BED 0-based)"),
 }
 
+EVIDENCE_LAYERS = {
+    "direct_signed": "Direct TF-target evidence with an activation or repression sign",
+    "direct_unsigned": "Direct TF binding or regulation evidence without a defensible sign",
+    "perturbation_signed": "Context-specific expression response after regulator perturbation",
+    "causal_signaling": "Directed causal signaling relation; not necessarily TF-DNA regulation",
+    "orthology_transferred": "Regulatory relation projected from another species through orthology",
+    "annotation": "Gene, genome, pathway, trait, or sequence annotation",
+    "method": "Software or reference model used to derive an atlas result",
+}
+
 # Data sources with citations. `key` is the BibTeX cite key.
 SOURCES = [
-    {"key": "trrust2", "name": "TRRUST v2", "version": "v2",
+    {"key": "trrust2", "name": "TRRUST v2", "version": "v2", "source_labels": ["TRRUST"],
+     "evidence_layers": ["direct_signed"],
      "provides": "Human TF–target regulatory interactions (literature-curated, with PubMed IDs)",
      "authors": "Han et al.", "year": 2018, "journal": "Nucleic Acids Research", "volume": "46", "pages": "D380",
      "doi": "10.1093/nar/gkx1013", "url": "https://www.grnpedia.org/trrust/"},
+    {"key": "dorothea", "name": "DoRothEA", "version": "OmniPath snapshot",
+     "source_labels": ["DoRothEA"], "evidence_layers": ["direct_signed"],
+     "provides": "Human and mouse signed TF-target prior knowledge (confidence A/B loaded)",
+     "authors": "Garcia-Alonso et al.", "year": 2019, "journal": "Genome Research", "volume": "29", "pages": "1363",
+     "doi": "10.1101/gr.240663.118", "url": "https://saezlab.github.io/dorothea/"},
+    {"key": "collectri", "name": "CollecTRI", "version": "OmniPath current",
+     "source_labels": ["CollecTRI"], "evidence_layers": ["direct_signed"],
+     "provides": "Expanded signed human TF-target prior knowledge with source-level references",
+     "authors": "Muller-Dott et al.", "year": 2023, "journal": "Nucleic Acids Research", "volume": "51", "pages": "10934",
+     "doi": "10.1093/nar/gkad841", "url": "https://github.com/saezlab/CollecTRI"},
+    {"key": "signor", "name": "SIGNOR", "version": "October 2026",
+     "source_labels": ["SIGNOR"], "evidence_layers": ["direct_signed", "causal_signaling"],
+     "provides": "Human and mouse causal relations; only the transcriptional subset enters the TF-target evidence layer",
+     "authors": "Licata et al.", "year": 2020, "journal": "Nucleic Acids Research", "volume": "48", "pages": "D504",
+     "doi": "10.1093/nar/gkz949", "url": "https://signor.uniroma2.it/"},
     {"key": "plantregmap", "name": "PlantRegMap / PlantTFDB", "version": "2019",
-     "provides": "Arabidopsis & tomato TF–target regulation (FunTFBS)",
+     "source_labels": ["PlantRegMap"], "evidence_layers": ["direct_unsigned", "direct_signed"],
+     "provides": "Plant TF-target regulation used for Arabidopsis, tomato, petunia, potato, rice, and transfer sources",
      "authors": "Tian et al.", "year": 2020, "journal": "Nucleic Acids Research", "volume": "48", "pages": "D1104",
      "doi": "10.1093/nar/gkz1020", "url": "https://plantregmap.gao-lab.org/"},
+    {"key": "atrm", "name": "Arabidopsis Transcriptional Regulatory Map", "version": "download snapshot",
+     "source_labels": ["ATRM"], "evidence_layers": ["direct_signed"],
+     "provides": "Literature-curated Arabidopsis activation and repression labels",
+     "authors": "Jin et al.", "year": 2015, "journal": "Molecular BioSystems", "volume": "11", "pages": "178",
+     "doi": "10.1039/C4MB00532C", "url": "http://atrm.cbi.pku.edu.cn/"},
+    {"key": "agris", "name": "AGRIS / AtRegNet", "version": "2019-03-11",
+     "source_labels": ["AGRIS AtRegNet"], "evidence_layers": ["direct_signed", "direct_unsigned"],
+     "provides": "Arabidopsis TF-target regulation; the atlas external layer retains confirmed direct signed records",
+     "authors": "Yilmaz et al.", "year": 2011, "journal": "Nucleic Acids Research", "volume": "39", "pages": "D1118",
+     "doi": "10.1093/nar/gkq1120", "url": "https://agris-knowledgebase.org/"},
+    {"key": "plantcistrome", "name": "Plant Cistrome DAP-seq", "version": "GSE60143",
+     "source_labels": ["DAP-seq"], "evidence_layers": ["direct_unsigned"],
+     "provides": "Genome-wide Arabidopsis TF binding evidence from DAP-seq",
+     "authors": "O'Malley et al.", "year": 2016, "journal": "Cell", "volume": "165", "pages": "1280",
+     "doi": "10.1016/j.cell.2016.04.038", "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE60143"},
+    {"key": "connectf", "name": "ConnecTF", "version": "data release v1",
+     "source_labels": ["ConnecTF", "connectf_target"], "evidence_layers": ["direct_unsigned", "perturbation_signed"],
+     "provides": "Arabidopsis and rice TF binding and TF-perturbation expression evidence",
+     "authors": "Brooks et al.", "year": 2021, "journal": "Plant Physiology", "volume": "185", "pages": "49",
+     "doi": "10.1093/plphys/kiaa012", "url": "https://connectf.org/"},
+    {"key": "knocktf2", "name": "KnockTF 2.0", "version": "2.0",
+     "source_labels": ["KnockTF", "knocktf"], "evidence_layers": ["perturbation_signed"],
+     "provides": "Context-specific TF knockdown and knockout differential-expression observations",
+     "authors": "Feng et al.", "year": 2024, "journal": "Nucleic Acids Research", "volume": "52", "pages": "D183",
+     "doi": "10.1093/nar/gkad1006", "url": "https://www.licpathway.net/KnockTF/"},
+    {"key": "atlasliterature", "name": "GRN Atlas literature curation", "version": "repository snapshot",
+     "source_labels": ["Literature", "literature_curated"], "evidence_layers": ["direct_signed", "perturbation_signed"],
+     "provides": "Manually curated signed plant regulatory interactions with publication identifiers",
+     "authors": "CAIRN Institute", "year": 2026, "journal": "", "volume": "", "pages": "", "doi": "",
+     "url": "https://www.cairninstitute.com/"},
     {"key": "oma", "name": "OMA (Orthologous MAtrix)", "version": "2021",
      "provides": "Genomic coordinates and cross-species orthologs (human, mouse, Arabidopsis)",
      "authors": "Altenhoff et al.", "year": 2021, "journal": "Nucleic Acids Research", "volume": "49", "pages": "D373",
      "doi": "10.1093/nar/gkaa1007", "url": "https://omabrowser.org/"},
     {"key": "plaza", "name": "PLAZA Dicots 4.5", "version": "4.5",
+     "source_labels": ["Inferred:Arabidopsis", "Inferred:Potato", "Inferred:Tobacco"],
+     "evidence_layers": ["orthology_transferred", "annotation"],
      "provides": "Plant gene coordinates, synteny, BHIF orthology, descriptions, GO (Arabidopsis, tomato, petunia)",
      "authors": "Van Bel et al.", "year": 2018, "journal": "Nucleic Acids Research", "volume": "46", "pages": "D1190",
      "doi": "10.1093/nar/gkx1002", "url": "https://bioinformatics.psb.ugent.be/plaza/"},
@@ -75,10 +134,20 @@ SOURCES = [
 ]
 
 
+def source_label_map():
+    """Map labels stored in atlas tables to their canonical manifest source."""
+    return {
+        label: source["key"]
+        for source in SOURCES
+        for label in source.get("source_labels", [])
+    }
+
+
 def manifest():
     from datetime import datetime
     return {"atlas_version": ATLAS_VERSION, "generated": datetime.utcnow().isoformat() + "Z",
-            "methods": METHODS, "sources": SOURCES}
+            "methods": METHODS, "evidence_layers": EVIDENCE_LAYERS,
+            "source_label_map": source_label_map(), "sources": SOURCES}
 
 
 def freshness():

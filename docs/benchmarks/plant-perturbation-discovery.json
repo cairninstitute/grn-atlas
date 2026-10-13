@@ -1,0 +1,242 @@
+{
+  "generated": "2026-10-12T23:25:28.095008+00:00",
+  "limitations": [
+    "Catalogue descriptions do not prove that the perturbed gene is a transcriptional regulator.",
+    "Each candidate requires contrast-level review and atlas identifier mapping before ingestion.",
+    "Perturbation effects belong in perturbation_signed, not direct_signed, unless direct binding is independently supported."
+  ],
+  "perturbatlas": {
+    "download_page": "https://perturbatlas.kratoss.site/#/download",
+    "ingestion": "Normalize selected DEG tables to the grn-perturbation-import TSV contract after species and contrast review.",
+    "reason": "The public site currently exposes bulk results through file-sharing mirrors rather than a stable catalogue API.",
+    "status": "manual_download_review_required"
+  },
+  "selection": "Differential experiments whose descriptions contain a genetic perturbation term",
+  "source": "Expression Atlas experiment catalogue",
+  "source_url": "https://www.ebi.ac.uk/gxa/json/experiments",
+  "species": {
+    "rice": [
+      {
+        "accession": "E-GEOD-93081",
+        "assays": 8,
+        "description": "Root-specific overexpression of OsERF48 causes regulation of OsCML16, a calmodulin-like protein gene that enhances root growth and drought tolerance",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-GEOD-93081/home",
+        "perturbation_terms": [
+          "overexpress"
+        ],
+        "regulator_tokens": [
+          "OsCML16",
+          "OsERF48"
+        ],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "RNA-Seq mRNA"
+        ]
+      },
+      {
+        "accession": "E-GEOD-18787",
+        "assays": 12,
+        "description": "Gene regulation in osmpk6 mutant cells expressing OsMKK4DD",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-GEOD-18787/home",
+        "perturbation_terms": [
+          "mutant"
+        ],
+        "regulator_tokens": [
+          "OsMKK4DD"
+        ],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "Microarray 1-colour mRNA"
+        ]
+      },
+      {
+        "accession": "E-GEOD-29577",
+        "assays": 6,
+        "description": "Global gene expression profiles of Oryza sativa wild type Nipponbare and mutant coi1-13",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-GEOD-29577/home",
+        "perturbation_terms": [
+          "mutant"
+        ],
+        "regulator_tokens": [],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "Microarray 1-colour mRNA"
+        ]
+      },
+      {
+        "accession": "E-GEOD-30818",
+        "assays": 6,
+        "description": "Transcript profiling of rice crl1 mutant stem base ",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-GEOD-30818/home",
+        "perturbation_terms": [
+          "mutant"
+        ],
+        "regulator_tokens": [],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "Microarray 1-colour mRNA"
+        ]
+      },
+      {
+        "accession": "E-GEOD-34547",
+        "assays": 6,
+        "description": "Expression data of the Dongjin and osbzip58-1 mutants in the immature endosperm at 9 DAF",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-GEOD-34547/home",
+        "perturbation_terms": [
+          "mutant"
+        ],
+        "regulator_tokens": [],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "Microarray 1-colour mRNA"
+        ]
+      },
+      {
+        "accession": "E-GEOD-39298",
+        "assays": 6,
+        "description": "Comparison of transcriptome profile between wild-type and Epi-df mutant plants",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-GEOD-39298/home",
+        "perturbation_terms": [
+          "mutant"
+        ],
+        "regulator_tokens": [],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "Microarray 1-colour mRNA"
+        ]
+      },
+      {
+        "accession": "E-GEOD-42028",
+        "assays": 6,
+        "description": "Overexpression of OsMADS29 in Oryza sativa var. PB1",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-GEOD-42028/home",
+        "perturbation_terms": [
+          "overexpress"
+        ],
+        "regulator_tokens": [
+          "OsMADS29"
+        ],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "Microarray 1-colour mRNA"
+        ]
+      },
+      {
+        "accession": "E-GEOD-46086",
+        "assays": 6,
+        "description": "DNA microarray data from root of transgenic rice Huahui 1 (HH1) and its parent Minghui 63 (MH63)",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-GEOD-46086/home",
+        "perturbation_terms": [
+          "transgenic"
+        ],
+        "regulator_tokens": [],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "Microarray 1-colour mRNA"
+        ]
+      },
+      {
+        "accession": "E-GEOD-58007",
+        "assays": 6,
+        "description": "Transcription profiling by array of rice OsRDR1 mutant",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-GEOD-58007/home",
+        "perturbation_terms": [
+          "mutant"
+        ],
+        "regulator_tokens": [
+          "OsRDR1"
+        ],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "Microarray 1-colour mRNA"
+        ]
+      },
+      {
+        "accession": "E-GEOD-60823",
+        "assays": 12,
+        "description": "Expression data from +Pi and -Pi treeatment between WT and spx1spx2 double mutant",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-GEOD-60823/home",
+        "perturbation_terms": [
+          "mutant"
+        ],
+        "regulator_tokens": [],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "Microarray 1-colour mRNA"
+        ]
+      },
+      {
+        "accession": "E-GEOD-61833",
+        "assays": 12,
+        "description": "Gene expression changes induced in Rice (Oryza sativa) leaves following treatment with any one of the following: wild type Xoo, lipopolysaccharide (LPS) and exopolysaccaride (EPS) deficient Xoo mutant;  LPS proficient but EPS deficient Xoo mutant",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-GEOD-61833/home",
+        "perturbation_terms": [
+          "mutant"
+        ],
+        "regulator_tokens": [],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "Microarray 1-colour mRNA"
+        ]
+      },
+      {
+        "accession": "E-MTAB-3230",
+        "assays": 12,
+        "description": "Comparative transcriptome study of enhanced water stress tolerant (ewst1) mutant of rice variety Nagina22",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-MTAB-3230/home",
+        "perturbation_terms": [
+          "mutant"
+        ],
+        "regulator_tokens": [],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "Microarray 1-colour mRNA"
+        ]
+      }
+    ],
+    "tomato": [
+      {
+        "accession": "E-MTAB-11876",
+        "assays": 6,
+        "description": "Rhizogenic Agrobacterium protein RolB interacts with the TOPLESS and NINJA repressor proteins to reprogram plant jasmonate signaling (GUS overexpression)",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-MTAB-11876/home",
+        "perturbation_terms": [
+          "overexpress"
+        ],
+        "regulator_tokens": [],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "RNA-Seq mRNA"
+        ]
+      },
+      {
+        "accession": "E-MTAB-11880",
+        "assays": 18,
+        "description": "Rhizogenic Agrobacterium protein RolB interacts with the TOPLESS and NINJA repressor proteins to reprogram plant jasmonate signaling (rolB overexpression)",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-MTAB-11880/home",
+        "perturbation_terms": [
+          "overexpress"
+        ],
+        "regulator_tokens": [],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "RNA-Seq mRNA"
+        ]
+      },
+      {
+        "accession": "E-MTAB-4797",
+        "assays": 9,
+        "description": "Transcription profiling by high throughput sequencing of leaves of resistant (RG-PtoR)  tomato plants treated with different Pst DC3000 mutant strains",
+        "experiment_url": "https://www.ebi.ac.uk/gxa/experiments/E-MTAB-4797/home",
+        "perturbation_terms": [
+          "mutant"
+        ],
+        "regulator_tokens": [],
+        "status": "candidate_requires_contrast_and_identifier_review",
+        "technology": [
+          "RNA-Seq mRNA"
+        ]
+      }
+    ]
+  }
+}

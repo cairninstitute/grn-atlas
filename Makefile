@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf enrich tissue-weights validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all external-regulation enrich tissue-weights validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - ONE COMMAND: full data setup from a fresh clone (setup->fetch->db->enrich->knocktf->allele-pwms->chromatin-peaks)"
@@ -13,6 +13,8 @@ help:
 	@echo "make allele-pwms    - cache JASPAR PWMs for grn-allele-affinity (needs make db + network)"
 	@echo "make chromatin-peaks - download+load Arabidopsis DAP-seq peaks (Plant Cistrome, needs make db + network)"
 	@echo "make knocktf        - download+load KnockTF LOF perturbations, re-derive signs (needs make db + network)"
+	@echo "make knocktf-all    - stream/load KnockTF for Arabidopsis, human, and mouse (large download)"
+	@echo "make external-regulation - load CollecTRI, SIGNOR transcriptional, and strict AGRIS evidence"
 	@echo "make enrich         - load ConnecTF edges+perturbations, curated pathway edges, display names (needs make db)"
 	@echo "make tissue-weights - compute per-tissue coexpression weights (also run by make db)"
 	@echo "make validate       - run gold-standard + population-level network validation"
@@ -26,10 +28,10 @@ help:
 # One command to take a fresh clone to a fully-populated atlas. Each step is individually
 # re-runnable; the optional network layers (enrich/allele-pwms/chromatin-peaks) self-skip
 # if a download is unavailable, so bootstrap never hard-fails on an offline extra.
-bootstrap: setup fetch db enrich knocktf allele-pwms chromatin-peaks
+bootstrap: setup fetch db external-regulation enrich knocktf allele-pwms chromatin-peaks
 	@echo ""
 	@echo "=== GRN Atlas bootstrap complete ==="
-	@echo "Verify:  make test-backend   (expect 342 passed)"
+	@echo "Verify:  make test-backend"
 	@echo "Run:     make backend        (API on :8000)   then   make frontend (UI on :3001)"
 
 setup:
@@ -73,8 +75,15 @@ chromatin-peaks:
 
 knocktf:
 	venv/bin/python backend/scripts/load_knocktf_perturbations.py
-	venv/bin/python backend/scripts/derive_perturbation_signs.py
+	venv/bin/python backend/scripts/derive_perturbation_signs.py --species arabidopsis
 	venv/bin/python backend/scripts/validate_edge_signs.py
+
+knocktf-all:
+	venv/bin/python backend/scripts/load_knocktf_perturbations.py --species all
+
+external-regulation:
+	venv/bin/python backend/scripts/load_external_regulatory_sources.py all \
+		--report backend/data/external_regulatory_benchmark.json
 
 enrich:
 	@if [ ! -d /tmp/connectf_data_release_v1 ]; then \

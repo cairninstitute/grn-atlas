@@ -1,0 +1,28 @@
+[
+  {
+    "atlas_genes": 32062,
+    "data_files": 662,
+    "database_not_reproduced": 0,
+    "database_pairs": 330903,
+    "metadata_records": 2,
+    "missing_from_database": 0,
+    "missing_source_endpoints": 0,
+    "missing_target_endpoints": 0,
+    "parsed_unique_pairs": 330903,
+    "signed_database_pairs": 116072,
+    "species": "arabidopsis"
+  },
+  {
+    "atlas_genes": 5281,
+    "data_files": 64,
+    "database_not_reproduced": 0,
+    "database_pairs": 6137,
+    "metadata_records": 85,
+    "missing_from_database": 0,
+    "missing_source_endpoints": 0,
+    "missing_target_endpoints": 0,
+    "parsed_unique_pairs": 6137,
+    "signed_database_pairs": 2709,
+    "species": "rice"
+  }
+]

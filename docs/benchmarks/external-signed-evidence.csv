@@ -1,0 +1,5 @@
+source,species,records,unique_pairs,new_pairs,conflicts,internal_conflicts,total_new_pairs,total_overlaps,signed_agreements,signed_conflicts
+AGRIS AtRegNet,arabidopsis,3837,3563,2912,22,274,2912,651,132,22
+CollecTRI,human,44784,42923,35186,186,126,35186,7737,7271,186
+SIGNOR,human,2576,2445,1411,40,10,1507,1044,991,41
+SIGNOR,mouse,110,106,96,1,0,1507,1044,991,41

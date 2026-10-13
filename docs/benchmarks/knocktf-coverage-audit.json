@@ -1,0 +1,26 @@
+[
+  {
+    "affected_genes": 25050,
+    "observations": 106926,
+    "perturbed_regulators": 18,
+    "source_file_bytes": 93920656,
+    "source_file_sha256": "55c0714c463d92676935a9b5387ceb0a527695066770824dcbcd058717e0b48a",
+    "species": "arabidopsis"
+  },
+  {
+    "affected_genes": 18115,
+    "observations": 1572511,
+    "perturbed_regulators": 440,
+    "source_file_bytes": 1927352609,
+    "source_file_sha256": "addf6cb0efc1574674acebb39223634eac2f4dde8fe8de4b9ec9808d1abcc2b9",
+    "species": "human"
+  },
+  {
+    "affected_genes": 17019,
+    "observations": 310990,
+    "perturbed_regulators": 115,
+    "source_file_bytes": 440042390,
+    "source_file_sha256": "bcf6f6cf4ffb7d5ed864711532b631a73ec808d83ea4a7066d0c782a7bb74350",
+    "species": "mouse"
+  }
+]

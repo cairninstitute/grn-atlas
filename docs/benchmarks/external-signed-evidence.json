@@ -1,0 +1,69 @@
+[
+  {
+    "by_species": {
+      "arabidopsis": {
+        "conflicts": 22,
+        "internal_conflicts": 274,
+        "new_pairs": 2912,
+        "records": 3837,
+        "unique_pairs": 3563
+      }
+    },
+    "existing_unsigned": 450,
+    "mapped_records": 3837,
+    "new_pairs": 2912,
+    "overlapping_pairs": 651,
+    "signed_agreements": 132,
+    "signed_conflicts": 22,
+    "source": "AGRIS AtRegNet",
+    "source_internal_sign_conflicts": 274,
+    "unique_pairs": 3563
+  },
+  {
+    "by_species": {
+      "human": {
+        "conflicts": 186,
+        "internal_conflicts": 126,
+        "new_pairs": 35186,
+        "records": 44784,
+        "unique_pairs": 42923
+      }
+    },
+    "existing_unsigned": 235,
+    "mapped_records": 44784,
+    "new_pairs": 35186,
+    "overlapping_pairs": 7737,
+    "signed_agreements": 7271,
+    "signed_conflicts": 186,
+    "source": "CollecTRI",
+    "source_internal_sign_conflicts": 126,
+    "unique_pairs": 42923
+  },
+  {
+    "by_species": {
+      "human": {
+        "conflicts": 40,
+        "internal_conflicts": 10,
+        "new_pairs": 1411,
+        "records": 2576,
+        "unique_pairs": 2445
+      },
+      "mouse": {
+        "conflicts": 1,
+        "internal_conflicts": 0,
+        "new_pairs": 96,
+        "records": 110,
+        "unique_pairs": 106
+      }
+    },
+    "existing_unsigned": 4,
+    "mapped_records": 2686,
+    "new_pairs": 1507,
+    "overlapping_pairs": 1044,
+    "signed_agreements": 991,
+    "signed_conflicts": 41,
+    "source": "SIGNOR",
+    "source_internal_sign_conflicts": 10,
+    "unique_pairs": 2551
+  }
+]

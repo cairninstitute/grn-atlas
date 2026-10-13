@@ -24,6 +24,7 @@ load_connectf_perturbations.py.
 Usage:
     backend/venv/bin/python backend/scripts/derive_perturbation_signs.py
 """
+import argparse
 import sqlite3
 import statistics
 from collections import defaultdict
@@ -44,24 +45,37 @@ DATASET_ORIENTATION = {
 
 
 def main():
-    conn = sqlite3.connect(DB_PATH)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--species", help="Only derive signs for this species")
+    parser.add_argument("--db", type=Path, default=DB_PATH)
+    args = parser.parse_args()
+    conn = sqlite3.connect(args.db)
     cols = {r[1] for r in conn.execute("PRAGMA table_info(interactions)")}
     if "sign_evidence" not in cols:
         print("sign columns missing — run infer_edge_signs.py first (part of make db).")
         return
 
-    # Idempotent reset of our own tier only.
-    conn.execute("UPDATE interactions SET sign = NULL, sign_evidence = 'unknown' "
-                 "WHERE sign_evidence = 'perturbation'")
+    # Idempotent reset of our own tier only, scoped when a species was requested.
+    if args.species:
+        conn.execute(
+            "UPDATE interactions SET sign = NULL, sign_evidence = 'unknown' "
+            "WHERE sign_evidence = 'perturbation' AND source_id IN "
+            "(SELECT id FROM genes WHERE species = ?)", (args.species,),
+        )
+    else:
+        conn.execute("UPDATE interactions SET sign = NULL, sign_evidence = 'unknown' "
+                     "WHERE sign_evidence = 'perturbation'")
     conn.commit()
 
     labels = tuple(DATASET_ORIENTATION)
     placeholders = ",".join("?" * len(labels))
     agg = defaultdict(list)
+    species_clause = " AND species = ?" if args.species else ""
+    params = (*labels, args.species) if args.species else labels
     for tf, tgt, fc, label in conn.execute(
         f"SELECT perturbed_gene, affected_gene, observed_log2fc, dataset_label "
         f"FROM perturbation_observations "
-        f"WHERE dataset_label IN ({placeholders}) AND observed_significant = 1", labels
+        f"WHERE dataset_label IN ({placeholders}) AND observed_significant = 1{species_clause}", params
     ):
         if fc is not None:
             # Orient to a common "activation score" so LOF and GOF evidence combine correctly.

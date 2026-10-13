@@ -11,8 +11,12 @@ import gzip
 import json
 import re
 import sqlite3
+import sys
 from collections import defaultdict
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from external_evidence import ensure_schema  # noqa: E402
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 DB_PATH = DATA_DIR / "grn.sqlite3"
@@ -335,8 +339,9 @@ def load_plantregmap_edges(tsv_path):
             tf, target, reg, conf = parts[0], parts[1], parts[2], float(parts[3])
             src = parts[4] if len(parts) > 4 else "PlantRegMap"
             if src.startswith("literature"):
-                pmid = src.split(":", 1)[1] if ":" in src else ""
-                edges.append((tf, target, reg, conf, "Literature", [pmid] if pmid else []))
+                pmid_text = src.split(":", 1)[1] if ":" in src else ""
+                pmids = [value.strip() for value in pmid_text.split(",") if value.strip()]
+                edges.append((tf, target, reg, conf, "Literature", pmids))
             else:
                 edges.append((tf, target, reg, conf, "PlantRegMap", []))
     return edges
@@ -735,6 +740,7 @@ def build():
         CREATE INDEX idx_cse_source ON cis_support_edges(source_id);
         CREATE INDEX idx_cse_target ON cis_support_edges(target_id);
     """)
+    ensure_schema(conn)
 
     # Insert human genes
     conn.executemany(

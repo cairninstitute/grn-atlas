@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse, JSONResponse
 
 import provenance
+import external_evidence
 import expression
 import rnai
 import evidence
@@ -1856,6 +1857,61 @@ async def get_freshness():
     """Data-currency audit: each source's loaded version vs the latest available
     release, so users can judge how current the atlas data is (#6)."""
     return provenance.freshness()
+
+
+@app.get("/api/v1/evidence/external/summary")
+async def external_evidence_summary(species: Optional[str] = None):
+    """Summarize source-level evidence without conflating it with legacy edges."""
+    where = "WHERE species = ?" if species else ""
+    params = (species,) if species else ()
+    rows = db.conn.execute(
+        "SELECT source_name, species, evidence_layer, relation_type, COUNT(*) "
+        f"FROM regulatory_evidence {where} "
+        "GROUP BY source_name, species, evidence_layer, relation_type "
+        "ORDER BY source_name, species, evidence_layer, relation_type",
+        params,
+    ).fetchall()
+    runs = db.conn.execute(
+        "SELECT source_name, source_version, source_url, fetched_at, sha256, status, counts "
+        "FROM source_import_runs ORDER BY fetched_at DESC"
+    ).fetchall()
+    return {
+        "species": species,
+        "evidence": [
+            {"source": row[0], "species": row[1], "evidence_layer": row[2],
+             "relation_type": row[3], "count": row[4]}
+            for row in rows
+        ],
+        "import_runs": [
+            {"source": row[0], "version": row[1], "url": row[2], "fetched_at": row[3],
+             "sha256": row[4], "status": row[5], "counts": json.loads(row[6] or "{}")}
+            for row in runs
+        ],
+        "legacy_graph_mutated": False,
+    }
+
+
+@app.get("/api/v1/evidence/external/pair/{source_id}/{target_id}")
+async def external_evidence_pair(source_id: str, target_id: str):
+    rows = db.conn.execute(
+        "SELECT species, relation_type, evidence_layer, directness, source_name, "
+        "source_version, confidence, context, pmids, metadata, imported_at "
+        "FROM regulatory_evidence WHERE source_id=? AND target_id=? "
+        "ORDER BY source_name, evidence_id",
+        (source_id, target_id),
+    ).fetchall()
+    return {
+        "source_id": source_id,
+        "target_id": target_id,
+        "evidence": [
+            {"species": row[0], "relation_type": row[1], "evidence_layer": row[2],
+             "directness": row[3], "source": row[4], "source_version": row[5],
+             "confidence": row[6], "context": json.loads(row[7] or "{}"),
+             "pmids": json.loads(row[8] or "[]"), "metadata": json.loads(row[9] or "{}"),
+             "imported_at": row[10]}
+            for row in rows
+        ],
+    }
 
 
 @app.get("/api/v1/citations.bib")
@@ -4965,6 +5021,8 @@ def _ensure_phase2_tables():
     if stmts:
         conn.commit()
         logger.info(f"Created {len(stmts)} Phase 2 tables/indexes")
+    external_evidence.ensure_schema(conn)
+    conn.commit()
 
 
 _ensure_phase2_tables()
@@ -5782,22 +5840,26 @@ async def perturbation_import(req: PerturbationImportRequest):
         conn.execute("CREATE INDEX idx_po_species ON perturbation_observations(species)")
         conn.execute("CREATE INDEX idx_po_gene ON perturbation_observations(perturbed_gene)")
         conn.commit()
-    n = 0
+    rows = []
     for obs in req.observations:
-        conn.execute(
-            "INSERT INTO perturbation_observations "
-            "(species, perturbed_gene, perturbation_type, affected_gene, "
-            "observed_log2fc, observed_significant, dataset_label) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (species, obs["perturbed_gene"], req.perturbation_type,
-             obs["affected_gene"], obs.get("log2fc", 0),
-             1 if obs.get("significant", False) else 0,
-             obs.get("dataset_label"))
-        )
-        n += 1
+        metadata = {**(req.metadata or {}), **(obs.get("metadata") or {})}
+        dataset_label = obs.get("dataset_label") or metadata.get("dataset_label")
+        rows.append((
+            species, obs["perturbed_gene"], req.perturbation_type,
+            obs["affected_gene"], obs.get("log2fc", 0),
+            1 if obs.get("significant", False) else 0,
+            dataset_label, json.dumps(metadata, sort_keys=True),
+        ))
+    conn.executemany(
+        "INSERT INTO perturbation_observations "
+        "(species, perturbed_gene, perturbation_type, affected_gene, "
+        "observed_log2fc, observed_significant, dataset_label, metadata) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        rows,
+    )
     conn.commit()
     return {"species": species, "perturbation_type": req.perturbation_type,
-            "n_imported": n}
+            "n_imported": len(rows)}
 
 
 class PerturbationCompareRequest(BaseModel):
