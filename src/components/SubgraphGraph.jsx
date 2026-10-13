@@ -44,7 +44,7 @@ export default function SubgraphGraph({ nodes, edges, onNodeClick, tfStyle = 'de
           'height': '48px',
           'shape': 'ellipse',
           'font-size': '11px',
-          'font-weight': '700',
+          'font-weight': 'bold',
           'text-margin-y': '7px',
           'text-outline-width': 0,
           'text-background-color': '#f8f5ed',
