@@ -44,10 +44,8 @@ CORE_PRE_DB = [
      "https://www.grnpedia.org/trrust/data/trrust_rawdata.mouse.tsv",
      "trrust_rawdata.mouse.tsv"), None),
     ("gene names (mygene)", [PY, "fetch_gene_names.py"], None),
-    ("ATRM + arabidopsis regulation", None,
-     "manual: backend/data/{atrm_regulations.tsv, regulation_arabidopsis.tsv} (ATRM site; "
-     "PlantRegMap, pre-filtered to tf/target/reg/confidence). build_db skips these gracefully "
-     "if absent (arabidopsis network + projection then empty)."),
+    ("ATRM + Arabidopsis PlantRegMap regulation",
+     [PY, "fetch_arabidopsis_regulation.py"], None),
 ]
 CORE_POST_DB = [
     ("OMA coords + orthologs", [PY, "fetch_genome_data.py"], None),

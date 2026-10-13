@@ -50,7 +50,8 @@ LLM/coverage status is:
 ## Fetch source data, then build the database
 
 Third-party data is **not committed** (see LICENSE). The one-command path is **`make bootstrap`**
-(`setup` → `fetch` → `db` → `enrich` → `knocktf` → `allele-pwms` → `chromatin-peaks`), which fetches every
+(`setup` → `fetch` → `db` → `external-regulation` → `enrich` → `knocktf-all` →
+`allele-pwms` → `chromatin-peaks` → `verify-data`), which fetches every
 third-party download automatically. The individual stages, for reference:
 
 ```bash
@@ -99,8 +100,9 @@ the Plant Cistrome DAP-seq peaks.
   corpora. (1) Committed, PMID-backed `literature_edges_*.tsv` → ~52 literature-documented
   knockdown directions (`literature_curated`). (2) ConnecTF inducible-TARGET DESeq2 (PMID
   33631799) → ~116K measured DEG log2FCs, 51 TFs, gain-of-function (`connectf_target`, via
-  `make enrich`). (3) KnockTF 2.0 (PMID 37956336) → ~107K knockdown/knockout DEGs, loss-of-function
-  (`knocktf`, via `make knocktf`); independent of the atlas edges, so the cleanest calibration
+  `make enrich`). (3) KnockTF 2.0 (PMID 37956336) → ~1.99M knockdown/knockout DEGs across
+  Arabidopsis, human, and mouse, with Arabidopsis used for graph-sign derivation; loss-of-function
+  (`knocktf`, via `make knocktf-all`); independent of the atlas edges, so the cleanest calibration
   ground truth. `perturbation_compare` is direction-aware by perturbation type (GOF: activation→up;
   LOF: activation→down) and scores concordance only on edges carrying a curated `measured` sign.
 - **DAP-seq chromatin peaks** (`load_dapseq_peaks.py`, `make chromatin-peaks`): downloads the
@@ -206,8 +208,10 @@ make enrich
 All three scripts are idempotent — safe to re-run. If ConnecTF data is not downloaded,
 `make enrich` skips that step and prints download instructions.
 
-The full bootstrap sequence is a single command: `make bootstrap`
-(`setup` → `fetch` → `db` → `enrich` → `knocktf` → `allele-pwms` → `chromatin-peaks`).
+The release source-data bootstrap is a single command: `make bootstrap`
+(`setup` → `fetch` → `db` → `external-regulation` → `enrich` → `knocktf-all` →
+`allele-pwms` → `chromatin-peaks` → `verify-data`). The final verifier fails on missing
+required layers instead of accepting a silently degraded build.
 
 ## Compute dependencies (only for regenerating derived data)
 

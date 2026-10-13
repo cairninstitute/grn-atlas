@@ -1,8 +1,8 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all external-regulation enrich tissue-weights validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all external-regulation enrich tissue-weights verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
-	@echo "make bootstrap      - ONE COMMAND: full data setup from a fresh clone (setup->fetch->db->enrich->knocktf->allele-pwms->chromatin-peaks)"
+	@echo "make bootstrap      - release data setup from a fresh clone, including all external evidence and KnockTF species"
 	@echo "make setup          - create venv + install backend & frontend deps"
 	@echo "make fetch          - fetch source data (core+light tiers) into backend/data/"
 	@echo "make fetch-all      - fetch everything incl. heavy layers (needs kallisto/BLAST, slow)"
@@ -15,6 +15,7 @@ help:
 	@echo "make knocktf        - download+load KnockTF LOF perturbations, re-derive signs (needs make db + network)"
 	@echo "make knocktf-all    - stream/load KnockTF for Arabidopsis, human, and mouse (large download)"
 	@echo "make external-regulation - load CollecTRI, SIGNOR transcriptional, and strict AGRIS evidence"
+	@echo "make verify-data    - fail unless all release data layers and minimum coverage are present"
 	@echo "make enrich         - load ConnecTF edges+perturbations, curated pathway edges, display names (needs make db)"
 	@echo "make tissue-weights - compute per-tissue coexpression weights (also run by make db)"
 	@echo "make validate       - run gold-standard + population-level network validation"
@@ -25,10 +26,10 @@ help:
 	@echo "make test           - run backend + frontend tests"
 	@echo "make test-skills    - run agent skill tests (342 direct-mode tests)"
 
-# One command to take a fresh clone to a fully-populated atlas. Each step is individually
+# One command to take a fresh clone to the verified release source-data profile. Each step is individually
 # re-runnable; the optional network layers (enrich/allele-pwms/chromatin-peaks) self-skip
 # if a download is unavailable, so bootstrap never hard-fails on an offline extra.
-bootstrap: setup fetch db external-regulation enrich knocktf allele-pwms chromatin-peaks
+bootstrap: setup fetch db external-regulation enrich knocktf-all allele-pwms chromatin-peaks verify-data
 	@echo ""
 	@echo "=== GRN Atlas bootstrap complete ==="
 	@echo "Verify:  make test-backend"
@@ -80,10 +81,15 @@ knocktf:
 
 knocktf-all:
 	venv/bin/python backend/scripts/load_knocktf_perturbations.py --species all
+	venv/bin/python backend/scripts/derive_perturbation_signs.py --species arabidopsis
+	venv/bin/python backend/scripts/validate_edge_signs.py
 
 external-regulation:
 	venv/bin/python backend/scripts/load_external_regulatory_sources.py all \
 		--report backend/data/external_regulatory_benchmark.json
+
+verify-data:
+	venv/bin/python backend/scripts/verify_release_data.py
 
 enrich:
 	@if [ ! -d /tmp/connectf_data_release_v1 ]; then \

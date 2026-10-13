@@ -42,12 +42,12 @@ Prereqs: **Python 3.10+**, **Node 18+**, `git`, `curl`, network access.
 ```bash
 git clone <this-repo> grn-atlas && cd grn-atlas
 make bootstrap        # venv + deps, fetch sources, build DB, signs, perturbation ground-truth,
-                      # tissue weights, ConnecTF edges+perturbations, JASPAR PWMs, DAP-seq peaks
+                      # external evidence, ConnecTF, all KnockTF species, JASPAR PWMs, DAP-seq peaks
 ```
 
-`make bootstrap` runs, in order: `setup` → `fetch` → `db` → `enrich` → `knocktf` →
-`allele-pwms` → `chromatin-peaks`. Every third-party download (ConnecTF ~200 MB, KnockTF
-~90 MB, Plant Cistrome DAP-seq ~74 MB, JASPAR PWMs) is fetched automatically; the optional network layers self-skip if a
+`make bootstrap` runs, in order: `setup` → `fetch` → `db` → `external-regulation` →
+`enrich` → `knocktf-all` → `allele-pwms` → `chromatin-peaks` → `verify-data`.
+Every third-party download (including ~2.4 GB of KnockTF tables) is fetched automatically; optional network layers self-skip if a
 download is unavailable, so a transient outage never hard-fails the build (the atlas still
 works, just with that layer empty). Each step is independently re-runnable (see `make help`).
 
@@ -64,8 +64,8 @@ make backend          # FastAPI on http://localhost:8000 (docs at /docs)
 make frontend         # in another shell: Vite UI on http://localhost:3001 (proxies /api)
 ```
 
-Verify the build: `make test-backend` (expect **342 passed**) and
-`make test-skills` (expect **342 passed**).
+Verify the build: `make verify-data && make test-backend` (expect **365 passed, 3 skipped**) and
+`make test-skills` (expect **386 passing single-skill cases**).
 
 <details><summary>Equivalent step-by-step (if you prefer to run stages individually)</summary>
 
@@ -73,8 +73,9 @@ Verify the build: `make test-backend` (expect **342 passed**) and
 make setup                                                       # venv + backend/frontend deps
 venv/bin/python backend/scripts/fetch_sources.py --tier light    # third-party sources -> backend/data/
 make db            # build_db + infer_edge_signs + validate_edge_signs + load_perturbation_truth + tissue-weights
+make external-regulation  # CollecTRI + SIGNOR + strict confirmed/direct AGRIS evidence
 make enrich        # auto-downloads ConnecTF, loads edges + TF-perturbation observations + perturbation signs
-make knocktf       # auto-downloads KnockTF loss-of-function perturbations; re-derives perturbation signs
+make knocktf-all   # Arabidopsis + human + mouse KnockTF; re-derives Arabidopsis signs
 make allele-pwms   # cache JASPAR PWMs for grn-allele-affinity
 make chromatin-peaks   # auto-downloads Plant Cistrome DAP-seq peaks (GSE60143)
 ```
@@ -142,11 +143,12 @@ confirm the build is complete.
 |---|---|---|---|---|
 | core | `fetch_sources.py --tier core` | genes, **human** networks (TRRUST + DoRothEA), coords, orthologs, GO, DAP-seq binding, gene lists | mostly | network |
 | light | `fetch_sources.py --tier light` | + pathways, traits, PlantRegMap regulation (tomato/petunia/potato/tobacco/rice), curated symbols, tobacco BLAST orthologs | mostly | network; BLAST+ for petunia symbols + tobacco orthologs |
-| manual core | *(see below)* | **measured Arabidopsis network** + ATRM direction labels → Arabidopsis multi-evidence + tomato/petunia/pepper/rice projection | **no** | manual download |
+| Arabidopsis core | `fetch_arabidopsis_regulation.py` | **measured Arabidopsis network** + ATRM direction labels → Arabidopsis multi-evidence + tomato/petunia/pepper/rice projection | yes | network |
 | heavy | `fetch_expression.py`, `motif_scan.py` | expression + predicted binding | **no** | kallisto / BLAST+, hours, GBs |
 | enrich | `make enrich` | ConnecTF edges (~309K) + TF-perturbation DEGs (~116K observations), display names, curated pathway overrides | mostly | built DB; ConnecTF tarball in `/tmp` (optional) |
 | chromatin-peaks | `make chromatin-peaks` | Arabidopsis DAP-seq peaks (Plant Cistrome GSE60143): ~179K peaks, peak-gene links, cis-support edges (389 TFs) | yes | built DB + network (~74 MB) |
-| knocktf | `make knocktf` | KnockTF 2.0 loss-of-function TF-perturbation DEGs (~107K obs); re-derives perturbation signs | yes | built DB + network (~90 MB) |
+| knocktf | `make knocktf-all` | KnockTF 2.0 loss-of-function TF-perturbation DEGs for Arabidopsis, human, and mouse (~1.99M obs); re-derives Arabidopsis signs | yes | built DB + network (~2.4 GB) |
+| external evidence | `make external-regulation` | normalized CollecTRI, SIGNOR, and strict confirmed/direct AGRIS evidence | yes | built DB + network |
 | tissue-weights | `make tissue-weights` | per-tissue coexpression weights for edges (petunia, tomato, arabidopsis) | yes | built DB + expression data |
 | validate | `make validate` | gold-standard recall/specificity + population-level statistical validation | yes | built DB |
 | benchmark | `make benchmark` | BEELINE-style AUROC/AUPRC against independent ground truth | yes | built DB |
@@ -156,34 +158,21 @@ confirm the build is complete.
 
 ### ⚠️ Caveats (know these before relying on a fresh clone)
 
-1. **Two core inputs are NOT auto-fetched** — their upstreams are unreliable or need
-   reshaping, so `fetch_sources.py` only prints guidance:
-   - `backend/data/regulation_arabidopsis.tsv` — the **measured Arabidopsis TF→target
-     network**. Without it you lose the Arabidopsis edges **and** the inferred tomato/petunia
-     edges projected from them (a large share of the plant networks).
-   - `backend/data/atrm_regulations.tsv` — ATRM literature-curated direction labels (refine
-     Arabidopsis edge signs). Optional; the atlas works without it.
-2. **Heavy layers are optional and slow** — expression (kallisto over dozens of public
+1. **Heavy layers are optional and slow** — expression (kallisto over dozens of public
    RNA-seq runs = hours) and predicted binding (motif scans over multi-GB genomes). A basic
    clone has neither; the dsRNA/expression/binding features light up once regenerated.
-3. **`petunia` curated symbols need BLAST+** (`fetch_curated_symbols.py petunia` homology-maps
+2. **`petunia` curated symbols need BLAST+** (`fetch_curated_symbols.py petunia` homology-maps
    real names). Skipped automatically if BLAST+ isn't on `BLAST_BIN`/PATH.
-4. **A full from-scratch fetch has not been certified end-to-end** — it hits several live
-   sources; expect occasional retries. Each fetcher is the same one that produced the shipped
-   data, and graceful degradation is tested, but plan to spot-check (see quality checks).
+3. **Live sources can still be temporarily unavailable.** `make verify-data` now fails if a
+   required release layer was skipped or fell below its expected coverage, preventing a
+   degraded build from being mistaken for the release dataset.
 
-### Ensuring the manual core files
+### Regenerating the Arabidopsis core
 
-- **`regulation_arabidopsis.tsv`** — a tab-separated file with **no header**, one edge per
-  line, exactly four columns: `TF_locus  target_locus  activation|repression  confidence`
-  (AGI ids, e.g. `AT1G01060`; confidence 0–1). Produce it from PlantRegMap's Arabidopsis
-  regulation data (https://plantregmap.gao-lab.org/, TF→target / FunTFBS) reduced to those
-  four columns.
-- **`atrm_regulations.tsv`** *(optional)* — tab-separated **with a header row**; ≥5 columns
-  where col 1 = TF locus, col 2 = target locus, col 5 = direction label `A` / `R` / `D`.
-  Source: ATRM (http://atrm.cbi.pku.edu.cn/). Skip if unavailable.
-
-Place both in `backend/data/`, then run `fetch_sources.py --tier light` and `build_db.py` again. The fetch script now bootstraps an intermediate database automatically on fresh clones so DB-dependent fetchers can resolve atlas gene IDs.
+`fetch_sources.py` automatically runs `fetch_arabidopsis_regulation.py`. The script downloads
+PlantRegMap's merged Arabidopsis network and the ATRM workbook, applies the release evidence
+filter and confidence rules, and records upstream URLs and SHA-256 hashes in
+`backend/data/arabidopsis_regulation_fetch.json`. No manual source files are required.
 
 ### Regenerating the heavy layers (optional)
 
@@ -214,7 +203,7 @@ curl -s localhost:8000/api/v1/species | python3 -m json.tool
 curl -s localhost:8000/api/v1/provenance/freshness | python3 -m json.tool
 ```
 
-A **complete** build (all tiers + manual core + heavy layers) should report roughly:
+A **complete** build (release source data + optional heavy layers) should report roughly:
 `~142,000` genes · `~1,470,000` interactions · human `~18,000` edges (TRRUST + DoRothEA) ·
 mouse `~18,000` edges (TRRUST + DoRothEA) · arabidopsis `~919,000` edges (PlantRegMap +
 DAP-seq) · tomato `~248,000` · petunia `~237,000` · rice `~17,000` (Arabidopsis projection) ·
