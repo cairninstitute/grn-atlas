@@ -624,6 +624,9 @@ export const analysisAPI = {
         circuits_per_core: options.circuitsPerCore || 12,
         max_search_states: options.maxSearchStates || 100000,
         max_controllers: options.maxControllers || 30,
+        max_systems: options.maxSystems || 20,
+        max_system_genes: options.maxSystemGenes || 80,
+        discover_systems: options.discoverSystems ?? true,
         refresh: options.refresh || false,
       }),
     });

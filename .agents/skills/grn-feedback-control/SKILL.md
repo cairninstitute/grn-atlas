@@ -1,6 +1,6 @@
 ---
 name: grn-feedback-control
-description: "Discover signed feedback cores, representative regulatory loops, and candidate structural controller genes across a species GRN. Use for questions about positive or negative feedback, toggle switches, repressilators, control loops, or feedback-vertex intervention points."
+description: "Discover biological control systems, signed feedback cores, representative regulatory loops, and candidate structural controller genes across a species GRN. Use for questions about oscillators, positive or negative feedback, toggle switches, repressilators, control loops, or feedback-vertex intervention points."
 compatibility: Requires the GRN Atlas backend virtualenv or a running GRN Atlas server.
 metadata:
   author: grn-atlas
@@ -25,11 +25,18 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - `--circuits-per-core` — representative-circuit limit for one core.
 - `--max-search-states` — hard search-work budget per core.
 - `--max-controllers` — control candidates retained per core.
+- `--max-systems` — maximum biological control-system hypotheses returned.
+- `--max-system-genes` — largest annotation-defined system considered.
+- `--topology-only` — skip annotation and context synthesis for topology benchmarks.
 - `--refresh` — recompute and replace an identical cached run.
 - `--http URL` — optional running backend URL.
 
 ### Output interpretation
 
+- `systems` combines signed loops with pathway/GO enrichment and available cis, perturbation, and tissue-coexpression support.
+- `annotation_supported` systems have a recognizable biological annotation; `de_novo_topology` systems are unlabeled circuit-overlap hypotheses.
+- Architecture labels distinguish oscillator scaffolds, oscillator candidates, toggle switches, reinforcing switches, mixed feedback, and negative-feedback controllers.
+- `partial_architecture` means that a relevant loop is present but the filtered atlas does not contain every regulatory arm needed for the proposed system behavior.
 - `feedback_cores` are strongly connected signed regions and are exhaustively identified for the filtered graph.
 - Self-loops and reciprocal loops are exhaustively detected within returned cores.
 - Longer loops are bounded representatives, not an exhaustive cycle list. Always inspect `truncation` and each core's `circuit_search`.
@@ -43,6 +50,7 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - Small-graph feedback cores, cycles through length 6, polarity, and exact controller sets are checked against independent NetworkX or brute-force truth.
 - Known-circuit recovery is measured only when every required signed edge exists in the filtered atlas.
 - Circuit scores are monotonic heuristic rankings, not calibrated probabilities.
+- System scores rank evidence coherence; they are not probabilities that the proposed dynamics occur in vivo.
 - The current atlas does not contain all three signed arms needed to recover the complete Arabidopsis three-module clock loop from topology alone.
 
 ### Routing notes

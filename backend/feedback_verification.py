@@ -327,6 +327,7 @@ def verify_biological_recovery(conn: sqlite3.Connection) -> dict[str, Any]:
             conn, species, FeedbackParameters(
                 max_cores=200, max_circuits=10_000, circuits_per_core=10_000,
                 max_search_states=2_000_000, max_controllers=200,
+                discover_systems=False,
             ),
         )
         for species in sorted({case["species"] for case in REFERENCE_CIRCUITS})

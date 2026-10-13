@@ -28,6 +28,7 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
   const [minConfidence, setMinConfidence] = useState(0.5);
   const [maxLoopLength, setMaxLoopLength] = useState(6);
   const [result, setResult] = useState(null);
+  const [selectedSystemId, setSelectedSystemId] = useState(null);
   const [selectedCoreId, setSelectedCoreId] = useState(null);
   const [selectedCircuitId, setSelectedCircuitId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -51,6 +52,7 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
       .then((data) => {
         if (cancelled) return;
         setResult(data);
+        setSelectedSystemId(data.systems?.[0]?.system_id || null);
         const firstCore = data.cores?.[0];
         setSelectedCoreId(firstCore?.core_id || null);
         setSelectedCircuitId(firstCore?.circuits?.[0]?.circuit_id || null);
@@ -63,6 +65,10 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
   const selectedCore = useMemo(
     () => result?.cores?.find((core) => core.core_id === selectedCoreId) || result?.cores?.[0],
     [result, selectedCoreId],
+  );
+  const selectedSystem = useMemo(
+    () => result?.systems?.find((system) => system.system_id === selectedSystemId) || result?.systems?.[0],
+    [result, selectedSystemId],
   );
   const selectedCircuit = useMemo(
     () => selectedCore?.circuits?.find((circuit) => circuit.circuit_id === selectedCircuitId)
@@ -80,9 +86,9 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
     <div className="feedback-view">
       <header className="feedback-header">
         <div>
-          <div className="feedback-kicker">SIGNED NETWORK CONTROL</div>
-          <h1>Feedback architecture</h1>
-          <p>Find regulatory regions that can feed back on themselves, then inspect representative loops and structural control points.</p>
+          <div className="feedback-kicker">BIOLOGICAL CONTROL DISCOVERY</div>
+          <h1>Biological control systems</h1>
+          <p>Find signed feedback, assemble it into biologically coherent systems, and distinguish supported mechanisms from incomplete hypotheses.</p>
         </div>
         <div className="feedback-controls">
           <label>
@@ -118,6 +124,7 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
         <>
           <section className="feedback-summary">
             <div><strong>{number(result.graph?.edges)}</strong><span>signed edges analyzed</span></div>
+            <div><strong>{number(result.summary?.biological_systems)}</strong><span>candidate control systems</span></div>
             <div><strong>{number(result.summary?.feedback_cores)}</strong><span>feedback cores</span></div>
             <div><strong>{number(result.summary?.feedback_genes)}</strong><span>genes inside feedback</span></div>
             <div><strong>{number(result.summary?.circuits_returned)}</strong><span>representative circuits</span></div>
@@ -134,7 +141,88 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
             </div>
           )}
 
+          {result.systems?.length ? (
+            <section className="control-systems-workspace">
+              <aside className="control-system-index">
+                <div className="feedback-section-title">
+                  <span>Discovered systems</span><small>biology + signed topology + context</small>
+                </div>
+                <div className="control-system-list">
+                  {result.systems.map((system) => (
+                    <button key={system.system_id}
+                      className={system.system_id === selectedSystem?.system_id ? 'active' : ''}
+                      onClick={() => setSelectedSystemId(system.system_id)}>
+                      <span className="feedback-core-rank">{String(system.rank).padStart(2, '0')}</span>
+                      <span className="control-system-copy">
+                        <strong>{system.name}</strong>
+                        <small>{system.architecture_label}</small>
+                      </span>
+                      <span className={`system-mode ${system.discovery_mode}`}>{system.discovery_mode === 'annotation_supported' ? 'KNOWN' : 'DE NOVO'}</span>
+                    </button>
+                  ))}
+                </div>
+              </aside>
+
+              <div className="control-system-detail">
+                <div className="control-system-heading">
+                  <div>
+                    <span className="feedback-kicker">SYSTEM {selectedSystem?.rank}</span>
+                    <h2>{selectedSystem?.name}</h2>
+                    <p>{selectedSystem?.architecture_label}</p>
+                  </div>
+                  <div className="control-system-score">
+                    <strong>{selectedSystem?.score?.toFixed(2)}</strong>
+                    <span>{selectedSystem?.confidence_label} evidence</span>
+                  </div>
+                </div>
+
+                <div className="system-status-row">
+                  <span className={`system-completeness ${selectedSystem?.completeness}`}>
+                    {selectedSystem?.completeness === 'partial_architecture' ? 'PARTIAL ARCHITECTURE' : 'CLOSED FEEDBACK FOUND'}
+                  </span>
+                  <span>{number(selectedSystem?.gene_count)} genes</span>
+                  <span>{number(selectedSystem?.edge_count)} signed edges</span>
+                  <span>{number(selectedSystem?.feedback_gene_count)} genes in retained loops</span>
+                </div>
+
+                <div className="system-evidence-grid">
+                  <div><strong>{number(selectedSystem?.context_support?.cis_supported_edges)}</strong><span>cis-supported edges</span></div>
+                  <div><strong>{number(selectedSystem?.context_support?.perturbation_supported_edges)}</strong><span>perturbation-supported</span></div>
+                  <div><strong>{number(selectedSystem?.context_support?.coexpressed_edges)}</strong><span>context-coexpressed</span></div>
+                  <div><strong>{number(selectedSystem?.context_support?.conservation?.conserved_signed_edges)}</strong><span>sign-conserved edges</span></div>
+                  <div><strong>{selectedSystem?.annotation?.enrichment?.fold?.toFixed?.(1) || '—'}×</strong><span>feedback enrichment</span></div>
+                </div>
+
+                <div className="system-rationale">
+                  {(selectedSystem?.classification_reasons || []).map((reason) => <span key={reason}>{reason}</span>)}
+                  {(selectedSystem?.context_support?.top_tissues || []).slice(0, 3).map((tissue) => (
+                    <span key={tissue.tissue}>{tissue.tissue}: {tissue.supported_edges} edges</span>
+                  ))}
+                </div>
+
+                <SubgraphGraph nodes={selectedSystem?.genes || []} edges={selectedSystem?.edges || []}
+                  tfStyle="circle" onNodeClick={(gene) => onSelectGene?.(gene.symbol)} />
+
+                <div className="system-boundary">
+                  <strong>Interpretation boundary</strong>
+                  <span>{selectedSystem?.evidence_boundary}</span>
+                  {selectedSystem?.completeness === 'partial_architecture' && (
+                    <span>Some regulatory arms required for the proposed behavior are absent from the filtered atlas.</span>
+                  )}
+                </div>
+              </div>
+            </section>
+          ) : (
+            <div className="feedback-boundary">No biological system passed the annotation and signed-feedback criteria.</div>
+          )}
+
           {result.cores?.length ? (
+            <>
+            <div className="structural-heading">
+              <span>Structural analysis</span>
+              <h2>Feedback cores and representative circuits</h2>
+              <p>The systems above interpret these topology-first results. Inspect the underlying cores and loops here.</p>
+            </div>
             <main className="feedback-workspace">
               <aside className="feedback-core-index">
                 <div className="feedback-section-title">
@@ -229,6 +317,7 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
                 </div>
               </section>
             </main>
+            </>
           ) : (
             <div className="feedback-empty">
               <strong>No signed feedback passed this evidence setting.</strong>

@@ -22,6 +22,9 @@ def main():
     parser.add_argument("--circuits-per-core", type=int, default=12)
     parser.add_argument("--max-search-states", type=int, default=100_000)
     parser.add_argument("--max-controllers", type=int, default=30)
+    parser.add_argument("--max-systems", type=int, default=20)
+    parser.add_argument("--max-system-genes", type=int, default=80)
+    parser.add_argument("--topology-only", action="store_true")
     parser.add_argument("--refresh", action="store_true")
     args = parser.parse_args()
     payload = {
@@ -34,6 +37,9 @@ def main():
         "circuits_per_core": args.circuits_per_core,
         "max_search_states": args.max_search_states,
         "max_controllers": args.max_controllers,
+        "max_systems": args.max_systems,
+        "max_system_genes": args.max_system_genes,
+        "discover_systems": not args.topology_only,
         "refresh": args.refresh,
     }
     if args.http:
@@ -52,6 +58,9 @@ def main():
             circuits_per_core=args.circuits_per_core,
             max_search_states=args.max_search_states,
             max_controllers=args.max_controllers,
+            max_systems=args.max_systems,
+            max_system_genes=args.max_system_genes,
+            discover_systems=not args.topology_only,
         )
         store = feedback_control.FeedbackStore(
             backend.DATA_DIR / "feedback_analysis.sqlite3"

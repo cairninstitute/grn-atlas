@@ -256,6 +256,9 @@ class FeedbackControlRequest(BaseModel):
     circuits_per_core: int = Field(12, ge=1, le=50)
     max_search_states: int = Field(100_000, ge=1_000, le=2_000_000)
     max_controllers: int = Field(30, ge=1, le=200)
+    max_systems: int = Field(20, ge=1, le=100)
+    max_system_genes: int = Field(80, ge=5, le=250)
+    discover_systems: bool = True
     refresh: bool = False
 
     @field_validator("evidence_tiers")
@@ -1386,6 +1389,9 @@ async def feedback_control_analysis(request: FeedbackControlRequest):
         circuits_per_core=request.circuits_per_core,
         max_search_states=request.max_search_states,
         max_controllers=request.max_controllers,
+        max_systems=request.max_systems,
+        max_system_genes=request.max_system_genes,
+        discover_systems=request.discover_systems,
     )
     store_path = FilePath(
         os.environ.get("GRN_FEEDBACK_DB") or (DATA_DIR / "feedback_analysis.sqlite3")

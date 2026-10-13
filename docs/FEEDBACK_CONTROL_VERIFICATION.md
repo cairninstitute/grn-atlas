@@ -53,6 +53,14 @@ The atlas supports 1 of 3 required module-level arms. A closed three-module loop
 - Missing: evening regulates daytime PRRs
 - Missing: daytime PRRs repress morning
 
+### Biological system discovery
+
+The v2 synthesis layer completed all eight atlas species and recovered Circadian rhythm
+as the third-ranked Arabidopsis system. It contains a measured negative loop and is
+correctly labeled `partial_architecture` / `oscillator_scaffold`, rather than claiming
+that the missing three-module clock was recovered. Cross-species benchmark output is
+stored in `docs/benchmarks/control-system-discovery.json` and `.csv`.
+
 ## Robustness
 
 | Case | Nodes | Edges | Seconds | Truncation explicit |

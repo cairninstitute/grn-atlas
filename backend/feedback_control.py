@@ -14,8 +14,10 @@ from typing import Any, Iterable
 
 import igraph as ig
 
+import control_systems
 
-ALGORITHM_VERSION = "feedback-control-v1"
+
+ALGORITHM_VERSION = "feedback-control-v2"
 STRONG_SIGN_EVIDENCE = ("measured", "perturbation")
 
 
@@ -30,6 +32,9 @@ class FeedbackParameters:
     max_search_states: int = 100_000
     exact_controller_max_nodes: int = 18
     max_controllers: int = 30
+    max_systems: int = 20
+    max_system_genes: int = 80
+    discover_systems: bool = True
 
     def normalized(self) -> dict[str, Any]:
         data = asdict(self)
@@ -389,8 +394,10 @@ def analyze_feedback(
                 "feedback_cores": 0, "feedback_cores_returned": 0,
                 "feedback_genes": 0, "feedback_genes_returned": 0,
                 "circuits_returned": 0, "controller_candidates": 0,
+                "biological_systems": 0,
             },
             "cores": [],
+            "systems": [],
             "truncation": {"cores": False, "circuits": False, "search": False},
             "evidence_boundary": "No signed edges passed the requested evidence filters.",
         }
@@ -461,6 +468,13 @@ def analyze_feedback(
             "circuits": circuits,
         })
 
+    systems = []
+    if params.discover_systems:
+        systems = control_systems.discover_control_systems(
+            conn, species, graph, genes, cores,
+            max_systems=params.max_systems,
+            max_system_genes=params.max_system_genes,
+        )
     feedback_gene_count = sum(len(row[3]) for row in component_rows)
     returned_feedback_genes = sum(core["node_count"] for core in cores)
     return {
@@ -484,7 +498,12 @@ def analyze_feedback(
             "controller_candidates": sum(
                 len(core["controller_analysis"]["controllers"]) for core in cores
             ),
+            "biological_systems": len(systems),
+            "annotation_supported_systems": sum(
+                system["discovery_mode"] == "annotation_supported" for system in systems
+            ),
         },
+        "systems": systems,
         "cores": cores,
         "truncation": {
             "cores": len(component_rows) > len(cores),

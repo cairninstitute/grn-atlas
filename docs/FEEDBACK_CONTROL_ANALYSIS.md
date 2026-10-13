@@ -1,9 +1,32 @@
-# Species-wide feedback and control analysis
+# Biological feedback and control-system discovery
 
 GRN Atlas can scan a species-level signed regulatory network for candidate feedback
 structures and structural intervention points. The implementation deliberately
 separates what graph topology establishes from biological dynamics that require
 kinetic or perturbation evidence.
+
+The workflow now has two layers. The structural layer finds signed cycles, strongly
+connected feedback cores, and feedback-vertex controller candidates. The biological
+discovery layer assembles those loops into interpretable systems using pathway and GO
+enrichment, then scores available cis, perturbation, tissue-coexpression, and signed
+cross-species conservation support.
+
+## Biological systems
+
+Each returned system reports:
+
+- whether it was annotation-supported or discovered from overlapping circuits alone;
+- a candidate architecture such as oscillator scaffold, oscillator, toggle switch,
+  reinforcing switch, mixed feedback controller, or negative-feedback controller;
+- the signed subgraph and representative loops supporting the classification;
+- pathway/GO enrichment and contextual evidence counts;
+- whether the architecture is closed or partial; and
+- an explicit boundary separating structural evidence from demonstrated dynamics.
+
+For Arabidopsis, the workflow identifies the Circadian rhythm system from Reactome
+enrichment and the measured LHY-PCL1/LUX negative loop. It reports an incomplete
+oscillator scaffold because the current signed atlas lacks the full evening-to-PRR
+and PRR-to-morning regulatory arms. The engine does not silently add those edges.
 
 ## Analysis model
 
@@ -36,12 +59,13 @@ GET  /api/v1/network/feedback-control/{species}/latest
 
 The POST body accepts `species`, `min_confidence`, `evidence_tiers`,
 `max_loop_length`, `max_cores`, `max_circuits`, `circuits_per_core`,
-`max_search_states`, `max_controllers`, and `refresh`.
+`max_search_states`, `max_controllers`, `max_systems`, `max_system_genes`,
+`discover_systems`, and `refresh`.
 
-The Advanced > Feedback view presents species-level summary counts, ranked feedback
-cores, exact or approximate controller candidates, representative signed circuits,
-and all truncation caveats. Edge color communicates activation or repression; it
-does not imply that the candidate circuit has demonstrated switching or oscillation.
+The Feedback view presents ranked biological systems first, followed by the underlying
+feedback cores, exact or approximate controller candidates, representative signed
+circuits, and all truncation caveats. Edge color communicates activation or repression;
+it does not imply that a candidate system has demonstrated switching or oscillation.
 
 ## Storage
 
@@ -86,6 +110,16 @@ venv/bin/python backend/scripts/benchmark_feedback_control.py \
 Runtime and memory depend on hardware and graph topology. An unusually large,
 dense feedback core remains bounded and reports incomplete representative circuit
 or controller results rather than running an unbounded exhaustive search.
+
+The biological synthesis benchmark completed all eight atlas species. It returned
+annotation-supported systems where pathway or GO coverage exists and de novo topology
+modules where it does not. Potato currently has no signed edge passing the default
+evidence filter, so no control system is reported. Results are in
+`docs/benchmarks/control-system-discovery.json` and `.csv`; reproduce them with:
+
+```bash
+venv/bin/python backend/scripts/benchmark_control_systems.py
+```
 
 ## Verification gate
 

@@ -75,6 +75,69 @@ def test_feedback_analysis_reports_species_gene_count_when_no_signed_edges():
     assert result["evidence_boundary"].startswith("No signed edges")
 
 
+def test_feedback_analysis_discovers_annotation_supported_control_system():
+    conn = _fixture_connection()
+    conn.executemany(
+        "INSERT INTO genes VALUES (?,?,?,?,?,?,?,?)",
+        [(f"X{index}", f"X{index}", f"X{index}", "test", 0, "protein_coding", None, None)
+         for index in range(20)],
+    )
+    conn.execute(
+        "UPDATE interactions SET regulation_type='activation', sign='activation' "
+        "WHERE source_id='B' AND target_id='A'"
+    )
+    conn.executemany(
+        "INSERT INTO genes VALUES (?,?,?,?,?,?,?,?)",
+        [("OA", "OA", "Ortholog A", "other", 1, "protein_coding", None, None),
+         ("OB", "OB", "Ortholog B", "other", 1, "protein_coding", None, None)],
+    )
+    conn.execute(
+        "INSERT INTO interactions VALUES (?,?,?,?,?,?,?,?,?)",
+        ("OA", "OB", "repression", 0.9, '["fixture"]', '[]', "repression", "measured", None),
+    )
+    conn.executescript("""
+        CREATE TABLE go_terms (go_id TEXT PRIMARY KEY, name TEXT, namespace TEXT);
+        CREATE TABLE go_annotations (gene_id TEXT, go_id TEXT);
+        CREATE TABLE pathways (pathway_id TEXT PRIMARY KEY, name TEXT, source TEXT);
+        CREATE TABLE pathway_annotations (gene_id TEXT, pathway_id TEXT);
+        CREATE TABLE cis_support_edges (
+            source_id TEXT, target_id TEXT, peak_id TEXT, support_type TEXT,
+            score REAL, species TEXT
+        );
+        CREATE TABLE perturbation_observations (
+            species TEXT, perturbed_gene TEXT, perturbation_type TEXT,
+            affected_gene TEXT, observed_log2fc REAL, observed_significant INTEGER,
+            dataset_label TEXT, metadata TEXT
+        );
+        CREATE TABLE edge_tissue_weights (
+            source_id TEXT, target_id TEXT, tissue TEXT, coexpression REAL, species TEXT
+        );
+        CREATE TABLE orthologs (
+            gene_a TEXT, gene_b TEXT, species_a TEXT, species_b TEXT,
+            rel_type TEXT, score REAL
+        );
+        INSERT INTO go_terms VALUES ('GO:CLOCK', 'circadian rhythm', 'biological_process');
+        INSERT INTO go_annotations VALUES ('A', 'GO:CLOCK'), ('B', 'GO:CLOCK'), ('C', 'GO:CLOCK');
+        INSERT INTO cis_support_edges VALUES ('A', 'B', 'peak-1', 'motif_in_peak', 0.9, 'test');
+        INSERT INTO perturbation_observations VALUES
+            ('test', 'A', 'knockout', 'B', -1.2, 1, 'fixture', '{}');
+        INSERT INTO edge_tissue_weights VALUES
+            ('A', 'B', 'seedling', 0.8, 'test'), ('B', 'A', 'seedling', -0.7, 'test');
+        INSERT INTO orthologs VALUES
+            ('A', 'OA', 'test', 'other', 'one2one', 1.0),
+            ('B', 'OB', 'test', 'other', 'one2one', 1.0);
+    """)
+    result = feedback_control.analyze_feedback(conn, "test")
+    system = next(system for system in result["systems"] if system["name"] == "circadian rhythm")
+    assert system["architecture"] == "oscillator_scaffold"
+    assert system["completeness"] == "partial_architecture"
+    assert system["discovery_mode"] == "annotation_supported"
+    assert system["context_support"]["cis_supported_edges"] == 1
+    assert system["context_support"]["perturbation_supported_edges"] == 1
+    assert system["context_support"]["conservation"]["conserved_signed_edges"] == 1
+    assert result["summary"]["biological_systems"] >= 1
+
+
 def test_feedback_search_budget_is_explicit():
     conn = _fixture_connection()
     result = feedback_control.analyze_feedback(

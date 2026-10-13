@@ -1,0 +1,588 @@
+{
+  "generated_at": "2026-10-13T04:35:35.736763+00:00",
+  "algorithm_version": "feedback-control-v2",
+  "species_count": 8,
+  "checks": {
+    "all_species_completed": true,
+    "arabidopsis_circadian_recovered": true,
+    "arabidopsis_circadian_partial": true
+  },
+  "species": {
+    "arabidopsis": {
+      "summary": {
+        "species": "arabidopsis",
+        "seconds": 18.534,
+        "signed_edges": 24945,
+        "feedback_cores": 12,
+        "systems": 20,
+        "annotation_supported": 19,
+        "de_novo": 1,
+        "partial_architectures": 1
+      },
+      "architecture_counts": {
+        "mixed_feedback": 2,
+        "negative_feedback": 4,
+        "oscillator_candidate": 3,
+        "oscillator_scaffold": 1,
+        "reinforcing_switch": 10
+      },
+      "top_systems": [
+        {
+          "rank": 1,
+          "name": "maintenance of inflorescence meristem identity",
+          "architecture": "reinforcing_switch",
+          "score": 0.8939,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 2,
+          "name": "maintenance of meristem identity",
+          "architecture": "oscillator_candidate",
+          "score": 0.8899,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 3,
+          "name": "Circadian rhythm",
+          "architecture": "oscillator_scaffold",
+          "score": 0.8886,
+          "discovery_mode": "annotation_supported",
+          "completeness": "partial_architecture"
+        },
+        {
+          "rank": 4,
+          "name": "meristem determinacy",
+          "architecture": "oscillator_candidate",
+          "score": 0.8863,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 5,
+          "name": "meristem structural organization",
+          "architecture": "reinforcing_switch",
+          "score": 0.8857,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 6,
+          "name": "Auxin signalling",
+          "architecture": "reinforcing_switch",
+          "score": 0.8818,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 7,
+          "name": "MAPK cascade",
+          "architecture": "oscillator_candidate",
+          "score": 0.8815,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 8,
+          "name": "plant ovule development",
+          "architecture": "reinforcing_switch",
+          "score": 0.8794,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 9,
+          "name": "specification of floral organ identity",
+          "architecture": "mixed_feedback",
+          "score": 0.8786,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 10,
+          "name": "formation of anatomical boundary",
+          "architecture": "negative_feedback",
+          "score": 0.8771,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        }
+      ]
+    },
+    "human": {
+      "summary": {
+        "species": "human",
+        "seconds": 23.823,
+        "signed_edges": 9414,
+        "feedback_cores": 4,
+        "systems": 20,
+        "annotation_supported": 20,
+        "de_novo": 0,
+        "partial_architectures": 0
+      },
+      "architecture_counts": {
+        "mixed_feedback": 2,
+        "negative_feedback": 3,
+        "toggle_switch": 15
+      },
+      "top_systems": [
+        {
+          "rank": 1,
+          "name": "nuclear steroid receptor activity",
+          "architecture": "toggle_switch",
+          "score": 0.8219,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 2,
+          "name": "IL-4 signaling pathway",
+          "architecture": "toggle_switch",
+          "score": 0.8199,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 3,
+          "name": "Notch Signaling Pathway Netpath",
+          "architecture": "toggle_switch",
+          "score": 0.8179,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 4,
+          "name": "Gastrin signaling pathway",
+          "architecture": "toggle_switch",
+          "score": 0.8162,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 5,
+          "name": "positive regulation of miRNA transcription",
+          "architecture": "toggle_switch",
+          "score": 0.8156,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 6,
+          "name": "EGF-EGFR signaling pathway",
+          "architecture": "negative_feedback",
+          "score": 0.8146,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 7,
+          "name": "double-stranded DNA binding",
+          "architecture": "mixed_feedback",
+          "score": 0.814,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 8,
+          "name": "B Cell Receptor Signaling Pathway",
+          "architecture": "toggle_switch",
+          "score": 0.813,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 9,
+          "name": "Aryl Hydrocarbon Receptor Netpath",
+          "architecture": "toggle_switch",
+          "score": 0.8124,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 10,
+          "name": "transcription coactivator binding",
+          "architecture": "toggle_switch",
+          "score": 0.8114,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        }
+      ]
+    },
+    "mouse": {
+      "summary": {
+        "species": "mouse",
+        "seconds": 0.311,
+        "signed_edges": 9817,
+        "feedback_cores": 2,
+        "systems": 4,
+        "annotation_supported": 0,
+        "de_novo": 4,
+        "partial_architectures": 0
+      },
+      "architecture_counts": {
+        "mixed_feedback": 1,
+        "negative_feedback": 2,
+        "toggle_switch": 1
+      },
+      "top_systems": [
+        {
+          "rank": 1,
+          "name": "Nr0b1 / Nr5a1 feedback module",
+          "architecture": "negative_feedback",
+          "score": 0.5779,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 2,
+          "name": "A0A979HLR9 / Cebpa / Dnmt1 control module",
+          "architecture": "mixed_feedback",
+          "score": 0.5475,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 3,
+          "name": "Cdx2 / Nanog / Pou5f1 feedback module",
+          "architecture": "toggle_switch",
+          "score": 0.5349,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 4,
+          "name": "Gsc / Mixl1 feedback module",
+          "architecture": "negative_feedback",
+          "score": 0.4074,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        }
+      ]
+    },
+    "pepper": {
+      "summary": {
+        "species": "pepper",
+        "seconds": 0.026,
+        "signed_edges": 34,
+        "feedback_cores": 3,
+        "systems": 3,
+        "annotation_supported": 0,
+        "de_novo": 3,
+        "partial_architectures": 0
+      },
+      "architecture_counts": {
+        "negative_feedback": 2,
+        "toggle_switch": 1
+      },
+      "top_systems": [
+        {
+          "rank": 1,
+          "name": "CAN.G282.12 / CAN.G438.29 feedback module",
+          "architecture": "negative_feedback",
+          "score": 0.4443,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 2,
+          "name": "CAN.G358.12 / CAN.G497.73 feedback module",
+          "architecture": "negative_feedback",
+          "score": 0.4443,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 3,
+          "name": "CAN.G567.68 / CAN.G588.67 feedback module",
+          "architecture": "toggle_switch",
+          "score": 0.4068,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        }
+      ]
+    },
+    "petunia": {
+      "summary": {
+        "species": "petunia",
+        "seconds": 6.603,
+        "signed_edges": 1403,
+        "feedback_cores": 9,
+        "systems": 16,
+        "annotation_supported": 11,
+        "de_novo": 5,
+        "partial_architectures": 0
+      },
+      "architecture_counts": {
+        "mixed_feedback": 4,
+        "negative_feedback": 2,
+        "oscillator_candidate": 1,
+        "reinforcing_switch": 6,
+        "toggle_switch": 3
+      },
+      "top_systems": [
+        {
+          "rank": 1,
+          "name": "meristem structural organization",
+          "architecture": "reinforcing_switch",
+          "score": 0.7242,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 2,
+          "name": "plant ovule development",
+          "architecture": "reinforcing_switch",
+          "score": 0.7159,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 3,
+          "name": "floral organ formation",
+          "architecture": "reinforcing_switch",
+          "score": 0.714,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 4,
+          "name": "regulation of cell proliferation",
+          "architecture": "reinforcing_switch",
+          "score": 0.7124,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 5,
+          "name": "meristem growth",
+          "architecture": "reinforcing_switch",
+          "score": 0.7114,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 6,
+          "name": "maintenance of cell number",
+          "architecture": "mixed_feedback",
+          "score": 0.71,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 7,
+          "name": "meristem determinacy",
+          "architecture": "mixed_feedback",
+          "score": 0.7099,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 8,
+          "name": "H3 histone acetyltransferase activity",
+          "architecture": "negative_feedback",
+          "score": 0.7093,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 9,
+          "name": "transcription regulatory region sequence-specific DNA binding",
+          "architecture": "toggle_switch",
+          "score": 0.7064,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 10,
+          "name": "RNA polymerase II regulatory region DNA binding",
+          "architecture": "mixed_feedback",
+          "score": 0.7063,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        }
+      ]
+    },
+    "potato": {
+      "summary": {
+        "species": "potato",
+        "seconds": 0.054,
+        "signed_edges": 0,
+        "feedback_cores": 0,
+        "systems": 0,
+        "annotation_supported": 0,
+        "de_novo": 0,
+        "partial_architectures": 0
+      },
+      "architecture_counts": {},
+      "top_systems": []
+    },
+    "rice": {
+      "summary": {
+        "species": "rice",
+        "seconds": 0.047,
+        "signed_edges": 503,
+        "feedback_cores": 5,
+        "systems": 6,
+        "annotation_supported": 0,
+        "de_novo": 6,
+        "partial_architectures": 0
+      },
+      "architecture_counts": {
+        "negative_feedback": 2,
+        "oscillator_candidate": 3,
+        "toggle_switch": 1
+      },
+      "top_systems": [
+        {
+          "rank": 1,
+          "name": "LOC_Os02g42950 / LOC_Os03g47016 / LOC_Os03g51690 control module",
+          "architecture": "oscillator_candidate",
+          "score": 0.4135,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 2,
+          "name": "LOC_Os01g10504 / LOC_Os02g52340 / LOC_Os03g08754 control module",
+          "architecture": "toggle_switch",
+          "score": 0.4132,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 3,
+          "name": "LOC_Os04g46350 / LOC_Os07g05010 feedback module",
+          "architecture": "negative_feedback",
+          "score": 0.4068,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 4,
+          "name": "LOC_Os06g43220 / LOC_Os07g42510 feedback module",
+          "architecture": "negative_feedback",
+          "score": 0.4068,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 5,
+          "name": "LOC_Os04g48350 / LOC_Os06g03670 / LOC_Os08g43200 feedback module",
+          "architecture": "oscillator_candidate",
+          "score": 0.4068,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 6,
+          "name": "LOC_Os01g43180 / LOC_Os01g55549 / LOC_Os01g65370 control module",
+          "architecture": "oscillator_candidate",
+          "score": 0.4068,
+          "discovery_mode": "de_novo_topology",
+          "completeness": "closed_signed_feedback"
+        }
+      ]
+    },
+    "tomato": {
+      "summary": {
+        "species": "tomato",
+        "seconds": 7.47,
+        "signed_edges": 2076,
+        "feedback_cores": 13,
+        "systems": 18,
+        "annotation_supported": 10,
+        "de_novo": 8,
+        "partial_architectures": 0
+      },
+      "architecture_counts": {
+        "mixed_feedback": 4,
+        "negative_feedback": 5,
+        "oscillator_candidate": 3,
+        "reinforcing_switch": 4,
+        "toggle_switch": 2
+      },
+      "top_systems": [
+        {
+          "rank": 1,
+          "name": "Salicylic acid signaling",
+          "architecture": "negative_feedback",
+          "score": 0.7218,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 2,
+          "name": "Jasmonic acid signaling",
+          "architecture": "toggle_switch",
+          "score": 0.7124,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 3,
+          "name": "cell fate specification",
+          "architecture": "mixed_feedback",
+          "score": 0.7105,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 4,
+          "name": "meristem determinacy",
+          "architecture": "negative_feedback",
+          "score": 0.7103,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 5,
+          "name": "regulation of transcription from RNA polymerase II promoter",
+          "architecture": "toggle_switch",
+          "score": 0.7078,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 6,
+          "name": "RNA polymerase II regulatory region DNA binding",
+          "architecture": "mixed_feedback",
+          "score": 0.7074,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 7,
+          "name": "regulation of cell differentiation",
+          "architecture": "mixed_feedback",
+          "score": 0.7063,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 8,
+          "name": "plant ovule development",
+          "architecture": "reinforcing_switch",
+          "score": 0.7032,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 9,
+          "name": "meristem growth",
+          "architecture": "reinforcing_switch",
+          "score": 0.695,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        },
+        {
+          "rank": 10,
+          "name": "Regulation of seed germination and coleoptile growth under submergence and normal gravity environment",
+          "architecture": "oscillator_candidate",
+          "score": 0.6905,
+          "discovery_mode": "annotation_supported",
+          "completeness": "closed_signed_feedback"
+        }
+      ]
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "verification_version": "feedback-verification-v1",
-  "generated_at": "2026-10-12T22:20:19.083445+00:00",
+  "generated_at": "2026-10-13T04:36:46.515853+00:00",
   "algorithm_parameters": {
     "min_confidence": 0.5,
     "evidence_tiers": [
@@ -13,7 +13,10 @@
     "circuits_per_core": 12,
     "max_search_states": 100000,
     "exact_controller_max_nodes": 18,
-    "max_controllers": 30
+    "max_controllers": 30,
+    "max_systems": 20,
+    "max_system_genes": 80,
+    "discover_systems": true
   },
   "status": "pass",
   "gates": {
@@ -335,7 +338,7 @@
         "name": "large-scc",
         "nodes": 1000,
         "edges": 3000,
-        "seconds": 0.0238,
+        "seconds": 0.0239,
         "feedback_cores": 1,
         "circuits_returned": 0,
         "truncation": {
@@ -349,7 +352,7 @@
         "name": "many-small-sccs",
         "nodes": 600,
         "edges": 600,
-        "seconds": 0.0113,
+        "seconds": 0.0377,
         "feedback_cores": 300,
         "circuits_returned": 100,
         "truncation": {
@@ -363,7 +366,7 @@
         "name": "dense-core",
         "nodes": 30,
         "edges": 870,
-        "seconds": 0.0081,
+        "seconds": 0.0089,
         "feedback_cores": 1,
         "circuits_returned": 12,
         "truncation": {
