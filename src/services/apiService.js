@@ -631,6 +631,8 @@ export const analysisAPI = {
         exact_cycle_limit: options.exactCycleLimit || 50000,
         cycle_cover_max_edges: options.cycleCoverMaxEdges || 1000,
         max_bridge_hops: options.maxBridgeHops || 3,
+        max_macro_circuits: options.maxMacroCircuits || 25,
+        max_macro_search_edges: options.maxMacroSearchEdges || 10000,
         discover_systems: options.discoverSystems ?? true,
         include_candidates: options.includeCandidates ?? false,
         include_exploratory: options.includeExploratory ?? false,

@@ -29,6 +29,8 @@ def main():
     parser.add_argument("--exact-cycle-limit", type=int, default=50_000)
     parser.add_argument("--cycle-cover-max-edges", type=int, default=1_000)
     parser.add_argument("--max-bridge-hops", type=int, default=3)
+    parser.add_argument("--max-macro-circuits", type=int, default=25)
+    parser.add_argument("--max-macro-search-edges", type=int, default=10_000)
     parser.add_argument(
         "--include-candidates", action="store_true",
         help="include conflict-free, multi-layer evidence candidates",
@@ -59,6 +61,8 @@ def main():
         "exact_cycle_limit": args.exact_cycle_limit,
         "cycle_cover_max_edges": args.cycle_cover_max_edges,
         "max_bridge_hops": args.max_bridge_hops,
+        "max_macro_circuits": args.max_macro_circuits,
+        "max_macro_search_edges": args.max_macro_search_edges,
         "include_candidates": args.include_candidates,
         "include_exploratory": args.include_exploratory,
         "include_multilayer": args.include_multilayer,
@@ -89,6 +93,8 @@ def main():
             exact_cycle_limit=args.exact_cycle_limit,
             cycle_cover_max_edges=args.cycle_cover_max_edges,
             max_bridge_hops=args.max_bridge_hops,
+            max_macro_circuits=args.max_macro_circuits,
+            max_macro_search_edges=args.max_macro_search_edges,
             include_candidates=args.include_candidates,
             include_exploratory=args.include_exploratory,
             include_multilayer=args.include_multilayer,

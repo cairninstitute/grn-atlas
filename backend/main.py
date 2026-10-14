@@ -264,6 +264,8 @@ class FeedbackControlRequest(BaseModel):
     exact_cycle_limit: int = Field(50_000, ge=100, le=200_000)
     cycle_cover_max_edges: int = Field(1_000, ge=10, le=10_000)
     max_bridge_hops: int = Field(3, ge=1, le=5)
+    max_macro_circuits: int = Field(25, ge=1, le=200)
+    max_macro_search_edges: int = Field(10_000, ge=100, le=100_000)
     discover_systems: bool = True
     include_candidates: bool = False
     include_exploratory: bool = False
@@ -1406,6 +1408,8 @@ async def feedback_control_analysis(request: FeedbackControlRequest):
         exact_cycle_limit=request.exact_cycle_limit,
         cycle_cover_max_edges=request.cycle_cover_max_edges,
         max_bridge_hops=request.max_bridge_hops,
+        max_macro_circuits=request.max_macro_circuits,
+        max_macro_search_edges=request.max_macro_search_edges,
         discover_systems=request.discover_systems,
         include_candidates=request.include_candidates,
         include_exploratory=request.include_exploratory,

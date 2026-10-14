@@ -13,6 +13,13 @@ discovery layer assembles those loops into interpretable systems using pathway a
 enrichment, then scores available cis, perturbation, tissue-coexpression, and signed
 cross-species conservation support.
 
+An evidence-differential macro-feedback layer compares the observed graph's SCC
+condensation DAG with supported, exploratory, or multilayer evidence. If newly admitted
+edges create a directed cycle containing at least two observed feedback cores, those
+cores become one larger augmented core. The result retains the observed parent cores,
+the shortest gene-level witness loop, its net sign and evidence bottleneck, the exact
+closing edges, and the number of formerly acyclic genes recruited into feedback.
+
 ## Biological systems
 
 Each returned system reports:
@@ -79,6 +86,12 @@ another returned core. Weakly connected components of this core relationship gra
 are returned as larger control assemblies. These groups establish regulatory chaining,
 not synchronized dynamics.
 
+Macro-circuit discovery handles the complementary question across evidence layers. It
+collapses every observed SCC into a condensation DAG, overlays the selected augmented
+edges, finds newly cyclic condensation components, and expands bounded shortest
+witnesses back to gene-level paths. Thus a one-way observed core group remains a group,
+while a supported return arm is explicitly reported as a macro-feedback hypothesis.
+
 ## API
 
 Run or retrieve an analysis with:
@@ -95,13 +108,15 @@ The POST body accepts `species`, `min_confidence`, `evidence_tiers`,
 `max_loop_length`, `max_cores`, `max_circuits`, `circuits_per_core`,
 `max_search_states`, `max_controllers`, `max_systems`, `max_system_genes`,
 `exact_cycle_max_nodes`, `exact_cycle_max_edges`, `exact_cycle_limit`,
-`cycle_cover_max_edges`, `max_bridge_hops`, `discover_systems`, and `refresh`.
+`cycle_cover_max_edges`, `max_bridge_hops`, `max_macro_circuits`,
+`max_macro_search_edges`, `discover_systems`, and `refresh`.
 Set `include_candidates` to compare the evidence-completed hypothesis graph with the
 default observed graph. `include_exploratory`, `include_multilayer`, and
 `probabilistic_samples` activate the separately disclosed extension layers.
 
-The Feedback view presents a network-layer selector, ranked biological systems first, linked groups of cores,
-then the underlying complete backbones, compact cycle covers, filtered cycle queries,
+The Feedback view presents a network-layer selector, ranked biological systems first,
+cross-core macro-feedback witnesses, linked groups of cores, then the underlying
+complete backbones, compact cycle covers, filtered cycle queries,
 and exact or approximate controller candidates. Edge color communicates activation or repression;
 it does not imply that a candidate system has demonstrated switching or oscillation.
 
@@ -111,7 +126,7 @@ Results are cached in `backend/data/feedback_analysis.sqlite3`, a derived sideca
 that is not part of the source atlas database. The cache key includes the algorithm
 version, normalized parameters, and a hash of the filtered graph. Normalized tables
 store runs, cores, complete core edges, exact and compact cycle catalogs, inter-core
-relationships, core groups, representative circuits, and circuit edges. JSON snapshots
+relationships, core groups, macro-circuits, representative circuits, and circuit edges. JSON snapshots
 preserve the summary response for fast retrieval and reproducibility.
 
 Keeping derived analyses outside `grn.sqlite3` avoids schema coupling and allows the

@@ -18,7 +18,7 @@ const payload = {
   graph: { nodes: 12, edges: 19 },
   summary: {
     feedback_cores: 1, feedback_genes: 3, circuits_returned: 1, controller_candidates: 1,
-    biological_systems: 1, feedback_edges: 3, core_groups: 1,
+    biological_systems: 1, feedback_edges: 3, core_groups: 1, macro_circuits: 1,
   },
   truncation: { cores: false, circuits: true, search: true },
   storage: { status: 'cached', backend: 'versioned_sidecar' },
@@ -56,6 +56,33 @@ const payload = {
     hop_count: 2, score: 0.81, net_sign: 'repression',
     path_genes: [{ symbol: 'CCA1' }, { symbol: 'BRIDGE' }, { symbol: 'TARGET' }],
     bridge_genes: [{ symbol: 'BRIDGE' }],
+  }],
+  macro_circuits: [{
+    macro_circuit_id: 'macro-1', rank: 1, parent_core_count: 2,
+    merged_parent_core_count: 2,
+    gene_loop_length: 4, merged_gene_count: 6, added_feedback_gene_count: 1,
+    polarity: 'negative', architecture: 'negative_macro_feedback',
+    augmented_layer: 'supported', score: 0.74, confidence_label: 'structural_candidate',
+    behavior_hypothesis: 'homeostasis, adaptation, or oscillation candidate',
+    parent_cores: [
+      { core_id: 'core-1', rank: 1, node_count: 3 },
+      { core_id: 'core-2', rank: 2, node_count: 2 },
+    ],
+    genes: [
+      { id: 'A', symbol: 'CCA1' }, { id: 'B', symbol: 'PRR7' },
+      { id: 'C', symbol: 'LUX' }, { id: 'D', symbol: 'BRIDGE' },
+    ],
+    edges: [
+      { source: 'A', target: 'B', regulation_type: 'activation' },
+      { source: 'B', target: 'C', regulation_type: 'repression' },
+      { source: 'C', target: 'D', regulation_type: 'activation' },
+      { source: 'D', target: 'A', regulation_type: 'activation' },
+    ],
+    introduced_edges: [{
+      source: 'D', target: 'A', sign: 'activation', evidence_tier: 'supported',
+      sign_evidence: 'candidate', confidence: 0.76,
+    }],
+    boundary: 'This is a structural witness, not proof of shared biological context.',
   }],
   cores: [{
     core_id: 'core-1', rank: 1, score: 0.91, node_count: 3, edge_count: 3,
@@ -105,10 +132,13 @@ describe('FeedbackControlView', () => {
     expect(screen.getAllByText('Circadian rhythm')).toHaveLength(2);
     expect(screen.getByText('PARTIAL ARCHITECTURE')).toBeInTheDocument();
     expect(screen.getByText('Connected groups of feedback cores')).toBeInTheDocument();
+    expect(screen.getByText('Analyze supported evidence')).toBeInTheDocument();
+    expect(screen.getByText('Larger feedback loops created by augmented evidence')).toBeInTheDocument();
+    expect(screen.getByText('Edges that close the larger loop')).toBeInTheDocument();
     expect(screen.getByText('Complete cycle-capable backbone')).toBeInTheDocument();
     expect(screen.getByText(/bounded representative analysis/i)).toBeInTheDocument();
     expect(screen.getByText(/not demonstrated dynamics/i)).toBeInTheDocument();
-    await waitFor(() => expect(screen.getAllByTestId('circuit-graph')).toHaveLength(3));
+    await waitFor(() => expect(screen.getAllByTestId('circuit-graph')).toHaveLength(4));
     expect(analysisAPI.feedbackBackbone).toHaveBeenCalledWith('run-1', 'core-1');
     expect(analysisAPI.feedbackControl).toHaveBeenCalledWith('arabidopsis', {
       minConfidence: 0.5, maxLoopLength: 6, includeCandidates: false,

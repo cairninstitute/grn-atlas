@@ -34,6 +34,7 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
   const [selectedCoreId, setSelectedCoreId] = useState(null);
   const [selectedCircuitId, setSelectedCircuitId] = useState(null);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
+  const [selectedMacroId, setSelectedMacroId] = useState(null);
   const [coreView, setCoreView] = useState('backbone');
   const [backbone, setBackbone] = useState(null);
   const [backboneLoading, setBackboneLoading] = useState(false);
@@ -73,6 +74,7 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
         setSelectedCoreId(firstCore?.core_id || null);
         setSelectedCircuitId(firstCore?.circuits?.[0]?.circuit_id || null);
         setSelectedGroupId(data.core_groups?.[0]?.group_id || null);
+        setSelectedMacroId(data.macro_circuits?.[0]?.macro_circuit_id || null);
         setBackbone(null);
         setCycleResult(null);
       })
@@ -104,6 +106,11 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
       || result?.core_groups?.[0],
     [result, selectedGroupId],
   );
+  const selectedMacro = useMemo(
+    () => result?.macro_circuits?.find((macro) => macro.macro_circuit_id === selectedMacroId)
+      || result?.macro_circuits?.[0],
+    [result, selectedMacroId],
+  );
   const selectedCoverCircuit = useMemo(
     () => selectedCore?.cycle_cover?.circuits?.find((circuit) => circuit.circuit_id === selectedCircuitId)
       || selectedCore?.cycle_cover?.circuits?.[0],
@@ -134,6 +141,10 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
       confidence: row.score,
     })),
   }), [selectedGroup, groupRelationships]);
+  const macroGraph = useMemo(() => ({
+    nodes: selectedMacro?.genes || [],
+    edges: selectedMacro?.edges || [],
+  }), [selectedMacro]);
 
   useEffect(() => {
     if (!result?.run_id || !selectedCore?.core_id || coreView !== 'backbone') return;
@@ -225,6 +236,7 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
             <div><strong>{number(result.summary?.biological_systems)}</strong><span>candidate control systems</span></div>
             <div><strong>{number(result.summary?.feedback_cores)}</strong><span>feedback cores</span></div>
             <div><strong>{number(result.summary?.core_groups)}</strong><span>linked core groups</span></div>
+            <div><strong>{number(result.summary?.macro_circuits)}</strong><span>macro feedback loops</span></div>
             <div><strong>{number(result.summary?.feedback_edges)}</strong><span>feedback-capable edges</span></div>
             <div><strong>{number(result.summary?.feedback_genes)}</strong><span>genes inside feedback</span></div>
             <div className="feedback-run-state">
@@ -286,12 +298,34 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
             </section>
           )}
 
-          {(result.truncation?.search || result.truncation?.circuits || result.truncation?.cores) && (
+          {(result.truncation?.search || result.truncation?.circuits || result.truncation?.cores
+            || result.truncation?.macro_circuits) && (
             <div className="feedback-boundary">
               This is a bounded representative analysis. Feedback cores are complete for the filtered graph;
-              longer circuit enumeration or controller search was truncated where reported.
+              longer circuit enumeration, macro-loop witnesses, or controller search was truncated where reported.
             </div>
           )}
+
+          <section className="macro-discovery-prompt">
+            <div>
+              <span>CROSS-CORE DISCOVERY</span>
+              <strong>Larger feedback loops</strong>
+              {networkLayer === 'observed' ? (
+                <p>Observed cores are separate by definition. Compare them with qualified supporting evidence to find return paths that join them into larger loops.</p>
+              ) : (
+                <p>{number(result.summary?.macro_circuits)} macro-feedback witnesses found in the {networkLayer} layer.</p>
+              )}
+            </div>
+            {networkLayer === 'observed' ? (
+              <button type="button" onClick={() => setNetworkLayer('supported')}>
+                Analyze supported evidence
+              </button>
+            ) : result.macro_circuits?.length > 0 ? (
+              <a href="#macro-feedback-results">View macro loops</a>
+            ) : (
+              <span className="macro-none-found">No cross-core closure found</span>
+            )}
+          </section>
 
           {result.systems?.length ? (
             <section className="control-systems-workspace">
@@ -366,6 +400,65 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
             </section>
           ) : (
             <div className="feedback-boundary">No biological system passed the annotation and signed-feedback criteria.</div>
+          )}
+
+          {result.macro_circuits?.length > 0 && (
+            <section className="macro-circuits-workspace" id="macro-feedback-results">
+              <div className="structural-heading">
+                <span>Cross-core closure</span>
+                <h2>Larger feedback loops created by augmented evidence</h2>
+                <p>Each loop joins at least two independently closed observed cores. The displayed gene path is a shortest structural witness, not proof of shared biological context.</p>
+              </div>
+              <div className="macro-circuits-layout">
+                <aside className="macro-circuit-list">
+                  {result.macro_circuits.map((macro) => (
+                    <button key={macro.macro_circuit_id}
+                      className={macro.macro_circuit_id === selectedMacro?.macro_circuit_id ? 'active' : ''}
+                      onClick={() => setSelectedMacroId(macro.macro_circuit_id)}>
+                      <strong>Macro loop {macro.rank}</strong>
+                      <span>{macro.parent_core_count} parent cores · {macro.gene_loop_length} witness genes</span>
+                      <small>{macro.polarity} feedback · {macro.augmented_layer} evidence</small>
+                    </button>
+                  ))}
+                </aside>
+                <div className="macro-circuit-detail">
+                  <div className="macro-circuit-heading">
+                    <div>
+                      <span className="feedback-kicker">MACRO LOOP {selectedMacro?.rank}</span>
+                      <h3>{selectedMacro?.polarity} cross-core feedback</h3>
+                      <p>{selectedMacro?.behavior_hypothesis}</p>
+                    </div>
+                    <div className="control-system-score">
+                      <strong>{selectedMacro?.score?.toFixed(2)}</strong>
+                      <span>{selectedMacro?.confidence_label?.replaceAll('_', ' ')}</span>
+                    </div>
+                  </div>
+                  <div className="macro-parent-row">
+                    {(selectedMacro?.parent_cores || []).map((core) => (
+                      <span key={core.core_id}>
+                        Witness core {core.rank}: {core.node_count} genes
+                      </span>
+                    ))}
+                    <span>{selectedMacro?.merged_parent_core_count} observed cores merged overall</span>
+                    <span>+{selectedMacro?.added_feedback_gene_count} newly feedback-capable genes</span>
+                  </div>
+                  <SubgraphGraph nodes={macroGraph.nodes} edges={macroGraph.edges}
+                    tfStyle="circle" onNodeClick={(gene) => onSelectGene?.(gene.symbol)} />
+                  <div className="macro-introduced-edges">
+                    <strong>Edges that close the larger loop</strong>
+                    {(selectedMacro?.introduced_edges || []).map((edge) => (
+                      <span key={`${edge.source}-${edge.target}-${edge.sign}`}>
+                        {edge.source} → {edge.target} · {edge.sign} · {edge.evidence_tier || edge.sign_evidence} · {edge.confidence.toFixed(2)}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="system-boundary">
+                    <strong>Interpretation boundary</strong>
+                    <span>{selectedMacro?.boundary}</span>
+                  </div>
+                </div>
+              </div>
+            </section>
           )}
 
           {result.core_groups?.length > 0 && (

@@ -32,6 +32,8 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - `--exact-cycle-limit` — safety ceiling; reaching it changes the catalog status to bounded.
 - `--cycle-cover-max-edges` — largest core for which edge-covering witness cycles are materialized.
 - `--max-bridge-hops` — longest signed path used to connect separate feedback cores.
+- `--max-macro-circuits` — maximum cross-core macro-feedback witnesses returned.
+- `--max-macro-search-edges` — search ceiling for newly admitted condensation edges.
 - `--include-candidates` — opt into conflict-free evidence-completed hypotheses; observed signed edges remain the default.
 - `--include-exploratory` — additionally include explicitly labeled putative-direct, perturbation-only, and conserved-orthology hypotheses.
 - `--include-multilayer` — include reviewed protein-activity, degradation, complex, and post-transcriptional edges.
@@ -56,6 +58,8 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - Small cores have exhaustive, all-length simple-cycle catalogs. Large cores expose resumable filtered enumeration and never imply that representative cycles are exhaustive.
 - `cycle_cover` is a compact set of short witness cycles selected to cover internal feedback edges; it is not a mathematical minimum-cycle basis.
 - `core_relationships` are shortest measured/perturbation signed paths between distinct cores through acyclic bridge genes. `core_groups` are weakly connected assemblies of those relationships.
+- `macro_circuits` compare the observed SCC condensation DAG with the selected augmented evidence layer. They report shortest gene-level witnesses where newly admitted edges join at least two observed feedback cores into one larger core.
+- A macro-circuit preserves its observed parent-core identities, net sign, evidence bottleneck, introduced closing edges, and added feedback-capable genes. It does not imply shared tissue or timing.
 - Self-loops and reciprocal loops are exhaustively detected within returned cores.
 - The legacy `circuits` field remains a bounded representative ranking. Use `cycle_catalog`, the cycle query endpoint, and its cursor/completion fields for exhaustive work.
 - Positive-loop polarity suggests switch or memory behavior; negative-loop polarity suggests homeostasis, adaptation, or oscillation. These are hypotheses, not demonstrated dynamics.

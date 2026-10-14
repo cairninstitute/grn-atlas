@@ -50,6 +50,7 @@ def main() -> int:
                     "feedback_cores": analysis["summary"]["feedback_cores"],
                     "feedback_genes": analysis["summary"]["feedback_genes"],
                     "feedback_edges": analysis["summary"]["feedback_edges"],
+                    "macro_circuits": analysis["summary"]["macro_circuits"],
                     "graph_edges": analysis["graph"]["edges"],
                     "seconds": round(time.perf_counter() - start, 3),
                     "probabilistic_members": len(

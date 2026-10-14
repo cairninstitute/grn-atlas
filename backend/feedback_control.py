@@ -19,7 +19,7 @@ import networkx as nx
 import control_systems
 
 
-ALGORITHM_VERSION = "feedback-control-v5"
+ALGORITHM_VERSION = "feedback-control-v6"
 STRONG_SIGN_EVIDENCE = ("measured", "perturbation")
 
 
@@ -42,6 +42,8 @@ class FeedbackParameters:
     exact_cycle_limit: int = 50_000
     cycle_cover_max_edges: int = 1_000
     max_bridge_hops: int = 3
+    max_macro_circuits: int = 25
+    max_macro_search_edges: int = 10_000
     include_candidates: bool = False
     include_exploratory: bool = False
     include_multilayer: bool = False
@@ -729,6 +731,333 @@ def _discover_core_relationships(
     return relationships, groups
 
 
+def _component_path(
+    graph: ig.Graph,
+    source: int,
+    target: int,
+    allowed: set[int],
+) -> list[int]:
+    """Find a deterministic shortest path without leaving one baseline SCC."""
+    if source == target:
+        return [source]
+    queue = deque([(source, [source])])
+    visited = {source}
+    while queue:
+        current, path = queue.popleft()
+        neighbors = sorted(
+            (node for node in graph.neighbors(current, mode="out") if node in allowed),
+            key=lambda node: graph.vs[node]["gene_id"],
+        )
+        for node in neighbors:
+            if node in visited:
+                continue
+            next_path = [*path, node]
+            if node == target:
+                return next_path
+            visited.add(node)
+            queue.append((node, next_path))
+    raise ValueError("baseline SCC did not contain an internal return path")
+
+
+def _macro_return_path(
+    graph: nx.DiGraph,
+    source: int,
+    target: int,
+    cyclic_components: set[int],
+    cycle_start: int,
+) -> list[int] | None:
+    """Find a shortest simple return path that visits at least two observed cores."""
+    initial_cores = frozenset(
+        node for node in (cycle_start, source) if node in cyclic_components
+    )
+    queue = deque([(source, [source], initial_cores)])
+    visited = {(source, initial_cores)}
+    while queue:
+        current, path, seen_cores = queue.popleft()
+        for node in sorted(graph.successors(current)):
+            if node in path and node != target:
+                continue
+            next_path = [*path, node]
+            next_cores = seen_cores | ({node} if node in cyclic_components else set())
+            if node == target:
+                if len(next_cores) >= 2:
+                    return next_path
+                continue
+            state = (node, frozenset(next_cores))
+            if state in visited:
+                continue
+            visited.add(state)
+            queue.append((node, next_path, frozenset(next_cores)))
+    return None
+
+
+def _discover_macro_circuits(
+    conn: sqlite3.Connection,
+    species: str,
+    graph: ig.Graph,
+    genes: dict[str, dict[str, Any]],
+    params: FeedbackParameters,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Find augmented-evidence cycles in the observed graph's condensation DAG."""
+    enabled = params.include_candidates or params.include_exploratory or params.include_multilayer
+    layer = (
+        "multilayer" if params.include_multilayer else
+        "exploratory" if params.include_exploratory else
+        "supported"
+    )
+    if not enabled:
+        return [], {
+            "enabled": False,
+            "baseline_layer": "observed",
+            "augmented_layer": "observed",
+            "introduced_condensation_edges": 0,
+            "introduced_edges_examined": 0,
+            "truncated": False,
+        }
+
+    baseline_params = FeedbackParameters(**{
+        **asdict(params),
+        "include_candidates": False,
+        "include_exploratory": False,
+        "include_multilayer": False,
+        "probabilistic_samples": 0,
+        "discover_systems": False,
+    })
+    baseline, _, _ = _load_signed_graph(conn, species, baseline_params)
+    baseline_index = {gene_id: index for index, gene_id in enumerate(baseline.vs["gene_id"])}
+    augmented_index = {gene_id: index for index, gene_id in enumerate(graph.vs["gene_id"])}
+    baseline_components = baseline.connected_components(mode="strong")
+    membership = baseline_components.membership
+    component_vertices = {
+        component_id: set(vertices)
+        for component_id, vertices in enumerate(baseline_components)
+    }
+    cyclic_component_ids = {
+        component_id for component_id, vertices in component_vertices.items()
+        if len(vertices) > 1 or any(
+            baseline.get_eid(vertex, vertex, directed=True, error=False) >= 0
+            for vertex in vertices
+        )
+    }
+
+    core_rows = []
+    for component_id in cyclic_component_ids:
+        vertices = component_vertices[component_id]
+        ids = sorted(baseline.vs[index]["gene_id"] for index in vertices)
+        subgraph = baseline.induced_subgraph(sorted(vertices))
+        edge_count = subgraph.ecount()
+        mean_confidence = sum(subgraph.es["confidence"]) / max(edge_count, 1)
+        score = min(
+            1.0,
+            0.50 * mean_confidence
+            + 0.30 * min(1.0, edge_count / max(2 * len(ids), 1))
+            + 0.20 * min(1.0, math.log1p(len(ids)) / math.log(101)),
+        )
+        core_id = hashlib.sha256(
+            f"{species}|{'|'.join(ids)}".encode("utf-8")
+        ).hexdigest()[:20]
+        core_rows.append((score, core_id, component_id, ids, edge_count))
+    core_rows.sort(key=lambda row: (-row[0], -len(row[3]), row[1]))
+    baseline_cores = {
+        component_id: {
+            "core_id": core_id,
+            "rank": rank,
+            "node_count": len(ids),
+            "edge_count": edge_count,
+            "score": round(score, 4),
+            "top_genes": [genes[gene_id] for gene_id in ids[:5]],
+        }
+        for rank, (score, core_id, component_id, ids, edge_count) in enumerate(core_rows, start=1)
+    }
+
+    baseline_pairs: set[tuple[int, int]] = set()
+    for edge in baseline.es:
+        source_component = membership[edge.source]
+        target_component = membership[edge.target]
+        if source_component != target_component:
+            baseline_pairs.add((source_component, target_component))
+
+    quotient = nx.DiGraph()
+    quotient.add_nodes_from(component_vertices)
+    representatives: dict[tuple[int, int], tuple[tuple[Any, ...], int, int]] = {}
+    for edge in graph.es:
+        source_id = graph.vs[edge.source]["gene_id"]
+        target_id = graph.vs[edge.target]["gene_id"]
+        source_component = membership[baseline_index[source_id]]
+        target_component = membership[baseline_index[target_id]]
+        if source_component == target_component:
+            continue
+        pair = (source_component, target_component)
+        evidence = edge["evidence"] if "evidence" in graph.es.attribute_names() else "measured"
+        key = (
+            evidence not in STRONG_SIGN_EVIDENCE,
+            -float(edge["confidence"]),
+            source_id,
+            target_id,
+        )
+        current = representatives.get(pair)
+        if current is None or key < current[0]:
+            representatives[pair] = (key, edge.source, edge.target)
+        quotient.add_edge(*pair)
+
+    introduced_pairs = sorted(set(representatives) - baseline_pairs)
+    macro_components = [
+        component for component in nx.strongly_connected_components(quotient)
+        if len(component & cyclic_component_ids) >= 2
+    ]
+    component_lookup = {
+        node: component for component in macro_components for node in component
+    }
+    candidate_pairs = [
+        pair for pair in introduced_pairs
+        if pair[0] in component_lookup
+        and component_lookup.get(pair[1]) is component_lookup[pair[0]]
+    ]
+    candidate_pairs.sort(key=lambda pair: representatives[pair][0])
+    truncated = len(candidate_pairs) > params.max_macro_search_edges
+    candidate_pairs = candidate_pairs[:params.max_macro_search_edges]
+
+    records: dict[tuple[int, ...], dict[str, Any]] = {}
+    for source_component, target_component in candidate_pairs:
+        macro_component = component_lookup[source_component]
+        local = quotient.subgraph(macro_component)
+        return_path = _macro_return_path(
+            local, target_component, source_component,
+            cyclic_component_ids, source_component,
+        )
+        if return_path is None:
+            continue
+        cycle_components = [source_component, *return_path[:-1]]
+        parent_components = sorted(set(cycle_components) & cyclic_component_ids)
+        if len(parent_components) < 2:
+            continue
+        tokens = [str(component_id) for component_id in cycle_components]
+        canonical_tokens = _canonical_cycle(tokens)
+        canonical = tuple(int(token) for token in canonical_tokens)
+        if canonical in records:
+            continue
+
+        quotient_edges = []
+        for index, component_id in enumerate(cycle_components):
+            next_component = cycle_components[(index + 1) % len(cycle_components)]
+            _, source, target = representatives[(component_id, next_component)]
+            quotient_edges.append((source, target))
+
+        witness_pairs: list[tuple[int, int]] = []
+        witness_vertices: list[int] = []
+        for index, component_id in enumerate(cycle_components):
+            previous_target = quotient_edges[index - 1][1]
+            outgoing_source, outgoing_target = quotient_edges[index]
+            previous_gene = graph.vs[previous_target]["gene_id"]
+            outgoing_gene = graph.vs[outgoing_source]["gene_id"]
+            internal_path = _component_path(
+                baseline,
+                baseline_index[previous_gene],
+                baseline_index[outgoing_gene],
+                component_vertices[component_id],
+            )
+            internal_augmented = [
+                augmented_index[baseline.vs[vertex]["gene_id"]]
+                for vertex in internal_path
+            ]
+            if not witness_vertices:
+                witness_vertices.extend(internal_augmented)
+            else:
+                witness_vertices.extend(internal_augmented[1:])
+            witness_pairs.extend(zip(internal_augmented, internal_augmented[1:]))
+            witness_pairs.append((outgoing_source, outgoing_target))
+            witness_vertices.append(outgoing_target)
+
+        edges = [_edge_record(graph, source, target) for source, target in witness_pairs]
+        score, confidence_label, score_components = _circuit_score(edges)
+        polarity = "positive" if _edge_product(edges) > 0 else "negative"
+        merged_nodes = set().union(*(component_vertices[node] for node in macro_component))
+        merged_parent_components = sorted(macro_component & cyclic_component_ids)
+        parent_nodes = set().union(*(
+            component_vertices[node] for node in merged_parent_components
+        ))
+        introduced_edges = [
+            edge for edge in edges
+            if (membership[baseline_index[edge["source"]]], membership[baseline_index[edge["target"]]])
+            in introduced_pairs
+        ]
+        macro_id = hashlib.sha256(
+            f"macro|{species}|{layer}|{'|'.join(canonical_tokens)}".encode("utf-8")
+        ).hexdigest()[:20]
+        records[canonical] = {
+            "macro_circuit_id": macro_id,
+            "rank": 0,
+            "baseline_layer": "observed",
+            "augmented_layer": layer,
+            "architecture": f"{polarity}_macro_feedback",
+            "polarity": polarity,
+            "behavior_hypothesis": (
+                "reinforcement, switching, or memory candidate" if polarity == "positive"
+                else "homeostasis, adaptation, or oscillation candidate"
+            ),
+            "score": score,
+            "confidence_label": confidence_label,
+            "score_components": score_components,
+            "parent_core_count": len(parent_components),
+            "parent_cores": sorted(
+                (baseline_cores[node] for node in parent_components),
+                key=lambda core: core["rank"],
+            ),
+            "merged_parent_core_count": len(merged_parent_components),
+            "merged_parent_cores": sorted(
+                (baseline_cores[node] for node in merged_parent_components),
+                key=lambda core: core["rank"],
+            ),
+            "merged_gene_count": len(merged_nodes),
+            "added_feedback_gene_count": len(merged_nodes - parent_nodes),
+            "condensation_length": len(cycle_components),
+            "gene_loop_length": len(edges),
+            "genes": [genes[graph.vs[vertex]["gene_id"]] for vertex in witness_vertices[:-1]],
+            "edges": edges,
+            "introduced_edges": introduced_edges,
+            "boundary": (
+                "This is a shortest structural witness showing how augmented evidence joins "
+                "observed components. It does not establish that every edge operates in the "
+                "same cell type, condition, or time window."
+            ),
+        }
+
+    preliminary = sorted(
+        records.values(),
+        key=lambda row: (-row["score"], row["gene_loop_length"], row["macro_circuit_id"]),
+    )
+    finalist_limit = min(len(preliminary), params.max_macro_circuits * 3)
+    finalists = preliminary[:finalist_limit]
+    for row in finalists:
+        _hydrate_edge_provenance(conn, row["edges"])
+        score, confidence_label, score_components = _circuit_score(row["edges"])
+        row.update(
+            score=score,
+            confidence_label=confidence_label,
+            score_components=score_components,
+        )
+    rows = sorted(
+        finalists,
+        key=lambda row: (-row["score"], row["gene_loop_length"], row["macro_circuit_id"]),
+    )[:params.max_macro_circuits]
+    for rank, row in enumerate(rows, start=1):
+        row["rank"] = rank
+    return rows, {
+        "enabled": True,
+        "baseline_layer": "observed",
+        "augmented_layer": layer,
+        "baseline_core_count": len(cyclic_component_ids),
+        "introduced_condensation_edges": len(introduced_pairs),
+        "introduced_edges_examined": len(candidate_pairs),
+        "macro_components": len(macro_components),
+        "truncated": truncated or len(records) > len(rows),
+        "boundary": (
+            "A macro-circuit is a cycle in the observed graph's condensation DAG after adding "
+            "the selected evidence layer. Distinct observed cores become one augmented core."
+        ),
+    }
+
+
 def _hydrate_circuit_provenance(
     conn: sqlite3.Connection,
     circuits: Iterable[dict[str, Any]],
@@ -816,13 +1145,29 @@ def analyze_feedback(
                 "exact_cycle_catalogs": 0, "cataloged_cycles": 0,
                 "circuits_returned": 0, "controller_candidates": 0,
                 "biological_systems": 0, "core_relationships": 0, "core_groups": 0,
+                "macro_circuits": 0,
             },
             "cores": [],
             "systems": [],
             "core_relationships": [],
             "core_groups": [],
+            "macro_circuits": [],
+            "macro_analysis": {
+                "enabled": bool(
+                    params.include_candidates or params.include_exploratory
+                    or params.include_multilayer
+                ),
+                "baseline_layer": "observed",
+                "augmented_layer": "observed",
+                "introduced_condensation_edges": 0,
+                "introduced_edges_examined": 0,
+                "truncated": False,
+            },
             "probabilistic_core_membership": probabilistic,
-            "truncation": {"cores": False, "circuits": False, "search": False},
+            "truncation": {
+                "cores": False, "circuits": False, "search": False,
+                "macro_circuits": False,
+            },
             "evidence_boundary": "No signed edges passed the requested evidence filters.",
         }
 
@@ -942,6 +1287,10 @@ def analyze_feedback(
     for relationship in core_relationships:
         _hydrate_edge_provenance(conn, relationship["edges"])
 
+    macro_circuits, macro_analysis = _discover_macro_circuits(
+        conn, species, graph, genes, params,
+    )
+
     systems = []
     if params.discover_systems:
         systems = control_systems.discover_control_systems(
@@ -987,11 +1336,14 @@ def analyze_feedback(
             ),
             "core_relationships": len(core_relationships),
             "core_groups": len(core_groups),
+            "macro_circuits": len(macro_circuits),
         },
         "systems": systems,
         "cores": cores,
         "core_relationships": core_relationships,
         "core_groups": core_groups,
+        "macro_circuits": macro_circuits,
+        "macro_analysis": macro_analysis,
         "probabilistic_core_membership": probabilistic,
         "truncation": {
             "cores": len(component_rows) > len(cores),
@@ -999,6 +1351,7 @@ def analyze_feedback(
                 core["circuit_search"]["truncated"] for core in cores
             ),
             "search": any_search_truncated,
+            "macro_circuits": macro_analysis["truncated"],
         },
         "evidence_boundary": (
             "Topology identifies candidate control structures, not demonstrated dynamics. "
@@ -1136,6 +1489,17 @@ class FeedbackStore:
                     score REAL NOT NULL,
                     result_json TEXT NOT NULL,
                     PRIMARY KEY (run_id, group_id),
+                    FOREIGN KEY (run_id) REFERENCES feedback_runs(run_id) ON DELETE CASCADE
+                );
+                CREATE TABLE IF NOT EXISTS feedback_macro_circuits (
+                    run_id TEXT NOT NULL,
+                    macro_circuit_id TEXT NOT NULL,
+                    rank INTEGER NOT NULL,
+                    parent_core_count INTEGER NOT NULL,
+                    polarity TEXT NOT NULL,
+                    score REAL NOT NULL,
+                    result_json TEXT NOT NULL,
+                    PRIMARY KEY (run_id, macro_circuit_id),
                     FOREIGN KEY (run_id) REFERENCES feedback_runs(run_id) ON DELETE CASCADE
                 );
             """)
@@ -1433,6 +1797,17 @@ class FeedbackStore:
                         row["score"], json.dumps(row, separators=(",", ":")),
                     )
                     for row in result.get("core_groups", [])
+                ],
+            )
+            conn.executemany(
+                "INSERT INTO feedback_macro_circuits VALUES (?,?,?,?,?,?,?)",
+                [
+                    (
+                        run_id, row["macro_circuit_id"], row["rank"],
+                        row["parent_core_count"], row["polarity"], row["score"],
+                        json.dumps(row, separators=(",", ":")),
+                    )
+                    for row in result.get("macro_circuits", [])
                 ],
             )
 

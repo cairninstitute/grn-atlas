@@ -185,6 +185,50 @@ def test_feedback_analysis_chains_cores_through_acyclic_bridge_genes():
     assert result["core_groups"][0]["core_count"] == 2
 
 
+def test_augmented_evidence_reports_gene_level_macro_feedback_between_observed_cores(tmp_path):
+    conn = _fixture_connection()
+    conn.execute(
+        "INSERT INTO interactions VALUES (?,?,?,?,?,?,?,?,?)",
+        ("B", "C", "activation", 0.9, '["fixture"]', '[]',
+         "activation", "measured", None),
+    )
+    conn.executescript("""
+        CREATE TABLE regulatory_edge_candidates (
+            species TEXT, source_id TEXT, target_id TEXT, relation_type TEXT,
+            confidence REAL, support_class TEXT, evidence_sources TEXT,
+            evidence_layers TEXT, status TEXT, evidence_tier TEXT,
+            inclusion_probability REAL, metadata TEXT
+        );
+        INSERT INTO regulatory_edge_candidates VALUES
+            ('test','E','A','activation',0.8,'direct_signed','["candidate fixture"]',
+             '["direct_signed"]','candidate','supported',0.8,'{}');
+    """)
+
+    observed = feedback_control.analyze_feedback(conn, "test")
+    completed = feedback_control.analyze_feedback(
+        conn, "test", feedback_control.FeedbackParameters(include_candidates=True),
+    )
+
+    assert observed["summary"]["feedback_cores"] == 3
+    assert observed["summary"]["macro_circuits"] == 0
+    assert completed["summary"]["macro_circuits"] == 1
+    macro = completed["macro_circuits"][0]
+    assert macro["parent_core_count"] == 2
+    assert macro["merged_parent_core_count"] == 2
+    assert macro["polarity"] == "negative"
+    assert macro["augmented_layer"] == "supported"
+    assert [(edge["source"], edge["target"]) for edge in macro["introduced_edges"]] == [("E", "A")]
+    assert {gene["id"] for core in macro["parent_cores"] for gene in core["top_genes"]} >= {
+        "A", "B", "C", "D", "E",
+    }
+    assert completed["macro_analysis"]["introduced_condensation_edges"] == 1
+    assert completed["macro_analysis"]["truncated"] is False
+    store = feedback_control.FeedbackStore(tmp_path / "macro-feedback.sqlite3")
+    store.save(completed)
+    with sqlite3.connect(store.path) as stored:
+        assert stored.execute("SELECT COUNT(*) FROM feedback_macro_circuits").fetchone()[0] == 1
+
+
 def test_probabilistic_membership_and_multilayer_edges_are_explicit():
     conn = _fixture_connection()
     conn.executescript("""
@@ -222,6 +266,7 @@ def test_feedback_store_normalizes_results_and_reuses_cache(tmp_path):
         assert stored.execute("SELECT COUNT(*) FROM feedback_circuit_edges").fetchone()[0] >= 6
         assert stored.execute("SELECT COUNT(*) FROM feedback_core_edges").fetchone()[0] == 6
         assert stored.execute("SELECT COUNT(*) FROM feedback_cycle_catalog").fetchone()[0] >= 3
+        assert stored.execute("SELECT COUNT(*) FROM feedback_macro_circuits").fetchone()[0] == 0
 
     core_id = first["cores"][0]["core_id"]
     backbone = store.backbone(first["run_id"], core_id)
