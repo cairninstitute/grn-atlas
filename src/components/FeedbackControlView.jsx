@@ -27,6 +27,8 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
   const [species, setSpecies] = useState(initialSpecies || 'arabidopsis');
   const [minConfidence, setMinConfidence] = useState(0.5);
   const [maxLoopLength, setMaxLoopLength] = useState(6);
+  const [networkLayer, setNetworkLayer] = useState('observed');
+  const [candidateImpacts, setCandidateImpacts] = useState([]);
   const [result, setResult] = useState(null);
   const [selectedSystemId, setSelectedSystemId] = useState(null);
   const [selectedCoreId, setSelectedCoreId] = useState(null);
@@ -56,7 +58,13 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
     let cancelled = false;
     setLoading(true);
     setError(null);
-    analysisAPI.feedbackControl(species, { minConfidence, maxLoopLength })
+    const includeCandidates = networkLayer !== 'observed';
+    const includeExploratory = ['exploratory', 'multilayer'].includes(networkLayer);
+    analysisAPI.feedbackControl(species, {
+      minConfidence, maxLoopLength, includeCandidates, includeExploratory,
+      includeMultilayer: networkLayer === 'multilayer',
+      probabilisticSamples: includeCandidates ? 48 : 0,
+    })
       .then((data) => {
         if (cancelled) return;
         setResult(data);
@@ -71,7 +79,17 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
       .catch((err) => { if (!cancelled) setError(err.message); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [species, minConfidence, maxLoopLength]);
+  }, [species, minConfidence, maxLoopLength, networkLayer]);
+
+  useEffect(() => {
+    if (networkLayer === 'observed') {
+      setCandidateImpacts([]);
+      return;
+    }
+    analysisAPI.feedbackCandidateImpacts(species, { limit: 12 })
+      .then((data) => setCandidateImpacts(data.candidates || []))
+      .catch(() => setCandidateImpacts([]));
+  }, [species, networkLayer]);
 
   const selectedCore = useMemo(
     () => result?.cores?.find((core) => core.core_id === selectedCoreId) || result?.cores?.[0],
@@ -170,6 +188,7 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
           <label>
             <span>Evidence floor</span>
             <select value={minConfidence} onChange={(event) => setMinConfidence(Number(event.target.value))}>
+              <option value={0.4}>Confidence ≥ 0.40 (exploratory)</option>
               <option value={0.5}>Confidence ≥ 0.50</option>
               <option value={0.7}>Confidence ≥ 0.70</option>
               <option value={0.9}>Confidence ≥ 0.90</option>
@@ -179,6 +198,19 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
             <span>Longest loop</span>
             <select value={maxLoopLength} onChange={(event) => setMaxLoopLength(Number(event.target.value))}>
               {[3, 4, 5, 6, 8, 10].map((length) => <option key={length} value={length}>{length} genes</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Network layer</span>
+            <select value={networkLayer} onChange={(event) => {
+              const layer = event.target.value;
+              setNetworkLayer(layer);
+              if (['exploratory', 'multilayer'].includes(layer) && minConfidence > 0.4) setMinConfidence(0.4);
+            }}>
+              <option value="observed">Observed signed edges</option>
+              <option value="supported">Evidence-completed hypotheses</option>
+              <option value="exploratory">Exploratory completion</option>
+              <option value="multilayer">Multilayer control</option>
             </select>
           </label>
         </div>
@@ -200,6 +232,59 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
               <span>versioned analysis</span>
             </div>
           </section>
+
+          {result.graph?.includes_evidence_candidates && (
+            <div className="feedback-boundary">
+              Evidence-completed mode includes conflict-free candidate edges. Candidate edges are hypotheses,
+              not equivalent to measured signed regulation.
+            </div>
+          )}
+
+          {result.graph?.includes_exploratory_candidates && (
+            <div className="feedback-boundary exploratory">
+              Exploratory mode adds putative-direct, perturbation-only, and conservatively transferred
+              orthology hypotheses. These edges are intended for prioritization, not mechanistic claims.
+            </div>
+          )}
+
+          {result.graph?.includes_multilayer_edges && (
+            <div className="feedback-boundary">
+              Multilayer mode may include explicitly labeled protein activity, degradation, complex,
+              and post-transcriptional regulation alongside transcriptional edges.
+            </div>
+          )}
+
+          {(result.probabilistic_core_membership?.samples || 0) > 0 && (
+            <section className="feedback-stability">
+              <div><span>UNCERTAINTY ENSEMBLE</span><strong>{result.probabilistic_core_membership.samples} samples</strong></div>
+              <p>Core membership frequency estimates how often each gene remains in feedback when candidate edges are sampled by evidence confidence.</p>
+              <div className="feedback-stability-list">
+                {result.probabilistic_core_membership.memberships.slice(0, 12).map((row) => (
+                  <span key={row.gene_id}><b>{row.gene_id}</b>{Math.round(row.probability * 100)}%</span>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {candidateImpacts.length > 0 && (
+            <section className="candidate-impact-panel">
+              <div className="structural-heading">
+                <span>Validation priorities</span>
+                <h2>Edges most likely to change feedback structure</h2>
+                <p>Ranked by structural impact after evidence qualification. High impact does not substitute for biological evidence.</p>
+              </div>
+              <div className="candidate-impact-grid">
+                {candidateImpacts.map((edge) => (
+                  <div key={`${edge.source_id}-${edge.target_id}-${edge.relation_type}`}>
+                    <strong>{edge.source_id} → {edge.target_id}</strong>
+                    <span>{edge.relation_type} · {edge.evidence_tier}</span>
+                    <small>{edge.closes_cycle ? `closes a return path; +${edge.feedback_nodes_added} potential feedback genes` : 'does not independently close a cycle'}</small>
+                    <b>{edge.impact_score.toFixed(2)}</b>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {(result.truncation?.search || result.truncation?.circuits || result.truncation?.cores) && (
             <div className="feedback-boundary">

@@ -131,7 +131,7 @@ def main(species):
     matrix = {g: [round(per_sample[r].get(g, 0.0), 3) for r in ok] for g in genes}
     out = {
         "meta": {"assembly": cfg["assembly"],
-                 "reference": f"PLAZA Dicots 4.5 {cfg['plaza_code']} CDS (selected transcript)"
+                 "reference": f"PLAZA Dicots 5 {cfg['plaza_code']} CDS (selected transcript)"
                               if cfg.get("plaza_code") else "reference CDS",
                  "quantifier": "kallisto 0.50.1", "source": "ENA/SRA public RNA-seq, subsampled",
                  "n_reads_subsample": N_READS, "unit": "TPM",

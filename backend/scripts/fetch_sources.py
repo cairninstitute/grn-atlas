@@ -37,6 +37,7 @@ PY = sys.executable
 #   ("DOWNLOAD", url, filename)  -> direct download into backend/data/
 #   None                         -> guidance only (manual step)
 CORE_PRE_DB = [
+    ("JASPAR 2026 CORE plant PWMs", [PY, "fetch_jaspar_pwms.py"], None),
     ("TRRUST human network", ("DOWNLOAD",
      "https://www.grnpedia.org/trrust/data/trrust_rawdata.human.tsv",
      "trrust_rawdata.human.tsv"), None),
@@ -54,7 +55,7 @@ CORE_POST_DB = [
     ("DoRothEA TF-target edges (OmniPath, human+mouse)", [PY, "fetch_dorothea.py"], None),
     ("DAP-seq TF-target binding (Plant Cistrome)", [PY, "fetch_dapseq.py"], None),
     ("protein-coding gene lists (mygene, human+mouse)", [PY, "fetch_gene_lists.py"], None),
-    ("PlantRegMap regulation (tomato, petunia, potato, tobacco)",
+    ("PlantRegMap regulation (tomato, petunia, potato, rice, tobacco)",
      [[PY, "fetch_plantregmap_regulation.py", "all"]], None),
 ]
 LIGHT = [

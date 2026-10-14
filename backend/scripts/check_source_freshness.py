@@ -53,12 +53,18 @@ def latest_reactome():
     return v.strip() if v and v.strip().isdigit() else None
 
 
+def latest_jaspar():
+    html = _get("https://jaspar.elixir.no/docs/")
+    match = re.search(r"viewing data from the \d+(?:st|nd|rd|th) release \((20\d{2})\)", html or "", re.I)
+    return match.group(1) if match else None
+
+
 # key -> (probe callable or None, static note). our_version comes from provenance.SOURCES.
 PROBES = {
     "plaza": (latest_plaza_dicots, "PLAZA dicots"),
     "plantreactome": (latest_reactome, "Reactome/Plant Reactome share a release number"),
     "gwascatalog": (None, "tracked as 'latest'; re-fetch pulls the current weekly release"),
-    "jaspar2024": (None, "JASPAR 2024 is the current CORE release"),
+    "jaspar2026": (latest_jaspar, "JASPAR CORE release"),
     "trrust2": (None, "TRRUST v2 is the latest published release"),
     "dorothea": (None, "loaded from an OmniPath snapshot; refresh with fetch_dorothea.py"),
     "collectri": (None, "loaded from the current OmniPath endpoint; import SHA-256 is recorded"),
@@ -68,6 +74,10 @@ PROBES = {
     "plantcistrome": (None, "static GEO series GSE60143"),
     "connectf": (None, "data release v1"),
     "knocktf2": (None, "KnockTF 2.0 download"),
+    "expressionatlas": (None, "reviewed manifests point to versioned experiment accessions"),
+    "chipatlas": (None, "live target-gene index; import timestamp and source URL recorded"),
+    "pcbase2": (None, "PCBase 2.0; assembly review required before coordinate joins"),
+    "tflink": (None, "TFLink small-scale release 1.0"),
     "atlasliterature": (None, "versioned with the GRN Atlas repository"),
     "oma": (None, "OMA browser updates periodically; not auto-checked"),
     "dnazoo": (None, "static assembly release"),

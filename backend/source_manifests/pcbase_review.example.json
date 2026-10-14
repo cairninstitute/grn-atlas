@@ -1,0 +1,15 @@
+{
+  "datasets": [
+    {
+      "factor": "MADS29",
+      "atlas_tf_id": "LOC_Os02g07430",
+      "species": "rice",
+      "remote_species": "Oryza_sativa",
+      "runs": ["SRR616062"],
+      "source_assembly": "REVIEW_REQUIRED",
+      "atlas_assembly": "MSU7",
+      "assembly_compatible": false,
+      "review_status": "blocked"
+    }
+  ]
+}

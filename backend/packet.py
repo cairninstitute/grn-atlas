@@ -22,6 +22,7 @@ SOURCE_KEY_BY_NAME = {
     "KnockTF": "knocktf2",
     "Literature": "atlasliterature",
     "JASPAR2024": "jaspar2024",
+    "JASPAR2026": "jaspar2026",
     "GWAS Catalog": "gwascatalog",
     "PlantReactome": "plantreactome",
     "Reactome": "plantreactome",

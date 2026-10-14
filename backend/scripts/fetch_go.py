@@ -22,7 +22,7 @@ DATA_DIR = Path(__file__).parent.parent / "data"
 DB_PATH = DATA_DIR / "grn.sqlite3"
 OUTPUT_JSON = DATA_DIR / "go_annotations.json.gz"
 
-PLAZA_GO = "https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_04_5/GO/go.{sp}.csv.gz"
+PLAZA_GO = "https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_05/GO/go.{sp}.csv.gz"
 PLAZA_CODE = {"arabidopsis": "ath", "tomato": "sly", "petunia": "pax"}
 UA = {"User-Agent": "grn-atlas-build/1.0 (GO enrichment)"}
 MYGENE_BATCH = 800

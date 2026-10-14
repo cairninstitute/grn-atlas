@@ -1,0 +1,17 @@
+{
+  "source": "Reviewed multilayer regulation",
+  "edges": [
+    {
+      "species": "arabidopsis",
+      "source_gene": "EXAMPLE_REGULATOR",
+      "target_gene": "EXAMPLE_TARGET",
+      "relation_type": "repression",
+      "regulatory_layer": "protein_degradation",
+      "confidence": 0.9,
+      "pmids": [],
+      "context": {},
+      "metadata": {},
+      "review_status": "blocked"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all external-regulation enrich tissue-weights verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all external-regulation evidence-expansion qualify-evidence enrich tissue-weights verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - release data setup from a fresh clone, including all external evidence and KnockTF species"
@@ -15,6 +15,8 @@ help:
 	@echo "make knocktf        - download+load KnockTF LOF perturbations, re-derive signs (needs make db + network)"
 	@echo "make knocktf-all    - stream/load KnockTF for Arabidopsis, human, and mouse (large download)"
 	@echo "make external-regulation - load CollecTRI, SIGNOR transcriptional, and strict AGRIS evidence"
+	@echo "make evidence-expansion - load ChIP-Atlas and TFLink; audit PCBase and literature sources"
+	@echo "make qualify-evidence - build conflict-aware candidates and source qualification report"
 	@echo "make verify-data    - fail unless all release data layers and minimum coverage are present"
 	@echo "make enrich         - load ConnecTF edges+perturbations, curated pathway edges, display names (needs make db)"
 	@echo "make tissue-weights - compute per-tissue coexpression weights (also run by make db)"
@@ -29,7 +31,7 @@ help:
 # One command to take a fresh clone to the verified release source-data profile. Each step is individually
 # re-runnable; the optional network layers (enrich/allele-pwms/chromatin-peaks) self-skip
 # if a download is unavailable, so bootstrap never hard-fails on an offline extra.
-bootstrap: setup fetch db external-regulation enrich knocktf-all allele-pwms chromatin-peaks verify-data
+bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion qualify-evidence allele-pwms chromatin-peaks verify-data
 	@echo ""
 	@echo "=== GRN Atlas bootstrap complete ==="
 	@echo "Verify:  make test-backend"
@@ -88,6 +90,21 @@ external-regulation:
 	venv/bin/python backend/scripts/load_external_regulatory_sources.py all \
 		--report backend/data/external_regulatory_benchmark.json
 
+evidence-expansion:
+	venv/bin/python backend/scripts/load_rice_id_aliases.py
+	venv/bin/python backend/scripts/load_tflink.py
+	venv/bin/python backend/scripts/load_chip_atlas.py
+	venv/bin/python backend/scripts/load_expression_atlas_perturbations.py backend/source_manifests/expression_atlas_reviewed.json
+	venv/bin/python backend/scripts/audit_pcbase.py --report backend/data/pcbase_qualification.json
+	venv/bin/python backend/scripts/audit_literature_sources.py --report backend/data/literature_source_qualification.json
+
+qualify-evidence:
+	venv/bin/python backend/scripts/build_conserved_regulatory_evidence.py
+	venv/bin/python backend/scripts/build_regulatory_candidates.py
+	venv/bin/python backend/scripts/rank_cycle_closing_candidates.py
+	venv/bin/python backend/scripts/qualify_regulatory_sources.py
+	venv/bin/python backend/scripts/assess_agris_quality.py
+
 verify-data:
 	venv/bin/python backend/scripts/verify_release_data.py
 
@@ -101,6 +118,7 @@ enrich:
 	@if [ -d /tmp/connectf_data_release_v1 ]; then \
 		cd backend && ../venv/bin/python scripts/load_connectf.py /tmp/connectf_data_release_v1; \
 		../venv/bin/python scripts/load_connectf_perturbations.py /tmp/connectf_data_release_v1; \
+		../venv/bin/python scripts/load_connectf_evidence.py /tmp/connectf_data_release_v1; \
 		../venv/bin/python scripts/derive_perturbation_signs.py; \
 		../venv/bin/python scripts/validate_edge_signs.py; \
 	else \

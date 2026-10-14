@@ -128,10 +128,9 @@ TOBACCO_PLANTREGMAP = {
     "suffix": "Nta",
 }
 
-# The release graph uses ConnecTF plus Arabidopsis orthology projection for
-# rice. Keep the now-correct rice endpoint available as an explicit expansion,
-# but do not silently change the release graph when "all" is requested.
-DEFAULT_SPECIES = ("petunia", "tomato", "potato")
+# Fetch every atlas species with a supported PlantRegMap endpoint. Rice is kept
+# in raw locus form and resolved by build_db after the PLAZA gene set is loaded.
+DEFAULT_SPECIES = ("petunia", "tomato", "potato", "rice")
 
 
 def fetch_tobacco_raw():

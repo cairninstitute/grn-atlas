@@ -489,6 +489,26 @@ def build():
         CREATE INDEX idx_interactions_source ON interactions(source_id);
         CREATE INDEX idx_interactions_target ON interactions(target_id);
 
+        -- Non-transcriptional control edges are stored separately so protein
+        -- activity, degradation, complexes, and RNA effects are never mistaken
+        -- for transcriptional regulation.
+        CREATE TABLE regulatory_layer_edges (
+            species TEXT NOT NULL,
+            source_id TEXT NOT NULL,
+            target_id TEXT NOT NULL,
+            relation_type TEXT NOT NULL,
+            regulatory_layer TEXT NOT NULL,
+            confidence REAL NOT NULL,
+            evidence_source TEXT NOT NULL,
+            pmids TEXT NOT NULL DEFAULT '[]',
+            context TEXT NOT NULL DEFAULT '{}',
+            metadata TEXT NOT NULL DEFAULT '{}',
+            imported_at TEXT NOT NULL,
+            PRIMARY KEY (species, source_id, target_id, relation_type, regulatory_layer, evidence_source)
+        );
+        CREATE INDEX idx_rle_species_layer
+            ON regulatory_layer_edges(species, regulatory_layer, confidence);
+
         CREATE TABLE gene_locations (
             gene_id TEXT PRIMARY KEY,
             species TEXT NOT NULL,
@@ -1130,6 +1150,17 @@ def build():
         if not rows:
             seqctx_counts[table] = 0
             continue
+        if table == "gene_id_crosswalk":
+            rows = [row for row in rows if row.get("atlas_gene_id") in valid_ids]
+        elif table == "pathway_annotations":
+            rows = [row for row in rows if row.get("gene_id") in valid_ids]
+        elif table == "motifs":
+            rows = [
+                {**row, "tf_gene_id": None}
+                if row.get("tf_gene_id") and row.get("tf_gene_id") not in valid_ids
+                else row
+                for row in rows
+            ]
         conn.executemany(
             f"INSERT OR IGNORE INTO {table} ({', '.join(cols)}) "
             f"VALUES ({', '.join('?' * len(cols))})",

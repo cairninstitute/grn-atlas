@@ -1,0 +1,27 @@
+{
+  "contrasts": [
+    {
+      "accession": "E-GEOD-93081",
+      "contrast": "g2_g1",
+      "species": "rice",
+      "perturbed_gene": "LOC_Os08g31580",
+      "perturbation_type": "overexpression",
+      "review_status": "approved",
+      "review_basis": "Configuration identifies Rcc3-OsERF48 as the test group and wild type as reference.",
+      "results": "https://ftp.ebi.ac.uk/pub/databases/microarray/data/atlas/experiments/E-GEOD-93081/E-GEOD-93081-analytics.tsv",
+      "columns": {
+        "gene": "Gene ID",
+        "log2fc": "g2_g1.log2foldchange",
+        "p_value": "g2_g1.p-value"
+      },
+      "p_value_type": "unadjusted",
+      "max_p_value": 0.01,
+      "min_abs_log2fc": 1.0,
+      "context": {
+        "organism_part": "root",
+        "age": "2 week",
+        "genotype": "Rcc3-OsERF48"
+      }
+    }
+  ]
+}

@@ -36,12 +36,23 @@ def database_source_labels(conn: sqlite3.Connection) -> set[str]:
                 "SELECT DISTINCT source_name FROM regulatory_evidence WHERE source_name IS NOT NULL"
             )
         )
+    if "regulatory_layer_edges" in tables:
+        labels.update(
+            row[0] for row in conn.execute(
+                "SELECT DISTINCT evidence_source FROM regulatory_layer_edges "
+                "WHERE evidence_source IS NOT NULL"
+            )
+        )
     return labels
 
 
 def audit(conn: sqlite3.Connection) -> dict:
     labels = sorted(database_source_labels(conn))
-    mapped = provenance.source_label_map()
+    mapped = {
+        label: provenance.source_key_for_label(label)
+        for label in labels
+        if provenance.source_key_for_label(label)
+    }
     return {
         "database_labels": labels,
         "mapped": {label: mapped[label] for label in labels if label in mapped},

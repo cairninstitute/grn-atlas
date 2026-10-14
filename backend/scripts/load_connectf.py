@@ -69,6 +69,15 @@ def parse_metadata(meta_dir):
     return tf_map
 
 
+def perturbation_mode(stem, metadata):
+    text = " ".join((stem, metadata.get("edge_type", ""), metadata.get("method", ""))).lower()
+    if any(token in text for token in ("_lof", " lof", "knockout", "knockdown", " mutant")):
+        return "loss"
+    if any(token in text for token in ("_gof", " gof", "_oe", "overexpress", "target")):
+        return "gain"
+    return None
+
+
 def load_species_edges(data_dir, meta_dir, gene_ids, species_label):
     """Load edges from ConnecTF data files for a species."""
     tf_map = parse_metadata(meta_dir)
@@ -100,6 +109,7 @@ def load_species_edges(data_dir, meta_dir, gene_ids, species_label):
                 continue
 
             has_fc = len(header) > 1 and "log2fc" in header[1].lower() if len(header) > 1 else False
+            mode = perturbation_mode(stem, tf_map.get(stem, {}))
 
             for row in reader:
                 if not row:
@@ -119,7 +129,11 @@ def load_species_edges(data_dir, meta_dir, gene_ids, species_label):
                 if has_fc:
                     try:
                         fc = float(row[1])
-                        if fc > 0:
+                        if mode == "loss":
+                            fc = -fc
+                        if mode is None:
+                            reg_type = REGULATION_TYPE
+                        elif fc > 0:
                             reg_type = "activation"
                         elif fc < 0:
                             reg_type = "repression"

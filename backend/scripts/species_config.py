@@ -25,9 +25,9 @@ Fields
   expr_panel    : {run_accession: [tissue, study]} curated RNA-seq panel
 """
 
-_PLAZA_GFF = ("https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_04_5/GFF/{code}/"
+_PLAZA_GFF = ("https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_05/GFF/{code}/"
               "annotation.selected_transcript.all_features.{code}.gff3.gz")
-_PLAZA_CDS = ("https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_04_5/Fasta/"
+_PLAZA_CDS = ("https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_05/Fasta/"
               "cds.selected_transcript.{code}.fasta.gz")
 
 SPECIES = {
@@ -90,7 +90,7 @@ SPECIES = {
     "arabidopsis": {
         "status": "loaded", "assembly": "TAIR10", "plaza_code": "ath",
         "gff_url": _PLAZA_GFF.format(code="ath"), "cds_url": _PLAZA_CDS.format(code="ath"),
-        "genome_url": "https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_04_5/Genomes/ath.con.gz",
+        "genome_url": "https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_05/Genomes/ath.con.gz",
         "id_style": "agi", "seqctx_style": "plaza_identity",
         "promoter": (2000, 500), "chrom_norm": "identity",
         "scan_edge_sql": None,  # None => scan all edges whose target is this species

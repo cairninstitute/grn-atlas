@@ -1,7 +1,7 @@
 """
 One-time enrichment step for the PLANT side of the genome comparison: fetch gene
 coordinates and cross-species orthologs for Arabidopsis, tomato, and petunia from
-PLAZA Dicots 4.5 (https://bioinformatics.psb.ugent.be/plaza/), and cache to
+PLAZA Dicots 5 (https://bioinformatics.psb.ugent.be/plaza/), and cache to
 committed JSON so runtime needs no network access.
 
 PLAZA is used for plants because petunia is absent from OMA. PLAZA Dicots
@@ -40,10 +40,11 @@ GENES_JSON = DATA_DIR / "genome_genes_plaza.json"
 SYMBOLS_JSON = DATA_DIR / "gene_symbols_plaza.json"
 ORTHOLOG_MAP_JSON = DATA_DIR / "ortholog_map_plaza.json"
 ARABIDOPSIS_NAMES_JSON = DATA_DIR / "gene_names_arabidopsis.json"
+RELEASE_JSON = DATA_DIR / "plaza_release.json"
 MAX_SYMBOLS_PER_GENE = 8
 MAX_ORTHOLOGS_PER_GENE = 3   # cap plant orthologs per Arabidopsis gene (per species)
 
-BASE = "https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_04_5"
+BASE = "https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_05"
 # Anchor points = synteny-based colinear gene pairs. Chosen over the gene-family
 # ORTHO relation because synteny is the right (and far sparser, near-1:1) signal
 # for a chromosome-vs-chromosome comparison.
@@ -413,12 +414,17 @@ def main():
     SYMBOLS_JSON.write_text(json.dumps(inferred_symbols, indent=1, sort_keys=True))
     ORTHOLOG_MAP_JSON.write_text(json.dumps(ortholog_map, indent=1, sort_keys=True))
     ARABIDOPSIS_NAMES_JSON.write_text(json.dumps(arabidopsis_names, indent=1, sort_keys=True))
+    RELEASE_JSON.write_text(json.dumps({
+        "source": "PLAZA Dicots 5", "release": "5",
+        "base_url": BASE, "species_codes": sorted(PLAZA_SPECIES),
+    }, indent=2, sort_keys=True) + "\n")
     print(f"Wrote {POSITIONS_JSON} ({len(positions)} positions)")
     print(f"Wrote {ORTHOLOGS_JSON} ({len(pairs)} ortholog pairs)")
-    print(f"Wrote {GENES_JSON} ({len(genes)} tomato/petunia genes)")
+    print(f"Wrote {GENES_JSON} ({len(genes)} plant genes)")
     print(f"Wrote {SYMBOLS_JSON} ({len(inferred_symbols)} genes with inferred symbols)")
     print(f"Wrote {ORTHOLOG_MAP_JSON} ({len(ortholog_map)} Arabidopsis genes mapped)")
     print(f"Wrote {ARABIDOPSIS_NAMES_JSON} ({len(arabidopsis_names)} Arabidopsis symbols)")
+    print(f"Wrote {RELEASE_JSON} (PLAZA Dicots 5)")
 
 
 if __name__ == "__main__":

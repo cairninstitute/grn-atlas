@@ -111,7 +111,8 @@ describe('FeedbackControlView', () => {
     await waitFor(() => expect(screen.getAllByTestId('circuit-graph')).toHaveLength(3));
     expect(analysisAPI.feedbackBackbone).toHaveBeenCalledWith('run-1', 'core-1');
     expect(analysisAPI.feedbackControl).toHaveBeenCalledWith('arabidopsis', {
-      minConfidence: 0.5, maxLoopLength: 6,
+      minConfidence: 0.5, maxLoopLength: 6, includeCandidates: false,
+      includeExploratory: false, includeMultilayer: false, probabilisticSamples: 0,
     });
   });
 });

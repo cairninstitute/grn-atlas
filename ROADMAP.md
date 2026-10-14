@@ -86,7 +86,7 @@ Last updated: 2026-10-10 · Current broad status: 106 documented skills (105 cal
 - Measured edges: TRRUST v2 (human), PlantRegMap FunTFBS (tomato, arabidopsis).
 - Inferred edges: Arabidopsis network projected onto tomato/petunia (`Inferred:Arabidopsis`).
 - Sequence context: promoter/gene-body windows + JASPAR-scan binding sites (tomato/petunia).
-- Orthology/coords: OMA, PLAZA Dicots 4.5, DNA Zoo *P. axillaris* Hi-C.
+- Orthology/coords: OMA, PLAZA Dicots 5, DNA Zoo *P. axillaris* Hi-C.
 
 ---
 

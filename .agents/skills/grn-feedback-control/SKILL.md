@@ -32,6 +32,10 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - `--exact-cycle-limit` — safety ceiling; reaching it changes the catalog status to bounded.
 - `--cycle-cover-max-edges` — largest core for which edge-covering witness cycles are materialized.
 - `--max-bridge-hops` — longest signed path used to connect separate feedback cores.
+- `--include-candidates` — opt into conflict-free evidence-completed hypotheses; observed signed edges remain the default.
+- `--include-exploratory` — additionally include explicitly labeled putative-direct, perturbation-only, and conserved-orthology hypotheses.
+- `--include-multilayer` — include reviewed protein-activity, degradation, complex, and post-transcriptional edges.
+- `--probabilistic-samples` — estimate candidate-dependent core membership over up to 200 deterministic Monte Carlo samples.
 - `--topology-only` — skip annotation and context synthesis for topology benchmarks.
 - `--refresh` — recompute and replace an identical cached run.
 - `--http URL` — optional running backend URL.
@@ -39,6 +43,11 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 ### Output interpretation
 
 - `systems` combines signed loops with pathway/GO enrichment and available cis, perturbation, and tissue-coexpression support.
+- Candidate mode can add an edge only from confirmed direct signed evidence or from independent binding plus signed perturbation evidence. It never silently changes the observed network.
+- Exploratory mode is a separate opt-in tier and never changes observed or supported-candidate results.
+- Candidate-impact ranks identify edges that would close cycles or merge cores; impact is a validation priority, not evidence that the edge exists.
+- Probabilistic membership reports stability under candidate uncertainty rather than treating every candidate as certain.
+- Multilayer mode keeps non-transcriptional regulation explicitly labeled instead of recasting it as transcription.
 - `annotation_supported` systems have a recognizable biological annotation; `de_novo_topology` systems are unlabeled circuit-overlap hypotheses.
 - Architecture labels distinguish oscillator scaffolds, oscillator candidates, toggle switches, reinforcing switches, mixed feedback, and negative-feedback controllers.
 - `partial_architecture` means that a relevant loop is present but the filtered atlas does not contain every regulatory arm needed for the proposed system behavior.
@@ -60,7 +69,7 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - Known-circuit recovery is measured only when every required signed edge exists in the filtered atlas.
 - Circuit scores are monotonic heuristic rankings, not calibrated probabilities.
 - System scores rank evidence coherence; they are not probabilities that the proposed dynamics occur in vivo.
-- The current atlas does not contain all three signed arms needed to recover the complete Arabidopsis three-module clock loop from topology alone.
+- Missing observed arms may appear in candidate mode only when the normalized evidence layers satisfy the completion policy; absence remains explicit.
 
 ### Routing notes
 

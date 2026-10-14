@@ -54,7 +54,12 @@ def load_expression(species):
     path = DATA_DIR / f"expression_{species}.json.gz"
     if not path.exists():
         return None
-    return json.loads(gzip.open(path, "rt").read()).get("genes")
+    genes = json.loads(gzip.open(path, "rt").read()).get("genes") or {}
+    # PLAZA releases can advance transcript/gene-model suffixes while the stable
+    # locus remains unchanged (for example Solyc...2 -> Solyc...4).
+    for gene_id, values in list(genes.items()):
+        genes.setdefault(gene_id.rsplit(".", 1)[0], values)
+    return genes
 
 
 def ensure_columns(conn):
@@ -94,7 +99,8 @@ def main():
         ).fetchall()
         updates = []
         for tf, tgt in pairs:
-            xe, ye = genes.get(tf), genes.get(tgt)
+            xe = genes.get(tf) or genes.get(tf.rsplit(".", 1)[0])
+            ye = genes.get(tgt) or genes.get(tgt.rsplit(".", 1)[0])
             if not xe or not ye or len(xe) != len(ye) or len(xe) < MIN_SAMPLES:
                 continue
             updates.append((round(pearson(xe, ye), 4), tf, tgt))

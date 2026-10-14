@@ -1,0 +1,169 @@
+{
+  "generated_at": "2026-10-14T18:34:19.847160+00:00",
+  "species": {
+    "arabidopsis": {
+      "candidate_impact": {
+        "cycle_closing": 75,
+        "potential_feedback_nodes_across_candidates": 40,
+        "ranked": 4207
+      },
+      "modes": {
+        "exploratory": {
+          "feedback_cores": 11,
+          "feedback_edges": 924,
+          "feedback_genes": 227,
+          "graph_edges": 29152,
+          "probabilistic_members": 227,
+          "seconds": 2.253
+        },
+        "multilayer": {
+          "feedback_cores": 11,
+          "feedback_edges": 924,
+          "feedback_genes": 227,
+          "graph_edges": 29152,
+          "probabilistic_members": 0,
+          "seconds": 1.784
+        },
+        "observed": {
+          "feedback_cores": 12,
+          "feedback_edges": 581,
+          "feedback_genes": 156,
+          "graph_edges": 24945,
+          "probabilistic_members": 0,
+          "seconds": 0.171
+        },
+        "supported": {
+          "feedback_cores": 11,
+          "feedback_edges": 748,
+          "feedback_genes": 190,
+          "graph_edges": 27730,
+          "probabilistic_members": 0,
+          "seconds": 1.056
+        }
+      }
+    },
+    "human": {
+      "candidate_impact": {
+        "cycle_closing": 3148,
+        "potential_feedback_nodes_across_candidates": 999,
+        "ranked": 35647
+      },
+      "modes": {
+        "exploratory": {
+          "feedback_cores": 2,
+          "feedback_edges": 9487,
+          "feedback_genes": 895,
+          "graph_edges": 45061,
+          "probabilistic_members": 895,
+          "seconds": 67.747
+        },
+        "multilayer": {
+          "feedback_cores": 2,
+          "feedback_edges": 9546,
+          "feedback_genes": 900,
+          "graph_edges": 45098,
+          "probabilistic_members": 0,
+          "seconds": 67.409
+        },
+        "observed": {
+          "feedback_cores": 4,
+          "feedback_edges": 1339,
+          "feedback_genes": 288,
+          "graph_edges": 9414,
+          "probabilistic_members": 0,
+          "seconds": 0.091
+        },
+        "supported": {
+          "feedback_cores": 2,
+          "feedback_edges": 9487,
+          "feedback_genes": 895,
+          "graph_edges": 45061,
+          "probabilistic_members": 0,
+          "seconds": 67.945
+        }
+      }
+    },
+    "mouse": {
+      "candidate_impact": {
+        "cycle_closing": 5,
+        "potential_feedback_nodes_across_candidates": 2,
+        "ranked": 83
+      },
+      "modes": {
+        "exploratory": {
+          "feedback_cores": 2,
+          "feedback_edges": 1621,
+          "feedback_genes": 352,
+          "graph_edges": 9900,
+          "probabilistic_members": 352,
+          "seconds": 0.496
+        },
+        "multilayer": {
+          "feedback_cores": 2,
+          "feedback_edges": 1621,
+          "feedback_genes": 352,
+          "graph_edges": 9913,
+          "probabilistic_members": 0,
+          "seconds": 0.173
+        },
+        "observed": {
+          "feedback_cores": 2,
+          "feedback_edges": 1611,
+          "feedback_genes": 350,
+          "graph_edges": 9817,
+          "probabilistic_members": 0,
+          "seconds": 0.107
+        },
+        "supported": {
+          "feedback_cores": 2,
+          "feedback_edges": 1621,
+          "feedback_genes": 352,
+          "graph_edges": 9900,
+          "probabilistic_members": 0,
+          "seconds": 0.148
+        }
+      }
+    },
+    "rice": {
+      "candidate_impact": {
+        "cycle_closing": 0,
+        "potential_feedback_nodes_across_candidates": 0,
+        "ranked": 11
+      },
+      "modes": {
+        "exploratory": {
+          "feedback_cores": 6,
+          "feedback_edges": 48,
+          "feedback_genes": 25,
+          "graph_edges": 343,
+          "probabilistic_members": 25,
+          "seconds": 0.225
+        },
+        "multilayer": {
+          "feedback_cores": 6,
+          "feedback_edges": 48,
+          "feedback_genes": 25,
+          "graph_edges": 343,
+          "probabilistic_members": 0,
+          "seconds": 0.046
+        },
+        "observed": {
+          "feedback_cores": 6,
+          "feedback_edges": 48,
+          "feedback_genes": 25,
+          "graph_edges": 332,
+          "probabilistic_members": 0,
+          "seconds": 0.047
+        },
+        "supported": {
+          "feedback_cores": 6,
+          "feedback_edges": 48,
+          "feedback_genes": 25,
+          "graph_edges": 332,
+          "probabilistic_members": 0,
+          "seconds": 0.058
+        }
+      }
+    }
+  }
+}

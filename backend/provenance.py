@@ -8,7 +8,7 @@ ATLAS_VERSION = "1.0.0"
 METHODS = {
     "promoter_window": "TSS −2000 / +500 bp (strand-aware)",
     "gene_body_window": "TSS → TES (full transcribed region)",
-    "motif_scan": ("JASPAR 2024 plant PWMs scanned with a log-odds model against a "
+    "motif_scan": ("JASPAR 2026 plant PWMs scanned with a log-odds model against a "
                    "uniform 0.25 background; exact discretised score-distribution "
                    "p-value < 1e-4"),
     "tf_motif_assignment": ("TF→motif by protein-sequence homology (BLASTp) to the "
@@ -64,7 +64,8 @@ SOURCES = [
      "authors": "Jin et al.", "year": 2015, "journal": "Molecular BioSystems", "volume": "11", "pages": "178",
      "doi": "10.1039/C4MB00532C", "url": "http://atrm.cbi.pku.edu.cn/"},
     {"key": "agris", "name": "AGRIS / AtRegNet", "version": "2019-03-11",
-     "source_labels": ["AGRIS AtRegNet"], "evidence_layers": ["direct_signed", "direct_unsigned"],
+     "source_labels": ["AGRIS AtRegNet", "AGRIS AtRegNet expanded"],
+     "evidence_layers": ["direct_signed", "direct_unsigned"],
      "provides": "Arabidopsis TF-target regulation; the atlas external layer retains confirmed direct signed records",
      "authors": "Yilmaz et al.", "year": 2011, "journal": "Nucleic Acids Research", "volume": "39", "pages": "D1118",
      "doi": "10.1093/nar/gkq1120", "url": "https://agris-knowledgebase.org/"},
@@ -74,7 +75,8 @@ SOURCES = [
      "authors": "O'Malley et al.", "year": 2016, "journal": "Cell", "volume": "165", "pages": "1280",
      "doi": "10.1016/j.cell.2016.04.038", "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE60143"},
     {"key": "connectf", "name": "ConnecTF", "version": "data release v1",
-     "source_labels": ["ConnecTF", "connectf_target"], "evidence_layers": ["direct_unsigned", "perturbation_signed"],
+     "source_labels": ["ConnecTF", "connectf_target", "ConnecTF experiment evidence"],
+     "evidence_layers": ["direct_unsigned", "perturbation_signed"],
      "provides": "Arabidopsis and rice TF binding and TF-perturbation expression evidence",
      "authors": "Brooks et al.", "year": 2021, "journal": "Plant Physiology", "volume": "185", "pages": "49",
      "doi": "10.1093/plphys/kiaa012", "url": "https://connectf.org/"},
@@ -83,6 +85,33 @@ SOURCES = [
      "provides": "Context-specific TF knockdown and knockout differential-expression observations",
      "authors": "Feng et al.", "year": 2024, "journal": "Nucleic Acids Research", "volume": "52", "pages": "D183",
      "doi": "10.1093/nar/gkad1006", "url": "https://www.licpathway.net/KnockTF/"},
+    {"key": "expressionatlas", "name": "Expression Atlas", "version": "reviewed manifest",
+     "source_labels": ["Expression Atlas reviewed perturbations"],
+     "source_label_prefixes": ["ExpressionAtlas:"],
+     "evidence_layers": ["perturbation_signed"],
+     "provides": "Manually reviewed regulator-perturbation contrasts with context and effect direction",
+     "authors": "Papatheodorou et al.", "year": 2020, "journal": "Nucleic Acids Research",
+     "volume": "48", "pages": "D77", "doi": "10.1093/nar/gkz947",
+     "license": "EMBL-EBI terms", "url": "https://www.ebi.ac.uk/gxa/"},
+    {"key": "chipatlas", "name": "ChIP-Atlas", "version": "live target-gene index",
+     "source_labels": ["ChIP-Atlas"], "evidence_layers": ["direct_unsigned"],
+     "provides": "Uniformly processed ChIP-seq target-gene occupancy evidence",
+     "authors": "Oki et al.", "year": 2018, "journal": "EMBO Reports",
+     "volume": "19", "pages": "e46255", "doi": "10.15252/embr.201846255",
+     "license": "CC-BY-4.0", "url": "https://chip-atlas.org/target_genes"},
+    {"key": "pcbase2", "name": "PCBase 2.0", "version": "2.0",
+     "source_labels": ["PCBase 2.0"], "evidence_layers": ["direct_unsigned"],
+     "provides": "Plant ChIP-seq peak evidence admitted only after assembly review",
+     "authors": "Chow et al.", "year": 2019, "journal": "Nucleic Acids Research",
+     "volume": "47", "pages": "D1155", "doi": "",
+     "license": "source terms", "url": "https://pcbase.itps.ncku.edu.tw/pcbase2/"},
+    {"key": "tflink", "name": "TFLink", "version": "1.0 small-scale",
+     "source_labels": ["TFLink small-scale"], "evidence_layers": ["direct_unsigned"],
+     "provides": "Literature-backed human and mouse TF-target evidence from small-scale experiments",
+     "authors": "Liska et al.", "year": 2022, "journal": "Database",
+     "volume": "2022", "pages": "baac083", "doi": "10.1093/database/baac083",
+     "license": "freely available; upstream source attribution retained",
+     "url": "https://tflink.net/download/"},
     {"key": "atlasliterature", "name": "GRN Atlas literature curation", "version": "repository snapshot",
      "source_labels": ["Literature", "literature_curated"], "evidence_layers": ["direct_signed", "perturbation_signed"],
      "provides": "Manually curated signed plant regulatory interactions with publication identifiers",
@@ -92,7 +121,7 @@ SOURCES = [
      "provides": "Genomic coordinates and cross-species orthologs (human, mouse, Arabidopsis)",
      "authors": "Altenhoff et al.", "year": 2021, "journal": "Nucleic Acids Research", "volume": "49", "pages": "D373",
      "doi": "10.1093/nar/gkaa1007", "url": "https://omabrowser.org/"},
-    {"key": "plaza", "name": "PLAZA Dicots 4.5", "version": "4.5",
+    {"key": "plaza", "name": "PLAZA Dicots 5", "version": "5",
      "source_labels": ["Inferred:Arabidopsis", "Inferred:Potato", "Inferred:Tobacco"],
      "evidence_layers": ["orthology_transferred", "annotation"],
      "provides": "Plant gene coordinates, synteny, BHIF orthology, descriptions, GO (Arabidopsis, tomato, petunia)",
@@ -119,10 +148,17 @@ SOURCES = [
      "provides": "Tomato SL4.0 assembly & ITAG4.1 gene models (sequence-context windows)",
      "authors": "Hosmani et al.", "year": 2019, "journal": "bioRxiv", "volume": "", "pages": "767764",
      "doi": "10.1101/767764", "url": "https://solgenomics.net/"},
-    {"key": "jaspar2024", "name": "JASPAR 2024", "version": "2024",
+    {"key": "jaspar2026", "name": "JASPAR 2026", "version": "2026",
+     "source_labels": ["JASPAR2026"],
      "provides": "Plant TF binding motif matrices (PWMs) for the promoter scan",
-     "authors": "Rauluseviciute et al.", "year": 2024, "journal": "Nucleic Acids Research", "volume": "52", "pages": "D174",
-     "doi": "10.1093/nar/gkad1059", "url": "https://jaspar.elixir.no/"},
+     "authors": "JASPAR Consortium", "year": 2026, "journal": "", "volume": "", "pages": "",
+     "doi": "", "url": "https://jaspar.elixir.no/"},
+    {"key": "jaspar2024", "name": "JASPAR 2024", "version": "2024",
+     "source_labels": ["JASPAR2024"],
+     "provides": "Historical plant TF binding motif matrices retained on previously generated scans",
+     "authors": "Rauluseviciute et al.", "year": 2024, "journal": "Nucleic Acids Research",
+     "volume": "52", "pages": "D174", "doi": "10.1093/nar/gkad1059",
+     "url": "https://jaspar.elixir.no/"},
     {"key": "mygene", "name": "mygene.info", "version": "v3",
      "provides": "Human/mouse gene names, identifiers, and GO annotations",
      "authors": "Xin et al.", "year": 2016, "journal": "Genome Biology", "volume": "17", "pages": "91",
@@ -141,6 +177,17 @@ def source_label_map():
         for source in SOURCES
         for label in source.get("source_labels", [])
     }
+
+
+def source_key_for_label(label: str):
+    mapped = source_label_map().get(label)
+    if mapped:
+        return mapped
+    return next((
+        source["key"] for source in SOURCES
+        for prefix in source.get("source_label_prefixes", [])
+        if label.startswith(prefix)
+    ), None)
 
 
 def manifest():

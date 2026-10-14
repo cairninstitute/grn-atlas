@@ -109,6 +109,24 @@ def begin_import(
     sha256: str | None,
 ) -> int:
     ensure_schema(conn)
+    if sha256 is None:
+        existing = conn.execute(
+            "SELECT import_run_id FROM source_import_runs WHERE source_name=? "
+            "AND source_version=? AND sha256 IS NULL ORDER BY import_run_id DESC",
+            (source_name, source_version),
+        ).fetchall()
+        if existing:
+            import_run_id = int(existing[0][0])
+            conn.execute(
+                "UPDATE source_import_runs SET status='superseded' WHERE source_name=? "
+                "AND source_version=? AND sha256 IS NULL AND import_run_id<>?",
+                (source_name, source_version, import_run_id),
+            )
+            conn.execute(
+                "UPDATE source_import_runs SET source_url=?,fetched_at=?,status='running',counts='{}' "
+                "WHERE import_run_id=?", (source_url, utc_now(), import_run_id),
+            )
+            return import_run_id
     conn.execute(
         "INSERT INTO source_import_runs "
         "(source_name, source_version, source_url, fetched_at, sha256, status, counts) "

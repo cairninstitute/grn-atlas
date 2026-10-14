@@ -28,7 +28,7 @@ import species_config  # noqa: E402
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 DB_PATH = DATA_DIR / "grn.sqlite3"
-JASPAR = Path("/tmp/jaspar_plants.jaspar")
+JASPAR = Path(__file__).resolve().parents[1] / "data" / "external_sources" / "JASPAR2026_CORE_plants.jaspar"
 
 PVAL = 1e-4
 BG = 0.25
@@ -223,7 +223,7 @@ def main(species, fasta_path):
                             "start": gs, "end": gs + L, "strand": 1 if eff >= 0 else -1,
                             "score": round(sc / SCALE, 3), "p_value": float(pval_of.get(sc, PVAL)),
                             "tier": "JASPAR_scan", "site_confidence": 0.5})
-                        motifs_out[syn_id] = {"motif_id": syn_id, "source": "JASPAR2024",
+                        motifs_out[syn_id] = {"motif_id": syn_id, "source": "JASPAR2026",
                                               "jaspar_id": mid, "tf_gene_id": tf,
                                               "tf_symbol": tf_symbol.get(tf)}
     (DATA_DIR / f"motifs_{species}.json").write_text(json.dumps(list(motifs_out.values()), indent=1))

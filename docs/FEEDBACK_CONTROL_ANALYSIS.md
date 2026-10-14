@@ -33,7 +33,10 @@ and PRR-to-morning regulatory arms. The engine does not silently add those edges
 ## Analysis model
 
 The analysis uses only activation or repression edges whose sign evidence is
-`measured` or `perturbation` by default. It then:
+`measured` or `perturbation` by default. An opt-in evidence-completed view may also
+include conflict-free candidates supported by confirmed direct signed evidence, or
+by independent binding plus signed perturbation evidence. Candidates remain separate
+from the observed interaction table. The analysis then:
 
 1. Computes all strongly connected components (feedback cores) with igraph.
 2. Exhaustively detects signed self-regulation and reciprocal pairs.
@@ -44,6 +47,17 @@ The analysis uses only activation or repression edges whose sign evidence is
    three-repressor loops.
 5. Computes an exact minimum feedback vertex set for small cores and a bounded,
    deterministic greedy approximation for larger cores.
+
+An additional exploratory view can include explicitly labeled putative-direct,
+perturbation-only, and conservatively transferred orthology candidates. A separate
+multilayer view can add reviewed protein-activity, degradation, complex, and
+post-transcriptional regulation without relabeling those mechanisms as transcription.
+Neither view changes the observed graph.
+
+Candidate-impact ranking identifies edges that would close an existing directed return
+path, add feedback-capable genes, or merge current cores. Optional deterministic Monte
+Carlo sampling reports each gene's frequency of membership in a feedback core when
+candidate edges are sampled according to evidence confidence.
 
 Feedback cores are exhaustive for the filtered graph. Longer circuit lists are not:
 every response includes truncation and search-budget fields. A feedback vertex set
@@ -72,6 +86,7 @@ Run or retrieve an analysis with:
 ```text
 POST /api/v1/network/feedback-control
 GET  /api/v1/network/feedback-control/{species}/latest
+GET  /api/v1/network/feedback-control/candidates/{species}
 GET  /api/v1/network/feedback-control/runs/{run_id}/cores/{core_id}/backbone
 GET  /api/v1/network/feedback-control/runs/{run_id}/cores/{core_id}/cycles
 ```
@@ -81,8 +96,11 @@ The POST body accepts `species`, `min_confidence`, `evidence_tiers`,
 `max_search_states`, `max_controllers`, `max_systems`, `max_system_genes`,
 `exact_cycle_max_nodes`, `exact_cycle_max_edges`, `exact_cycle_limit`,
 `cycle_cover_max_edges`, `max_bridge_hops`, `discover_systems`, and `refresh`.
+Set `include_candidates` to compare the evidence-completed hypothesis graph with the
+default observed graph. `include_exploratory`, `include_multilayer`, and
+`probabilistic_samples` activate the separately disclosed extension layers.
 
-The Feedback view presents ranked biological systems first, linked groups of cores,
+The Feedback view presents a network-layer selector, ranked biological systems first, linked groups of cores,
 then the underlying complete backbones, compact cycle covers, filtered cycle queries,
 and exact or approximate controller candidates. Edge color communicates activation or repression;
 it does not imply that a candidate system has demonstrated switching or oscillation.
@@ -112,6 +130,24 @@ The committed benchmark creates 50,000-node synthetic networks with a fixed
 500-node feedback core and progressively larger acyclic backgrounds. This measures
 100-fold edge-volume growth without pretending that a 2.5-million-edge single SCC
 is equivalent to ordinary database growth.
+
+## Evidence-tier benchmark
+
+`backend/scripts/benchmark_feedback_evidence_tiers.py` compares all four graph views
+and writes `docs/benchmarks/feedback-evidence-tiers.json`. In the October 2026 rebuild:
+
+| Species | Observed genes | Supported genes | Exploratory genes | Multilayer genes |
+| --- | ---: | ---: | ---: | ---: |
+| Arabidopsis | 156 | 190 | 227 | 227 |
+| Human | 288 | 895 | 895 | 900 |
+| Mouse | 350 | 352 | 352 | 352 |
+| Rice | 25 | 25 | 25 | 25 |
+
+Arabidopsis has 75 individually cycle-closing candidate edges in the current candidate
+pool. The count of cores can fall while feedback membership rises because added edges
+merge previously separate strongly connected components. Conservative orthology
+transfer admitted no edge in this rebuild; that zero is retained rather than relaxing
+the evidence rule. Human multilayer mode adds reviewed SIGNOR post-transcriptional edges.
 
 | Scale | Signed edges | Analysis time | Peak RSS |
 | ---: | ---: | ---: | ---: |

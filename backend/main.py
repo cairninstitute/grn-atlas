@@ -31,6 +31,7 @@ import consensus
 import sequence_design
 import advanced
 import feedback_control
+import candidate_impact
 from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -264,6 +265,10 @@ class FeedbackControlRequest(BaseModel):
     cycle_cover_max_edges: int = Field(1_000, ge=10, le=10_000)
     max_bridge_hops: int = Field(3, ge=1, le=5)
     discover_systems: bool = True
+    include_candidates: bool = False
+    include_exploratory: bool = False
+    include_multilayer: bool = False
+    probabilistic_samples: int = Field(0, ge=0, le=200)
     refresh: bool = False
 
     @field_validator("evidence_tiers")
@@ -1402,6 +1407,10 @@ async def feedback_control_analysis(request: FeedbackControlRequest):
         cycle_cover_max_edges=request.cycle_cover_max_edges,
         max_bridge_hops=request.max_bridge_hops,
         discover_systems=request.discover_systems,
+        include_candidates=request.include_candidates,
+        include_exploratory=request.include_exploratory,
+        include_multilayer=request.include_multilayer,
+        probabilistic_samples=request.probabilistic_samples,
     )
     store_path = FilePath(
         os.environ.get("GRN_FEEDBACK_DB") or (DATA_DIR / "feedback_analysis.sqlite3")
@@ -1414,6 +1423,27 @@ async def feedback_control_analysis(request: FeedbackControlRequest):
     except sqlite3.Error as exc:
         logger.exception("Feedback-control analysis failed")
         raise HTTPException(status_code=500, detail=f"Feedback analysis storage failed: {exc}") from exc
+
+
+@app.get("/api/v1/network/feedback-control/candidates/{species}")
+async def feedback_candidate_impacts(
+    species: str,
+    limit: int = Query(50, ge=1, le=500),
+    refresh: bool = Query(False),
+):
+    """Rank candidate edges by the feedback structure each edge would create."""
+    normalized = _normalize_species_input(species)
+    if refresh:
+        candidate_impact.rank_candidates(db.conn, normalized)
+    rows = candidate_impact.top_impacts(db.conn, normalized, limit)
+    return {
+        "species": normalized,
+        "candidates": rows,
+        "boundary": (
+            "Impact ranks structural cycle closure; it does not increase biological evidence "
+            "for an edge and is intended to prioritize validation."
+        ),
+    }
 
 
 @app.get("/api/v1/network/feedback-control/runs/{run_id}/cores/{core_id}/backbone")

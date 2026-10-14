@@ -178,7 +178,10 @@ def _subgraph_edges(
             "sign": "repression" if edge["repression"] else "activation",
             "regulation_type": "repression" if edge["repression"] else "activation",
             "confidence": round(float(edge["confidence"]), 4),
-            "sign_evidence": "measured" if edge["measured"] else "perturbation",
+            "sign_evidence": (
+                edge["evidence"] if "evidence" in graph.es.attribute_names()
+                else "measured" if edge["measured"] else "perturbation"
+            ),
         })
     return sorted(involved), edges
 

@@ -44,6 +44,8 @@ Expected coverage (as of 2026-09-02):
 """
 import sqlite3
 import re
+import gzip
+import signal
 import urllib.request
 import json
 import sys
@@ -283,20 +285,17 @@ def stage_ensembl_biomart(conn):
             ).fetchall()
 
             updates = []
+            base_to_name = {
+                eid.rsplit(".", 1)[0] if "." in eid else eid: ename
+                for eid, ename in id_to_name.items()
+            }
             for (gid,) in genes:
-                if gid in id_to_name:
-                    updates.append((id_to_name[gid], gid))
-                    if species == "arabidopsis":
-                        new_arab_names[gid] = id_to_name[gid]
-                    continue
                 base = gid.rsplit(".", 1)[0] if "." in gid else gid
-                for eid, ename in id_to_name.items():
-                    ebase = eid.rsplit(".", 1)[0] if "." in eid else eid
-                    if base == ebase:
-                        updates.append((ename, gid))
-                        if species == "arabidopsis":
-                            new_arab_names[gid] = ename
-                        break
+                name = id_to_name.get(gid) or base_to_name.get(base)
+                if name:
+                    updates.append((name, gid))
+                    if species == "arabidopsis":
+                        new_arab_names[gid] = name
 
             if updates:
                 conn.executemany(
@@ -331,13 +330,22 @@ def stage_uniprot(conn):
             "https://rest.uniprot.org/uniprotkb/stream?"
             "query=organism_id:3702+AND+database:TAIR&"
             "fields=xref_tair,gene_names&"
-            "format=tsv&size=500"
+            "format=tsv&compressed=true"
         )
         req = urllib.request.Request(
             url, headers={"User-Agent": "Darwin-GRN-Atlas/1.0"}
         )
-        resp = urllib.request.urlopen(req, timeout=120)
-        content = resp.read().decode()
+        def stop_stream(_signum, _frame):
+            raise TimeoutError("UniProt stream exceeded 60 seconds")
+
+        previous_handler = signal.signal(signal.SIGALRM, stop_stream)
+        signal.alarm(60)
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                content = gzip.decompress(resp.read()).decode()
+        finally:
+            signal.alarm(0)
+            signal.signal(signal.SIGALRM, previous_handler)
         lines = content.strip().split("\n")
         print(f"  UniProt returned {len(lines) - 1} entries")
 

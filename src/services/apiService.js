@@ -632,11 +632,28 @@ export const analysisAPI = {
         cycle_cover_max_edges: options.cycleCoverMaxEdges || 1000,
         max_bridge_hops: options.maxBridgeHops || 3,
         discover_systems: options.discoverSystems ?? true,
+        include_candidates: options.includeCandidates ?? false,
+        include_exploratory: options.includeExploratory ?? false,
+        include_multilayer: options.includeMultilayer ?? false,
+        probabilistic_samples: options.probabilisticSamples || 0,
         refresh: options.refresh || false,
       }),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.detail || 'Feedback analysis failed');
+    return data;
+  },
+
+  feedbackCandidateImpacts: async (species, options = {}) => {
+    const params = new URLSearchParams({
+      limit: String(options.limit || 25),
+      refresh: String(options.refresh || false),
+    });
+    const response = await fetch(
+      `${API_BASE}/network/feedback-control/candidates/${encodeURIComponent(species)}?${params}`,
+    );
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Candidate impact query failed');
     return data;
   },
 

@@ -1,6 +1,7 @@
 import sqlite3
 
-from external_evidence import benchmark_source, ensure_schema, gene_resolver, replace_source_evidence
+from external_evidence import (begin_import, benchmark_source, ensure_schema, finish_import,
+                               gene_resolver, replace_source_evidence)
 
 
 def fixture_db():
@@ -66,3 +67,15 @@ def test_source_replacement_can_be_rolled_back():
     assert conn.execute(
         "SELECT record_key FROM regulatory_evidence WHERE source_name='Example'"
     ).fetchall() == [("original",)]
+
+
+def test_hashless_import_reuses_latest_run_without_leaving_running_duplicates():
+    conn = fixture_db()
+    first = begin_import(conn, "Example", "1", "https://example.test", None)
+    finish_import(conn, first, {"stored": 1})
+    second = begin_import(conn, "Example", "1", "https://example.test", None)
+    finish_import(conn, second, {"stored": 2})
+    assert second == first
+    assert conn.execute(
+        "SELECT status FROM source_import_runs WHERE import_run_id=?", (second,)
+    ).fetchone()[0] == "complete"

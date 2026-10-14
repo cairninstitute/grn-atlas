@@ -25,7 +25,7 @@ DATA_DIR = Path(__file__).parent.parent / "data"
 WORK_DIR = Path("/tmp/blastwork")
 TOBACCO_CDS_GZ = WORK_DIR / "tobacco_cds.fna.gz"
 
-PEPPER_CDS_URL = ("https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_04_5/Fasta/"
+PEPPER_CDS_URL = ("https://ftp.psb.ugent.be/pub/plaza/plaza_public_dicots_05/Fasta/"
                    "cds.selected_transcript.can.fasta.gz")
 PEPPER_CDS_GZ = DATA_DIR / "expr" / "can_cds.fasta.gz"
 

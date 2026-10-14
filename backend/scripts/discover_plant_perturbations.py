@@ -11,13 +11,29 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 URL = "https://www.ebi.ac.uk/gxa/json/experiments"
-SPECIES = {"rice": "Oryza sativa", "tomato": "Solanum lycopersicum"}
+FALLBACK_URL = "https://ftp.ebi.ac.uk/pub/databases/microarray/data/atlas/experiments.json"
+SPECIES = {
+    "arabidopsis": "Arabidopsis thaliana",
+    "rice": "Oryza sativa",
+    "tomato": "Solanum lycopersicum",
+    "potato": "Solanum tuberosum",
+    "pepper": "Capsicum annuum",
+    "petunia": "Petunia axillaris",
+    "human": "Homo sapiens",
+    "mouse": "Mus musculus",
+}
 PERTURBATION_TERMS = (
     "knockout", "knockdown", "mutant", "overexpress", "silenc", "crispr", "transgenic",
 )
 REGULATOR_PATTERNS = {
+    "arabidopsis": re.compile(r"\b(?:AT[1-5CM]G\d{5}|[A-Z][A-Z0-9-]{1,15})\b"),
     "rice": re.compile(r"\b(?:Os[A-Za-z0-9-]+|[A-Za-z0-9-]+(?:TF|ZIP|MYB|NAC|WRKY)\d*)\b"),
     "tomato": re.compile(r"\b(?:Sl[A-Za-z0-9-]+|[A-Za-z0-9-]+(?:TF|ZIP|MYB|NAC|WRKY)\d*)\b"),
+    "potato": re.compile(r"\b(?:St[A-Za-z0-9-]+|PGSC\w+|[A-Za-z0-9-]+(?:TF|MYB|NAC|WRKY)\d*)\b"),
+    "pepper": re.compile(r"\b(?:Ca[A-Za-z0-9-]+|CA\w+|[A-Za-z0-9-]+(?:TF|MYB|NAC|WRKY)\d*)\b"),
+    "petunia": re.compile(r"\b(?:Ph[A-Za-z0-9-]+|Peaxi\w+|[A-Za-z0-9-]+(?:TF|MYB|NAC|WRKY)\d*)\b"),
+    "human": re.compile(r"\b[A-Z][A-Z0-9-]{1,15}\b"),
+    "mouse": re.compile(r"\b[A-Z][A-Za-z0-9-]{1,15}\b"),
 }
 
 
@@ -73,9 +89,20 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    request = urllib.request.Request(URL, headers={"User-Agent": "grn-atlas/1.0"})
-    with urllib.request.urlopen(request, timeout=90) as response:
-        report = discover(json.load(response))
+    payload = None
+    source_url = URL
+    for source_url in (URL, FALLBACK_URL):
+        try:
+            request = urllib.request.Request(source_url, headers={"User-Agent": "grn-atlas/1.0"})
+            with urllib.request.urlopen(request, timeout=90) as response:
+                payload = json.load(response)
+            break
+        except Exception:
+            continue
+    if payload is None:
+        raise RuntimeError("Expression Atlas catalogue and FTP fallback are unavailable")
+    report = discover(payload)
+    report["source_url"] = source_url
     text = json.dumps(report, indent=2, sort_keys=True) + "\n"
     print(text, end="")
     if args.output:

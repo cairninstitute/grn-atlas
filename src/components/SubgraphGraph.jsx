@@ -28,6 +28,9 @@ export default function SubgraphGraph({ nodes, edges, onNodeClick, tfStyle = 'de
           confidence: e.confidence || 0.5,
           source_databases: e.source_databases || [],
           inferred: e.inferred ? 1 : 0,
+          evidence_layer: e.sign_evidence || e.evidence || '',
+          evidence_tier: e.evidence_tier || '',
+          regulatory_layer: e.regulatory_layer || 'transcriptional',
         },
       })),
     ];
@@ -53,6 +56,22 @@ export default function SubgraphGraph({ nodes, edges, onNodeClick, tfStyle = 'de
           'z-index': '5'
         }
       }] : []),
+      {
+        selector: 'edge[evidence_layer="candidate"]',
+        style: {
+          'line-style': 'dashed',
+          'opacity': 0.52,
+          'width': 2,
+        },
+      },
+      {
+        selector: 'edge[evidence_tier="exploratory"]',
+        style: { 'line-style': 'dotted', opacity: 0.68 },
+      },
+      {
+        selector: 'edge[evidence_layer="multilayer"]',
+        style: { 'line-style': 'dashed', width: 3, opacity: 0.82 },
+      },
     ];
 
     const layoutName = nodes.length <= 12 ? 'circle' : 'cose';

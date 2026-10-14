@@ -185,6 +185,27 @@ def test_feedback_analysis_chains_cores_through_acyclic_bridge_genes():
     assert result["core_groups"][0]["core_count"] == 2
 
 
+def test_probabilistic_membership_and_multilayer_edges_are_explicit():
+    conn = _fixture_connection()
+    conn.executescript("""
+        CREATE TABLE regulatory_layer_edges (
+            species TEXT, source_id TEXT, target_id TEXT, relation_type TEXT,
+            regulatory_layer TEXT, confidence REAL, evidence_source TEXT,
+            pmids TEXT, context TEXT, metadata TEXT, imported_at TEXT
+        );
+        INSERT INTO regulatory_layer_edges VALUES
+            ('test','H','G','repression','protein_degradation',0.9,'fixture','[]','{}','{}','now');
+    """)
+    result = feedback_control.analyze_feedback(
+        conn, "test", feedback_control.FeedbackParameters(
+            include_multilayer=True, probabilistic_samples=8,
+        ),
+    )
+    assert result["graph"]["includes_multilayer_edges"] is True
+    assert result["probabilistic_core_membership"]["samples"] == 8
+    assert result["summary"]["feedback_genes"] == 8
+
+
 def test_feedback_store_normalizes_results_and_reuses_cache(tmp_path):
     conn = _fixture_connection()
     store = feedback_control.FeedbackStore(tmp_path / "feedback.sqlite3")

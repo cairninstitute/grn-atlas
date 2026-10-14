@@ -44,7 +44,10 @@ def load_expression(species):
     path = DATA_DIR / f"expression_{species}.json.gz"
     if not path.exists():
         return None
-    return json.loads(gzip.open(path, "rt").read()).get("genes")
+    genes = json.loads(gzip.open(path, "rt").read()).get("genes") or {}
+    for gene_id, values in list(genes.items()):
+        genes.setdefault(gene_id.rsplit(".", 1)[0], values)
+    return genes
 
 
 def validate_perturbation_signs(conn_path, baseline, min_abs=1.0):
@@ -121,7 +124,9 @@ def main():
             continue
         evaluated = correct = 0
         for r in rows:
-            xe, ye = genes.get(r["source_id"]), genes.get(r["target_id"])
+            source_id, target_id = r["source_id"], r["target_id"]
+            xe = genes.get(source_id) or genes.get(source_id.rsplit(".", 1)[0])
+            ye = genes.get(target_id) or genes.get(target_id.rsplit(".", 1)[0])
             if not xe or not ye or len(xe) != len(ye) or len(xe) < 4:
                 continue
             rr = pearson(xe, ye)

@@ -166,6 +166,19 @@
 .feedback-legend span:last-child { margin-left: auto; }
 .feedback-empty { display: flex; flex-direction: column; gap: 4px; }
 .feedback-footer { padding: 12px 2px 0; color: #60747a; font-size: 10px; }
+.feedback-boundary.exploratory { border-color: #bd7b45; background: #fff6e8; color: #684324; }
+.feedback-stability { margin: 14px 0; padding: 16px 18px; border: 1px solid #bfc9c4; background: linear-gradient(115deg, rgba(22,135,122,.08), rgba(255,255,255,.55)); }
+.feedback-stability > div:first-child { display: flex; justify-content: space-between; gap: 16px; color: #126b61; font-size: 10px; letter-spacing: .08em; }
+.feedback-stability p { margin: 6px 0 12px; color: #60747a; font-size: 11px; }
+.feedback-stability-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.feedback-stability-list span { display: flex; gap: 8px; padding: 5px 8px; border: 1px solid #c7d3cf; background: rgba(255,255,255,.72); font-size: 9px; }
+.candidate-impact-panel { margin: 18px 0; }
+.candidate-impact-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid #c9d0cc; border-left: 1px solid #c9d0cc; }
+.candidate-impact-grid > div { position: relative; display: flex; flex-direction: column; gap: 3px; min-height: 92px; padding: 12px 42px 12px 12px; border-right: 1px solid #c9d0cc; border-bottom: 1px solid #c9d0cc; background: rgba(255,255,255,.52); }
+.candidate-impact-grid strong { font-family: Georgia, serif; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
+.candidate-impact-grid span { color: #9a4f32; font-size: 9px; text-transform: uppercase; }
+.candidate-impact-grid small { color: #60747a; font-size: 9px; }
+.candidate-impact-grid b { position: absolute; top: 12px; right: 10px; color: #126b61; font-size: 11px; }
 
 @media (max-width: 1050px) {
   .feedback-header { align-items: flex-start; flex-direction: column; }
@@ -187,6 +200,7 @@
   .feedback-controls label { flex: 1 1 140px; }
   .feedback-controls select { width: 100%; }
   .feedback-circuit-area { grid-template-columns: 1fr; }
+  .candidate-impact-grid { grid-template-columns: 1fr; }
   .core-relationship-list { grid-template-columns: 1fr; }
   .feedback-layer-tabs { overflow-x: auto; padding-left: 12px; }
   .feedback-layer-tabs button { white-space: nowrap; }

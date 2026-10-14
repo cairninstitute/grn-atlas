@@ -29,6 +29,16 @@ def main():
     parser.add_argument("--exact-cycle-limit", type=int, default=50_000)
     parser.add_argument("--cycle-cover-max-edges", type=int, default=1_000)
     parser.add_argument("--max-bridge-hops", type=int, default=3)
+    parser.add_argument(
+        "--include-candidates", action="store_true",
+        help="include conflict-free, multi-layer evidence candidates",
+    )
+    parser.add_argument("--include-exploratory", action="store_true",
+                        help="include lower-confidence putative, perturbation-only, and conserved candidates")
+    parser.add_argument("--include-multilayer", action="store_true",
+                        help="include reviewed protein/post-transcriptional control edges")
+    parser.add_argument("--probabilistic-samples", type=int, default=0,
+                        help="Monte Carlo samples for candidate-dependent core membership")
     parser.add_argument("--topology-only", action="store_true")
     parser.add_argument("--refresh", action="store_true")
     args = parser.parse_args()
@@ -49,6 +59,10 @@ def main():
         "exact_cycle_limit": args.exact_cycle_limit,
         "cycle_cover_max_edges": args.cycle_cover_max_edges,
         "max_bridge_hops": args.max_bridge_hops,
+        "include_candidates": args.include_candidates,
+        "include_exploratory": args.include_exploratory,
+        "include_multilayer": args.include_multilayer,
+        "probabilistic_samples": args.probabilistic_samples,
         "discover_systems": not args.topology_only,
         "refresh": args.refresh,
     }
@@ -75,6 +89,10 @@ def main():
             exact_cycle_limit=args.exact_cycle_limit,
             cycle_cover_max_edges=args.cycle_cover_max_edges,
             max_bridge_hops=args.max_bridge_hops,
+            include_candidates=args.include_candidates,
+            include_exploratory=args.include_exploratory,
+            include_multilayer=args.include_multilayer,
+            probabilistic_samples=args.probabilistic_samples,
             discover_systems=not args.topology_only,
         )
         store = feedback_control.FeedbackStore(

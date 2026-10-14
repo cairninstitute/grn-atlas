@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import random
 import sqlite3
 from collections import Counter, deque
 from dataclasses import asdict, dataclass
@@ -18,7 +19,7 @@ import networkx as nx
 import control_systems
 
 
-ALGORITHM_VERSION = "feedback-control-v3"
+ALGORITHM_VERSION = "feedback-control-v5"
 STRONG_SIGN_EVIDENCE = ("measured", "perturbation")
 
 
@@ -41,6 +42,10 @@ class FeedbackParameters:
     exact_cycle_limit: int = 50_000
     cycle_cover_max_edges: int = 1_000
     max_bridge_hops: int = 3
+    include_candidates: bool = False
+    include_exploratory: bool = False
+    include_multilayer: bool = False
+    probabilistic_samples: int = 0
 
     def normalized(self) -> dict[str, Any]:
         data = asdict(self)
@@ -93,7 +98,11 @@ def _circuit_score(edges: list[dict[str, Any]]) -> tuple[float, str, dict[str, f
     confidences = [float(edge["confidence"]) for edge in edges]
     weakest = min(confidences)
     geometric = math.exp(sum(math.log(max(value, 1e-9)) for value in confidences) / len(confidences))
-    evidence_values = [1.0 if edge["sign_evidence"] == "measured" else 0.82 for edge in edges]
+    evidence_values = [
+        1.0 if edge["sign_evidence"] == "measured" else
+        0.82 if edge["sign_evidence"] == "perturbation" else 0.65
+        for edge in edges
+    ]
     evidence = min(evidence_values)
     independent_sources = min(1.0, sum(min(len(edge["sources"]), 3) / 3 for edge in edges) / len(edges))
     score = 0.50 * weakest + 0.25 * geometric + 0.20 * evidence + 0.05 * independent_sources
@@ -115,16 +124,23 @@ def _edge_record(graph: ig.Graph, source: int, target: int) -> dict[str, Any]:
     edge_id = graph.get_eid(source, target, directed=True, error=False)
     if edge_id < 0:
         raise KeyError(f"missing cycle edge {source}->{target}")
-    return {
+    record = {
         "source": graph.vs[source]["gene_id"],
         "target": graph.vs[target]["gene_id"],
         "sign": "repression" if graph.es[edge_id]["repression"] else "activation",
         "regulation_type": "repression" if graph.es[edge_id]["repression"] else "activation",
-        "sign_evidence": "measured" if graph.es[edge_id]["measured"] else "perturbation",
+        "sign_evidence": (
+            graph.es[edge_id]["evidence"]
+            if "evidence" in graph.es.attribute_names()
+            else "measured" if graph.es[edge_id]["measured"] else "perturbation"
+        ),
         "confidence": round(float(graph.es[edge_id]["confidence"]), 4),
         "sources": [],
         "pmids": [],
     }
+    if "regulatory_layer" in graph.es.attribute_names():
+        record["regulatory_layer"] = graph.es[edge_id]["regulatory_layer"]
+    return record
 
 
 def _cycle_record(
@@ -469,12 +485,110 @@ def _load_signed_graph(
             "confidence": [float(row[4]) for row in rows],
             "repression": [row[2] == "repression" for row in rows],
             "measured": [row[3] == "measured" for row in rows],
+            "evidence": [row[3] for row in rows],
+            "probability": [1.0] * len(rows),
+            "regulatory_layer": ["transcriptional"] * len(rows),
         })
         for row in rows:
             digest.update(
                 f"{row[0]}\0{row[1]}\0{row[2]}\0{row[3]}\0{float(row[4]):.8f}\n".encode("utf-8")
             )
+    if (params.include_candidates or params.include_exploratory) and conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='regulatory_edge_candidates'"
+    ).fetchone():
+        observed_pairs = {
+            (graph.vs[edge.source]["gene_id"], graph.vs[edge.target]["gene_id"])
+            for edge in graph.es
+        }
+        columns = {row[1] for row in conn.execute("PRAGMA table_info(regulatory_edge_candidates)")}
+        if "evidence_tier" in columns:
+            tiers = ("supported", "exploratory") if params.include_exploratory else ("supported",)
+            tier_placeholders = ",".join("?" for _ in tiers)
+            candidate_rows = conn.execute(
+                f"SELECT source_id,target_id,relation_type,confidence,evidence_tier,"
+                f"inclusion_probability FROM regulatory_edge_candidates "
+                f"WHERE species=? AND status='candidate' AND evidence_tier IN ({tier_placeholders}) "
+                f"AND confidence>=? ORDER BY source_id,target_id",
+                (species, *tiers, params.min_confidence),
+            ).fetchall()
+        else:
+            candidate_rows = [(*row, "supported", float(row[3])) for row in conn.execute(
+                "SELECT source_id,target_id,relation_type,confidence "
+                "FROM regulatory_edge_candidates WHERE species=? AND status='candidate' "
+                "AND confidence>=? ORDER BY source_id,target_id", (species, params.min_confidence),
+            )]
+        candidate_rows = [
+            row for row in candidate_rows
+            if row[0] in index and row[1] in index and (row[0], row[1]) not in observed_pairs
+        ]
+        if candidate_rows:
+            graph.add_edges(
+                [(index[row[0]], index[row[1]]) for row in candidate_rows],
+                attributes={
+                    "confidence": [float(row[3]) for row in candidate_rows],
+                    "repression": [row[2] == "repression" for row in candidate_rows],
+                    "measured": [False] * len(candidate_rows),
+                    "evidence": ["candidate"] * len(candidate_rows),
+                    "probability": [float(row[5]) for row in candidate_rows],
+                    "regulatory_layer": ["transcriptional"] * len(candidate_rows),
+                },
+            )
+            for row in candidate_rows:
+                digest.update(
+                    f"candidate\0{row[4]}\0{row[0]}\0{row[1]}\0{row[2]}\0{float(row[3]):.8f}\n".encode()
+                )
+    if params.include_multilayer and conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='regulatory_layer_edges'"
+    ).fetchone():
+        layer_rows = conn.execute(
+            "SELECT source_id,target_id,relation_type,confidence,regulatory_layer "
+            "FROM regulatory_layer_edges WHERE species=? AND confidence>=? ORDER BY source_id,target_id",
+            (species, params.min_confidence),
+        ).fetchall()
+        present_pairs = {
+            (graph.vs[edge.source]["gene_id"], graph.vs[edge.target]["gene_id"])
+            for edge in graph.es
+        }
+        layer_rows = [
+            row for row in layer_rows
+            if row[0] in index and row[1] in index and (row[0], row[1]) not in present_pairs
+        ]
+        if layer_rows:
+            graph.add_edges([(index[row[0]], index[row[1]]) for row in layer_rows], attributes={
+                "confidence": [float(row[3]) for row in layer_rows],
+                "repression": [row[2] == "repression" for row in layer_rows],
+                "measured": [True] * len(layer_rows),
+                "evidence": ["multilayer"] * len(layer_rows),
+                "probability": [1.0] * len(layer_rows),
+                "regulatory_layer": [row[4] for row in layer_rows],
+            })
+            for row in layer_rows:
+                digest.update(f"multilayer\0{row[4]}\0{row[0]}\0{row[1]}\0{row[2]}\n".encode())
     return graph, genes, digest.hexdigest()
+
+
+def _probabilistic_membership(graph: ig.Graph, samples: int, seed: int = 17) -> dict[str, Any]:
+    """Estimate feedback membership while sampling uncertain candidate edges."""
+    if samples <= 0:
+        return {"samples": 0, "memberships": []}
+    rng = random.Random(seed)
+    uncertain = [
+        edge.index for edge in graph.es
+        if edge["evidence"] == "candidate" and float(edge["probability"]) < 1.0
+    ]
+    counts: Counter[str] = Counter()
+    for _ in range(samples):
+        sampled = graph.copy()
+        remove = [index for index in uncertain if rng.random() > float(graph.es[index]["probability"])]
+        if remove:
+            sampled.delete_edges(remove)
+        for component in _cyclic_components(sampled):
+            counts.update(sampled.vs[index]["gene_id"] for index in component)
+    memberships = [
+        {"gene_id": gene_id, "probability": round(count / samples, 4)}
+        for gene_id, count in sorted(counts.items(), key=lambda item: (-item[1], item[0]))
+    ]
+    return {"samples": samples, "seed": seed, "memberships": memberships}
 
 
 def _discover_core_relationships(
@@ -638,6 +752,26 @@ def _hydrate_edge_provenance(
         if row:
             edge["sources"] = _json_list(row[0])
             edge["pmids"] = _json_list(row[1])
+        elif edge.get("sign_evidence") == "candidate":
+            candidate = conn.execute(
+                "SELECT evidence_sources,support_class,evidence_tier FROM regulatory_edge_candidates "
+                "WHERE source_id=? AND target_id=? AND relation_type=? AND status='candidate'",
+                (edge["source"], edge["target"], edge["sign"]),
+            ).fetchone()
+            if candidate:
+                edge["sources"] = _json_list(candidate[0])
+                edge["support_class"] = candidate[1]
+                edge["evidence_tier"] = candidate[2]
+        elif edge.get("sign_evidence") == "multilayer":
+            layered = conn.execute(
+                "SELECT evidence_source,pmids,regulatory_layer FROM regulatory_layer_edges "
+                "WHERE source_id=? AND target_id=? AND relation_type=? ORDER BY confidence DESC LIMIT 1",
+                (edge["source"], edge["target"], edge["sign"]),
+            ).fetchone()
+            if layered:
+                edge["sources"] = [layered[0]]
+                edge["pmids"] = _json_list(layered[1])
+                edge["regulatory_layer"] = layered[2]
 
 
 def analyze_feedback(
@@ -648,6 +782,13 @@ def analyze_feedback(
     """Analyze bounded representative feedback circuits in one species GRN."""
     params = params or FeedbackParameters()
     graph, genes, graph_hash = _load_signed_graph(conn, species, params)
+    probabilistic = _probabilistic_membership(graph, params.probabilistic_samples)
+    membership_by_gene = {
+        row["gene_id"]: row["probability"] for row in probabilistic["memberships"]
+    }
+    for gene_id, probability in membership_by_gene.items():
+        if gene_id in genes:
+            genes[gene_id]["core_membership_probability"] = probability
     parameter_json = json.dumps(params.normalized(), sort_keys=True, separators=(",", ":"))
     run_id = hashlib.sha256(
         f"{ALGORITHM_VERSION}|{species}|{graph_hash}|{parameter_json}".encode("utf-8")
@@ -661,7 +802,12 @@ def analyze_feedback(
             "parameters": params.normalized(),
             "graph": {
                 "nodes": graph.vcount(), "edges": 0, "graph_hash": graph_hash,
-                "signed_evidence_only": True,
+                "signed_evidence_only": not (
+                    params.include_candidates or params.include_exploratory or params.include_multilayer
+                ),
+                "includes_evidence_candidates": params.include_candidates,
+                "includes_exploratory_candidates": params.include_exploratory,
+                "includes_multilayer_edges": params.include_multilayer,
             },
             "summary": {
                 "feedback_cores": 0, "feedback_cores_returned": 0,
@@ -675,6 +821,7 @@ def analyze_feedback(
             "systems": [],
             "core_relationships": [],
             "core_groups": [],
+            "probabilistic_core_membership": probabilistic,
             "truncation": {"cores": False, "circuits": False, "search": False},
             "evidence_boundary": "No signed edges passed the requested evidence filters.",
         }
@@ -814,7 +961,12 @@ def analyze_feedback(
             "nodes": graph.vcount(),
             "edges": graph.ecount(),
             "graph_hash": graph_hash,
-            "signed_evidence_only": True,
+            "signed_evidence_only": not (
+                params.include_candidates or params.include_exploratory or params.include_multilayer
+            ),
+            "includes_evidence_candidates": params.include_candidates,
+            "includes_exploratory_candidates": params.include_exploratory,
+            "includes_multilayer_edges": params.include_multilayer,
         },
         "summary": {
             "feedback_cores": len(component_rows),
@@ -840,6 +992,7 @@ def analyze_feedback(
         "cores": cores,
         "core_relationships": core_relationships,
         "core_groups": core_groups,
+        "probabilistic_core_membership": probabilistic,
         "truncation": {
             "cores": len(component_rows) > len(cores),
             "circuits": circuits_globally_truncated or any(

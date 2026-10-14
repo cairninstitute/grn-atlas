@@ -17,7 +17,10 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-JASPAR_FILE = Path(sys.argv[1] if len(sys.argv) > 1 else "/tmp/jaspar_plants.jaspar")
+JASPAR_FILE = Path(
+    sys.argv[1] if len(sys.argv) > 1 else
+    Path(__file__).resolve().parents[1] / "data" / "external_sources" / "JASPAR2026_CORE_plants.jaspar"
+)
 OUT = Path("/tmp/blastwork/jaspar_tf.fasta")
 UA = {"User-Agent": "grn-atlas-build/1.0"}
 
