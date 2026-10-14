@@ -39,7 +39,8 @@ def main():
     tables = {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     required_tables = {
         "genes", "interactions", "perturbation_observations",
-        "regulatory_evidence", "source_import_runs",
+        "regulatory_evidence", "source_import_runs", "regulatory_edge_candidates",
+        "regulatory_candidate_impacts",
     }
     missing_tables = sorted(required_tables - tables)
     if missing_tables:
@@ -66,7 +67,13 @@ def main():
                 "SELECT COUNT(*) FROM perturbation_observations WHERE dataset_label='knocktf' AND species='mouse'",
                 (), 300_000,
             ),
-            "external_evidence": ("SELECT COUNT(*) FROM regulatory_evidence", (), 50_000),
+            "external_evidence": ("SELECT COUNT(*) FROM regulatory_evidence", (), 1_000_000),
+            "regulatory_candidates": (
+                "SELECT COUNT(*) FROM regulatory_edge_candidates", (), 150_000,
+            ),
+            "ranked_candidate_impacts": (
+                "SELECT COUNT(*) FROM regulatory_candidate_impacts", (), 35_000,
+            ),
         }
         for label, (query, params, minimum) in checks.items():
             count = scalar(conn, query, params)
@@ -74,15 +81,33 @@ def main():
             if count < minimum:
                 failures.append(f"{label}: {count:,}; expected at least {minimum:,}")
 
-        imports = {
-            name: {"status": status, "counts": json.loads(raw_counts)}
-            for name, status, raw_counts in conn.execute(
-                "SELECT source_name, status, counts FROM source_import_runs"
-            )
+        imports = {}
+        for name, status, raw_counts in conn.execute(
+            "SELECT source_name, status, counts FROM source_import_runs ORDER BY import_run_id"
+        ):
+            imports[name] = {"status": status, "counts": json.loads(raw_counts)}
+
+        required_sources = {
+            "CollecTRI": 40_000,
+            "SIGNOR": 2_000,
+            "AGRIS AtRegNet": 3_500,
+            "AGRIS AtRegNet expanded": 6_000,
+            "TFLink small-scale": 15_000,
+            "ChIP-Atlas": 800_000,
+            "Expression Atlas reviewed perturbations": 25,
+            "ConnecTF experiment evidence": 140_000,
+            "Conserved signed orthology": 0,
         }
-        for source in ("CollecTRI", "SIGNOR", "AGRIS AtRegNet"):
+        for source, minimum in required_sources.items():
             if imports.get(source, {}).get("status") != "complete":
                 failures.append(f"{source}: no complete source import run")
+                continue
+            stored = scalar(
+                conn, "SELECT COUNT(*) FROM regulatory_evidence WHERE source_name=?", (source,)
+            )
+            counts[f"source:{source}"] = stored
+            if stored < minimum:
+                failures.append(f"{source}: {stored:,} evidence rows; expected at least {minimum:,}")
     else:
         imports = {}
     conn.close()

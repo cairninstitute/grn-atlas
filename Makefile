@@ -14,7 +14,7 @@ help:
 	@echo "make chromatin-peaks - download+load Arabidopsis DAP-seq peaks (Plant Cistrome, needs make db + network)"
 	@echo "make knocktf        - download+load KnockTF LOF perturbations, re-derive signs (needs make db + network)"
 	@echo "make knocktf-all    - stream/load KnockTF for Arabidopsis, human, and mouse (large download)"
-	@echo "make external-regulation - load CollecTRI, SIGNOR transcriptional, and strict AGRIS evidence"
+	@echo "make external-regulation - load CollecTRI, SIGNOR, and strict + expanded AGRIS evidence"
 	@echo "make evidence-expansion - load ChIP-Atlas and TFLink; audit PCBase and literature sources"
 	@echo "make qualify-evidence - build conflict-aware candidates and source qualification report"
 	@echo "make verify-data    - fail unless all release data layers and minimum coverage are present"
@@ -28,9 +28,9 @@ help:
 	@echo "make test           - run backend + frontend tests"
 	@echo "make test-skills    - run agent skill tests (342 direct-mode tests)"
 
-# One command to take a fresh clone to the verified release source-data profile. Each step is individually
-# re-runnable; the optional network layers (enrich/allele-pwms/chromatin-peaks) self-skip
-# if a download is unavailable, so bootstrap never hard-fails on an offline extra.
+# One command to take a fresh clone to the verified release source-data profile. Each step is
+# individually re-runnable. Some download stages self-skip on transient failures, but the final
+# verifier rejects a degraded build that is missing a release-required layer.
 bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion qualify-evidence allele-pwms chromatin-peaks verify-data
 	@echo ""
 	@echo "=== GRN Atlas bootstrap complete ==="

@@ -51,7 +51,8 @@ LLM/coverage status is:
 
 Third-party data is **not committed** (see LICENSE). The one-command path is **`make bootstrap`**
 (`setup` → `fetch` → `db` → `external-regulation` → `enrich` → `knocktf-all` →
-`allele-pwms` → `chromatin-peaks` → `verify-data`), which fetches every
+`evidence-expansion` → `qualify-evidence` → `allele-pwms` → `chromatin-peaks` →
+`verify-data`), which fetches every
 third-party download automatically. The individual stages, for reference:
 
 ```bash
@@ -143,7 +144,7 @@ PlantRegMap including tobacco orthologs), `all` (also attempts the heavy layers 
 
 Additional signed evidence is staged source-by-source in `regulatory_evidence` and
 does not silently mutate the merged graph. Run `make external-regulation` to fetch
-CollecTRI, SIGNOR transcriptional relations, and strict confirmed-direct AGRIS rows.
+CollecTRI, SIGNOR transcriptional relations, and strict plus expanded AGRIS rows.
 See `docs/EXTERNAL_SIGNED_EVIDENCE.md` for evidence-layer boundaries and benchmarks.
 
 Rice PlantRegMap is available as an explicit network expansion with
@@ -215,7 +216,8 @@ All three scripts are idempotent — safe to re-run. If ConnecTF data is not dow
 
 The release source-data bootstrap is a single command: `make bootstrap`
 (`setup` → `fetch` → `db` → `external-regulation` → `enrich` → `knocktf-all` →
-`allele-pwms` → `chromatin-peaks` → `verify-data`). The final verifier fails on missing
+`evidence-expansion` → `qualify-evidence` → `allele-pwms` → `chromatin-peaks` →
+`verify-data`). The final verifier fails on missing
 required layers instead of accepting a silently degraded build.
 
 ## Compute dependencies (only for regenerating derived data)

@@ -46,10 +46,12 @@ make bootstrap        # venv + deps, fetch sources, build DB, signs, perturbatio
 ```
 
 `make bootstrap` runs, in order: `setup` → `fetch` → `db` → `external-regulation` →
-`enrich` → `knocktf-all` → `allele-pwms` → `chromatin-peaks` → `verify-data`.
-Every third-party download (including ~2.4 GB of KnockTF tables) is fetched automatically; optional network layers self-skip if a
-download is unavailable, so a transient outage never hard-fails the build (the atlas still
-works, just with that layer empty). Each step is independently re-runnable (see `make help`).
+`enrich` → `knocktf-all` → `evidence-expansion` → `qualify-evidence` →
+`allele-pwms` → `chromatin-peaks` → `verify-data`.
+Every third-party download (including ~2.4 GB of KnockTF tables) is fetched automatically.
+Some download stages self-skip after a transient outage, but the final `verify-data` gate rejects
+a degraded build that is missing a release-required layer. Each stage is independently re-runnable
+(see `make help`).
 
 This yields a working atlas with every skill functional. Two things are **not** in the
 automatic build and remain as documented optional steps: the full-size **measured Arabidopsis
@@ -64,7 +66,7 @@ make backend          # FastAPI on http://localhost:8000 (docs at /docs)
 make frontend         # in another shell: Vite UI on http://localhost:3001 (proxies /api)
 ```
 
-Verify the build: `make verify-data && make test-backend` (expect **365 passed, 3 skipped**) and
+Verify the build: `make verify-data && make test-backend` (expect **379 passed, 6 skipped**) and
 `make test-skills` (expect **386 passing single-skill cases**).
 
 <details><summary>Equivalent step-by-step (if you prefer to run stages individually)</summary>
@@ -73,9 +75,11 @@ Verify the build: `make verify-data && make test-backend` (expect **365 passed, 
 make setup                                                       # venv + backend/frontend deps
 venv/bin/python backend/scripts/fetch_sources.py --tier light    # third-party sources -> backend/data/
 make db            # build_db + infer_edge_signs + validate_edge_signs + load_perturbation_truth + tissue-weights
-make external-regulation  # CollecTRI + SIGNOR + strict confirmed/direct AGRIS evidence
+make external-regulation  # CollecTRI + SIGNOR + strict and expanded AGRIS evidence
 make enrich        # auto-downloads ConnecTF, loads edges + TF-perturbation observations + perturbation signs
 make knocktf-all   # Arabidopsis + human + mouse KnockTF; re-derives Arabidopsis signs
+make evidence-expansion  # expanded AGRIS, TFLink, ChIP-Atlas, and reviewed Expression Atlas evidence
+make qualify-evidence    # conflict-aware candidates, cycle-closing impact ranks, source qualification
 make allele-pwms   # cache JASPAR PWMs for grn-allele-affinity
 make chromatin-peaks   # auto-downloads Plant Cistrome DAP-seq peaks (GSE60143)
 ```
@@ -148,7 +152,7 @@ confirm the build is complete.
 | enrich | `make enrich` | ConnecTF edges (~309K) + TF-perturbation DEGs (~116K observations), display names, curated pathway overrides | mostly | built DB; ConnecTF tarball in `/tmp` (optional) |
 | chromatin-peaks | `make chromatin-peaks` | Arabidopsis DAP-seq peaks (Plant Cistrome GSE60143): ~179K peaks, peak-gene links, cis-support edges (389 TFs) | yes | built DB + network (~74 MB) |
 | knocktf | `make knocktf-all` | KnockTF 2.0 loss-of-function TF-perturbation DEGs for Arabidopsis, human, and mouse (~1.99M obs); re-derives Arabidopsis signs | yes | built DB + network (~2.4 GB) |
-| external evidence | `make external-regulation` | normalized CollecTRI, SIGNOR, and strict confirmed/direct AGRIS evidence | yes | built DB + network |
+| external evidence | `make external-regulation` | normalized CollecTRI, SIGNOR, and strict plus expanded AGRIS evidence | yes | built DB + network |
 | tissue-weights | `make tissue-weights` | per-tissue coexpression weights for edges (petunia, tomato, arabidopsis) | yes | built DB + expression data |
 | validate | `make validate` | gold-standard recall/specificity + population-level statistical validation | yes | built DB |
 | benchmark | `make benchmark` | BEELINE-style AUROC/AUPRC against independent ground truth | yes | built DB |
