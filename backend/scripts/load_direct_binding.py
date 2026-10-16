@@ -127,8 +127,9 @@ def promote_to_interactions(conn: sqlite3.Connection, evidence_rows: list[dict])
         else:
             conn.execute(
                 "INSERT OR IGNORE INTO interactions "
-                "(source_id, target_id, regulation_type, confidence, sources, pmids) "
-                "VALUES (?, ?, 'regulation', ?, ?, '[]')",
+                "(source_id, target_id, regulation_type, confidence, sources, pmids, "
+                " sign, sign_evidence) "
+                "VALUES (?, ?, 'regulation', ?, ?, '[]', NULL, 'unknown')",
                 (tf_id, target_id, round(confidence, 4),
                  json.dumps(sorted(source_labels))),
             )

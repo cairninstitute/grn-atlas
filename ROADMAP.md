@@ -6,7 +6,7 @@
 > Iteration Log. The working loop is: _build → test → document here → find gaps →
 > plan → repeat._
 
-Last updated: 2026-10-14 · Current broad status: 107 documented skills (106 callable + 1 overview/router); direct skill harness 342/342 PASS, backend suite 385/385 PASS. (Earlier LLM routing snapshot, 61-skill era: GPT-5.4 single-skill matrix 347/347, orchestration 59/59; the single-skill/orchestration matrices have not been re-run against the current skill set.)
+Last updated: 2026-10-16 · Current broad status: 107 documented skills (106 callable + 1 overview/router); direct skill harness 342/342 PASS, backend suite 380 passed / 6 skipped. (Earlier LLM routing snapshot, 61-skill era: GPT-5.4 single-skill matrix 347/347, orchestration 59/59; the single-skill/orchestration matrices have not been re-run against the current skill set.)
 
 ---
 

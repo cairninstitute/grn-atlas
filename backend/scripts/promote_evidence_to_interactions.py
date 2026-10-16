@@ -40,13 +40,26 @@ PROMOTABLE_SOURCES = {
     "SIGNOR": {"label": "SIGNOR", "min_confidence": 0.50},
 }
 
-SIGNED_SOURCES = {"CollecTRI", "SIGNOR"}
-
 MULTI_EVIDENCE_BOOST = 0.05
+SOURCE_ALIASES = {"TFLink": "TFLink small-scale"}
+
+
+def _canonical_sources(raw_sources: list[str]) -> set[str]:
+    return {SOURCE_ALIASES.get(source, source) for source in raw_sources}
 
 
 def promote(conn: sqlite3.Connection, dry_run: bool = False) -> dict:
     stats = Counter()
+
+    null_evidence = conn.execute(
+        "SELECT COUNT(*) FROM interactions WHERE sign_evidence IS NULL"
+    ).fetchone()[0]
+    stats["null_sign_evidence_repaired"] = null_evidence
+    if null_evidence and not dry_run:
+        conn.execute(
+            "UPDATE interactions SET sign_evidence = 'unknown' "
+            "WHERE sign_evidence IS NULL"
+        )
 
     pairs: dict[tuple[str, str], dict] = {}
     for source_name, cfg in PROMOTABLE_SOURCES.items():
@@ -66,15 +79,15 @@ def promote(conn: sqlite3.Connection, dry_run: bool = False) -> dict:
             key = (source_id, target_id)
             if key not in pairs:
                 pairs[key] = {
-                    "relation": relation or "regulation",
                     "confidence": confidence or 0.50,
                     "sources": set(),
+                    "signs": set(),
                 }
             entry = pairs[key]
             entry["sources"].add(label)
             entry["confidence"] = max(entry["confidence"], confidence or 0.50)
             if relation in ("activation", "repression"):
-                entry["relation"] = relation
+                entry["signs"].add(relation)
 
     print(f"Candidate pairs from evidence: {len(pairs):,}")
     stats["candidate_pairs"] = len(pairs)
@@ -82,43 +95,61 @@ def promote(conn: sqlite3.Connection, dry_run: bool = False) -> dict:
     new_edges = 0
     updated_edges = 0
     unchanged_edges = 0
+    conflicted_pairs = 0
+    signs_repaired = 0
+    source_labels_normalized = 0
 
     for (src_id, tgt_id), entry in pairs.items():
+        desired_sign = next(iter(entry["signs"])) if len(entry["signs"]) == 1 else None
+        if len(entry["signs"]) > 1:
+            conflicted_pairs += 1
         existing = conn.execute(
-            "SELECT sources, confidence FROM interactions "
+            "SELECT sources, confidence, regulation_type, sign, sign_evidence "
+            "FROM interactions "
             "WHERE source_id = ? AND target_id = ?",
             (src_id, tgt_id),
         ).fetchone()
 
         if existing:
-            old_sources = json.loads(existing[0])
-            new_labels = entry["sources"] - set(old_sources)
-            if new_labels:
-                merged = sorted(set(old_sources) | entry["sources"])
+            raw_sources = json.loads(existing[0])
+            old_sources = _canonical_sources(raw_sources)
+            new_labels = entry["sources"] - old_sources
+            merged = sorted(old_sources | entry["sources"])
+            normalized = set(raw_sources) != old_sources
+            repair_sign = desired_sign is not None and existing[3] is None
+            repaired_relation = desired_sign if repair_sign else None
+            clear_conflicted_type = (
+                desired_sign is None
+                and len(entry["signs"]) > 1
+                and existing[3] is None
+                and existing[2] in ("activation", "repression")
+            )
+            changed = bool(new_labels or normalized or repair_sign or clear_conflicted_type)
+            if changed:
                 new_conf = min(existing[1] + MULTI_EVIDENCE_BOOST * len(new_labels), 0.95)
                 if not dry_run:
                     conn.execute(
-                        "UPDATE interactions SET sources = ?, confidence = ? "
+                        "UPDATE interactions SET sources = ?, confidence = ?, "
+                        "regulation_type = CASE WHEN ? IS NOT NULL THEN ? "
+                        "  WHEN ? THEN 'regulation' ELSE regulation_type END, "
+                        "sign = CASE WHEN sign IS NULL THEN ? ELSE sign END, "
+                        "sign_evidence = CASE WHEN sign IS NULL AND ? IS NOT NULL "
+                        "  THEN 'measured' ELSE COALESCE(sign_evidence, 'unknown') END "
                         "WHERE source_id = ? AND target_id = ?",
-                        (json.dumps(merged), round(new_conf, 4), src_id, tgt_id),
+                        (
+                            json.dumps(merged), round(new_conf, 4),
+                            repaired_relation, repaired_relation, clear_conflicted_type,
+                            desired_sign, desired_sign, src_id, tgt_id,
+                        ),
                     )
-                    if entry["relation"] in ("activation", "repression"):
-                        conn.execute(
-                            "UPDATE interactions SET sign = ?, sign_evidence = 'measured' "
-                            "WHERE source_id = ? AND target_id = ? "
-                            "AND sign IS NULL",
-                            (entry["relation"], src_id, tgt_id),
-                        )
+                source_labels_normalized += int(normalized)
+                signs_repaired += int(repair_sign)
                 updated_edges += 1
             else:
                 unchanged_edges += 1
         else:
-            relation = entry["relation"]
-            sign = None
-            sign_evidence = "unknown"
-            if relation in ("activation", "repression"):
-                sign = relation
-                sign_evidence = "measured"
+            relation = desired_sign or "regulation"
+            sign_evidence = "measured" if desired_sign else "unknown"
             if not dry_run:
                 conn.execute(
                     "INSERT OR IGNORE INTO interactions "
@@ -128,7 +159,7 @@ def promote(conn: sqlite3.Connection, dry_run: bool = False) -> dict:
                     (src_id, tgt_id, relation,
                      round(entry["confidence"], 4),
                      json.dumps(sorted(entry["sources"])),
-                     sign, sign_evidence),
+                     desired_sign, sign_evidence),
                 )
             new_edges += 1
 
@@ -138,6 +169,9 @@ def promote(conn: sqlite3.Connection, dry_run: bool = False) -> dict:
     stats["new_edges"] = new_edges
     stats["updated_edges"] = updated_edges
     stats["unchanged_edges"] = unchanged_edges
+    stats["conflicted_pairs"] = conflicted_pairs
+    stats["signs_repaired"] = signs_repaired
+    stats["source_labels_normalized"] = source_labels_normalized
     return dict(stats)
 
 

@@ -66,7 +66,7 @@ make backend          # FastAPI on http://localhost:8000 (docs at /docs)
 make frontend         # in another shell: Vite UI on http://localhost:3001 (proxies /api)
 ```
 
-Verify the build: `make verify-data && make test-backend` (expect **385 passed**) and
+Verify the build: `make verify-data && make test-backend` (expect **380 passed, 6 skipped**) and
 `make test-skills` (expect **386 passing single-skill cases**).
 
 <details><summary>Equivalent step-by-step (if you prefer to run stages individually)</summary>
