@@ -35,9 +35,18 @@ crosswalk and stored as searchable aliases.
 
 `build_regulatory_candidates.py` creates a separate hypothesis table with two tiers.
 Supported edges require confirmed direct signed evidence or signed perturbation plus
-independent binding. Exploratory edges may use putative-direct signed evidence,
+independent binding, and a passing species/sign calibration gate. Exploratory edges may use putative-direct signed evidence,
 perturbation-only evidence, or conservative orthology transfer. Conflicting signs remain
 excluded from every graph.
+
+`build_perturbation_evidence.py` normalizes gain- and loss-of-function observations,
+aggregates experiment-level calls, and stores accepted and conflicting consensus records
+without changing `interactions`. Single-experiment perturbation-only calls are rejected;
+novel evidence requires independent binding or at least two agreeing experiments.
+`calibrate_perturbation_signs.py` evaluates each species/sign class against independently
+curated `measured` edges. Literature-derived direction markers are excluded from consensus
+generation to prevent self-validation. Only classes passing precision, class-base-rate
+lift, sample-size, and Wilson-bound gates can produce supported candidates.
 
 The observed feedback graph remains the default. API, UI, and skill users must explicitly
 request `include_candidates` to analyze the evidence-completed graph. Candidate edges are

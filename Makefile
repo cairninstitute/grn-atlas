@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - release data setup from a fresh clone, including all external evidence and KnockTF species"
@@ -14,6 +14,7 @@ help:
 	@echo "make chromatin-peaks - download+load Arabidopsis DAP-seq peaks (Plant Cistrome, needs make db + network)"
 	@echo "make knocktf        - download+load KnockTF LOF perturbations, re-derive signs (needs make db + network)"
 	@echo "make knocktf-all    - stream/load KnockTF for Arabidopsis, human, and mouse (large download)"
+	@echo "make perturbation-evidence - aggregate context-aware perturbation signs into candidate evidence"
 	@echo "make external-regulation - load CollecTRI, SIGNOR, and strict + expanded AGRIS evidence"
 	@echo "make evidence-expansion - load ChIP-Atlas and TFLink; audit PCBase and literature sources"
 	@echo "make direct-binding  - fetch+load direct TF-binding data (GTRD, Cistrome, GEO) for all species"
@@ -87,6 +88,11 @@ knocktf-all:
 	venv/bin/python backend/scripts/derive_perturbation_signs.py --species arabidopsis
 	venv/bin/python backend/scripts/validate_edge_signs.py
 
+perturbation-evidence:
+	venv/bin/python backend/scripts/build_perturbation_evidence.py
+	venv/bin/python backend/scripts/calibrate_perturbation_signs.py
+	venv/bin/python backend/scripts/benchmark_inferred_sign_model.py
+
 external-regulation:
 	venv/bin/python backend/scripts/load_external_regulatory_sources.py all \
 		--report backend/data/external_regulatory_benchmark.json
@@ -106,10 +112,13 @@ direct-binding:
 
 qualify-evidence:
 	venv/bin/python backend/scripts/build_conserved_regulatory_evidence.py
+	venv/bin/python backend/scripts/build_perturbation_evidence.py
+	venv/bin/python backend/scripts/calibrate_perturbation_signs.py
 	venv/bin/python backend/scripts/build_regulatory_candidates.py
 	venv/bin/python backend/scripts/rank_cycle_closing_candidates.py
 	venv/bin/python backend/scripts/qualify_regulatory_sources.py
 	venv/bin/python backend/scripts/assess_agris_quality.py
+	venv/bin/python backend/scripts/verify_perturbation_release.py
 
 verify-data:
 	venv/bin/python backend/scripts/verify_release_data.py

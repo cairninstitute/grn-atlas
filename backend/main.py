@@ -31,6 +31,7 @@ import consensus
 import sequence_design
 import advanced
 import feedback_control
+import perturbation_evidence
 import candidate_impact
 from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional, Dict, Any
@@ -5959,19 +5960,7 @@ async def perturbation_import(req: PerturbationImportRequest):
     """Import observed perturbation results for calibration."""
     conn = db.conn
     species = _normalize_species_input(req.species) or req.species
-    existing = set(r[0] for r in conn.execute(
-        "SELECT name FROM sqlite_master WHERE type='table'"
-    ).fetchall())
-    if "perturbation_observations" not in existing:
-        conn.execute("""CREATE TABLE perturbation_observations (
-            obs_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            species TEXT NOT NULL, perturbed_gene TEXT NOT NULL,
-            perturbation_type TEXT NOT NULL, affected_gene TEXT NOT NULL,
-            observed_log2fc REAL, observed_significant INTEGER DEFAULT 0,
-            dataset_label TEXT, metadata TEXT)""")
-        conn.execute("CREATE INDEX idx_po_species ON perturbation_observations(species)")
-        conn.execute("CREATE INDEX idx_po_gene ON perturbation_observations(perturbed_gene)")
-        conn.commit()
+    perturbation_evidence.ensure_schema(conn)
     rows = []
     for obs in req.observations:
         metadata = {**(req.metadata or {}), **(obs.get("metadata") or {})}

@@ -1,0 +1,151 @@
+{
+  "generated_at": "2026-10-16T20:08:45.369096+00:00",
+  "ablated_source": "Perturbation sign consensus",
+  "species": {
+    "arabidopsis": {
+      "supported": {
+        "with_source": {
+          "graph_edges": 28173,
+          "feedback_cores": 11,
+          "feedback_genes": 194,
+          "feedback_edges": 761,
+          "macro_circuits": 1
+        },
+        "without_source": {
+          "graph_edges": 28172,
+          "feedback_cores": 11,
+          "feedback_genes": 194,
+          "feedback_edges": 761,
+          "macro_circuits": 1
+        },
+        "delta": {
+          "graph_edges": 1,
+          "feedback_cores": 0,
+          "feedback_genes": 0,
+          "feedback_edges": 0,
+          "macro_circuits": 0
+        }
+      },
+      "exploratory": {
+        "with_source": {
+          "graph_edges": 38344,
+          "feedback_cores": 10,
+          "feedback_genes": 236,
+          "feedback_edges": 1022,
+          "macro_circuits": 7
+        },
+        "without_source": {
+          "graph_edges": 32352,
+          "feedback_cores": 10,
+          "feedback_genes": 235,
+          "feedback_edges": 1019,
+          "macro_circuits": 7
+        },
+        "delta": {
+          "graph_edges": 5992,
+          "feedback_cores": 0,
+          "feedback_genes": 1,
+          "feedback_edges": 3,
+          "macro_circuits": 0
+        }
+      }
+    },
+    "human": {
+      "supported": {
+        "with_source": {
+          "graph_edges": 49906,
+          "feedback_cores": 2,
+          "feedback_genes": 951,
+          "feedback_edges": 10026,
+          "macro_circuits": 0
+        },
+        "without_source": {
+          "graph_edges": 45295,
+          "feedback_cores": 2,
+          "feedback_genes": 896,
+          "feedback_edges": 9564,
+          "macro_circuits": 0
+        },
+        "delta": {
+          "graph_edges": 4611,
+          "feedback_cores": 0,
+          "feedback_genes": 55,
+          "feedback_edges": 462,
+          "macro_circuits": 0
+        }
+      },
+      "exploratory": {
+        "with_source": {
+          "graph_edges": 117232,
+          "feedback_cores": 2,
+          "feedback_genes": 1125,
+          "feedback_edges": 14980,
+          "macro_circuits": 0
+        },
+        "without_source": {
+          "graph_edges": 45295,
+          "feedback_cores": 2,
+          "feedback_genes": 896,
+          "feedback_edges": 9564,
+          "macro_circuits": 0
+        },
+        "delta": {
+          "graph_edges": 71937,
+          "feedback_cores": 0,
+          "feedback_genes": 229,
+          "feedback_edges": 5416,
+          "macro_circuits": 0
+        }
+      }
+    },
+    "mouse": {
+      "supported": {
+        "with_source": {
+          "graph_edges": 9901,
+          "feedback_cores": 2,
+          "feedback_genes": 352,
+          "feedback_edges": 1621,
+          "macro_circuits": 0
+        },
+        "without_source": {
+          "graph_edges": 9901,
+          "feedback_cores": 2,
+          "feedback_genes": 352,
+          "feedback_edges": 1621,
+          "macro_circuits": 0
+        },
+        "delta": {
+          "graph_edges": 0,
+          "feedback_cores": 0,
+          "feedback_genes": 0,
+          "feedback_edges": 0,
+          "macro_circuits": 0
+        }
+      },
+      "exploratory": {
+        "with_source": {
+          "graph_edges": 18498,
+          "feedback_cores": 2,
+          "feedback_genes": 422,
+          "feedback_edges": 2038,
+          "macro_circuits": 0
+        },
+        "without_source": {
+          "graph_edges": 9901,
+          "feedback_cores": 2,
+          "feedback_genes": 352,
+          "feedback_edges": 1621,
+          "macro_circuits": 0
+        },
+        "delta": {
+          "graph_edges": 8597,
+          "feedback_cores": 0,
+          "feedback_genes": 70,
+          "feedback_edges": 417,
+          "macro_circuits": 0
+        }
+      }
+    }
+  },
+  "interpretation": "Deltas compare the same database and algorithm with versus without candidates that depend on perturbation consensus. Observed interactions are untouched."
+}

@@ -28,6 +28,10 @@ import sqlite3
 import urllib.request
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from perturbation_evidence import ensure_schema as ensure_perturbation_schema  # noqa: E402
+
 DATA_DIR = Path(__file__).parent.parent / "data"
 DB_PATH = DATA_DIR / "grn.sqlite3"
 DEFAULT_FILE = Path("/tmp/knocktf_arabidopsis.txt")
@@ -50,17 +54,7 @@ SPECIES = {
 
 
 def ensure_table(conn):
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS perturbation_observations (
-            obs_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            species TEXT NOT NULL, perturbed_gene TEXT NOT NULL,
-            perturbation_type TEXT NOT NULL, affected_gene TEXT NOT NULL,
-            observed_log2fc REAL, observed_significant INTEGER DEFAULT 0,
-            dataset_label TEXT, metadata TEXT)
-    """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_po_species ON perturbation_observations(species)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_po_gene ON perturbation_observations(perturbed_gene)")
-    conn.commit()
+    ensure_perturbation_schema(conn)
 
 
 def gene_resolver(conn, species):

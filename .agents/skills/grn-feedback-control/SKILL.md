@@ -46,6 +46,9 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 
 - `systems` combines signed loops with pathway/GO enrichment and available cis, perturbation, and tissue-coexpression support.
 - Candidate mode can add an edge only from confirmed direct signed evidence or from independent binding plus signed perturbation evidence. It never silently changes the observed network.
+- Perturbation signs are aggregated across experiments with gain/loss direction normalization. Conflicting calls are retained for audit but excluded from every graph.
+- Binding-plus-perturbation signs enter the supported tier only when that species/sign class passes held-out precision, lift, sample-size, and confidence-bound gates. Failed classes remain exploratory.
+- Ordinary expression correlation is context only and never determines activation or repression.
 - Exploratory mode is a separate opt-in tier and never changes observed or supported-candidate results.
 - Candidate-impact ranks identify edges that would close cycles or merge cores; impact is a validation priority, not evidence that the edge exists.
 - Probabilistic membership reports stability under candidate uncertainty rather than treating every candidate as certain.
@@ -72,6 +75,7 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - Small-graph feedback cores, cycles through length 6, polarity, and exact controller sets are checked against independent NetworkX or brute-force truth.
 - Known-circuit recovery is measured only when every required signed edge exists in the filtered atlas.
 - Circuit scores are monotonic heuristic rankings, not calibrated probabilities.
+- Perturbation calibration is class-specific. A passing human activation class does not validate human repression or transfer to another species.
 - System scores rank evidence coherence; they are not probabilities that the proposed dynamics occur in vivo.
 - Missing observed arms may appear in candidate mode only when the normalized evidence layers satisfy the completion policy; absence remains explicit.
 

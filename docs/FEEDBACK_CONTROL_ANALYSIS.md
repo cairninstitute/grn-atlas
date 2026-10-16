@@ -42,7 +42,8 @@ and PRR-to-morning regulatory arms. The engine does not silently add those edges
 The analysis uses only activation or repression edges whose sign evidence is
 `measured` or `perturbation` by default. An opt-in evidence-completed view may also
 include conflict-free candidates supported by confirmed direct signed evidence, or
-by independent binding plus signed perturbation evidence. Candidates remain separate
+by independent binding plus signed perturbation evidence that passes a species/sign-specific
+calibration gate. Candidates remain separate
 from the observed interaction table. The analysis then:
 
 1. Computes all strongly connected components (feedback cores) with igraph.
@@ -119,6 +120,9 @@ cross-core macro-feedback witnesses, linked groups of cores, then the underlying
 complete backbones, compact cycle covers, filtered cycle queries,
 and exact or approximate controller candidates. Edge color communicates activation or repression;
 it does not imply that a candidate system has demonstrated switching or oscillation.
+Candidate cycle details also report support class, source provenance, experiment count,
+sign consistency, and whether the relevant calibration gate passed. Excluded perturbation
+conflicts are summarized separately.
 
 ## Storage
 

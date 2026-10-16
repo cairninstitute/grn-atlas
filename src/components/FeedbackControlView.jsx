@@ -22,6 +22,28 @@ const FAMILY_LABELS = {
 const number = (value) => (value ?? 0).toLocaleString();
 const labelSpecies = (species) => LABELS[species] || species;
 
+function EdgeEvidence({ edges = [] }) {
+  const candidates = edges.filter((edge) => edge.sign_evidence === 'candidate');
+  if (!candidates.length) return null;
+  return (
+    <div className="feedback-edge-evidence">
+      <strong>Candidate-edge evidence</strong>
+      {candidates.map((edge) => {
+        const consensus = edge.evidence_context?.perturbation_consensus;
+        return (
+          <div key={`${edge.source}-${edge.target}-${edge.sign}`}>
+            <b>{edge.source} → {edge.target}</b>
+            <span>{edge.sign} · {edge.evidence_tier} · {(edge.support_class || 'candidate').replaceAll('_', ' ')}</span>
+            <small>{(edge.sources || []).join(', ') || 'qualified evidence'}
+              {consensus ? ` · ${consensus.experiment_count} experiments · ${Math.round(consensus.sign_consistency * 100)}% sign consistency` : ''}
+            </small>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function FeedbackControlView({ initialSpecies = 'arabidopsis', onSpeciesChange, onSelectGene }) {
   const [speciesList, setSpeciesList] = useState([]);
   const [species, setSpecies] = useState(initialSpecies || 'arabidopsis');
@@ -250,6 +272,19 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
               Evidence-completed mode includes conflict-free candidate edges. Candidate edges are hypotheses,
               not equivalent to measured signed regulation.
             </div>
+          )}
+
+          {result.evidence_completion?.candidate_edges > 0 && (
+            <section className="feedback-evidence-summary">
+              <div><strong>{number(result.evidence_completion.candidate_edges)}</strong><span>qualified candidate edges in this layer</span></div>
+              <div><strong>{number(result.evidence_completion.perturbation_conflicts_excluded)}</strong><span>context-conflicting perturbation signs excluded</span></div>
+              {(result.evidence_completion.calibrated_classes || []).map((row) => (
+                <div key={row.relation_type} className={row.gate_pass ? 'passed' : 'failed'}>
+                  <strong>{Math.round(row.precision * 100)}%</strong>
+                  <span>{row.relation_type} precision · {row.gate_pass ? 'supported gate passed' : 'exploratory only'}</span>
+                </div>
+              ))}
+            </section>
           )}
 
           {result.graph?.includes_exploratory_candidates && (
@@ -621,6 +656,7 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
                           </div>
                           <SubgraphGraph nodes={selectedCoverCircuit.genes} edges={selectedCoverCircuit.edges}
                             tfStyle="circle" onNodeClick={(gene) => onSelectGene?.(gene.symbol)} />
+                          <EdgeEvidence edges={selectedCoverCircuit.edges} />
                         </>
                       ) : <div className="feedback-notice">Cycle-cover witnesses were not materialized for this large core.</div>}
                     </div>
@@ -656,8 +692,9 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
                           {cycleResult.next_cursor != null && <button className="load-more-cycles" onClick={() => loadCycles(cycleResult.next_cursor, true)}>Continue enumeration</button>}
                         </div>
                         <div className="feedback-circuit-visual">
-                          {selectedQueriedCircuit ? <SubgraphGraph nodes={selectedQueriedCircuit.genes} edges={selectedQueriedCircuit.edges}
+                          {selectedQueriedCircuit ? <><SubgraphGraph nodes={selectedQueriedCircuit.genes} edges={selectedQueriedCircuit.edges}
                             tfStyle="circle" onNodeClick={(gene) => onSelectGene?.(gene.symbol)} />
+                            <EdgeEvidence edges={selectedQueriedCircuit.edges} /></>
                             : <div className="feedback-notice">No cycle matches the current filters.</div>}
                         </div>
                       </div>

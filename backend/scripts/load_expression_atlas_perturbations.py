@@ -21,6 +21,7 @@ from pathlib import Path
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
 from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
+from perturbation_evidence import ensure_schema as ensure_perturbation_schema  # noqa: E402
 
 DB = BACKEND / "data" / "grn.sqlite3"
 SOURCE = "Expression Atlas reviewed perturbations"
@@ -94,11 +95,7 @@ def load(conn: sqlite3.Connection, manifest_path: Path) -> dict:
                                  "perturbation_type": contrast["perturbation_type"]},
                 })
         stats["contrasts_loaded"] += 1
-    conn.execute("""CREATE TABLE IF NOT EXISTS perturbation_observations (
-        obs_id INTEGER PRIMARY KEY AUTOINCREMENT, species TEXT NOT NULL,
-        perturbed_gene TEXT NOT NULL, perturbation_type TEXT NOT NULL,
-        affected_gene TEXT NOT NULL, observed_log2fc REAL,
-        observed_significant INTEGER DEFAULT 0, dataset_label TEXT, metadata TEXT)""")
+    ensure_perturbation_schema(conn)
     conn.execute("DELETE FROM perturbation_observations WHERE dataset_label LIKE 'ExpressionAtlas:%'")
     conn.executemany("INSERT INTO perturbation_observations (species,perturbed_gene,perturbation_type,affected_gene,observed_log2fc,observed_significant,dataset_label,metadata) VALUES (?,?,?,?,?,?,?,?)", observations)
     run_id = begin_import(conn, SOURCE, VERSION, "https://www.ebi.ac.uk/gxa/", None)

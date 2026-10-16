@@ -23,6 +23,12 @@ def fixture():
         INSERT INTO interactions VALUES ('A','B','activation',0.8,'[]','[]','activation','measured');
     """)
     ensure_schema(conn)
+    conn.executescript("""
+        CREATE TABLE perturbation_sign_calibration (
+            species TEXT, relation_type TEXT, gate_pass INTEGER
+        );
+        INSERT INTO perturbation_sign_calibration VALUES ('test','activation',1);
+    """)
     rows = [
         ("test", "B", "A", "repression", "direct_signed", "direct", "curated", "1", "b-a", 0.8),
         ("test", "B", "C", "regulation", "direct_unsigned", "binding", "chip", "1", "b-c-bind", 0.7),
@@ -75,3 +81,16 @@ def test_cycle_closing_candidates_are_ranked_by_marginal_impact():
     assert summary["cycle_closing"] >= 1
     assert ranked[0]["closes_cycle"] is True
     assert ranked[0]["feedback_nodes_added"] >= 1
+
+
+def test_supported_evidence_completes_existing_unsigned_pair_as_candidate():
+    conn = fixture()
+    conn.execute(
+        "INSERT INTO interactions VALUES "
+        "('B','C','regulation',0.7,'[]','[]',NULL,'unknown')"
+    )
+    build_regulatory_candidates.build(conn)
+    assert conn.execute(
+        "SELECT status,support_class FROM regulatory_edge_candidates "
+        "WHERE source_id='B' AND target_id='C'"
+    ).fetchone() == ("candidate", "binding_plus_perturbation")

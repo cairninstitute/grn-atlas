@@ -23,6 +23,12 @@ ALGORITHM_VERSION = "feedback-control-v6"
 STRONG_SIGN_EVIDENCE = ("measured", "perturbation")
 
 
+def _table_exists(conn: sqlite3.Connection, table: str) -> bool:
+    return conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)
+    ).fetchone() is not None
+
+
 @dataclass(frozen=True)
 class FeedbackParameters:
     min_confidence: float = 0.5
@@ -569,6 +575,57 @@ def _load_signed_graph(
     return graph, genes, digest.hexdigest()
 
 
+def _evidence_completion_summary(
+    conn: sqlite3.Connection, species: str, params: FeedbackParameters,
+) -> dict[str, Any]:
+    if not _table_exists(conn, "regulatory_edge_candidates"):
+        return {"candidate_edges": 0, "support_classes": {}, "calibrated_classes": []}
+    tiers = []
+    if params.include_candidates:
+        tiers.append("supported")
+    if params.include_exploratory:
+        tiers.append("exploratory")
+    if not tiers:
+        return {"candidate_edges": 0, "support_classes": {}, "calibrated_classes": []}
+    placeholders = ",".join("?" for _ in tiers)
+    rows = conn.execute(
+        f"SELECT support_class,COUNT(*) FROM regulatory_edge_candidates "
+        f"WHERE species=? AND status='candidate' AND evidence_tier IN ({placeholders}) "
+        "AND confidence>=? GROUP BY support_class ORDER BY support_class",
+        (species, *tiers, params.min_confidence),
+    ).fetchall()
+    calibrated = []
+    if _table_exists(conn, "perturbation_sign_calibration"):
+        columns = {
+            row[1] for row in conn.execute("PRAGMA table_info(perturbation_sign_calibration)")
+        }
+        if {"cases", "precision", "baseline_rate"} <= columns:
+            calibrated = [
+                {
+                    "relation_type": row[0], "cases": row[1], "precision": round(row[2], 4),
+                    "baseline_rate": round(row[3], 4), "gate_pass": bool(row[4]),
+                }
+                for row in conn.execute(
+                    "SELECT relation_type,cases,precision,baseline_rate,gate_pass "
+                    "FROM perturbation_sign_calibration WHERE species=? ORDER BY relation_type",
+                    (species,),
+                )
+            ]
+    conflicts = 0
+    if _table_exists(conn, "perturbation_sign_consensus"):
+        conflicts = conn.execute(
+            "SELECT COUNT(*) FROM perturbation_sign_consensus "
+            "WHERE species=? AND status='sign_conflict'", (species,),
+        ).fetchone()[0]
+    support_classes = {row[0]: int(row[1]) for row in rows}
+    return {
+        "candidate_edges": sum(support_classes.values()),
+        "support_classes": support_classes,
+        "perturbation_conflicts_excluded": int(conflicts),
+        "calibrated_classes": calibrated,
+    }
+
+
 def _probabilistic_membership(graph: ig.Graph, samples: int, seed: int = 17) -> dict[str, Any]:
     """Estimate feedback membership while sampling uncertain candidate edges."""
     if samples <= 0:
@@ -1074,16 +1131,10 @@ def _hydrate_edge_provenance(
     conn: sqlite3.Connection, edges: Iterable[dict[str, Any]],
 ) -> None:
     for edge in edges:
-        row = conn.execute(
-            "SELECT sources, pmids FROM interactions WHERE source_id = ? AND target_id = ?",
-            (edge["source"], edge["target"]),
-        ).fetchone()
-        if row:
-            edge["sources"] = _json_list(row[0])
-            edge["pmids"] = _json_list(row[1])
-        elif edge.get("sign_evidence") == "candidate":
+        if edge.get("sign_evidence") == "candidate":
             candidate = conn.execute(
-                "SELECT evidence_sources,support_class,evidence_tier FROM regulatory_edge_candidates "
+                "SELECT evidence_sources,support_class,evidence_tier,metadata "
+                "FROM regulatory_edge_candidates "
                 "WHERE source_id=? AND target_id=? AND relation_type=? AND status='candidate'",
                 (edge["source"], edge["target"], edge["sign"]),
             ).fetchone()
@@ -1091,7 +1142,19 @@ def _hydrate_edge_provenance(
                 edge["sources"] = _json_list(candidate[0])
                 edge["support_class"] = candidate[1]
                 edge["evidence_tier"] = candidate[2]
-        elif edge.get("sign_evidence") == "multilayer":
+                try:
+                    edge["evidence_context"] = json.loads(candidate[3] or "{}")
+                except json.JSONDecodeError:
+                    edge["evidence_context"] = {}
+        else:
+            row = conn.execute(
+                "SELECT sources, pmids FROM interactions WHERE source_id = ? AND target_id = ?",
+                (edge["source"], edge["target"]),
+            ).fetchone()
+            if row:
+                edge["sources"] = _json_list(row[0])
+                edge["pmids"] = _json_list(row[1])
+        if edge.get("sign_evidence") == "multilayer":
             layered = conn.execute(
                 "SELECT evidence_source,pmids,regulatory_layer FROM regulatory_layer_edges "
                 "WHERE source_id=? AND target_id=? AND relation_type=? ORDER BY confidence DESC LIMIT 1",
@@ -1163,6 +1226,7 @@ def analyze_feedback(
                 "introduced_edges_examined": 0,
                 "truncated": False,
             },
+            "evidence_completion": _evidence_completion_summary(conn, species, params),
             "probabilistic_core_membership": probabilistic,
             "truncation": {
                 "cores": False, "circuits": False, "search": False,
@@ -1353,6 +1417,7 @@ def analyze_feedback(
         "core_groups": core_groups,
         "macro_circuits": macro_circuits,
         "macro_analysis": macro_analysis,
+        "evidence_completion": _evidence_completion_summary(conn, species, params),
         "probabilistic_core_membership": probabilistic,
         "truncation": {
             "cores": len(component_rows) > len(cores),

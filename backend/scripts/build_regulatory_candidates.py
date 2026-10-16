@@ -37,9 +37,51 @@ def build(conn: sqlite3.Connection) -> dict:
     existing = {(row[0], row[1]): (row[2], row[3]) for row in conn.execute(
         "SELECT source_id,target_id,COALESCE(sign,regulation_type),confidence FROM interactions"
     )}
+    calibrated_classes = set()
+    if conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='perturbation_sign_calibration'"
+    ).fetchone():
+        calibrated_classes = {
+            (row[0], row[1]) for row in conn.execute(
+                "SELECT species,relation_type FROM perturbation_sign_calibration WHERE gate_pass=1"
+            )
+        }
+    consensus = {}
+    if conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='perturbation_sign_consensus'"
+    ).fetchone():
+        consensus = {
+            (row[0], row[1], row[2]): {
+                "mean_activation_score": round(float(row[3]), 6),
+                "mean_abs_effect": round(float(row[4]), 6),
+                "sign_consistency": round(float(row[5]), 6),
+                "observation_count": int(row[6]),
+                "experiment_count": int(row[7]),
+                "dataset_count": int(row[8]),
+                "datasets": json.loads(row[9]),
+                "contexts": json.loads(row[10]),
+                "model_version": row[11],
+            }
+            for row in conn.execute(
+                "SELECT species,source_id,target_id,mean_activation_score,mean_abs_effect,"
+                "sign_consistency,observation_count,experiment_count,dataset_count,datasets,"
+                "contexts,model_version FROM perturbation_sign_consensus WHERE status='accepted'"
+            )
+        }
     output = []
     summary = defaultdict(int)
     for (species, source_id, target_id), records in grouped.items():
+        consensus_present = any(
+            record[3] == "Perturbation sign consensus" for record in records
+        )
+        if consensus_present:
+            # Individual experiments remain queryable, but the versioned consensus is
+            # the only perturbation row allowed to make a global candidate sign call.
+            records = [
+                record for record in records
+                if record[1] != "perturbation_signed"
+                or record[3] == "Perturbation sign consensus"
+            ]
         signed = defaultdict(list)
         binding_sources = set()
         layers = set()
@@ -70,12 +112,17 @@ def build(conn: sqlite3.Connection) -> dict:
             confidence = max(0.65, max(row[1] for row in signed_rows))
             evidence_tier = "supported"
             probability = min(0.97, max(0.72, confidence))
-        elif has_perturbation and binding_sources:
+        elif has_perturbation and binding_sources and (species, relation) in calibrated_classes:
             support_class = "binding_plus_perturbation"
             confidence = min(0.88, 0.60 + 0.05 * min(len(binding_sources), 3)
                              + 0.04 * min(len(signed_sources), 3))
             evidence_tier = "supported"
             probability = min(0.92, confidence)
+        elif has_perturbation and binding_sources:
+            support_class = "binding_plus_uncalibrated_perturbation"
+            confidence = max(0.48, min(0.64, max(row[1] for row in signed_rows)))
+            evidence_tier = "exploratory"
+            probability = min(0.64, max(0.35, confidence))
         elif has_putative_direct:
             support_class = "putative_direct_signed"
             confidence = max(0.40, min(0.60, max(row[1] for row in signed_rows)))
@@ -95,18 +142,28 @@ def build(conn: sqlite3.Connection) -> dict:
             summary["insufficient_support"] += 1
             continue
         old = existing.get((source_id, target_id))
-        if old and old[0] in ("activation", "repression") and old[0] != relation:
-            status = "conflict"
+        if old and old[0] in ("activation", "repression"):
+            status = "corroborated" if old[0] == relation else "conflict"
         elif old:
-            status = "corroborated"
+            # Completing the sign of an observed unsigned binding pair changes the
+            # signed graph, so it remains an explicit opt-in candidate.
+            status = "candidate"
         else:
             status = "candidate"
         sources = sorted(signed_sources | binding_sources)
+        candidate_metadata = {
+            "signed_sources": sorted(signed_sources),
+            "binding_sources": sorted(binding_sources),
+            "calibration_gate_pass": (species, relation) in calibrated_classes,
+        }
+        if (species, source_id, target_id) in consensus:
+            candidate_metadata["perturbation_consensus"] = consensus[
+                (species, source_id, target_id)
+            ]
         output.append((species, source_id, target_id, relation, confidence, support_class,
                        json.dumps(sources), json.dumps(sorted(layers)), status,
                        evidence_tier, probability,
-                       json.dumps({"signed_sources": sorted(signed_sources),
-                                   "binding_sources": sorted(binding_sources)}, sort_keys=True)))
+                       json.dumps(candidate_metadata, sort_keys=True)))
         summary[status] += 1
         summary[support_class] += 1
     conn.executemany("INSERT INTO regulatory_edge_candidates VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", output)

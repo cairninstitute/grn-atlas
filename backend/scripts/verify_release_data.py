@@ -40,7 +40,8 @@ def main():
     required_tables = {
         "genes", "interactions", "perturbation_observations",
         "regulatory_evidence", "source_import_runs", "regulatory_edge_candidates",
-        "regulatory_candidate_impacts",
+        "regulatory_candidate_impacts", "perturbation_sign_consensus",
+        "perturbation_sign_calibration",
     }
     missing_tables = sorted(required_tables - tables)
     if missing_tables:
@@ -71,6 +72,10 @@ def main():
             "regulatory_candidates": (
                 "SELECT COUNT(*) FROM regulatory_edge_candidates", (), 150_000,
             ),
+            "perturbation_consensus": (
+                "SELECT COUNT(*) FROM perturbation_sign_consensus WHERE status='accepted'",
+                (), 80_000,
+            ),
             "ranked_candidate_impacts": (
                 "SELECT COUNT(*) FROM regulatory_candidate_impacts", (), 35_000,
             ),
@@ -96,6 +101,7 @@ def main():
             "ChIP-Atlas": 800_000,
             "Expression Atlas reviewed perturbations": 25,
             "ConnecTF experiment evidence": 140_000,
+            "Perturbation sign consensus": 80_000,
             "Conserved signed orthology": 0,
         }
         for source, minimum in required_sources.items():

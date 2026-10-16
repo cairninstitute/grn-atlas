@@ -1,0 +1,74 @@
+{
+  "generated_at": "2026-10-16T20:07:15.130803+00:00",
+  "model_version": "perturbation-calibration-v1",
+  "leakage_controls": [
+    "literature_curated observations are excluded from consensus generation",
+    "only interactions with sign_evidence=measured are calibration truth",
+    "release gates are evaluated separately by species and predicted sign"
+  ],
+  "thresholds": {
+    "minimum_cases": 50,
+    "minimum_precision": 0.8,
+    "minimum_lift_over_class_base_rate": 0.02,
+    "wilson_lower_must_exceed_base_rate": true
+  },
+  "overall": {
+    "cases": 4372,
+    "accuracy": 0.5524,
+    "species_majority_baseline": 0.8488,
+    "passes_global_baseline": false
+  },
+  "classes": [
+    {
+      "species": "human",
+      "relation_type": "activation",
+      "cases": 2301,
+      "agreements": 2019,
+      "precision": 0.8774,
+      "baseline_rate": 0.85,
+      "lift": 0.0274,
+      "wilson_lower_95": 0.8634,
+      "gate_pass": true
+    },
+    {
+      "species": "human",
+      "relation_type": "repression",
+      "cases": 2027,
+      "agreements": 367,
+      "precision": 0.1811,
+      "baseline_rate": 0.15,
+      "lift": 0.0311,
+      "wilson_lower_95": 0.1649,
+      "gate_pass": false
+    },
+    {
+      "species": "mouse",
+      "relation_type": "activation",
+      "cases": 25,
+      "agreements": 21,
+      "precision": 0.84,
+      "baseline_rate": 0.7273,
+      "lift": 0.1127,
+      "wilson_lower_95": 0.6535,
+      "gate_pass": false
+    },
+    {
+      "species": "mouse",
+      "relation_type": "repression",
+      "cases": 19,
+      "agreements": 8,
+      "precision": 0.4211,
+      "baseline_rate": 0.2727,
+      "lift": 0.1483,
+      "wilson_lower_95": 0.2314,
+      "gate_pass": false
+    }
+  ],
+  "supported_classes": [
+    {
+      "species": "human",
+      "relation_type": "activation"
+    }
+  ],
+  "interpretation": "A failed class remains exploratory. Perturbation response may be indirect or context-specific and is not promoted as a global regulatory sign."
+}

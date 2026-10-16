@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-10-16T20:12:47.453756+00:00",
+  "model_version": "binding-perturbation-logistic-v1",
+  "features": [
+    "mean_activation_score",
+    "mean_absolute_effect",
+    "sign_consistency",
+    "log_experiment_count",
+    "log_dataset_count",
+    "direct_binding_present"
+  ],
+  "leakage_controls": [
+    "literature-derived observations excluded upstream",
+    "cross-validation groups all targets from the same TF",
+    "species-held-out evaluation reported when both classes have at least 20 cases"
+  ],
+  "cases": 4372,
+  "activation_majority_baseline": 0.8488,
+  "tf_grouped_cross_validation": {
+    "cases": 4372,
+    "accuracy": 0.4787,
+    "balanced_accuracy": 0.5276,
+    "activation_precision": 0.8646,
+    "repression_precision": 0.164,
+    "roc_auc": 0.5359
+  },
+  "species_holdout": {
+    "human": {
+      "cases": 4328,
+      "accuracy": 0.5765,
+      "balanced_accuracy": 0.4964,
+      "activation_precision": 0.8486,
+      "repression_precision": 0.1476,
+      "roc_auc": 0.5184
+    },
+    "mouse": {
+      "cases": 44,
+      "accuracy": 0.75,
+      "balanced_accuracy": 0.6198,
+      "activation_precision": 0.7838,
+      "repression_precision": 0.5714,
+      "roc_auc": 0.5599
+    }
+  },
+  "promotion_gate": {
+    "minimum_balanced_accuracy": 0.7,
+    "minimum_precision_each_sign": 0.65,
+    "passed": false
+  },
+  "deployment_status": "rejected_no_predictions_emitted",
+  "interpretation": "Failure means these features do not support a generic global sign model. Binding and ordinary expression context remain evidence, not direction calls."
+}

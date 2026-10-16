@@ -15,6 +15,9 @@ METHODS = {
                             "JASPAR matrix TF, merged with symbol/synonym matches"),
     "inferred_edges": ("Regulatory networks projected across plant species through PLAZA/BLAST "
                        "orthology; source species and confidence penalty retained per edge"),
+    "perturbation_sign_consensus": ("Experiment-level gain- and loss-of-function responses are "
+                                    "orientation-normalized, aggregated by independent experiment, "
+                                    "and retained only with direct binding support or replication"),
     "regulator_identification": "BLASTp vs characterised regulator proteins (best hit, %id + coverage)",
     "enrichment": "hypergeometric over-representation with Benjamini–Hochberg FDR",
     "coordinate_systems": ("gene coordinates on each species' atlas assembly (GFF 1-based); "
@@ -29,6 +32,10 @@ EVIDENCE_LAYERS = {
     "orthology_transferred": "Regulatory relation projected from another species through orthology",
     "annotation": "Gene, genome, pathway, trait, or sequence annotation",
     "method": "Software or reference model used to derive an atlas result",
+}
+
+DERIVED_SOURCE_LABELS = {
+    "Perturbation sign consensus": "method:perturbation_sign_consensus",
 }
 
 # Data sources with citations. `key` is the BibTeX cite key.
@@ -172,11 +179,12 @@ SOURCES = [
 
 def source_label_map():
     """Map labels stored in atlas tables to their canonical manifest source."""
-    return {
+    external = {
         label: source["key"]
         for source in SOURCES
         for label in source.get("source_labels", [])
     }
+    return {**external, **DERIVED_SOURCE_LABELS}
 
 
 def source_key_for_label(label: str):

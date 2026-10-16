@@ -203,6 +203,17 @@
 .candidate-impact-grid span { color: #9a4f32; font-size: 9px; text-transform: uppercase; }
 .candidate-impact-grid small { color: #60747a; font-size: 9px; }
 .candidate-impact-grid b { position: absolute; top: 12px; right: 10px; color: #126b61; font-size: 11px; }
+.feedback-evidence-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); margin: 12px 0; border: 1px solid #c9d0cc; background: rgba(255,255,255,.58); }
+.feedback-evidence-summary > div { display: flex; flex-direction: column; gap: 3px; padding: 11px 13px; border-right: 1px solid #d8d8cf; }
+.feedback-evidence-summary strong { font-family: Georgia, serif; font-size: 20px; font-weight: 500; }
+.feedback-evidence-summary span { color: #60747a; font-size: 9px; text-transform: uppercase; letter-spacing: .04em; }
+.feedback-evidence-summary .passed strong { color: #126b61; }
+.feedback-evidence-summary .failed strong { color: #9a4f32; }
+.feedback-edge-evidence { display: grid; gap: 6px; margin-top: 10px; padding: 10px; border: 1px solid #d8d8cf; background: #f8f5ec; }
+.feedback-edge-evidence > strong { color: #55696f; font-size: 9px; text-transform: uppercase; letter-spacing: .08em; }
+.feedback-edge-evidence > div { display: grid; grid-template-columns: minmax(110px, .7fr) minmax(180px, 1fr) minmax(200px, 1.4fr); gap: 8px; font-size: 9px; }
+.feedback-edge-evidence span { color: #9a4f32; text-transform: uppercase; }
+.feedback-edge-evidence small { color: #60747a; }
 
 @media (max-width: 1050px) {
   .feedback-header { align-items: flex-start; flex-direction: column; }
@@ -245,4 +256,5 @@
   .feedback-core-metrics { justify-content: flex-start; }
   .feedback-legend { flex-wrap: wrap; }
   .feedback-legend span:last-child { margin-left: 0; }
+  .feedback-edge-evidence > div { grid-template-columns: 1fr; }
 }
