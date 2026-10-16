@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all external-regulation evidence-expansion qualify-evidence enrich tissue-weights verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - release data setup from a fresh clone, including all external evidence and KnockTF species"
@@ -16,6 +16,7 @@ help:
 	@echo "make knocktf-all    - stream/load KnockTF for Arabidopsis, human, and mouse (large download)"
 	@echo "make external-regulation - load CollecTRI, SIGNOR, and strict + expanded AGRIS evidence"
 	@echo "make evidence-expansion - load ChIP-Atlas and TFLink; audit PCBase and literature sources"
+	@echo "make direct-binding  - fetch+load direct TF-binding data (GTRD, Cistrome, GEO) for all species"
 	@echo "make qualify-evidence - build conflict-aware candidates and source qualification report"
 	@echo "make verify-data    - fail unless all release data layers and minimum coverage are present"
 	@echo "make enrich         - load ConnecTF edges+perturbations, curated pathway edges, display names (needs make db)"
@@ -31,7 +32,7 @@ help:
 # One command to take a fresh clone to the verified release source-data profile. Each step is
 # individually re-runnable. Some download stages self-skip on transient failures, but the final
 # verifier rejects a degraded build that is missing a release-required layer.
-bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion qualify-evidence allele-pwms chromatin-peaks verify-data
+bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion direct-binding qualify-evidence allele-pwms chromatin-peaks verify-data
 	@echo ""
 	@echo "=== GRN Atlas bootstrap complete ==="
 	@echo "Verify:  make test-backend"
@@ -97,6 +98,11 @@ evidence-expansion:
 	venv/bin/python backend/scripts/load_expression_atlas_perturbations.py backend/source_manifests/expression_atlas_reviewed.json
 	venv/bin/python backend/scripts/audit_pcbase.py --report backend/data/pcbase_qualification.json
 	venv/bin/python backend/scripts/audit_literature_sources.py --report backend/data/literature_source_qualification.json
+
+direct-binding:
+	venv/bin/python backend/scripts/fetch_direct_binding.py
+	venv/bin/python backend/scripts/load_direct_binding.py
+	venv/bin/python backend/scripts/promote_evidence_to_interactions.py
 
 qualify-evidence:
 	venv/bin/python backend/scripts/build_conserved_regulatory_evidence.py

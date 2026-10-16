@@ -46,8 +46,8 @@ make bootstrap        # venv + deps, fetch sources, build DB, signs, perturbatio
 ```
 
 `make bootstrap` runs, in order: `setup` → `fetch` → `db` → `external-regulation` →
-`enrich` → `knocktf-all` → `evidence-expansion` → `qualify-evidence` →
-`allele-pwms` → `chromatin-peaks` → `verify-data`.
+`enrich` → `knocktf-all` → `evidence-expansion` → `direct-binding` →
+`qualify-evidence` → `allele-pwms` → `chromatin-peaks` → `verify-data`.
 Every third-party download (including ~2.4 GB of KnockTF tables) is fetched automatically.
 Some download stages self-skip after a transient outage, but the final `verify-data` gate rejects
 a degraded build that is missing a release-required layer. Each stage is independently re-runnable
@@ -66,7 +66,7 @@ make backend          # FastAPI on http://localhost:8000 (docs at /docs)
 make frontend         # in another shell: Vite UI on http://localhost:3001 (proxies /api)
 ```
 
-Verify the build: `make verify-data && make test-backend` (expect **379 passed, 6 skipped**) and
+Verify the build: `make verify-data && make test-backend` (expect **385 passed**) and
 `make test-skills` (expect **386 passing single-skill cases**).
 
 <details><summary>Equivalent step-by-step (if you prefer to run stages individually)</summary>
@@ -79,6 +79,7 @@ make external-regulation  # CollecTRI + SIGNOR + strict and expanded AGRIS evide
 make enrich        # auto-downloads ConnecTF, loads edges + TF-perturbation observations + perturbation signs
 make knocktf-all   # Arabidopsis + human + mouse KnockTF; re-derives Arabidopsis signs
 make evidence-expansion  # expanded AGRIS, TFLink, ChIP-Atlas, and reviewed Expression Atlas evidence
+make direct-binding      # fetch+load direct TF-binding data, promote evidence to interactions
 make qualify-evidence    # conflict-aware candidates, cycle-closing impact ranks, source qualification
 make allele-pwms   # cache JASPAR PWMs for grn-allele-affinity
 make chromatin-peaks   # auto-downloads Plant Cistrome DAP-seq peaks (GSE60143)
@@ -357,9 +358,9 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 
 ### Complete skill inventory
 
-The repository currently contains **106 documented GRN Atlas skills**:
+The repository currently contains **107 documented GRN Atlas skills**:
 
-- **105 callable analysis/workflow skills**
+- **106 callable analysis/workflow skills**
 - **1 overview/router skill**: `grn-atlas-overview`
 
 The full live inventory, with every skill name and current description, is maintained in:
@@ -410,7 +411,7 @@ orchestration. The current repo status as of **Saturday, August 22, 2026** is:
 | **Multi-skill orchestration (GPT-5.4 full rerun)** | 111 | 111 | 100% (111/111) | Latest full GPT-5.4 rerun on Saturday, August 22, 2026 across the current 111-question orchestration matrix |
 | **Multi-skill orchestration (Nemotron partial rerun)** | 40 | 37 | 92.5% (37/40) | Latest Saturday, August 22, 2026 paced partial rerun before provider/model exit; useful as a health check, not a full benchmark |
 
-All **106 documented skills** are documented in-repo. The older direct/HTTP harnesses still
+All **107 documented skills** are documented in-repo. The older direct/HTTP harnesses still
 cover the legacy 41-skill subset, while the current skill inventory, coverage audit, and LLM matrices
 cover the current expanded surface.
 

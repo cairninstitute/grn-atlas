@@ -57,6 +57,10 @@ CORE_POST_DB = [
     ("protein-coding gene lists (mygene, human+mouse)", [PY, "fetch_gene_lists.py"], None),
     ("PlantRegMap regulation (tomato, petunia, potato, rice, tobacco)",
      [[PY, "fetch_plantregmap_regulation.py", "all"]], None),
+    ("direct TF-binding data (GTRD, Cistrome, GEO studies)",
+     [PY, "fetch_direct_binding.py"],
+     "Downloads GTRD (human/mouse) and Cistrome DB (human/mouse) TF-target tables. "
+     "Tomato/rice GEO sources may require manual peak processing."),
 ]
 LIGHT = [
     ("plant pathways (Plant Reactome)", [PY, "fetch_pathways.py"], None),

@@ -1,0 +1,88 @@
+{
+  "sources": [
+    {
+      "name": "GTRD",
+      "species": "human",
+      "version": "24.01",
+      "url": "https://gtrd.biouml.org/downloads/24.01/human_tf_target.tsv.gz",
+      "fallback_urls": [
+        "https://gtrd.biouml.org/downloads/24.01/Homo_sapiens_tf_target.tsv.gz",
+        "https://gtrd20-06.biouml.org/downloads/24.01/human_tf_target.tsv.gz"
+      ],
+      "format": "tsv_gz",
+      "columns": {"tf": 0, "target": 1},
+      "filename": "gtrd_human.tsv.gz",
+      "description": "GTRD meta-cluster TF-target gene table for human",
+      "requires_peak_calling": false
+    },
+    {
+      "name": "GTRD",
+      "species": "mouse",
+      "version": "24.01",
+      "url": "https://gtrd.biouml.org/downloads/24.01/mouse_tf_target.tsv.gz",
+      "fallback_urls": [
+        "https://gtrd.biouml.org/downloads/24.01/Mus_musculus_tf_target.tsv.gz",
+        "https://gtrd20-06.biouml.org/downloads/24.01/mouse_tf_target.tsv.gz"
+      ],
+      "format": "tsv_gz",
+      "columns": {"tf": 0, "target": 1},
+      "filename": "gtrd_mouse.tsv.gz",
+      "description": "GTRD meta-cluster TF-target gene table for mouse",
+      "requires_peak_calling": false
+    },
+    {
+      "name": "Cistrome",
+      "species": "human",
+      "version": "2024",
+      "url": "http://cistrome.org/db/api",
+      "fallback_urls": [],
+      "format": "cistrome_api",
+      "columns": {},
+      "filename": "cistrome_human_cache.json",
+      "description": "Cistrome DB ChIP-seq TF-target gene tables for human (~500 TFs)",
+      "requires_peak_calling": false,
+      "max_samples": 300,
+      "max_targets_per_sample": 500
+    },
+    {
+      "name": "Cistrome",
+      "species": "mouse",
+      "version": "2024",
+      "url": "http://cistrome.org/db/api",
+      "fallback_urls": [],
+      "format": "cistrome_api",
+      "columns": {},
+      "filename": "cistrome_mouse_cache.json",
+      "description": "Cistrome DB ChIP-seq TF-target gene tables for mouse (~350 TFs)",
+      "requires_peak_calling": false,
+      "max_samples": 200,
+      "max_targets_per_sample": 500
+    },
+    {
+      "name": "GEO_GSE271397",
+      "species": "tomato",
+      "version": "2024",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE271nnn/GSE271397/suppl/",
+      "fallback_urls": [],
+      "format": "geo_suppl_dir",
+      "columns": {},
+      "filename": "geo_GSE271397_tomato_suppl",
+      "description": "AP1/FUL DAP-seq in tomato (Wageningen, FUL2/MC complexes)",
+      "requires_peak_calling": true,
+      "note": "Peak files need promoter intersection for TF→target mapping. If processed TSV is placed manually at direct_binding/geo_gse271397_tomato.tsv, load_direct_binding.py will use it."
+    },
+    {
+      "name": "GEO_PRJNA1236412",
+      "species": "tomato",
+      "version": "2025",
+      "url": "https://ftp.ncbi.nlm.nih.gov/sra/",
+      "fallback_urls": [],
+      "format": "manual",
+      "columns": {},
+      "filename": "geo_prjna1236412_tomato.tsv",
+      "description": "SlGBF3 DAP-seq ~46,705 peaks (ripening/ABA regulation)",
+      "requires_peak_calling": true,
+      "note": "Raw sequencing data only. Process peaks externally and place TSV at direct_binding/geo_prjna1236412_tomato.tsv"
+    }
+  ]
+}

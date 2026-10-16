@@ -65,6 +65,7 @@ GRN Atlas is a multi-species gene regulatory network database covering the speci
 | `grn-network-control` | Find the minimal set of TFs to perturb to steer a target gene program, with sign-aware direction recommendations |
 | `grn-differential-network` | Compare regulatory-edge activity between two tissues/conditions (gained/strengthened/weakened edges) |
 | `grn-dynamics` | Boolean/attractor simulation of a signed regulatory module (fixed point vs cycle; steady-state ON/OFF after a perturbation) |
+| `grn-feedback-control` | Discover signed feedback loops, feedback-capable backbones, control groups, biological control-system hypotheses, and structural controller genes across a species GRN |
 | `grn-promoter-edit-prioritization` | Prioritize motif-supported promoter sites as editing targets |
 | `grn-crispr-design` | Suggest sequence-only heuristic CRISPR guides |
 | `grn-primer-design` | Suggest sequence-only heuristic primer pairs |
@@ -157,6 +158,7 @@ below complete the catalog; the authoritative, always-current list is every
 27. **Steer a whole gene program with the fewest interventions**: `grn-upstream` / `grn-shared-regulators` → `grn-network-control`
 28. **Compare regulatory wiring between two tissues/conditions**: `grn-tissue-coexpression` → `grn-differential-network`
 29. **Simulate a circuit's steady state / attractor after a perturbation**: `grn-regulon` → `grn-dynamics`
+30. **Find feedback loops and biological control systems**: `grn-feedback-control` → `grn-dynamics` / `grn-evidence-synthesis`
 
 ## Execution Modes
 

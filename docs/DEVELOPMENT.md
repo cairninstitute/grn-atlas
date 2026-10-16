@@ -36,7 +36,7 @@ then-current 90 documented skills were executed individually through their own
 `scripts/run.py --http` surface. As of **Saturday, August 22, 2026**, the current broad
 LLM/coverage status is:
 
-- **106 documented skills** in the current inventory (**105 callable + 1 overview/router**)
+- **107 documented skills** in the current inventory (**106 callable + 1 overview/router**)
 - **386** natural-language single-skill cases covering the original **100-skill** matrix snapshot
   (the most recently added skills are covered by the direct skill harness and backend pytest,
   not yet folded into the single-skill routing matrix)
@@ -51,8 +51,8 @@ LLM/coverage status is:
 
 Third-party data is **not committed** (see LICENSE). The one-command path is **`make bootstrap`**
 (`setup` → `fetch` → `db` → `external-regulation` → `enrich` → `knocktf-all` →
-`evidence-expansion` → `qualify-evidence` → `allele-pwms` → `chromatin-peaks` →
-`verify-data`), which fetches every
+`evidence-expansion` → `direct-binding` → `qualify-evidence` → `allele-pwms` →
+`chromatin-peaks` → `verify-data`), which fetches every
 third-party download automatically. The individual stages, for reference:
 
 ```bash
@@ -216,8 +216,8 @@ All three scripts are idempotent — safe to re-run. If ConnecTF data is not dow
 
 The release source-data bootstrap is a single command: `make bootstrap`
 (`setup` → `fetch` → `db` → `external-regulation` → `enrich` → `knocktf-all` →
-`evidence-expansion` → `qualify-evidence` → `allele-pwms` → `chromatin-peaks` →
-`verify-data`). The final verifier fails on missing
+`evidence-expansion` → `direct-binding` → `qualify-evidence` → `allele-pwms` →
+`chromatin-peaks` → `verify-data`). The final verifier fails on missing
 required layers instead of accepting a silently degraded build.
 
 ## Compute dependencies (only for regenerating derived data)
