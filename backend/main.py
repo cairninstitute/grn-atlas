@@ -3513,6 +3513,7 @@ class ConservationRequest(BaseModel):
     species_b: str                       # compare against this species
     min_confidence: float = 0.0
     include_inferred: bool = True
+    include_transfer_candidates: bool = True
 
 
 @app.post("/api/v1/conservation")
@@ -3545,9 +3546,14 @@ async def conservation(request: ConservationRequest):
         else:
             orth[r["gene_b"]].add(r["gene_a"])
 
+    def sym(gene_id):
+        r = db.conn.execute("SELECT symbol FROM genes WHERE id = ?", (gene_id,)).fetchone()
+        return r["symbol"] if r else gene_id
+
     # B-side edges among all candidate orthologs
     b_ids = sorted({g for s in orth.values() for g in s})
     b_edge = {}
+    transfer_edge = {}
     if b_ids:
         bph = ",".join("?" * len(b_ids))
         inferred_b = "" if request.include_inferred else " AND i.sources NOT LIKE '%Inferred%'"
@@ -3555,14 +3561,28 @@ async def conservation(request: ConservationRequest):
             f"SELECT source_id, target_id, regulation_type, confidence FROM interactions i "
             f"WHERE source_id IN ({bph}) AND target_id IN ({bph}){inferred_b}", b_ids + b_ids).fetchall():
             b_edge[(r["source_id"], r["target_id"])] = (r["regulation_type"], r["confidence"])
-
-    def sym(gene_id):
-        r = db.conn.execute("SELECT symbol FROM genes WHERE id = ?", (gene_id,)).fetchone()
-        return r["symbol"] if r else gene_id
+        has_transfers = db.conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' "
+            "AND name='orthology_transfer_candidates'"
+        ).fetchone()
+        if request.include_transfer_candidates and has_transfers:
+            for r in db.conn.execute(
+                f"SELECT source_id,target_id,relation_type,mapping_class,edge_score,sign_score,"
+                f"status,metadata FROM orthology_transfer_candidates "
+                f"WHERE species=? AND source_id IN ({bph}) AND target_id IN ({bph}) "
+                f"AND status<>'sign_conflict'", [request.species_b] + b_ids + b_ids,
+            ).fetchall():
+                transfer_edge[(r["source_id"], r["target_id"])] = {
+                    "source_ortholog": r["source_id"], "source_ortholog_symbol": sym(r["source_id"]),
+                    "target_ortholog": r["target_id"], "target_ortholog_symbol": sym(r["target_id"]),
+                    "regulation_type": r["relation_type"], "mapping_class": r["mapping_class"],
+                    "edge_score": r["edge_score"], "sign_score": r["sign_score"],
+                    "status": r["status"], "metadata": json.loads(r["metadata"] or "{}"),
+                }
 
     out, n_cons = [], 0
     for e in a_edges:
-        matches = []
+        matches, transfer_matches = [], []
         for a in orth.get(e["source_id"], ()):
             for b in orth.get(e["target_id"], ()):
                 if (a, b) in b_edge:
@@ -3570,6 +3590,8 @@ async def conservation(request: ConservationRequest):
                     matches.append({"source_ortholog": a, "source_ortholog_symbol": sym(a),
                                     "target_ortholog": b, "target_ortholog_symbol": sym(b),
                                     "regulation_type": reg, "confidence": conf})
+                if (a, b) in transfer_edge:
+                    transfer_matches.append(transfer_edge[(a, b)])
         conserved = bool(matches)
         n_cons += conserved
         out.append({
@@ -3580,9 +3602,11 @@ async def conservation(request: ConservationRequest):
             "source_has_ortholog": bool(orth.get(e["source_id"])),
             "target_has_ortholog": bool(orth.get(e["target_id"])),
             "b_edges": matches,
+            "transfer_hypotheses": transfer_matches,
         })
     return {"species_b": request.species_b, "edges": out,
             "stats": {"edges": len(out), "conserved": n_cons,
+                      "transfer_hypotheses": sum(len(e["transfer_hypotheses"]) for e in out),
                       "both_orthologs": sum(1 for e in out if e["source_has_ortholog"] and e["target_has_ortholog"])}}
 
 

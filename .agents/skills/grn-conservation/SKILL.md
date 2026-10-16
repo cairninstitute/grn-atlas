@@ -33,3 +33,10 @@ backend/venv/bin/python .agents/skills/grn-conservation/scripts/run.py --gene-id
 
 ### Output
 JSON object with regulatory edges and their conservation status (conserved vs. species-specific) between the two species.
+
+### Evidence boundary
+
+- An observed edge in both species is stronger than an orthology-projected edge.
+- Cross-species candidates report mapping class, donor species, recipient evidence, and calibration status.
+- Reciprocal-unique synteny is admissible for exploratory transfer; one-to-many mappings are excluded.
+- Never describe an exploratory transfer as conserved regulation without recipient-species validation.

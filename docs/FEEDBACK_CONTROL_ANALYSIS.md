@@ -62,6 +62,11 @@ multilayer view can add reviewed protein-activity, degradation, complex, and
 post-transcriptional regulation without relabeling those mechanisms as transcription.
 Neither view changes the observed graph.
 
+Cross-species candidates retain donor species, mapping class, recipient evidence, and
+separate edge/sign ranking scores. Supported promotion requires a passing source-held-out
+species/sign/mapping calibration class plus independent recipient binding or cis evidence;
+all other nonconflicting transfers remain exploratory.
+
 Candidate-impact ranking identifies edges that would close an existing directed return
 path, add feedback-capable genes, or merge current cores. Optional deterministic Monte
 Carlo sampling reports each gene's frequency of membership in a feedback core when

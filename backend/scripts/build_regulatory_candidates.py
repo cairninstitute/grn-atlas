@@ -46,6 +46,35 @@ def build(conn: sqlite3.Connection) -> dict:
                 "SELECT species,relation_type FROM perturbation_sign_calibration WHERE gate_pass=1"
             )
         }
+    calibrated_transfer_classes = set()
+    if conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='cross_species_transfer_calibration'"
+    ).fetchone():
+        calibrated_transfer_classes = {
+            (row[0], row[1], row[2]) for row in conn.execute(
+                "SELECT species,relation_type,mapping_class "
+                "FROM cross_species_transfer_calibration WHERE gate_pass=1"
+            )
+        }
+    transfer_candidates = {}
+    if conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='orthology_transfer_candidates'"
+    ).fetchone():
+        transfer_candidates = {
+            (row[0], row[1], row[2], row[3]): {
+                "mapping_class": row[4], "mapping_score": round(float(row[5]), 6),
+                "donor_species": json.loads(row[6]), "donor_sources": json.loads(row[7]),
+                "recipient_binding_sources": json.loads(row[8]),
+                "recipient_cis_support": bool(row[9]), "source_independent": bool(row[10]),
+                "edge_score": round(float(row[11]), 6), "sign_score": round(float(row[12]), 6),
+            }
+            for row in conn.execute(
+                "SELECT species,source_id,target_id,relation_type,mapping_class,mapping_score,"
+                "donor_species,donor_sources,recipient_binding_sources,recipient_cis_support,"
+                "source_independent,edge_score,sign_score FROM orthology_transfer_candidates "
+                "WHERE status IN ('qualified','unvalidated')"
+            )
+        }
     consensus = {}
     if conn.execute(
         "SELECT 1 FROM sqlite_master WHERE type='table' AND name='perturbation_sign_consensus'"
@@ -134,10 +163,22 @@ def build(conn: sqlite3.Connection) -> dict:
             evidence_tier = "exploratory"
             probability = min(0.60, max(0.35, confidence))
         elif has_orthology:
-            support_class = "conserved_orthology"
-            confidence = max(0.40, min(0.58, max(row[1] for row in signed_rows)))
-            evidence_tier = "exploratory"
-            probability = min(0.58, max(0.30, confidence))
+            transfer = transfer_candidates.get((species, source_id, target_id, relation), {})
+            transfer_class = (species, relation, transfer.get("mapping_class"))
+            transfer_supported = (
+                transfer_class in calibrated_transfer_classes
+                and transfer.get("source_independent", False)
+                and bool(transfer.get("recipient_binding_sources")
+                         or transfer.get("recipient_cis_support"))
+            )
+            support_class = (
+                "supported_cross_species_transfer" if transfer_supported
+                else "exploratory_cross_species_transfer"
+            )
+            confidence = max(0.40, min(0.72 if transfer_supported else 0.58,
+                                       max(row[1] for row in signed_rows)))
+            evidence_tier = "supported" if transfer_supported else "exploratory"
+            probability = min(0.78 if transfer_supported else 0.58, max(0.30, confidence))
         else:
             summary["insufficient_support"] += 1
             continue
@@ -160,6 +201,12 @@ def build(conn: sqlite3.Connection) -> dict:
             candidate_metadata["perturbation_consensus"] = consensus[
                 (species, source_id, target_id)
             ]
+        if (species, source_id, target_id, relation) in transfer_candidates:
+            transfer = transfer_candidates[(species, source_id, target_id, relation)]
+            transfer["calibration_gate_pass"] = (
+                species, relation, transfer["mapping_class"]
+            ) in calibrated_transfer_classes
+            candidate_metadata["cross_species_transfer"] = transfer
         output.append((species, source_id, target_id, relation, confidence, support_class,
                        json.dumps(sources), json.dumps(sorted(layers)), status,
                        evidence_tier, probability,

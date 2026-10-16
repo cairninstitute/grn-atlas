@@ -18,6 +18,9 @@ METHODS = {
     "perturbation_sign_consensus": ("Experiment-level gain- and loss-of-function responses are "
                                     "orientation-normalized, aggregated by independent experiment, "
                                     "and retained only with direct binding support or replication"),
+    "cross_species_sign_transfer": ("Signed measured donor edges are projected through explicit "
+                                    "one-to-one orthology or reciprocal-unique synteny; promotion "
+                                    "requires source-disjoint calibration and recipient evidence"),
     "regulator_identification": "BLASTp vs characterised regulator proteins (best hit, %id + coverage)",
     "enrichment": "hypergeometric over-representation with Benjamini–Hochberg FDR",
     "coordinate_systems": ("gene coordinates on each species' atlas assembly (GFF 1-based); "
@@ -36,6 +39,7 @@ EVIDENCE_LAYERS = {
 
 DERIVED_SOURCE_LABELS = {
     "Perturbation sign consensus": "method:perturbation_sign_consensus",
+    "Conserved signed orthology": "method:cross_species_sign_transfer",
 }
 
 # Data sources with citations. `key` is the BibTeX cite key.

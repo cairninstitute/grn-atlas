@@ -22,8 +22,11 @@ never inserted directly into `interactions` by the expansion pipeline.
 - ConnecTF experiment files are retained at experiment resolution with TF, assay,
   tissue/treatment metadata, log2 fold change, significance, and binding versus
   perturbation semantics.
-- Conserved-edge transfer requires strict one-to-one orthology and either support from
-  two donor species or independent cis support in the recipient species.
+- Conserved-edge transfer accepts explicit one-to-one orthology and reciprocal-unique
+  synteny. Supported promotion additionally requires a calibrated species/sign/mapping
+  class and independent recipient binding or cis evidence; other projections are exploratory.
+- Legacy inferred interactions are excluded as transfer donors, and shared sources or
+  publications are excluded from transfer calibration to prevent recursive validation.
 
 The unconfirmed unsigned AGRIS predictions remain excluded. Signed putative-direct
 records are retained only in the explicitly exploratory tier.
@@ -82,6 +85,7 @@ The relevant individual stages are:
 make external-regulation
 make evidence-expansion
 make qualify-evidence
+make cross-species-transfer
 ```
 
 Qualification reports source mapping, novel-pair yield, sign agreement and conflicts,

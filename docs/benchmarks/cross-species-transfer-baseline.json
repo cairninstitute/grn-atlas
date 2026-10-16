@@ -1,0 +1,86 @@
+{
+  "generated_at": "2026-10-16T22:56:18.169910+00:00",
+  "definition": "Feedback metrics with cross-species transfer candidates ablated",
+  "species": {
+    "mouse": {
+      "supported": {
+        "graph_edges": 9901,
+        "feedback_cores": 2,
+        "feedback_genes": 352,
+        "feedback_edges": 1621,
+        "macro_circuits": 0
+      },
+      "exploratory": {
+        "graph_edges": 18498,
+        "feedback_cores": 2,
+        "feedback_genes": 422,
+        "feedback_edges": 2038,
+        "macro_circuits": 0
+      }
+    },
+    "petunia": {
+      "supported": {
+        "graph_edges": 1381,
+        "feedback_cores": 11,
+        "feedback_genes": 68,
+        "feedback_edges": 247,
+        "macro_circuits": 0
+      },
+      "exploratory": {
+        "graph_edges": 1381,
+        "feedback_cores": 11,
+        "feedback_genes": 68,
+        "feedback_edges": 247,
+        "macro_circuits": 0
+      }
+    },
+    "potato": {
+      "supported": {
+        "graph_edges": 0,
+        "feedback_cores": 0,
+        "feedback_genes": 0,
+        "feedback_edges": 0,
+        "macro_circuits": 0
+      },
+      "exploratory": {
+        "graph_edges": 0,
+        "feedback_cores": 0,
+        "feedback_genes": 0,
+        "feedback_edges": 0,
+        "macro_circuits": 0
+      }
+    },
+    "rice": {
+      "supported": {
+        "graph_edges": 332,
+        "feedback_cores": 6,
+        "feedback_genes": 25,
+        "feedback_edges": 48,
+        "macro_circuits": 0
+      },
+      "exploratory": {
+        "graph_edges": 1617,
+        "feedback_cores": 6,
+        "feedback_genes": 25,
+        "feedback_edges": 48,
+        "macro_circuits": 0
+      }
+    },
+    "tomato": {
+      "supported": {
+        "graph_edges": 2142,
+        "feedback_cores": 12,
+        "feedback_genes": 97,
+        "feedback_edges": 329,
+        "macro_circuits": 0
+      },
+      "exploratory": {
+        "graph_edges": 2142,
+        "feedback_cores": 12,
+        "feedback_genes": 97,
+        "feedback_edges": 329,
+        "macro_circuits": 0
+      }
+    }
+  }
+}

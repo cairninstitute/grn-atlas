@@ -42,6 +42,8 @@ def main():
         "regulatory_evidence", "source_import_runs", "regulatory_edge_candidates",
         "regulatory_candidate_impacts", "perturbation_sign_consensus",
         "perturbation_sign_calibration",
+        "orthology_transfer_mappings", "orthology_transfer_candidates",
+        "cross_species_transfer_calibration",
     }
     missing_tables = sorted(required_tables - tables)
     if missing_tables:
@@ -76,6 +78,9 @@ def main():
                 "SELECT COUNT(*) FROM perturbation_sign_consensus WHERE status='accepted'",
                 (), 80_000,
             ),
+            "cross_species_transfer_candidates": (
+                "SELECT COUNT(*) FROM orthology_transfer_candidates", (), 13_000,
+            ),
             "ranked_candidate_impacts": (
                 "SELECT COUNT(*) FROM regulatory_candidate_impacts", (), 35_000,
             ),
@@ -102,7 +107,7 @@ def main():
             "Expression Atlas reviewed perturbations": 25,
             "ConnecTF experiment evidence": 140_000,
             "Perturbation sign consensus": 80_000,
-            "Conserved signed orthology": 0,
+            "Conserved signed orthology": 13_000,
         }
         for source, minimum in required_sources.items():
             if imports.get(source, {}).get("status") != "complete":

@@ -51,8 +51,8 @@ LLM/coverage status is:
 
 Third-party data is **not committed** (see LICENSE). The one-command path is **`make bootstrap`**
 (`setup` → `fetch` → `db` → `external-regulation` → `enrich` → `knocktf-all` →
-`evidence-expansion` → `direct-binding` → `qualify-evidence` → `allele-pwms` →
-`chromatin-peaks` → `verify-data`), which fetches every
+`evidence-expansion` → `direct-binding` → `allele-pwms` → `chromatin-peaks` →
+`qualify-evidence` → `verify-data`), which fetches every
 third-party download automatically. The individual stages, for reference:
 
 ```bash
@@ -216,8 +216,8 @@ All three scripts are idempotent — safe to re-run. If ConnecTF data is not dow
 
 The release source-data bootstrap is a single command: `make bootstrap`
 (`setup` → `fetch` → `db` → `external-regulation` → `enrich` → `knocktf-all` →
-`evidence-expansion` → `direct-binding` → `qualify-evidence` → `allele-pwms` →
-`chromatin-peaks` → `verify-data`). The final verifier fails on missing
+`evidence-expansion` → `direct-binding` → `allele-pwms` → `chromatin-peaks` →
+`qualify-evidence` → `verify-data`). The final verifier fails on missing
 required layers instead of accepting a silently degraded build.
 
 ## Compute dependencies (only for regenerating derived data)

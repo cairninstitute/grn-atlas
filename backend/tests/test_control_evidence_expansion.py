@@ -72,7 +72,7 @@ def test_conserved_transfer_requires_cis_support_for_one_donor():
         ("OA", "OA", "two", 1), ("OB", "OB", "two", 0),
     ])
     conn.execute("INSERT INTO interactions VALUES (?,?,?,?,?,?,?,?)",
-                 ("A", "B", "activation", .9, "[]", "[]", "activation", "measured"))
+                 ("A", "B", "activation", .9, '["curated"]', "[]", "activation", "measured"))
     conn.executemany("INSERT INTO orthologs VALUES (?,?,?,?,?,?)", [
         ("A", "OA", "one", "two", "1:1", 100),
         ("B", "OB", "one", "two", "1:1", 100),
@@ -81,6 +81,35 @@ def test_conserved_transfer_requires_cis_support_for_one_donor():
     result = build_conserved_regulatory_evidence.build(conn)
     assert result["stored"] == 1
     assert conn.execute("SELECT relation_type FROM regulatory_evidence").fetchone()[0] == "activation"
+
+
+def test_reciprocal_unique_synteny_is_exploratory_and_inferred_donors_are_excluded():
+    conn = base_db()
+    conn.executemany("INSERT INTO genes VALUES (?,?,?,?)", [
+        ("A", "A", "one", 1), ("B", "B", "one", 0),
+        ("OA", "OA", "two", 1), ("OB", "OB", "two", 0),
+        ("C", "C", "one", 1), ("D", "D", "one", 0),
+        ("OC", "OC", "two", 1), ("OD", "OD", "two", 0),
+    ])
+    conn.executemany("INSERT INTO interactions VALUES (?,?,?,?,?,?,?,?)", [
+        ("A", "B", "activation", .9, '["curated"]', "[]", "activation", "measured"),
+        ("C", "D", "activation", .9, '["Inferred:one"]', "[]", "activation", "measured"),
+    ])
+    conn.executemany("INSERT INTO orthologs VALUES (?,?,?,?,?,?)", [
+        ("A", "OA", "one", "two", "synteny", .8),
+        ("B", "OB", "one", "two", "synteny", .8),
+        ("C", "OC", "one", "two", "synteny", .8),
+        ("D", "OD", "one", "two", "synteny", .8),
+    ])
+    result = build_conserved_regulatory_evidence.build(conn)
+    assert result["projected"] == 1
+    assert result["unvalidated"] == 1
+    assert conn.execute(
+        "SELECT mapping_class,status FROM orthology_transfer_candidates"
+    ).fetchone() == ("reciprocal_unique_synteny", "unvalidated")
+    assert conn.execute(
+        "SELECT directness FROM regulatory_evidence"
+    ).fetchone()[0] == "conserved_unvalidated"
 
 
 def test_multilayer_edges_retain_their_mechanism():

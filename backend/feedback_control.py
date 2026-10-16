@@ -611,6 +611,26 @@ def _evidence_completion_summary(
                     (species,),
                 )
             ]
+    transfer_calibration = []
+    if _table_exists(conn, "cross_species_transfer_calibration"):
+        transfer_calibration = [
+            {
+                "relation_type": row[0], "mapping_class": row[1], "cases": int(row[2]),
+                "precision": round(float(row[3]), 4), "baseline_rate": round(float(row[4]), 4),
+                "gate_pass": bool(row[5]),
+            }
+            for row in conn.execute(
+                "SELECT relation_type,mapping_class,cases,precision,baseline_rate,gate_pass "
+                "FROM cross_species_transfer_calibration WHERE species=? "
+                "ORDER BY mapping_class,relation_type", (species,),
+            )
+        ]
+    transfer_status = {}
+    if _table_exists(conn, "orthology_transfer_candidates"):
+        transfer_status = {row[0]: int(row[1]) for row in conn.execute(
+            "SELECT status,COUNT(*) FROM orthology_transfer_candidates "
+            "WHERE species=? GROUP BY status ORDER BY status", (species,),
+        )}
     conflicts = 0
     if _table_exists(conn, "perturbation_sign_consensus"):
         conflicts = conn.execute(
@@ -623,6 +643,9 @@ def _evidence_completion_summary(
         "support_classes": support_classes,
         "perturbation_conflicts_excluded": int(conflicts),
         "calibrated_classes": calibrated,
+        "cross_species_transfer": {
+            "candidate_status": transfer_status, "calibrated_classes": transfer_calibration,
+        },
     }
 
 

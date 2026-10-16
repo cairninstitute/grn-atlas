@@ -47,7 +47,7 @@ make bootstrap        # venv + deps, fetch sources, build DB, signs, perturbatio
 
 `make bootstrap` runs, in order: `setup` → `fetch` → `db` → `external-regulation` →
 `enrich` → `knocktf-all` → `evidence-expansion` → `direct-binding` →
-`qualify-evidence` → `allele-pwms` → `chromatin-peaks` → `verify-data`.
+`allele-pwms` → `chromatin-peaks` → `qualify-evidence` → `verify-data`.
 Every third-party download (including ~2.4 GB of KnockTF tables) is fetched automatically.
 Some download stages self-skip after a transient outage, but the final `verify-data` gate rejects
 a degraded build that is missing a release-required layer. Each stage is independently re-runnable

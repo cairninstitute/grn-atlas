@@ -46,6 +46,8 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 
 - `systems` combines signed loops with pathway/GO enrichment and available cis, perturbation, and tissue-coexpression support.
 - Candidate mode can add an edge only from confirmed direct signed evidence or from independent binding plus signed perturbation evidence. It never silently changes the observed network.
+- Supported cross-species candidates additionally require a passing source-held-out species/sign/mapping calibration class and independent recipient binding or cis evidence.
+- Unvalidated nonconflicting orthology or reciprocal-unique-synteny projections appear only in exploratory mode and preserve their donor provenance.
 - Perturbation signs are aggregated across experiments with gain/loss direction normalization. Conflicting calls are retained for audit but excluded from every graph.
 - Binding-plus-perturbation signs enter the supported tier only when that species/sign class passes held-out precision, lift, sample-size, and confidence-bound gates. Failed classes remain exploratory.
 - Ordinary expression correlation is context only and never determines activation or repression.

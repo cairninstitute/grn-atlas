@@ -30,12 +30,14 @@ function EdgeEvidence({ edges = [] }) {
       <strong>Candidate-edge evidence</strong>
       {candidates.map((edge) => {
         const consensus = edge.evidence_context?.perturbation_consensus;
+        const transfer = edge.evidence_context?.cross_species_transfer;
         return (
           <div key={`${edge.source}-${edge.target}-${edge.sign}`}>
             <b>{edge.source} → {edge.target}</b>
             <span>{edge.sign} · {edge.evidence_tier} · {(edge.support_class || 'candidate').replaceAll('_', ' ')}</span>
             <small>{(edge.sources || []).join(', ') || 'qualified evidence'}
               {consensus ? ` · ${consensus.experiment_count} experiments · ${Math.round(consensus.sign_consistency * 100)}% sign consistency` : ''}
+              {transfer ? ` · transferred from ${(transfer.donor_species || []).join(', ')} · ${transfer.mapping_class.replaceAll('_', ' ')}` : ''}
             </small>
           </div>
         );
@@ -282,6 +284,12 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
                 <div key={row.relation_type} className={row.gate_pass ? 'passed' : 'failed'}>
                   <strong>{Math.round(row.precision * 100)}%</strong>
                   <span>{row.relation_type} precision · {row.gate_pass ? 'supported gate passed' : 'exploratory only'}</span>
+                </div>
+              ))}
+              {(result.evidence_completion.cross_species_transfer?.calibrated_classes || []).map((row) => (
+                <div key={`${row.mapping_class}-${row.relation_type}`} className={row.gate_pass ? 'passed' : 'failed'}>
+                  <strong>{row.cases ? `${Math.round(row.precision * 100)}%` : 'N/A'}</strong>
+                  <span>{row.relation_type} transfer · {row.mapping_class.replaceAll('_', ' ')} · {row.gate_pass ? 'supported gate passed' : 'exploratory only'}</span>
                 </div>
               ))}
             </section>

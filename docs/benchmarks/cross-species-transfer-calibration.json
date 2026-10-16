@@ -1,0 +1,173 @@
+{
+  "generated_at": "2026-10-16T22:56:00.759851+00:00",
+  "model_version": "cross-species-transfer-v1",
+  "leakage_controls": [
+    "donor and recipient evidence sources must be disjoint",
+    "donor and recipient PubMed identifiers must be disjoint",
+    "recipient truth is restricted to measured signed interactions",
+    "donor-sign conflicts are excluded"
+  ],
+  "thresholds": {
+    "minimum_cases": 50,
+    "minimum_precision": 0.8,
+    "minimum_lift_over_class_base_rate": 0.02,
+    "wilson_lower_must_exceed_base_rate": true
+  },
+  "excluded_overlaps": {},
+  "classes": [
+    {
+      "species": "mouse",
+      "relation_type": "activation",
+      "mapping_class": "explicit_one_to_one",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.8003,
+      "lift": -0.8003,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "mouse",
+      "relation_type": "repression",
+      "mapping_class": "explicit_one_to_one",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.1997,
+      "lift": -0.1997,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "petunia",
+      "relation_type": "activation",
+      "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 1.0,
+      "lift": -1.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "petunia",
+      "relation_type": "repression",
+      "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "potato",
+      "relation_type": "activation",
+      "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "potato",
+      "relation_type": "repression",
+      "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "rice",
+      "relation_type": "activation",
+      "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "rice",
+      "relation_type": "repression",
+      "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "tomato",
+      "relation_type": "activation",
+      "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 1.0,
+      "lift": -1.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "tomato",
+      "relation_type": "repression",
+      "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    }
+  ],
+  "species_held_out": {
+    "mouse": {
+      "independent_cases": 0,
+      "status": "insufficient_independent_cases"
+    },
+    "petunia": {
+      "independent_cases": 0,
+      "status": "insufficient_independent_cases"
+    },
+    "potato": {
+      "independent_cases": 0,
+      "status": "insufficient_independent_cases"
+    },
+    "rice": {
+      "independent_cases": 0,
+      "status": "insufficient_independent_cases"
+    },
+    "tomato": {
+      "independent_cases": 0,
+      "status": "insufficient_independent_cases"
+    }
+  },
+  "evolutionary_distance_strata": {},
+  "supported_classes": []
+}
