@@ -418,10 +418,11 @@ def discover_control_systems(
     cores: list[dict[str, Any]],
     max_systems: int = 20,
     max_system_genes: int = 80,
+    circuits: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     """Discover interpretable biological systems containing signed feedback."""
     feedback_ids = {gene_id for core in cores for gene_id in core.get("_gene_ids", [])}
-    all_circuits = [circuit for core in cores for circuit in core["circuits"]]
+    all_circuits = circuits or [circuit for core in cores for circuit in core["circuits"]]
     if not feedback_ids or not all_circuits:
         return []
     candidates = _annotation_candidates(

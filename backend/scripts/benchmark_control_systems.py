@@ -30,6 +30,7 @@ def main_cli() -> None:
     ]
     rows = []
     details = {}
+    circadian = None
     for species in species_list:
         started = time.perf_counter()
         result = feedback_control.analyze_feedback(main.db.conn, species)
@@ -72,12 +73,12 @@ def main_cli() -> None:
                 for system in systems[:10]
             ],
         }
+        if species == "arabidopsis":
+            circadian = next(
+                (system for system in systems if "circadian" in system["name"].lower()),
+                None,
+            )
 
-    circadian = next(
-        (system for system in details.get("arabidopsis", {}).get("top_systems", [])
-         if "circadian" in system["name"].lower()),
-        None,
-    )
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "algorithm_version": feedback_control.ALGORITHM_VERSION,

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-14T19:02:30.921768+00:00",
+  "generated_at": "2026-10-16T19:05:50.144127+00:00",
   "species": {
     "arabidopsis": {
       "candidate_impact": {
@@ -15,7 +15,7 @@
           "graph_edges": 29152,
           "macro_circuits": 2,
           "probabilistic_members": 227,
-          "seconds": 2.622
+          "seconds": 3.416
         },
         "multilayer": {
           "feedback_cores": 11,
@@ -24,7 +24,7 @@
           "graph_edges": 29152,
           "macro_circuits": 2,
           "probabilistic_members": 0,
-          "seconds": 2.154
+          "seconds": 2.676
         },
         "observed": {
           "feedback_cores": 12,
@@ -33,7 +33,7 @@
           "graph_edges": 24945,
           "macro_circuits": 0,
           "probabilistic_members": 0,
-          "seconds": 0.169
+          "seconds": 0.238
         },
         "supported": {
           "feedback_cores": 11,
@@ -42,7 +42,7 @@
           "graph_edges": 27730,
           "macro_circuits": 1,
           "probabilistic_members": 0,
-          "seconds": 1.237
+          "seconds": 1.519
         }
       }
     },
@@ -55,39 +55,39 @@
       "modes": {
         "exploratory": {
           "feedback_cores": 2,
-          "feedback_edges": 9487,
-          "feedback_genes": 895,
-          "graph_edges": 45061,
-          "macro_circuits": 25,
-          "probabilistic_members": 895,
-          "seconds": 79.791
+          "feedback_edges": 9564,
+          "feedback_genes": 896,
+          "graph_edges": 45295,
+          "macro_circuits": 0,
+          "probabilistic_members": 896,
+          "seconds": 1.23
         },
         "multilayer": {
           "feedback_cores": 2,
-          "feedback_edges": 9546,
-          "feedback_genes": 900,
-          "graph_edges": 45098,
-          "macro_circuits": 25,
-          "probabilistic_members": 0,
-          "seconds": 80.295
-        },
-        "observed": {
-          "feedback_cores": 4,
-          "feedback_edges": 1339,
-          "feedback_genes": 288,
-          "graph_edges": 9414,
+          "feedback_edges": 9623,
+          "feedback_genes": 901,
+          "graph_edges": 45332,
           "macro_circuits": 0,
           "probabilistic_members": 0,
-          "seconds": 0.078
+          "seconds": 0.898
+        },
+        "observed": {
+          "feedback_cores": 2,
+          "feedback_edges": 9564,
+          "feedback_genes": 896,
+          "graph_edges": 45295,
+          "macro_circuits": 0,
+          "probabilistic_members": 0,
+          "seconds": 0.31
         },
         "supported": {
           "feedback_cores": 2,
-          "feedback_edges": 9487,
-          "feedback_genes": 895,
-          "graph_edges": 45061,
-          "macro_circuits": 25,
+          "feedback_edges": 9564,
+          "feedback_genes": 896,
+          "graph_edges": 45295,
+          "macro_circuits": 0,
           "probabilistic_members": 0,
-          "seconds": 79.108
+          "seconds": 0.827
         }
       }
     },
@@ -102,37 +102,37 @@
           "feedback_cores": 2,
           "feedback_edges": 1621,
           "feedback_genes": 352,
-          "graph_edges": 9900,
+          "graph_edges": 9901,
           "macro_circuits": 0,
           "probabilistic_members": 352,
-          "seconds": 0.667
+          "seconds": 0.787
         },
         "multilayer": {
           "feedback_cores": 2,
           "feedback_edges": 1621,
           "feedback_genes": 352,
-          "graph_edges": 9913,
+          "graph_edges": 9914,
           "macro_circuits": 0,
           "probabilistic_members": 0,
-          "seconds": 0.322
+          "seconds": 0.368
         },
         "observed": {
           "feedback_cores": 2,
-          "feedback_edges": 1611,
-          "feedback_genes": 350,
-          "graph_edges": 9817,
+          "feedback_edges": 1621,
+          "feedback_genes": 352,
+          "graph_edges": 9901,
           "macro_circuits": 0,
           "probabilistic_members": 0,
-          "seconds": 0.114
+          "seconds": 0.138
         },
         "supported": {
           "feedback_cores": 2,
           "feedback_edges": 1621,
           "feedback_genes": 352,
-          "graph_edges": 9900,
+          "graph_edges": 9901,
           "macro_circuits": 0,
           "probabilistic_members": 0,
-          "seconds": 0.314
+          "seconds": 0.383
         }
       }
     },
@@ -150,7 +150,7 @@
           "graph_edges": 343,
           "macro_circuits": 0,
           "probabilistic_members": 25,
-          "seconds": 0.319
+          "seconds": 0.406
         },
         "multilayer": {
           "feedback_cores": 6,
@@ -159,7 +159,7 @@
           "graph_edges": 343,
           "macro_circuits": 0,
           "probabilistic_members": 0,
-          "seconds": 0.121
+          "seconds": 0.182
         },
         "observed": {
           "feedback_cores": 6,
@@ -168,7 +168,7 @@
           "graph_edges": 332,
           "macro_circuits": 0,
           "probabilistic_members": 0,
-          "seconds": 0.049
+          "seconds": 0.077
         },
         "supported": {
           "feedback_cores": 6,
@@ -177,7 +177,7 @@
           "graph_edges": 332,
           "macro_circuits": 0,
           "probabilistic_members": 0,
-          "seconds": 0.12
+          "seconds": 0.197
         }
       }
     }

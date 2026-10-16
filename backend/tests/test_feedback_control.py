@@ -140,6 +140,38 @@ def test_feedback_analysis_discovers_annotation_supported_control_system():
     assert result["summary"]["biological_systems"] >= 1
 
 
+def test_annotation_system_discovery_uses_cycle_cover_beyond_display_limit():
+    conn = _fixture_connection()
+    conn.executemany(
+        "INSERT INTO genes VALUES (?,?,?,?,?,?,?,?)",
+        [(f"X{index}", f"X{index}", f"X{index}", "test", 0, "protein_coding", None, None)
+         for index in range(20)],
+    )
+    conn.execute(
+        "UPDATE interactions SET confidence=0.51 WHERE source_id IN ('A', 'B')"
+    )
+    conn.execute(
+        "UPDATE interactions SET confidence=0.99 WHERE source_id IN ('C', 'D', 'E')"
+    )
+    conn.executescript("""
+        CREATE TABLE go_terms (go_id TEXT PRIMARY KEY, name TEXT, namespace TEXT);
+        CREATE TABLE go_annotations (gene_id TEXT, go_id TEXT);
+        CREATE TABLE pathways (pathway_id TEXT PRIMARY KEY, name TEXT, source TEXT);
+        CREATE TABLE pathway_annotations (gene_id TEXT, pathway_id TEXT);
+        INSERT INTO go_terms VALUES ('GO:CLOCK', 'circadian rhythm', 'biological_process');
+        INSERT INTO go_annotations VALUES ('A', 'GO:CLOCK'), ('B', 'GO:CLOCK');
+    """)
+    result = feedback_control.analyze_feedback(
+        conn,
+        "test",
+        feedback_control.FeedbackParameters(max_circuits=1, circuits_per_core=1),
+    )
+    assert result["summary"]["circuits_returned"] == 1
+    system = next(system for system in result["systems"] if system["name"] == "circadian rhythm")
+    assert system["architecture"] == "toggle_switch"
+    assert {gene["id"] for gene in system["genes"]} == {"A", "B"}
+
+
 def test_feedback_search_budget_is_explicit():
     conn = _fixture_connection()
     result = feedback_control.analyze_feedback(

@@ -1,9 +1,9 @@
 species,seconds,signed_edges,feedback_cores,feedback_edges,exact_cycle_catalogs,cataloged_cycles,core_relationships,core_groups,systems,annotation_supported,de_novo,partial_architectures
-arabidopsis,18.48,24945,12,581,11,11,11,1,20,19,1,1
-human,24.202,9414,4,1339,3,3,2,1,20,20,0,0
-mouse,0.351,9817,2,1611,1,1,1,1,4,0,4,0
-pepper,0.027,34,3,6,3,3,0,0,3,0,3,0
-petunia,6.731,1403,9,248,7,51,4,1,16,11,5,0
-potato,0.04,0,0,0,0,0,0,0,0,0,0,0
-rice,0.074,503,5,115,4,79,3,1,6,0,6,0
-tomato,7.603,2076,13,370,12,87,6,1,18,10,8,0
+arabidopsis,24.798,24945,12,581,11,11,11,1,20,20,0,1
+human,36.043,45295,2,9564,1,1,0,0,20,20,0,0
+mouse,0.511,9901,2,1621,1,1,1,1,5,0,5,0
+pepper,0.054,35,4,8,4,4,0,0,4,0,4,0
+petunia,6.823,1381,11,247,10,59,6,1,20,12,8,0
+potato,0.062,0,0,0,0,0,0,0,0,0,0,0
+rice,0.136,332,6,48,6,49,1,1,6,0,6,0
+tomato,1.902,2142,12,329,11,188,6,1,18,7,11,0

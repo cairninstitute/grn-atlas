@@ -1293,10 +1293,19 @@ def analyze_feedback(
 
     systems = []
     if params.discover_systems:
+        discovery_circuits: dict[str, dict[str, Any]] = {}
+        for core in cores:
+            for circuit in (
+                *core["circuits"],
+                *core["_catalog_cycles"],
+                *core["_cycle_cover_cycles"],
+            ):
+                discovery_circuits.setdefault(circuit["circuit_id"], circuit)
         systems = control_systems.discover_control_systems(
             conn, species, graph, genes, cores,
             max_systems=params.max_systems,
             max_system_genes=params.max_system_genes,
+            circuits=list(discovery_circuits.values()),
         )
     feedback_gene_count = sum(len(row[3]) for row in component_rows)
     returned_feedback_genes = sum(core["node_count"] for core in cores)
