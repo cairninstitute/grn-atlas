@@ -46,6 +46,10 @@ def _distance_stratum(donor: str, recipient: str) -> str:
     return "distant_eudicot"
 
 
+def _columns(conn: sqlite3.Connection, table: str) -> set[str]:
+    return {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
+
+
 def calibrate(conn: sqlite3.Connection) -> dict:
     conn.executescript("""
         DROP TABLE IF EXISTS cross_species_transfer_calibration;
@@ -76,15 +80,27 @@ def calibrate(conn: sqlite3.Connection) -> dict:
     edge_validation: dict[tuple[str, str, str], list[bool]] = defaultdict(list)
     distance_outcomes: dict[str, list[bool]] = defaultdict(list)
     excluded = Counter()
+    candidate_columns = _columns(conn, "orthology_transfer_candidates")
+    metadata_sql = "metadata" if "metadata" in candidate_columns else "'{}'"
     for row in conn.execute(
             "SELECT species,source_id,target_id,relation_type,mapping_class,donor_sources,donor_pmids,"
-            "recipient_binding_sources,recipient_cis_support,status,donor_species "
+            "recipient_binding_sources,recipient_cis_support,status,donor_species," + metadata_sql + " "
             "FROM orthology_transfer_candidates"
         ):
         (species, source, target, relation, mapping_class, donor_sources, donor_pmids,
-         binding_sources, cis_support, status, donor_species_json) = row
+         binding_sources, cis_support, status, donor_species_json, metadata_json) = row
         key = (species, relation, mapping_class)
         edge_validation[key].append(bool(_items(binding_sources) or cis_support))
+        try:
+            metadata = json.loads(metadata_json or "{}")
+        except (TypeError, json.JSONDecodeError):
+            metadata = {}
+        if mapping_class == "paralog_aware_synteny":
+            excluded["paralog_aware_mapping"] += 1
+            continue
+        if metadata and int(metadata.get("supported_donor_count", 0)) < 1:
+            excluded["exploratory_donor_only"] += 1
+            continue
         truth = truths.get((species, source, target))
         if not truth:
             continue
@@ -114,7 +130,8 @@ def calibrate(conn: sqlite3.Connection) -> dict:
         lift = precision - baseline
         lower = _wilson_lower(agreements, cases)
         edge_rate = sum(edge_validation[key]) / len(edge_validation[key]) if edge_validation[key] else 0.0
-        gate = cases >= 50 and precision >= 0.80 and lift >= 0.02 and lower > baseline
+        gate = (mapping_class != "paralog_aware_synteny" and cases >= 50
+                and precision >= 0.80 and lift >= 0.02 and lower > baseline)
         row = (species, relation, mapping_class, cases, agreements, precision, baseline,
                lift, lower, edge_rate, int(gate), MODEL)
         rows.append(row)
@@ -134,6 +151,8 @@ def calibrate(conn: sqlite3.Connection) -> dict:
             "donor and recipient PubMed identifiers must be disjoint",
             "recipient truth is restricted to measured signed interactions",
             "donor-sign conflicts are excluded",
+            "exploratory-only donor evidence is excluded",
+            "bounded-paralog projections are excluded",
         ],
         "thresholds": {"minimum_cases": 50, "minimum_precision": 0.8,
                        "minimum_lift_over_class_base_rate": 0.02,

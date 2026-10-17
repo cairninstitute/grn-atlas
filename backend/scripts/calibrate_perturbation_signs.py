@@ -6,8 +6,9 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import sqlite3
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -19,6 +20,23 @@ MODEL_VERSION = "perturbation-calibration-v1"
 MIN_CASES = 50
 MIN_PRECISION = 0.80
 MIN_LIFT = 0.02
+
+
+def _items(value: str | None) -> set[str]:
+    try:
+        parsed = json.loads(value or "[]")
+        return {str(item) for item in parsed} if isinstance(parsed, list) else set()
+    except (TypeError, json.JSONDecodeError):
+        return set()
+
+
+def _source_key(value: str) -> str:
+    value = value.removeprefix("Perturbation:").casefold()
+    return re.sub(r"[^a-z0-9]+", "", value)
+
+
+def _columns(conn: sqlite3.Connection, table: str) -> set[str]:
+    return {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
 
 
 def wilson_lower(successes: int, total: int, z: float = 1.96) -> float:
@@ -49,17 +67,58 @@ def calibrate(conn: sqlite3.Connection) -> dict:
             PRIMARY KEY (species, relation_type)
         );
     """)
-    rows = conn.execute("""
-        SELECT c.species,c.relation_type,
-               COALESCE(i.sign,i.regulation_type) AS observed_sign,
-               c.confidence
-        FROM perturbation_sign_consensus c
-        JOIN interactions i
-          ON i.source_id=c.source_id AND i.target_id=c.target_id
-        WHERE c.status='accepted' AND i.sign_evidence='measured'
-          AND COALESCE(i.sign,i.regulation_type) IN ('activation','repression')
-        ORDER BY c.species,c.relation_type
-    """).fetchall()
+    interaction_columns = _columns(conn, "interactions")
+    source_expr = "sources" if "sources" in interaction_columns else "'[]'"
+    pmid_expr = "pmids" if "pmids" in interaction_columns else "'[]'"
+    gene_species = {}
+    if conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='genes'"
+    ).fetchone():
+        gene_species = dict(conn.execute("SELECT id,species FROM genes"))
+
+    truths: dict[tuple[str | None, str, str], list[tuple[str, set[str], set[str]]]] = defaultdict(list)
+    for source, target, sign, sources, pmids in conn.execute(
+        f"SELECT source_id,target_id,COALESCE(sign,regulation_type),{source_expr},{pmid_expr} "
+        "FROM interactions WHERE sign_evidence='measured' "
+        "AND COALESCE(sign,regulation_type) IN ('activation','repression')"
+    ):
+        truths[(gene_species.get(source), source, target)].append(
+            (sign, _items(sources), _items(pmids))
+        )
+    if conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='regulatory_evidence'"
+    ).fetchone():
+        for species, source, target, sign, source_name, pmids in conn.execute(
+            "SELECT species,source_id,target_id,relation_type,source_name,pmids "
+            "FROM regulatory_evidence WHERE evidence_layer='direct_signed' "
+            "AND directness='direct' AND relation_type IN ('activation','repression')"
+        ):
+            truths[(species, source, target)].append(
+                (sign, {source_name}, _items(pmids))
+            )
+
+    consensus_columns = _columns(conn, "perturbation_sign_consensus")
+    datasets_expr = "datasets" if "datasets" in consensus_columns else "'[]'"
+    predictions = conn.execute(
+        f"SELECT species,source_id,target_id,relation_type,confidence,{datasets_expr} "
+        "FROM perturbation_sign_consensus WHERE status='accepted'"
+    ).fetchall()
+    rows = []
+    excluded = Counter()
+    for species, source, target, predicted, confidence, datasets in predictions:
+        truth_records = truths.get((species, source, target), truths.get((None, source, target), []))
+        if not truth_records:
+            continue
+        truth_signs = {record[0] for record in truth_records}
+        if len(truth_signs) != 1:
+            excluded["conflicting_truth"] += 1
+            continue
+        prediction_sources = {_source_key(item) for item in _items(datasets)}
+        truth_sources = {_source_key(item) for record in truth_records for item in record[1]}
+        if prediction_sources & truth_sources:
+            excluded["shared_source"] += 1
+            continue
+        rows.append((species, predicted, next(iter(truth_signs)), float(confidence)))
     by_species = defaultdict(list)
     by_class = defaultdict(list)
     for species, predicted, observed, confidence in rows:
@@ -109,9 +168,12 @@ def calibrate(conn: sqlite3.Connection) -> dict:
         "model_version": MODEL_VERSION,
         "leakage_controls": [
             "literature_curated observations are excluded from consensus generation",
-            "only interactions with sign_evidence=measured are calibration truth",
+            "truth is restricted to measured interactions and independently direct-signed evidence",
+            "conflicting recipient truth is excluded",
+            "perturbation datasets and truth sources must be disjoint",
             "release gates are evaluated separately by species and predicted sign",
         ],
+        "excluded_overlaps": dict(excluded),
         "thresholds": {
             "minimum_cases": MIN_CASES,
             "minimum_precision": MIN_PRECISION,

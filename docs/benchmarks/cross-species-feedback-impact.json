@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-10-17T01:24:19.072018+00:00",
+  "generated_at": "2026-10-17T02:08:34.625086+00:00",
   "ablated_source": "Conserved signed orthology",
   "species": {
     "human": {
       "supported": {
         "with_transfer": {
-          "graph_edges": 49932,
+          "graph_edges": 49938,
           "feedback_cores": 2,
           "feedback_genes": 951,
-          "feedback_edges": 10043,
+          "feedback_edges": 10045,
           "macro_circuits": 0
         },
         "without_transfer": {
@@ -19,33 +19,33 @@
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 26,
+          "graph_edges": 32,
           "feedback_cores": 0,
           "feedback_genes": 0,
-          "feedback_edges": 17,
+          "feedback_edges": 19,
           "macro_circuits": 0
         }
       },
       "exploratory": {
         "with_transfer": {
-          "graph_edges": 117575,
+          "graph_edges": 118229,
           "feedback_cores": 2,
-          "feedback_genes": 1131,
-          "feedback_edges": 15250,
+          "feedback_genes": 1132,
+          "feedback_edges": 15458,
           "macro_circuits": 0
         },
         "without_transfer": {
-          "graph_edges": 117228,
+          "graph_edges": 117213,
           "feedback_cores": 2,
           "feedback_genes": 1125,
-          "feedback_edges": 14978,
+          "feedback_edges": 14974,
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 347,
+          "graph_edges": 1016,
           "feedback_cores": 0,
-          "feedback_genes": 6,
-          "feedback_edges": 272,
+          "feedback_genes": 7,
+          "feedback_edges": 484,
           "macro_circuits": 0
         }
       }
@@ -76,24 +76,72 @@
       },
       "exploratory": {
         "with_transfer": {
-          "graph_edges": 29114,
+          "graph_edges": 33241,
           "feedback_cores": 2,
-          "feedback_genes": 594,
-          "feedback_edges": 5080,
+          "feedback_genes": 610,
+          "feedback_edges": 6163,
           "macro_circuits": 0
         },
         "without_transfer": {
-          "graph_edges": 18469,
+          "graph_edges": 18458,
           "feedback_cores": 2,
           "feedback_genes": 421,
-          "feedback_edges": 2031,
+          "feedback_edges": 2030,
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 10645,
+          "graph_edges": 14783,
           "feedback_cores": 0,
-          "feedback_genes": 173,
-          "feedback_edges": 3049,
+          "feedback_genes": 189,
+          "feedback_edges": 4133,
+          "macro_circuits": 0
+        }
+      }
+    },
+    "pepper": {
+      "supported": {
+        "with_transfer": {
+          "graph_edges": 35,
+          "feedback_cores": 4,
+          "feedback_genes": 8,
+          "feedback_edges": 8,
+          "macro_circuits": 0
+        },
+        "without_transfer": {
+          "graph_edges": 35,
+          "feedback_cores": 4,
+          "feedback_genes": 8,
+          "feedback_edges": 8,
+          "macro_circuits": 0
+        },
+        "delta": {
+          "graph_edges": 0,
+          "feedback_cores": 0,
+          "feedback_genes": 0,
+          "feedback_edges": 0,
+          "macro_circuits": 0
+        }
+      },
+      "exploratory": {
+        "with_transfer": {
+          "graph_edges": 252,
+          "feedback_cores": 4,
+          "feedback_genes": 8,
+          "feedback_edges": 8,
+          "macro_circuits": 0
+        },
+        "without_transfer": {
+          "graph_edges": 35,
+          "feedback_cores": 4,
+          "feedback_genes": 8,
+          "feedback_edges": 8,
+          "macro_circuits": 0
+        },
+        "delta": {
+          "graph_edges": 217,
+          "feedback_cores": 0,
+          "feedback_genes": 0,
+          "feedback_edges": 0,
           "macro_circuits": 0
         }
       }
@@ -124,11 +172,11 @@
       },
       "exploratory": {
         "with_transfer": {
-          "graph_edges": 1656,
-          "feedback_cores": 11,
-          "feedback_genes": 68,
-          "feedback_edges": 247,
-          "macro_circuits": 0
+          "graph_edges": 4748,
+          "feedback_cores": 10,
+          "feedback_genes": 86,
+          "feedback_edges": 311,
+          "macro_circuits": 5
         },
         "without_transfer": {
           "graph_edges": 1381,
@@ -138,11 +186,11 @@
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 275,
-          "feedback_cores": 0,
-          "feedback_genes": 0,
-          "feedback_edges": 0,
-          "macro_circuits": 0
+          "graph_edges": 3367,
+          "feedback_cores": -1,
+          "feedback_genes": 18,
+          "feedback_edges": 64,
+          "macro_circuits": 5
         }
       }
     },
@@ -172,10 +220,10 @@
       },
       "exploratory": {
         "with_transfer": {
-          "graph_edges": 36,
+          "graph_edges": 2873,
           "feedback_cores": 2,
-          "feedback_genes": 4,
-          "feedback_edges": 4,
+          "feedback_genes": 9,
+          "feedback_edges": 14,
           "macro_circuits": 0
         },
         "without_transfer": {
@@ -186,10 +234,10 @@
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 36,
+          "graph_edges": 2873,
           "feedback_cores": 2,
-          "feedback_genes": 4,
-          "feedback_edges": 4,
+          "feedback_genes": 9,
+          "feedback_edges": 14,
           "macro_circuits": 0
         }
       }
@@ -220,24 +268,24 @@
       },
       "exploratory": {
         "with_transfer": {
-          "graph_edges": 1704,
+          "graph_edges": 1995,
           "feedback_cores": 6,
-          "feedback_genes": 25,
-          "feedback_edges": 48,
+          "feedback_genes": 26,
+          "feedback_edges": 51,
           "macro_circuits": 0
         },
         "without_transfer": {
-          "graph_edges": 1617,
+          "graph_edges": 1726,
           "feedback_cores": 6,
           "feedback_genes": 25,
           "feedback_edges": 48,
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 87,
+          "graph_edges": 269,
           "feedback_cores": 0,
-          "feedback_genes": 0,
-          "feedback_edges": 0,
+          "feedback_genes": 1,
+          "feedback_edges": 3,
           "macro_circuits": 0
         }
       }
@@ -268,11 +316,11 @@
       },
       "exploratory": {
         "with_transfer": {
-          "graph_edges": 2537,
-          "feedback_cores": 12,
-          "feedback_genes": 97,
-          "feedback_edges": 329,
-          "macro_circuits": 0
+          "graph_edges": 8161,
+          "feedback_cores": 13,
+          "feedback_genes": 127,
+          "feedback_edges": 448,
+          "macro_circuits": 3
         },
         "without_transfer": {
           "graph_edges": 2142,
@@ -282,19 +330,19 @@
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 395,
-          "feedback_cores": 0,
-          "feedback_genes": 0,
-          "feedback_edges": 0,
-          "macro_circuits": 0
+          "graph_edges": 6019,
+          "feedback_cores": 1,
+          "feedback_genes": 30,
+          "feedback_edges": 119,
+          "macro_circuits": 3
         }
       }
     }
   },
   "projection_summary": {
-    "qualified": 1937,
-    "sign_conflict": 26,
-    "unvalidated": 14126
+    "qualified": 2113,
+    "sign_conflict": 1864,
+    "unvalidated": 31050
   },
   "interpretation": "Observed interactions are unchanged; deltas isolate transfer candidates.",
   "known_circuit_impact": {

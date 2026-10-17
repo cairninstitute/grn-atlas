@@ -166,6 +166,93 @@ def test_alias_resolution_learns_unambiguous_species_namespace():
     assert aliases["OMA_U"] == "two:Unobserved"
 
 
+def test_supported_direct_evidence_can_seed_transfer_without_interaction_row():
+    conn = base_db()
+    conn.executemany("INSERT INTO genes VALUES (?,?,?,?)", [
+        ("A", "A", "one", 1), ("B", "B", "one", 0),
+        ("OA", "OA", "two", 1), ("OB", "OB", "two", 0),
+    ])
+    conn.executemany("INSERT INTO orthologs VALUES (?,?,?,?,?,?)", [
+        ("A", "OA", "one", "two", "1:1", 1),
+        ("B", "OB", "one", "two", "1:1", 1),
+    ])
+    conn.execute(
+        "INSERT INTO regulatory_evidence "
+        "(species,source_id,target_id,relation_type,evidence_layer,directness,source_name,"
+        "source_version,record_key,confidence,pmids,imported_at) "
+        "VALUES ('one','A','B','activation','direct_signed','direct','curated','v1','A|B',"
+        ".9,'[\"1\"]',datetime('now'))"
+    )
+
+    result = build_conserved_regulatory_evidence.build(conn)
+    metadata = json.loads(conn.execute(
+        "SELECT metadata FROM orthology_transfer_candidates"
+    ).fetchone()[0])
+
+    assert result["projected"] == 1
+    assert metadata["donor_evidence_tier"] == "supported"
+    assert metadata["supported_donor_count"] == 1
+
+
+def test_uncalibrated_perturbation_transfer_stays_exploratory():
+    conn = base_db()
+    conn.executemany("INSERT INTO genes VALUES (?,?,?,?)", [
+        ("A", "A", "one", 1), ("B", "B", "one", 0),
+        ("OA", "OA", "two", 1), ("OB", "OB", "two", 0),
+    ])
+    conn.executemany("INSERT INTO orthologs VALUES (?,?,?,?,?,?)", [
+        ("A", "OA", "one", "two", "1:1", 1),
+        ("B", "OB", "one", "two", "1:1", 1),
+    ])
+    conn.execute(
+        "CREATE TABLE perturbation_sign_consensus "
+        "(species TEXT,source_id TEXT,target_id TEXT,relation_type TEXT,confidence REAL,"
+        "datasets TEXT,status TEXT)"
+    )
+    conn.execute(
+        "INSERT INTO perturbation_sign_consensus VALUES "
+        "('one','A','B','activation',.8,'[\"experiment-1\"]','accepted')"
+    )
+
+    build_conserved_regulatory_evidence.build(conn)
+    status, metadata_json = conn.execute(
+        "SELECT status,metadata FROM orthology_transfer_candidates"
+    ).fetchone()
+    metadata = json.loads(metadata_json)
+
+    assert status == "unvalidated"
+    assert metadata["donor_evidence_tier"] == "exploratory"
+    assert metadata["supported_donor_count"] == 0
+
+
+def test_bounded_paralog_mapping_creates_penalized_exploratory_hypotheses():
+    conn = base_db()
+    conn.executemany("INSERT INTO genes VALUES (?,?,?,?)", [
+        ("A", "A", "one", 1), ("B", "B", "one", 0),
+        ("OA1", "OA1", "two", 1), ("OA2", "OA2", "two", 1),
+        ("OB", "OB", "two", 0),
+    ])
+    conn.execute("INSERT INTO interactions VALUES (?,?,?,?,?,?,?,?)",
+                 ("A", "B", "activation", .9, '["curated"]', "[]",
+                  "activation", "measured"))
+    conn.executemany("INSERT INTO orthologs VALUES (?,?,?,?,?,?)", [
+        ("A", "OA1", "one", "two", "synteny", .5),
+        ("A", "OA2", "one", "two", "synteny", .5),
+        ("B", "OB", "one", "two", "synteny", .5),
+    ])
+
+    result = build_conserved_regulatory_evidence.build(conn)
+    rows = conn.execute(
+        "SELECT mapping_class,status,mapping_score FROM orthology_transfer_candidates "
+        "ORDER BY source_id"
+    ).fetchall()
+
+    assert result["projected"] == 2
+    assert all(row[0] == "paralog_aware_synteny" for row in rows)
+    assert all(row[1] == "unvalidated" for row in rows)
+    assert all(row[2] < .5 for row in rows)
+
+
 def test_multilayer_edges_retain_their_mechanism():
     conn = base_db()
     stored = multilayer_control.replace_source(conn, "reviewed", [{

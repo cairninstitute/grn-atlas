@@ -22,6 +22,8 @@ SPECIES = {
     "human": "Homo sapiens",
     "mouse": "Mus musculus",
 }
+RECIPIENT_PLANTS = ("rice", "tomato", "potato", "pepper", "petunia")
+DEFAULT_MANIFEST = Path(__file__).resolve().parents[1] / "source_manifests" / "expression_atlas_reviewed.json"
 PERTURBATION_TERMS = (
     "knockout", "knockdown", "mutant", "overexpress", "silenc", "crispr", "transgenic",
 )
@@ -37,10 +39,16 @@ REGULATOR_PATTERNS = {
 }
 
 
-def discover(payload: dict) -> dict:
+def discover(
+    payload: dict,
+    reviewed_accessions: set[str] | None = None,
+    species_keys: tuple[str, ...] = RECIPIENT_PLANTS,
+) -> dict:
+    reviewed_accessions = reviewed_accessions or set()
     results = {}
     experiments = payload.get("experiments", [])
-    for atlas_species, scientific_name in SPECIES.items():
+    for atlas_species in species_keys:
+        scientific_name = SPECIES[atlas_species]
         candidates = []
         for experiment in experiments:
             description = experiment.get("experimentDescription", "")
@@ -62,7 +70,9 @@ def discover(payload: dict) -> dict:
                     "https://www.ebi.ac.uk/gxa/experiments/"
                     f"{experiment.get('experimentAccession')}/home"
                 ),
-                "status": "candidate_requires_contrast_and_identifier_review",
+                "status": ("approved_manifest_present" if experiment.get("experimentAccession")
+                           in reviewed_accessions
+                           else "candidate_requires_contrast_and_identifier_review"),
             })
         results[atlas_species] = candidates
     return {
@@ -88,6 +98,8 @@ def discover(payload: dict) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--reviewed-manifest", type=Path, default=DEFAULT_MANIFEST)
+    parser.add_argument("--include-arabidopsis", action="store_true")
     args = parser.parse_args()
     payload = None
     source_url = URL
@@ -101,7 +113,15 @@ def main() -> int:
             continue
     if payload is None:
         raise RuntimeError("Expression Atlas catalogue and FTP fallback are unavailable")
-    report = discover(payload)
+    reviewed_accessions = set()
+    if args.reviewed_manifest.exists():
+        manifest = json.loads(args.reviewed_manifest.read_text())
+        reviewed_accessions = {
+            item["accession"] for item in manifest.get("contrasts", [])
+            if item.get("review_status") == "approved" and item.get("accession")
+        }
+    species_keys = RECIPIENT_PLANTS + (("arabidopsis",) if args.include_arabidopsis else ())
+    report = discover(payload, reviewed_accessions, species_keys)
     report["source_url"] = source_url
     text = json.dumps(report, indent=2, sort_keys=True) + "\n"
     print(text, end="")

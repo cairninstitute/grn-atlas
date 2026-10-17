@@ -48,3 +48,35 @@ def test_calibration_holds_out_shared_sources_and_gates_independent_class():
     assert row["precision"] == 1.0
     assert row["gate_pass"] is True
     assert result["excluded_overlaps"]["shared_source"] == 1
+
+
+def test_calibration_excludes_exploratory_donors_and_paralog_mappings():
+    conn = sqlite3.connect(":memory:")
+    conn.executescript("""
+        CREATE TABLE genes (id TEXT PRIMARY KEY, species TEXT);
+        CREATE TABLE interactions (
+            source_id TEXT,target_id TEXT,regulation_type TEXT,confidence REAL,
+            sources TEXT,pmids TEXT,sign TEXT,sign_evidence TEXT
+        );
+        CREATE TABLE orthology_transfer_candidates (
+            species TEXT,source_id TEXT,target_id TEXT,relation_type TEXT,mapping_class TEXT,
+            donor_sources TEXT,donor_pmids TEXT,recipient_binding_sources TEXT,
+            recipient_cis_support INTEGER,status TEXT,donor_species TEXT,metadata TEXT
+        );
+    """)
+    for index, mapping in enumerate(("explicit_one_to_one", "paralog_aware_synteny")):
+        source, target = f"S{index}", f"T{index}"
+        conn.executemany("INSERT INTO genes VALUES (?,?)", [(source, "recipient"), (target, "recipient")])
+        conn.execute(
+            "INSERT INTO interactions VALUES (?,?,?,?,?,?,?,?)",
+            (source, target, "activation", .9, '["truth"]', "[]", "activation", "measured"),
+        )
+        conn.execute(
+            "INSERT INTO orthology_transfer_candidates VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            ("recipient", source, target, "activation", mapping, '["donor"]', "[]", "[]",
+             0, "unvalidated", '["donor_species"]', '{"supported_donor_count": 0}'),
+        )
+    result = calibrate_cross_species_transfer.calibrate(conn)
+    assert result["excluded_overlaps"]["exploratory_donor_only"] == 1
+    assert result["excluded_overlaps"]["paralog_aware_mapping"] == 1
+    assert not result["supported_classes"]

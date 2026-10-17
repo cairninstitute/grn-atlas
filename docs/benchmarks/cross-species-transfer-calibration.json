@@ -1,11 +1,13 @@
 {
-  "generated_at": "2026-10-17T01:24:07.706909+00:00",
+  "generated_at": "2026-10-17T02:04:07.372844+00:00",
   "model_version": "cross-species-transfer-v1",
   "leakage_controls": [
     "donor and recipient evidence sources must be disjoint",
     "donor and recipient PubMed identifiers must be disjoint",
     "recipient truth is restricted to measured signed interactions",
-    "donor-sign conflicts are excluded"
+    "donor-sign conflicts are excluded",
+    "exploratory-only donor evidence is excluded",
+    "bounded-paralog projections are excluded"
   ],
   "thresholds": {
     "minimum_cases": 50,
@@ -14,60 +16,129 @@
     "wilson_lower_must_exceed_base_rate": true
   },
   "excluded_overlaps": {
-    "shared_source": 3093
+    "shared_source": 3237,
+    "exploratory_donor_only": 3809,
+    "shared_publication": 542,
+    "donor_sign_conflict": 38,
+    "paralog_aware_mapping": 11709
   },
   "classes": [
     {
       "species": "human",
       "relation_type": "activation",
       "mapping_class": "explicit_one_to_one",
-      "cases": 360,
-      "agreements": 338,
-      "precision": 0.9389,
+      "cases": 391,
+      "agreements": 367,
+      "precision": 0.9386,
       "baseline_rate": 0.8147,
-      "lift": 0.1242,
-      "wilson_lower_95": 0.9092,
-      "recipient_edge_validation_rate": 0.8548,
+      "lift": 0.1239,
+      "wilson_lower_95": 0.9103,
+      "recipient_edge_validation_rate": 0.7414,
       "gate_pass": true
     },
     {
       "species": "human",
       "relation_type": "repression",
       "mapping_class": "explicit_one_to_one",
-      "cases": 162,
-      "agreements": 139,
-      "precision": 0.858,
+      "cases": 167,
+      "agreements": 144,
+      "precision": 0.8623,
       "baseline_rate": 0.1853,
-      "lift": 0.6728,
-      "wilson_lower_95": 0.796,
-      "recipient_edge_validation_rate": 0.7225,
+      "lift": 0.677,
+      "wilson_lower_95": 0.8018,
+      "recipient_edge_validation_rate": 0.4943,
       "gate_pass": true
     },
     {
       "species": "mouse",
       "relation_type": "activation",
       "mapping_class": "explicit_one_to_one",
-      "cases": 394,
-      "agreements": 371,
-      "precision": 0.9416,
+      "cases": 33,
+      "agreements": 29,
+      "precision": 0.8788,
       "baseline_rate": 0.8003,
-      "lift": 0.1413,
-      "wilson_lower_95": 0.9139,
+      "lift": 0.0785,
+      "wilson_lower_95": 0.7267,
       "recipient_edge_validation_rate": 0.0,
-      "gate_pass": true
+      "gate_pass": false
     },
     {
       "species": "mouse",
       "relation_type": "repression",
       "mapping_class": "explicit_one_to_one",
-      "cases": 171,
-      "agreements": 148,
-      "precision": 0.8655,
+      "cases": 9,
+      "agreements": 5,
+      "precision": 0.5556,
       "baseline_rate": 0.1997,
-      "lift": 0.6658,
-      "wilson_lower_95": 0.8063,
+      "lift": 0.3559,
+      "wilson_lower_95": 0.2666,
       "recipient_edge_validation_rate": 0.0,
-      "gate_pass": true
+      "gate_pass": false
+    },
+    {
+      "species": "pepper",
+      "relation_type": "activation",
+      "mapping_class": "paralog_aware_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "pepper",
+      "relation_type": "activation",
+      "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "pepper",
+      "relation_type": "repression",
+      "mapping_class": "paralog_aware_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "pepper",
+      "relation_type": "repression",
+      "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "petunia",
+      "relation_type": "activation",
+      "mapping_class": "paralog_aware_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 1.0,
+      "lift": -1.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
     },
     {
       "species": "petunia",
@@ -78,6 +149,19 @@
       "precision": 0.0,
       "baseline_rate": 1.0,
       "lift": -1.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "petunia",
+      "relation_type": "repression",
+      "mapping_class": "paralog_aware_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
       "wilson_lower_95": 0.0,
       "recipient_edge_validation_rate": 0.0,
       "gate_pass": false
@@ -98,7 +182,33 @@
     {
       "species": "potato",
       "relation_type": "activation",
+      "mapping_class": "paralog_aware_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "potato",
+      "relation_type": "activation",
       "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "potato",
+      "relation_type": "repression",
+      "mapping_class": "paralog_aware_synteny",
       "cases": 0,
       "agreements": 0,
       "precision": 0.0,
@@ -124,7 +234,33 @@
     {
       "species": "rice",
       "relation_type": "activation",
+      "mapping_class": "paralog_aware_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "rice",
+      "relation_type": "activation",
       "mapping_class": "reciprocal_unique_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "rice",
+      "relation_type": "repression",
+      "mapping_class": "paralog_aware_synteny",
       "cases": 0,
       "agreements": 0,
       "precision": 0.0,
@@ -150,12 +286,38 @@
     {
       "species": "tomato",
       "relation_type": "activation",
+      "mapping_class": "paralog_aware_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 1.0,
+      "lift": -1.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "tomato",
+      "relation_type": "activation",
       "mapping_class": "reciprocal_unique_synteny",
       "cases": 0,
       "agreements": 0,
       "precision": 0.0,
       "baseline_rate": 1.0,
       "lift": -1.0,
+      "wilson_lower_95": 0.0,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": false
+    },
+    {
+      "species": "tomato",
+      "relation_type": "repression",
+      "mapping_class": "paralog_aware_synteny",
+      "cases": 0,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
       "wilson_lower_95": 0.0,
       "recipient_edge_validation_rate": 0.0,
       "gate_pass": false
@@ -176,12 +338,16 @@
   ],
   "species_held_out": {
     "human": {
-      "independent_cases": 522,
+      "independent_cases": 558,
       "status": "evaluated"
     },
     "mouse": {
-      "independent_cases": 565,
+      "independent_cases": 42,
       "status": "evaluated"
+    },
+    "pepper": {
+      "independent_cases": 0,
+      "status": "insufficient_independent_cases"
     },
     "petunia": {
       "independent_cases": 0,
@@ -202,8 +368,8 @@
   },
   "evolutionary_distance_strata": {
     "close_mammal": {
-      "cases": 1087,
-      "precision": 0.9163
+      "cases": 600,
+      "precision": 0.9083
     }
   },
   "supported_classes": [
@@ -211,52 +377,26 @@
       "species": "human",
       "relation_type": "activation",
       "mapping_class": "explicit_one_to_one",
-      "cases": 360,
-      "agreements": 338,
-      "precision": 0.9389,
+      "cases": 391,
+      "agreements": 367,
+      "precision": 0.9386,
       "baseline_rate": 0.8147,
-      "lift": 0.1242,
-      "wilson_lower_95": 0.9092,
-      "recipient_edge_validation_rate": 0.8548,
+      "lift": 0.1239,
+      "wilson_lower_95": 0.9103,
+      "recipient_edge_validation_rate": 0.7414,
       "gate_pass": true
     },
     {
       "species": "human",
       "relation_type": "repression",
       "mapping_class": "explicit_one_to_one",
-      "cases": 162,
-      "agreements": 139,
-      "precision": 0.858,
+      "cases": 167,
+      "agreements": 144,
+      "precision": 0.8623,
       "baseline_rate": 0.1853,
-      "lift": 0.6728,
-      "wilson_lower_95": 0.796,
-      "recipient_edge_validation_rate": 0.7225,
-      "gate_pass": true
-    },
-    {
-      "species": "mouse",
-      "relation_type": "activation",
-      "mapping_class": "explicit_one_to_one",
-      "cases": 394,
-      "agreements": 371,
-      "precision": 0.9416,
-      "baseline_rate": 0.8003,
-      "lift": 0.1413,
-      "wilson_lower_95": 0.9139,
-      "recipient_edge_validation_rate": 0.0,
-      "gate_pass": true
-    },
-    {
-      "species": "mouse",
-      "relation_type": "repression",
-      "mapping_class": "explicit_one_to_one",
-      "cases": 171,
-      "agreements": 148,
-      "precision": 0.8655,
-      "baseline_rate": 0.1997,
-      "lift": 0.6658,
-      "wilson_lower_95": 0.8063,
-      "recipient_edge_validation_rate": 0.0,
+      "lift": 0.677,
+      "wilson_lower_95": 0.8018,
+      "recipient_edge_validation_rate": 0.4943,
       "gate_pass": true
     }
   ]

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-12T23:25:28.095008+00:00",
+  "generated": "2026-10-17T02:16:08.536017+00:00",
   "limitations": [
     "Catalogue descriptions do not prove that the perturbed gene is a transcriptional regulator.",
     "Each candidate requires contrast-level review and atlas identifier mapping before ingestion.",
@@ -15,6 +15,9 @@
   "source": "Expression Atlas experiment catalogue",
   "source_url": "https://www.ebi.ac.uk/gxa/json/experiments",
   "species": {
+    "pepper": [],
+    "petunia": [],
+    "potato": [],
     "rice": [
       {
         "accession": "E-GEOD-93081",
@@ -28,7 +31,7 @@
           "OsCML16",
           "OsERF48"
         ],
-        "status": "candidate_requires_contrast_and_identifier_review",
+        "status": "approved_manifest_present",
         "technology": [
           "RNA-Seq mRNA"
         ]
@@ -86,7 +89,7 @@
           "mutant"
         ],
         "regulator_tokens": [],
-        "status": "candidate_requires_contrast_and_identifier_review",
+        "status": "approved_manifest_present",
         "technology": [
           "Microarray 1-colour mRNA"
         ]

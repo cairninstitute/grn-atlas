@@ -22,6 +22,29 @@
         "age": "2 week",
         "genotype": "Rcc3-OsERF48"
       }
+    },
+    {
+      "accession": "E-GEOD-34547",
+      "contrast": "g2_g1",
+      "species": "rice",
+      "perturbed_gene": "LOC_Os07g08420",
+      "perturbation_type": "loss_of_function",
+      "review_status": "approved",
+      "review_basis": "Expression Atlas configuration identifies osbzip58-1 as the test group and wild type as the reference group.",
+      "results": "https://ftp.ebi.ac.uk/pub/databases/microarray/data/atlas/experiments/E-GEOD-34547/E-GEOD-34547_A-AFFY-126-analytics.tsv",
+      "columns": {
+        "gene": "Gene ID",
+        "log2fc": "g2_g1.log2foldchange",
+        "p_value": "g2_g1.p-value"
+      },
+      "p_value_type": "unadjusted",
+      "max_p_value": 0.01,
+      "min_abs_log2fc": 1.0,
+      "context": {
+        "organism_part": "immature endosperm",
+        "developmental_stage": "9 days after flowering",
+        "genotype": "osbzip58-1"
+      }
     }
   ]
 }

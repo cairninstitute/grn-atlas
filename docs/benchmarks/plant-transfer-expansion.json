@@ -1,0 +1,146 @@
+{
+  "generated_at": "2026-10-17T02:04:27.003558+00:00",
+  "species": {
+    "pepper": {
+      "total": 218,
+      "status": {
+        "unvalidated": 218
+      },
+      "mapping_class": {
+        "paralog_aware_synteny": 205,
+        "reciprocal_unique_synteny": 13
+      },
+      "donor_tier": {
+        "exploratory": 36,
+        "mixed": 2,
+        "supported": 180
+      },
+      "donor_class": {
+        "observed_interaction": 181,
+        "supported_direct_signed": 1,
+        "uncalibrated_perturbation": 38
+      },
+      "supported_candidates": 0,
+      "exploratory_candidates": 218
+    },
+    "petunia": {
+      "total": 3586,
+      "status": {
+        "sign_conflict": 146,
+        "unvalidated": 3440
+      },
+      "mapping_class": {
+        "paralog_aware_synteny": 2909,
+        "reciprocal_unique_synteny": 677
+      },
+      "donor_tier": {
+        "exploratory": 244,
+        "mixed": 24,
+        "supported": 3318
+      },
+      "donor_class": {
+        "observed_interaction": 2586,
+        "supported_direct_signed": 772,
+        "uncalibrated_perturbation": 268
+      },
+      "supported_candidates": 0,
+      "exploratory_candidates": 3440
+    },
+    "potato": {
+      "total": 3047,
+      "status": {
+        "sign_conflict": 174,
+        "unvalidated": 2873
+      },
+      "mapping_class": {
+        "paralog_aware_synteny": 2571,
+        "reciprocal_unique_synteny": 476
+      },
+      "donor_tier": {
+        "exploratory": 118,
+        "mixed": 24,
+        "supported": 2905
+      },
+      "donor_class": {
+        "observed_interaction": 1794,
+        "supported_direct_signed": 1170,
+        "uncalibrated_perturbation": 142
+      },
+      "supported_candidates": 0,
+      "exploratory_candidates": 2873
+    },
+    "rice": {
+      "total": 295,
+      "status": {
+        "sign_conflict": 2,
+        "unvalidated": 293
+      },
+      "mapping_class": {
+        "paralog_aware_synteny": 190,
+        "reciprocal_unique_synteny": 105
+      },
+      "donor_tier": {
+        "mixed": 1,
+        "supported": 294
+      },
+      "donor_class": {
+        "observed_interaction": 252,
+        "supported_direct_signed": 48,
+        "uncalibrated_perturbation": 1
+      },
+      "supported_candidates": 0,
+      "exploratory_candidates": 293
+    },
+    "tomato": {
+      "total": 6313,
+      "status": {
+        "sign_conflict": 50,
+        "unvalidated": 6263
+      },
+      "mapping_class": {
+        "paralog_aware_synteny": 5834,
+        "reciprocal_unique_synteny": 479
+      },
+      "donor_tier": {
+        "exploratory": 305,
+        "mixed": 4,
+        "supported": 6004
+      },
+      "donor_class": {
+        "observed_interaction": 5636,
+        "supported_direct_signed": 409,
+        "uncalibrated_perturbation": 309
+      },
+      "supported_candidates": 0,
+      "exploratory_candidates": 6263
+    }
+  },
+  "baseline": "docs/benchmarks/plant-transfer-expansion-baseline.json",
+  "delta": {
+    "pepper": {
+      "total": 218,
+      "supported_candidates": 0,
+      "exploratory_candidates": 218
+    },
+    "petunia": {
+      "total": 3285,
+      "supported_candidates": 0,
+      "exploratory_candidates": 3139
+    },
+    "potato": {
+      "total": 3011,
+      "supported_candidates": 0,
+      "exploratory_candidates": 2837
+    },
+    "rice": {
+      "total": 204,
+      "supported_candidates": 0,
+      "exploratory_candidates": 202
+    },
+    "tomato": {
+      "total": 5872,
+      "supported_candidates": 0,
+      "exploratory_candidates": 5822
+    }
+  }
+}

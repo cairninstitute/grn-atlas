@@ -83,8 +83,9 @@ the Plant Cistrome DAP-seq peaks.
   perturbation observations) and never overwrites a curated sign. Expression correlation is
   **not** a sign tier (validated uninformative); it stays in `sign_r` as coexpression context only.
   grn-allele-affinity predicts an expression direction from measured OR perturbation signs; the
-  perturbation-calibration scorer deliberately uses **only** curated `'measured'` signs, so it
-  never self-validates against the same ConnecTF DEGs the perturbation tier came from.
+  perturbation-calibration scorer uses curated `'measured'` signs and independently sourced
+  direct-signed evidence. It excludes shared source families and conflicting truth, so it never
+  self-validates against the same perturbation dataset that produced a candidate.
   `validate_edge_signs.py` tested expression-correlation as a sign predictor against the
   4,913 plant edges that also carry a curated sign and found it **uninformative** — the
   "activation" call precision just equals the activation base rate (~0.69) and "repression"
@@ -106,6 +107,10 @@ the Plant Cistrome DAP-seq peaks.
   (`knocktf`, via `make knocktf-all`); independent of the atlas edges, so the cleanest calibration
   ground truth. `perturbation_compare` is direction-aware by perturbation type (GOF: activation→up;
   LOF: activation→down) and scores concordance only on edges carrying a curated `measured` sign.
+  Reviewed Expression Atlas contrasts are declared in
+  `backend/source_manifests/expression_atlas_reviewed.json`; the manifest is the manual review
+  boundary for regulator identity, contrast direction, and result columns. `make
+  discover-plant-perturbations` refreshes a candidate queue but does not approve studies.
 - **DAP-seq chromatin peaks** (`load_dapseq_peaks.py`, `make chromatin-peaks`): downloads the
   Plant Cistrome DB peaks (O'Malley 2016, GEO GSE60143 — the assay behind the DAP-seq edges)
   and populates `chromatin_peaks`, `peak_gene_links` (peak→promoter overlap), `cis_support_edges`

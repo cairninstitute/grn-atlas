@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence cross-species-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - release data setup from a fresh clone, including all external evidence and KnockTF species"
@@ -15,7 +15,9 @@ help:
 	@echo "make knocktf        - download+load KnockTF LOF perturbations, re-derive signs (needs make db + network)"
 	@echo "make knocktf-all    - stream/load KnockTF for Arabidopsis, human, and mouse (large download)"
 	@echo "make perturbation-evidence - aggregate context-aware perturbation signs into candidate evidence"
+	@echo "make discover-plant-perturbations - refresh reviewed-candidate report from Expression Atlas"
 	@echo "make cross-species-transfer - build and calibrate orthology/synteny edge transfers"
+	@echo "make benchmark-plant-transfer - summarize supported/exploratory plant transfer growth"
 	@echo "make external-regulation - load CollecTRI, SIGNOR, and strict + expanded AGRIS evidence"
 	@echo "make evidence-expansion - load ChIP-Atlas and TFLink; audit PCBase and literature sources"
 	@echo "make direct-binding  - fetch+load direct TF-binding data (GTRD, Cistrome, GEO) for all species"
@@ -94,13 +96,25 @@ perturbation-evidence:
 	venv/bin/python backend/scripts/calibrate_perturbation_signs.py
 	venv/bin/python backend/scripts/benchmark_inferred_sign_model.py
 
+discover-plant-perturbations:
+	venv/bin/python backend/scripts/discover_plant_perturbations.py \
+		--output docs/benchmarks/plant-perturbation-discovery.json
+
 cross-species-transfer:
+	venv/bin/python backend/scripts/build_perturbation_evidence.py
+	venv/bin/python backend/scripts/calibrate_perturbation_signs.py
 	venv/bin/python backend/scripts/build_conserved_regulatory_evidence.py
 	venv/bin/python backend/scripts/calibrate_cross_species_transfer.py
 	venv/bin/python backend/scripts/build_regulatory_candidates.py
 	venv/bin/python backend/scripts/rank_cycle_closing_candidates.py
 	venv/bin/python backend/scripts/benchmark_cross_species_transfer.py
+	venv/bin/python backend/scripts/benchmark_plant_transfer_expansion.py \
+		--baseline docs/benchmarks/plant-transfer-expansion-baseline.json
 	venv/bin/python backend/scripts/verify_cross_species_transfer.py
+
+benchmark-plant-transfer:
+	venv/bin/python backend/scripts/benchmark_plant_transfer_expansion.py \
+		--baseline docs/benchmarks/plant-transfer-expansion-baseline.json
 
 external-regulation:
 	venv/bin/python backend/scripts/load_external_regulatory_sources.py all \
@@ -120,10 +134,10 @@ direct-binding:
 	venv/bin/python backend/scripts/promote_evidence_to_interactions.py
 
 qualify-evidence:
-	venv/bin/python backend/scripts/build_conserved_regulatory_evidence.py
-	venv/bin/python backend/scripts/calibrate_cross_species_transfer.py
 	venv/bin/python backend/scripts/build_perturbation_evidence.py
 	venv/bin/python backend/scripts/calibrate_perturbation_signs.py
+	venv/bin/python backend/scripts/build_conserved_regulatory_evidence.py
+	venv/bin/python backend/scripts/calibrate_cross_species_transfer.py
 	venv/bin/python backend/scripts/build_regulatory_candidates.py
 	venv/bin/python backend/scripts/rank_cycle_closing_candidates.py
 	venv/bin/python backend/scripts/qualify_regulatory_sources.py

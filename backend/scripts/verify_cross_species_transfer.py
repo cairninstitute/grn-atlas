@@ -46,7 +46,21 @@ def verify(conn: sqlite3.Connection) -> dict:
         SELECT COUNT(*) FROM regulatory_edge_candidates c
         JOIN orthology_transfer_candidates t ON t.species=c.species
           AND t.source_id=c.source_id AND t.target_id=c.target_id AND t.relation_type=c.relation_type
-        WHERE t.status='unvalidated' AND c.evidence_tier<>'exploratory'
+        WHERE t.status='unvalidated' AND c.support_class='supported_cross_species_transfer'
+    """).fetchone()[0] == 0
+    checks["exploratory_donors_never_supported"] = conn.execute("""
+        SELECT COUNT(*) FROM regulatory_edge_candidates c
+        JOIN orthology_transfer_candidates t ON t.species=c.species
+          AND t.source_id=c.source_id AND t.target_id=c.target_id AND t.relation_type=c.relation_type
+        WHERE c.support_class='supported_cross_species_transfer'
+          AND COALESCE(json_extract(t.metadata,'$.supported_donor_count'),0)<1
+    """).fetchone()[0] == 0
+    checks["paralog_transfers_never_supported"] = conn.execute("""
+        SELECT COUNT(*) FROM regulatory_edge_candidates c
+        JOIN orthology_transfer_candidates t ON t.species=c.species
+          AND t.source_id=c.source_id AND t.target_id=c.target_id AND t.relation_type=c.relation_type
+        WHERE c.support_class='supported_cross_species_transfer'
+          AND t.mapping_class='paralog_aware_synteny'
     """).fetchone()[0] == 0
     checks["scores_are_bounded"] = conn.execute(
         "SELECT COUNT(*) FROM orthology_transfer_candidates "

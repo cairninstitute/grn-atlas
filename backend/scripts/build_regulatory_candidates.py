@@ -60,6 +60,10 @@ def build(conn: sqlite3.Connection) -> dict:
     if conn.execute(
         "SELECT 1 FROM sqlite_master WHERE type='table' AND name='orthology_transfer_candidates'"
     ).fetchone():
+        transfer_columns = {
+            row[1] for row in conn.execute("PRAGMA table_info(orthology_transfer_candidates)")
+        }
+        transfer_metadata = "metadata" if "metadata" in transfer_columns else "'{}'"
         transfer_candidates = {
             (row[0], row[1], row[2], row[3]): {
                 "mapping_class": row[4], "mapping_score": round(float(row[5]), 6),
@@ -67,11 +71,18 @@ def build(conn: sqlite3.Connection) -> dict:
                 "recipient_binding_sources": json.loads(row[8]),
                 "recipient_cis_support": bool(row[9]), "source_independent": bool(row[10]),
                 "edge_score": round(float(row[11]), 6), "sign_score": round(float(row[12]), 6),
+                "donor_evidence_tier": json.loads(row[13]).get(
+                    "donor_evidence_tier", "supported"
+                ),
+                "supported_donor_count": int(json.loads(row[13]).get(
+                    "supported_donor_count", 1
+                )),
             }
             for row in conn.execute(
                 "SELECT species,source_id,target_id,relation_type,mapping_class,mapping_score,"
                 "donor_species,donor_sources,recipient_binding_sources,recipient_cis_support,"
-                "source_independent,edge_score,sign_score FROM orthology_transfer_candidates "
+                f"source_independent,edge_score,sign_score,{transfer_metadata} "
+                "FROM orthology_transfer_candidates "
                 "WHERE status IN ('qualified','unvalidated')"
             )
         }
@@ -168,6 +179,7 @@ def build(conn: sqlite3.Connection) -> dict:
             transfer_supported = (
                 transfer_class in calibrated_transfer_classes
                 and transfer.get("source_independent", False)
+                and transfer.get("supported_donor_count", 0) > 0
                 and bool(transfer.get("recipient_binding_sources")
                          or transfer.get("recipient_cis_support"))
             )

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-17T01:24:19.072018+00:00",
+  "generated_at": "2026-10-17T02:08:34.625086+00:00",
   "definition": "Feedback metrics with cross-species transfer candidates ablated",
   "species": {
     "human": {
@@ -11,10 +11,10 @@
         "macro_circuits": 0
       },
       "exploratory": {
-        "graph_edges": 117228,
+        "graph_edges": 117213,
         "feedback_cores": 2,
         "feedback_genes": 1125,
-        "feedback_edges": 14978,
+        "feedback_edges": 14974,
         "macro_circuits": 0
       }
     },
@@ -27,10 +27,26 @@
         "macro_circuits": 0
       },
       "exploratory": {
-        "graph_edges": 18469,
+        "graph_edges": 18458,
         "feedback_cores": 2,
         "feedback_genes": 421,
-        "feedback_edges": 2031,
+        "feedback_edges": 2030,
+        "macro_circuits": 0
+      }
+    },
+    "pepper": {
+      "supported": {
+        "graph_edges": 35,
+        "feedback_cores": 4,
+        "feedback_genes": 8,
+        "feedback_edges": 8,
+        "macro_circuits": 0
+      },
+      "exploratory": {
+        "graph_edges": 35,
+        "feedback_cores": 4,
+        "feedback_genes": 8,
+        "feedback_edges": 8,
         "macro_circuits": 0
       }
     },
@@ -75,7 +91,7 @@
         "macro_circuits": 0
       },
       "exploratory": {
-        "graph_edges": 1617,
+        "graph_edges": 1726,
         "feedback_cores": 6,
         "feedback_genes": 25,
         "feedback_edges": 48,

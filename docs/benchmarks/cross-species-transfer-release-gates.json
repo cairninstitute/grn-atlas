@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-17T01:30:45.002535+00:00",
+  "generated_at": "2026-10-17T02:04:27.170390+00:00",
   "checks": {
     "calibration_has_independent_cases": true,
     "calibration_has_supported_classes": true,
@@ -7,6 +7,8 @@
     "recursive_inferred_donors_excluded": true,
     "supported_classes_pass_calibration": true,
     "unvalidated_transfers_are_exploratory": true,
+    "exploratory_donors_never_supported": true,
+    "paralog_transfers_never_supported": true,
     "scores_are_bounded": true
   },
   "passed": true

@@ -154,6 +154,7 @@ confirm the build is complete.
 | chromatin-peaks | `make chromatin-peaks` | Arabidopsis DAP-seq peaks (Plant Cistrome GSE60143): ~179K peaks, peak-gene links, cis-support edges (389 TFs) | yes | built DB + network (~74 MB) |
 | knocktf | `make knocktf-all` | KnockTF 2.0 loss-of-function TF-perturbation DEGs for Arabidopsis, human, and mouse (~1.99M obs); re-derives Arabidopsis signs | yes | built DB + network (~2.4 GB) |
 | external evidence | `make external-regulation` | normalized CollecTRI, SIGNOR, and strict plus expanded AGRIS evidence | yes | built DB + network |
+| plant perturbations | `make evidence-expansion`; `make discover-plant-perturbations` | reviewed Expression Atlas rice TF perturbations; separately refreshable candidate-discovery report | yes after manifest review | built DB + network |
 | tissue-weights | `make tissue-weights` | per-tissue coexpression weights for edges (petunia, tomato, arabidopsis) | yes | built DB + expression data |
 | validate | `make validate` | gold-standard recall/specificity + population-level statistical validation | yes | built DB |
 | benchmark | `make benchmark` | BEELINE-style AUROC/AUPRC against independent ground truth | yes | built DB |

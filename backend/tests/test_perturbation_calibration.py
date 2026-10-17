@@ -47,3 +47,42 @@ def test_calibration_gates_species_and_sign_separately():
         "SELECT gate_pass FROM perturbation_sign_calibration "
         "WHERE species='test' AND relation_type='activation'"
     ).fetchone()[0] == 1
+
+
+def test_calibration_uses_source_disjoint_direct_signed_truth():
+    conn = sqlite3.connect(":memory:")
+    conn.executescript("""
+        CREATE TABLE perturbation_sign_consensus (
+            species TEXT, source_id TEXT, target_id TEXT, relation_type TEXT,
+            confidence REAL, status TEXT, datasets TEXT
+        );
+        CREATE TABLE interactions (
+            source_id TEXT, target_id TEXT, regulation_type TEXT,
+            sign TEXT, sign_evidence TEXT, sources TEXT, pmids TEXT
+        );
+        CREATE TABLE regulatory_evidence (
+            species TEXT, source_id TEXT, target_id TEXT, relation_type TEXT,
+            evidence_layer TEXT, directness TEXT, source_name TEXT, pmids TEXT
+        );
+    """)
+    conn.executemany(
+        "INSERT INTO perturbation_sign_consensus VALUES (?,?,?,?,?,?,?)",
+        [
+            ("plant", "TF", "independent", "activation", .8, "accepted", '["experiment"]'),
+            ("plant", "TF", "leaked", "activation", .8, "accepted", '["same source"]'),
+        ],
+    )
+    conn.executemany(
+        "INSERT INTO regulatory_evidence VALUES (?,?,?,?,?,?,?,?)",
+        [
+            ("plant", "TF", "independent", "activation", "direct_signed", "direct",
+             "curated direct", "[]"),
+            ("plant", "TF", "leaked", "activation", "direct_signed", "direct",
+             "Same-Source", "[]"),
+        ],
+    )
+
+    report = calibrate_perturbation_signs.calibrate(conn)
+
+    assert report["overall"]["cases"] == 1
+    assert report["excluded_overlaps"]["shared_source"] == 1

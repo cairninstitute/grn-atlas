@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sqlite3
 import sys
 from collections import Counter, defaultdict
@@ -138,12 +139,29 @@ def _normalize_mappings(
                 len(synteny_degree[(a, species_b)]) == 1
                 and len(synteny_degree[(b, species_a)]) == 1
             )
-            mapping_class = "reciprocal_unique_synteny"
-            status = "accepted" if reciprocal_unique else "excluded"
-            reason = "reciprocal_unique" if reciprocal_unique else "ambiguous_synteny"
+            bounded_paralogs = (
+                len(synteny_degree[(a, species_b)]) <= 2
+                and len(synteny_degree[(b, species_a)]) <= 2
+            )
+            if reciprocal_unique:
+                mapping_class, status, reason = (
+                    "reciprocal_unique_synteny", "accepted", "reciprocal_unique"
+                )
+            elif bounded_paralogs:
+                mapping_class, status, reason = (
+                    "paralog_aware_synteny", "exploratory", "bounded_paralog_family"
+                )
+            else:
+                mapping_class, status, reason = (
+                    "ambiguous_synteny", "excluded", "ambiguous_synteny"
+                )
         else:
             mapping_class, status, reason = "ambiguous_family", "excluded", rel_type or "unknown"
         normalized_score = min(1.0, max(0.0, float(score)))
+        if status == "exploratory":
+            normalized_score /= math.sqrt(
+                len(synteny_degree[(a, species_b)]) * len(synteny_degree[(b, species_a)])
+            )
         for original_source, original_target, source_species, target_species in (
             (a, b, species_a, species_b), (b, a, species_b, species_a),
         ):
@@ -154,7 +172,7 @@ def _normalize_mappings(
                 resolved_reason += ";canonical_alias_resolution"
             rows.append((source, target, source_species, target_species, mapping_class,
                          normalized_score, status, resolved_reason))
-            if status == "accepted":
+            if status in {"accepted", "exploratory"}:
                 signature = (source, target_species, target, mapping_class)
                 if signature not in accepted_seen:
                     accepted_seen.add(signature)
@@ -163,6 +181,73 @@ def _normalize_mappings(
                     })
     conn.executemany("INSERT OR IGNORE INTO orthology_transfer_mappings VALUES (?,?,?,?,?,?,?,?)", rows)
     return accepted, canonical
+
+
+def _donor_records(conn: sqlite3.Connection, gene_species: dict[str, str]) -> list[dict]:
+    """Collect signed donors while preserving their evidence tier and provenance."""
+    records = []
+    for source, target, sign, confidence, sources, pmids, sign_evidence in conn.execute(
+        "SELECT source_id,target_id,COALESCE(sign,regulation_type),confidence,sources,pmids,"
+        "sign_evidence FROM interactions WHERE COALESCE(sign,regulation_type) "
+        "IN ('activation','repression') AND sign_evidence IN ('measured','perturbation')"
+    ):
+        donor_sources = [
+            item for item in _json_list(sources)
+            if not item.startswith("Inferred:") and item != SOURCE
+        ]
+        donor_species = gene_species.get(source)
+        if donor_species and donor_sources:
+            records.append({
+                "donor_species": donor_species, "source_id": source, "target_id": target,
+                "sign": sign, "confidence": float(confidence), "sources": donor_sources,
+                "pmids": _json_list(pmids), "sign_evidence": sign_evidence,
+                "donor_class": "observed_interaction", "donor_tier": "supported",
+            })
+
+    for species, source, target, sign, confidence, source_name, pmids in conn.execute(
+        "SELECT species,source_id,target_id,relation_type,COALESCE(confidence,0.65),"
+        "source_name,pmids FROM regulatory_evidence WHERE evidence_layer='direct_signed' "
+        "AND directness='direct' AND relation_type IN ('activation','repression') "
+        "AND source_name<>?", (SOURCE,),
+    ):
+        records.append({
+            "donor_species": species, "source_id": source, "target_id": target,
+            "sign": sign, "confidence": float(confidence), "sources": [source_name],
+            "pmids": _json_list(pmids), "sign_evidence": "direct_signed",
+            "donor_class": "supported_direct_signed", "donor_tier": "supported",
+        })
+
+    calibrated_perturbation = set()
+    if conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' "
+        "AND name='perturbation_sign_calibration'"
+    ).fetchone():
+        calibrated_perturbation = {
+            (species, relation) for species, relation in conn.execute(
+                "SELECT species,relation_type FROM perturbation_sign_calibration "
+                "WHERE gate_pass=1"
+            )
+        }
+    if conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' "
+        "AND name='perturbation_sign_consensus'"
+    ).fetchone():
+        for species, source, target, sign, confidence, datasets in conn.execute(
+            "SELECT species,source_id,target_id,relation_type,confidence,datasets "
+            "FROM perturbation_sign_consensus WHERE status='accepted'"
+        ):
+            gate_pass = (species, sign) in calibrated_perturbation
+            records.append({
+                "donor_species": species, "source_id": source, "target_id": target,
+                "sign": sign, "confidence": float(confidence),
+                "sources": [f"Perturbation:{item}" for item in _json_list(datasets)]
+                           or ["Perturbation sign consensus"],
+                "pmids": [], "sign_evidence": "perturbation_consensus",
+                "donor_class": ("calibrated_perturbation" if gate_pass
+                                else "uncalibrated_perturbation"),
+                "donor_tier": "supported" if gate_pass else "exploratory",
+            })
+    return records
 
 
 def build(conn: sqlite3.Connection) -> dict:
@@ -194,40 +279,32 @@ def build(conn: sqlite3.Connection) -> dict:
         }
 
     projections: dict[tuple[str, str, str, str], list[dict]] = defaultdict(list)
-    for source, target, sign, confidence, source_json, pmid_json, sign_evidence in conn.execute(
-        "SELECT source_id,target_id,COALESCE(sign,regulation_type),confidence,sources,pmids,sign_evidence "
-        "FROM interactions WHERE COALESCE(sign,regulation_type) IN ('activation','repression') "
-        "AND sign_evidence IN ('measured','perturbation')"
-    ):
-        measured_sources = [
-            item for item in _json_list(source_json)
-            if not item.startswith("Inferred:") and item != SOURCE
-        ]
-        if not measured_sources:
-            continue
-        donor_species = species.get(source)
-        if not donor_species:
-            continue
+    donor_records = _donor_records(conn, species)
+    for donor in donor_records:
+        source, target, sign = donor["source_id"], donor["target_id"], donor["sign"]
         for recipient_species in mapped_species.get(source, set()):
             source_maps = mappings.get((source, recipient_species), [])
             target_maps = mappings.get((target, recipient_species), [])
-            if len(source_maps) != 1 or len(target_maps) != 1:
+            if not source_maps or not target_maps or len(source_maps) * len(target_maps) > 4:
                 continue
-            projected_source = source_maps[0]["target"]
-            projected_target = target_maps[0]["target"]
-            if projected_source == projected_target or not is_tf.get(projected_source):
-                continue
-            mapping_class = (
-                "explicit_one_to_one" if source_maps[0]["class"] == target_maps[0]["class"] == "explicit_one_to_one"
-                else "reciprocal_unique_synteny"
-            )
-            projections[(recipient_species, projected_source, projected_target, sign)].append({
-                "donor_species": donor_species, "source_id": source, "target_id": target,
-                "confidence": float(confidence), "sources": measured_sources,
-                "pmids": _json_list(pmid_json), "sign_evidence": sign_evidence,
-                "mapping_class": mapping_class,
-                "mapping_score": min(source_maps[0]["score"], target_maps[0]["score"]),
-            })
+            for source_map in source_maps:
+                for target_map in target_maps:
+                    projected_source = source_map["target"]
+                    projected_target = target_map["target"]
+                    if projected_source == projected_target or not is_tf.get(projected_source):
+                        continue
+                    map_classes = {source_map["class"], target_map["class"]}
+                    if map_classes == {"explicit_one_to_one"}:
+                        mapping_class = "explicit_one_to_one"
+                    elif "paralog_aware_synteny" in map_classes:
+                        mapping_class = "paralog_aware_synteny"
+                    else:
+                        mapping_class = "reciprocal_unique_synteny"
+                    projections[(recipient_species, projected_source, projected_target, sign)].append({
+                        **donor,
+                        "mapping_class": mapping_class,
+                        "mapping_score": min(source_map["score"], target_map["score"]),
+                    })
 
     projected_pairs = {(key[1], key[2]) for key in projections}
     expression_context: dict[tuple[str, str], list[tuple[str, float]]] = defaultdict(list)
@@ -261,15 +338,23 @@ def build(conn: sqlite3.Connection) -> dict:
         source_independent = not set(donor_sources).intersection(binding_sources)
         mapping_class = (
             "explicit_one_to_one" if all(row["mapping_class"] == "explicit_one_to_one" for row in donors)
-            else "reciprocal_unique_synteny"
+            else "paralog_aware_synteny" if any(
+                row["mapping_class"] == "paralog_aware_synteny" for row in donors
+            ) else "reciprocal_unique_synteny"
         )
         mapping_score = max(row["mapping_score"] for row in donors)
         recipient_supported = bool(binding_sources or cis_supported)
         conflict = len(pair_signs[(recipient_species, source, target)]) > 1
-        qualified = not conflict and (recipient_supported or len(donor_species) >= 2)
+        supported_donors = [row for row in donors if row["donor_tier"] == "supported"]
+        supported_donor_species = {row["donor_species"] for row in supported_donors}
+        qualified = (
+            not conflict and mapping_class != "paralog_aware_synteny" and bool(supported_donors)
+            and (recipient_supported or len(supported_donor_species) >= 2)
+        )
         status = "sign_conflict" if conflict else ("qualified" if qualified else "unvalidated")
         edge_score = min(0.92, 0.38 + 0.16 * (mapping_class == "explicit_one_to_one")
                          + 0.12 * (mapping_class == "reciprocal_unique_synteny")
+                         + 0.04 * (mapping_class == "paralog_aware_synteny")
                          + 0.14 * recipient_supported + 0.06 * min(len(donor_species), 2)
                          + 0.04 * source_independent)
         sign_score = min(0.90, 0.42 + 0.12 * max(row["confidence"] for row in donors)
@@ -281,6 +366,16 @@ def build(conn: sqlite3.Connection) -> dict:
             "donor_sources": donor_sources, "edge_score": round(edge_score, 6),
             "sign_score": round(sign_score, 6), "score_semantics": "uncalibrated_rank",
             "transfer_status": status,
+            "donor_evidence_tier": (
+                "supported" if len(supported_donors) == len(donors) else "mixed"
+                if supported_donors else "exploratory"
+            ),
+            "supported_donor_count": len(supported_donors),
+            "donor_consensus": {
+                "species_count": len(donor_species),
+                "independent_source_count": len(independent_donors),
+                "sign_agreement": not conflict,
+            },
             "recipient_expression_context": [
                 {"tissue": tissue, "coexpression": round(weight, 6)}
                 for tissue, weight in sorted(
@@ -289,8 +384,10 @@ def build(conn: sqlite3.Connection) -> dict:
                 )[:5]
             ],
         }
-        donor_edges = [{k: row[k] for k in ("donor_species", "source_id", "target_id", "confidence",
-                                             "sources", "pmids", "sign_evidence")} for row in donors]
+        donor_edges = [{k: row[k] for k in (
+            "donor_species", "source_id", "target_id", "confidence", "sources", "pmids",
+            "sign_evidence", "donor_class", "donor_tier",
+        )} for row in donors]
         table_rows.append((recipient_species, source, target, sign, mapping_class, mapping_score,
                            json.dumps(donor_species), json.dumps(donor_edges, sort_keys=True),
                            json.dumps(donor_sources), json.dumps(donor_pmids), len(donor_species),
@@ -314,12 +411,17 @@ def build(conn: sqlite3.Connection) -> dict:
     run_id = begin_import(conn, SOURCE, VERSION, "local://orthologs+signed-interactions", None)
     stored = replace_source_evidence(conn, SOURCE, VERSION, run_id, evidence_rows)
     counts.update({"projected": len(table_rows), "stored": stored,
+                   "donor_records": len(donor_records),
                    "normalized_mappings": conn.execute(
                        "SELECT COUNT(*) FROM orthology_transfer_mappings WHERE status='accepted'"
                    ).fetchone()[0],
                    "canonicalized_mappings": conn.execute(
                        "SELECT COUNT(*) FROM orthology_transfer_mappings "
                        "WHERE status='accepted' AND reason LIKE '%canonical_alias_resolution%'"
+                   ).fetchone()[0],
+                   "exploratory_mappings": conn.execute(
+                       "SELECT COUNT(*) FROM orthology_transfer_mappings "
+                       "WHERE status='exploratory'"
                    ).fetchone()[0]})
     finish_import(conn, run_id, dict(counts))
     return dict(counts)

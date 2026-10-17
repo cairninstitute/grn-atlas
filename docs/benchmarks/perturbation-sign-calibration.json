@@ -1,11 +1,16 @@
 {
-  "generated_at": "2026-10-16T20:07:15.130803+00:00",
+  "generated_at": "2026-10-17T02:03:51.684113+00:00",
   "model_version": "perturbation-calibration-v1",
   "leakage_controls": [
     "literature_curated observations are excluded from consensus generation",
-    "only interactions with sign_evidence=measured are calibration truth",
+    "truth is restricted to measured interactions and independently direct-signed evidence",
+    "conflicting recipient truth is excluded",
+    "perturbation datasets and truth sources must be disjoint",
     "release gates are evaluated separately by species and predicted sign"
   ],
+  "excluded_overlaps": {
+    "conflicting_truth": 56
+  },
   "thresholds": {
     "minimum_cases": 50,
     "minimum_precision": 0.8,
@@ -13,32 +18,54 @@
     "wilson_lower_must_exceed_base_rate": true
   },
   "overall": {
-    "cases": 4372,
-    "accuracy": 0.5524,
-    "species_majority_baseline": 0.8488,
+    "cases": 4370,
+    "accuracy": 0.5568,
+    "species_majority_baseline": 0.8549,
     "passes_global_baseline": false
   },
   "classes": [
     {
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "cases": 33,
+      "agreements": 33,
+      "precision": 1.0,
+      "baseline_rate": 1.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.8957,
+      "gate_pass": false
+    },
+    {
+      "species": "arabidopsis",
+      "relation_type": "repression",
+      "cases": 2,
+      "agreements": 0,
+      "precision": 0.0,
+      "baseline_rate": 0.0,
+      "lift": 0.0,
+      "wilson_lower_95": 0.0,
+      "gate_pass": false
+    },
+    {
       "species": "human",
       "relation_type": "activation",
-      "cases": 2301,
-      "agreements": 2019,
-      "precision": 0.8774,
-      "baseline_rate": 0.85,
-      "lift": 0.0274,
-      "wilson_lower_95": 0.8634,
+      "cases": 2273,
+      "agreements": 2011,
+      "precision": 0.8847,
+      "baseline_rate": 0.855,
+      "lift": 0.0297,
+      "wilson_lower_95": 0.871,
       "gate_pass": true
     },
     {
       "species": "human",
       "relation_type": "repression",
-      "cases": 2027,
-      "agreements": 367,
-      "precision": 0.1811,
-      "baseline_rate": 0.15,
-      "lift": 0.0311,
-      "wilson_lower_95": 0.1649,
+      "cases": 2018,
+      "agreements": 360,
+      "precision": 0.1784,
+      "baseline_rate": 0.145,
+      "lift": 0.0334,
+      "wilson_lower_95": 0.1623,
       "gate_pass": false
     },
     {

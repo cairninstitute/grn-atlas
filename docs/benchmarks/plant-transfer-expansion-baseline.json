@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-10-17T01:53:59.535201+00:00",
+  "species": {
+    "petunia": {
+      "total": 301,
+      "status": {
+        "unvalidated": 301
+      },
+      "mapping_class": {
+        "reciprocal_unique_synteny": 301
+      },
+      "donor_tier": {
+        "legacy_unknown": 301
+      },
+      "donor_class": {
+        "legacy_observed_interaction": 301
+      },
+      "supported_candidates": 0,
+      "exploratory_candidates": 301
+    },
+    "potato": {
+      "total": 36,
+      "status": {
+        "unvalidated": 36
+      },
+      "mapping_class": {
+        "reciprocal_unique_synteny": 36
+      },
+      "donor_tier": {
+        "legacy_unknown": 36
+      },
+      "donor_class": {
+        "legacy_observed_interaction": 36
+      },
+      "supported_candidates": 0,
+      "exploratory_candidates": 36
+    },
+    "rice": {
+      "total": 91,
+      "status": {
+        "unvalidated": 91
+      },
+      "mapping_class": {
+        "reciprocal_unique_synteny": 91
+      },
+      "donor_tier": {
+        "legacy_unknown": 91
+      },
+      "donor_class": {
+        "legacy_observed_interaction": 91
+      },
+      "supported_candidates": 0,
+      "exploratory_candidates": 91
+    },
+    "tomato": {
+      "total": 441,
+      "status": {
+        "unvalidated": 441
+      },
+      "mapping_class": {
+        "reciprocal_unique_synteny": 441
+      },
+      "donor_tier": {
+        "legacy_unknown": 441
+      },
+      "donor_class": {
+        "legacy_observed_interaction": 441
+      },
+      "supported_candidates": 0,
+      "exploratory_candidates": 441
+    }
+  }
+}
