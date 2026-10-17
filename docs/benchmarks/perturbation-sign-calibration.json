@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-17T02:03:51.684113+00:00",
+  "generated_at": "2026-10-17T02:28:17.391904+00:00",
   "model_version": "perturbation-calibration-v1",
   "leakage_controls": [
     "literature_curated observations are excluded from consensus generation",
@@ -18,9 +18,9 @@
     "wilson_lower_must_exceed_base_rate": true
   },
   "overall": {
-    "cases": 4370,
-    "accuracy": 0.5568,
-    "species_majority_baseline": 0.8549,
+    "cases": 4293,
+    "accuracy": 0.5563,
+    "species_majority_baseline": 0.8556,
     "passes_global_baseline": false
   },
   "classes": [
@@ -49,45 +49,45 @@
     {
       "species": "human",
       "relation_type": "activation",
-      "cases": 2273,
-      "agreements": 2011,
-      "precision": 0.8847,
-      "baseline_rate": 0.855,
-      "lift": 0.0297,
-      "wilson_lower_95": 0.871,
+      "cases": 2250,
+      "agreements": 1990,
+      "precision": 0.8844,
+      "baseline_rate": 0.8552,
+      "lift": 0.0293,
+      "wilson_lower_95": 0.8706,
       "gate_pass": true
     },
     {
       "species": "human",
       "relation_type": "repression",
-      "cases": 2018,
-      "agreements": 360,
-      "precision": 0.1784,
-      "baseline_rate": 0.145,
-      "lift": 0.0334,
-      "wilson_lower_95": 0.1623,
+      "cases": 1989,
+      "agreements": 354,
+      "precision": 0.178,
+      "baseline_rate": 0.1448,
+      "lift": 0.0331,
+      "wilson_lower_95": 0.1618,
       "gate_pass": false
     },
     {
       "species": "mouse",
       "relation_type": "activation",
-      "cases": 25,
-      "agreements": 21,
-      "precision": 0.84,
-      "baseline_rate": 0.7273,
-      "lift": 0.1127,
-      "wilson_lower_95": 0.6535,
+      "cases": 7,
+      "agreements": 6,
+      "precision": 0.8571,
+      "baseline_rate": 0.6842,
+      "lift": 0.1729,
+      "wilson_lower_95": 0.4869,
       "gate_pass": false
     },
     {
       "species": "mouse",
       "relation_type": "repression",
-      "cases": 19,
-      "agreements": 8,
-      "precision": 0.4211,
-      "baseline_rate": 0.2727,
-      "lift": 0.1483,
-      "wilson_lower_95": 0.2314,
+      "cases": 12,
+      "agreements": 5,
+      "precision": 0.4167,
+      "baseline_rate": 0.3158,
+      "lift": 0.1009,
+      "wilson_lower_95": 0.1933,
       "gate_pass": false
     }
   ],
