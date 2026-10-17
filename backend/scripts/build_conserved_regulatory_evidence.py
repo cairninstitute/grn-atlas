@@ -7,7 +7,7 @@ import argparse
 import json
 import sqlite3
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
@@ -27,6 +27,11 @@ def _json_list(value: str | None) -> list[str]:
         return [str(item) for item in parsed] if isinstance(parsed, list) else []
     except (TypeError, json.JSONDecodeError):
         return []
+
+
+def _namespace_style(gene_id: str, species: str) -> str:
+    prefix = f"{species.casefold()}:"
+    return "species_prefixed" if gene_id.casefold().startswith(prefix) else "native"
 
 
 def _ensure_transfer_schema(conn: sqlite3.Connection) -> None:
@@ -58,7 +63,59 @@ def _ensure_transfer_schema(conn: sqlite3.Connection) -> None:
     """)
 
 
-def _normalize_mappings(conn: sqlite3.Connection) -> dict[tuple[str, str], list[dict]]:
+def _canonical_gene_ids(conn: sqlite3.Connection) -> dict[str, str]:
+    """Resolve duplicate same-symbol IDs to a uniquely evidence-anchored ID."""
+    trusted_degree: dict[str, int] = defaultdict(int)
+    for source, target, sources in conn.execute(
+        "SELECT source_id,target_id,sources FROM interactions "
+        "WHERE sign_evidence IN ('measured','perturbation')"
+    ):
+        if not any(not item.startswith("Inferred:") for item in _json_list(sources)):
+            continue
+        trusted_degree[source] += 1
+        trusted_degree[target] += 1
+
+    symbol_groups: dict[tuple[str, str], list[str]] = defaultdict(list)
+    for gene_id, symbol, species in conn.execute("SELECT id,symbol,species FROM genes"):
+        if symbol:
+            symbol_groups[(species, symbol.casefold())].append(gene_id)
+
+    canonical = {}
+    namespace_votes: dict[str, Counter] = defaultdict(Counter)
+    for (species, _), gene_ids in symbol_groups.items():
+        if len(gene_ids) < 2:
+            continue
+        best_degree = max(trusted_degree.get(gene_id, 0) for gene_id in gene_ids)
+        if best_degree == 0:
+            continue
+        best = [gene_id for gene_id in gene_ids if trusted_degree.get(gene_id, 0) == best_degree]
+        if len(best) == 1:
+            style = _namespace_style(best[0], species)
+            namespace_votes[species][style] += 1
+            canonical.update({gene_id: best[0] for gene_id in gene_ids})
+
+    preferred_namespace = {}
+    for species, votes in namespace_votes.items():
+        style, count = votes.most_common(1)[0]
+        if count >= 10 and count / sum(votes.values()) >= 0.9:
+            preferred_namespace[species] = style
+
+    for (species, _), gene_ids in symbol_groups.items():
+        if len(gene_ids) < 2 or all(gene_id in canonical for gene_id in gene_ids):
+            continue
+        preferred = preferred_namespace.get(species)
+        matching = [
+            gene_id for gene_id in gene_ids
+            if preferred and _namespace_style(gene_id, species) == preferred
+        ]
+        if len(matching) == 1:
+            canonical.update({gene_id: matching[0] for gene_id in gene_ids})
+    return canonical
+
+
+def _normalize_mappings(
+    conn: sqlite3.Connection,
+) -> tuple[dict[tuple[str, str], list[dict]], dict[str, str]]:
     raw = conn.execute(
         "SELECT gene_a,gene_b,species_a,species_b,COALESCE(rel_type,''),COALESCE(score,0.5) "
         "FROM orthologs"
@@ -69,8 +126,10 @@ def _normalize_mappings(conn: sqlite3.Connection) -> dict[tuple[str, str], list[
             synteny_degree[(a, species_b)].add(b)
             synteny_degree[(b, species_a)].add(a)
 
+    canonical = _canonical_gene_ids(conn)
     rows = []
     accepted: dict[tuple[str, str], list[dict]] = defaultdict(list)
+    accepted_seen = set()
     for a, b, species_a, species_b, rel_type, score in raw:
         if rel_type in {"1:1", "one2one"}:
             mapping_class, status, reason = "explicit_one_to_one", "accepted", "explicit_one_to_one"
@@ -85,27 +144,37 @@ def _normalize_mappings(conn: sqlite3.Connection) -> dict[tuple[str, str], list[
         else:
             mapping_class, status, reason = "ambiguous_family", "excluded", rel_type or "unknown"
         normalized_score = min(1.0, max(0.0, float(score)))
-        for source, target, source_species, target_species in (
+        for original_source, original_target, source_species, target_species in (
             (a, b, species_a, species_b), (b, a, species_b, species_a),
         ):
+            source = canonical.get(original_source, original_source)
+            target = canonical.get(original_target, original_target)
+            resolved_reason = reason
+            if source != original_source or target != original_target:
+                resolved_reason += ";canonical_alias_resolution"
             rows.append((source, target, source_species, target_species, mapping_class,
-                         normalized_score, status, reason))
+                         normalized_score, status, resolved_reason))
             if status == "accepted":
-                accepted[(source, target_species)].append({
-                    "target": target, "class": mapping_class, "score": normalized_score,
-                })
+                signature = (source, target_species, target, mapping_class)
+                if signature not in accepted_seen:
+                    accepted_seen.add(signature)
+                    accepted[(source, target_species)].append({
+                        "target": target, "class": mapping_class, "score": normalized_score,
+                    })
     conn.executemany("INSERT OR IGNORE INTO orthology_transfer_mappings VALUES (?,?,?,?,?,?,?,?)", rows)
-    return accepted
+    return accepted, canonical
 
 
 def build(conn: sqlite3.Connection) -> dict:
     _ensure_transfer_schema(conn)
-    mappings = _normalize_mappings(conn)
+    mappings, canonical = _normalize_mappings(conn)
     mapped_species: dict[str, set[str]] = defaultdict(set)
     for source_gene, target_species in mappings:
         mapped_species[source_gene].add(target_species)
     species = dict(conn.execute("SELECT id,species FROM genes"))
-    is_tf = {row[0]: bool(row[1]) for row in conn.execute("SELECT id,is_tf FROM genes")}
+    is_tf: dict[str, bool] = defaultdict(bool)
+    for gene_id, tf_value in conn.execute("SELECT id,is_tf FROM genes"):
+        is_tf[canonical.get(gene_id, gene_id)] |= bool(tf_value)
 
     recipient_binding: dict[tuple[str, str], set[str]] = defaultdict(set)
     for source, target, source_name in conn.execute(
@@ -114,12 +183,15 @@ def build(conn: sqlite3.Connection) -> dict:
         "OR (evidence_layer='direct_signed' AND directness IN ('direct','binding')))",
         (SOURCE,),
     ):
-        recipient_binding[(source, target)].add(source_name)
+        recipient_binding[(canonical.get(source, source), canonical.get(target, target))].add(source_name)
     cis_pairs = set()
     if conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='cis_support_edges'").fetchone():
-        cis_pairs = {(row[0], row[1]) for row in conn.execute(
-            "SELECT source_id,target_id FROM cis_support_edges WHERE score>=0.5"
-        )}
+        cis_pairs = {
+            (canonical.get(source, source), canonical.get(target, target))
+            for source, target in conn.execute(
+                "SELECT source_id,target_id FROM cis_support_edges WHERE score>=0.5"
+            )
+        }
 
     projections: dict[tuple[str, str, str, str], list[dict]] = defaultdict(list)
     for source, target, sign, confidence, source_json, pmid_json, sign_evidence in conn.execute(
@@ -165,6 +237,8 @@ def build(conn: sqlite3.Connection) -> dict:
         for source, target, tissue, weight in conn.execute(
             "SELECT source_id,target_id,tissue,coexpression FROM edge_tissue_weights"
         ):
+            source = canonical.get(source, source)
+            target = canonical.get(target, target)
             if (source, target) in projected_pairs and abs(float(weight)) >= 0.3:
                 expression_context[(source, target)].append((tissue, float(weight)))
 
@@ -242,6 +316,10 @@ def build(conn: sqlite3.Connection) -> dict:
     counts.update({"projected": len(table_rows), "stored": stored,
                    "normalized_mappings": conn.execute(
                        "SELECT COUNT(*) FROM orthology_transfer_mappings WHERE status='accepted'"
+                   ).fetchone()[0],
+                   "canonicalized_mappings": conn.execute(
+                       "SELECT COUNT(*) FROM orthology_transfer_mappings "
+                       "WHERE status='accepted' AND reason LIKE '%canonical_alias_resolution%'"
                    ).fetchone()[0]})
     finish_import(conn, run_id, dict(counts))
     return dict(counts)

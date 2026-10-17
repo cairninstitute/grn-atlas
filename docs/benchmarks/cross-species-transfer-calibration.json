@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-16T22:56:00.759851+00:00",
+  "generated_at": "2026-10-17T01:24:07.706909+00:00",
   "model_version": "cross-species-transfer-v1",
   "leakage_controls": [
     "donor and recipient evidence sources must be disjoint",
@@ -13,33 +13,61 @@
     "minimum_lift_over_class_base_rate": 0.02,
     "wilson_lower_must_exceed_base_rate": true
   },
-  "excluded_overlaps": {},
+  "excluded_overlaps": {
+    "shared_source": 3093
+  },
   "classes": [
+    {
+      "species": "human",
+      "relation_type": "activation",
+      "mapping_class": "explicit_one_to_one",
+      "cases": 360,
+      "agreements": 338,
+      "precision": 0.9389,
+      "baseline_rate": 0.8147,
+      "lift": 0.1242,
+      "wilson_lower_95": 0.9092,
+      "recipient_edge_validation_rate": 0.8548,
+      "gate_pass": true
+    },
+    {
+      "species": "human",
+      "relation_type": "repression",
+      "mapping_class": "explicit_one_to_one",
+      "cases": 162,
+      "agreements": 139,
+      "precision": 0.858,
+      "baseline_rate": 0.1853,
+      "lift": 0.6728,
+      "wilson_lower_95": 0.796,
+      "recipient_edge_validation_rate": 0.7225,
+      "gate_pass": true
+    },
     {
       "species": "mouse",
       "relation_type": "activation",
       "mapping_class": "explicit_one_to_one",
-      "cases": 0,
-      "agreements": 0,
-      "precision": 0.0,
+      "cases": 394,
+      "agreements": 371,
+      "precision": 0.9416,
       "baseline_rate": 0.8003,
-      "lift": -0.8003,
-      "wilson_lower_95": 0.0,
+      "lift": 0.1413,
+      "wilson_lower_95": 0.9139,
       "recipient_edge_validation_rate": 0.0,
-      "gate_pass": false
+      "gate_pass": true
     },
     {
       "species": "mouse",
       "relation_type": "repression",
       "mapping_class": "explicit_one_to_one",
-      "cases": 0,
-      "agreements": 0,
-      "precision": 0.0,
+      "cases": 171,
+      "agreements": 148,
+      "precision": 0.8655,
       "baseline_rate": 0.1997,
-      "lift": -0.1997,
-      "wilson_lower_95": 0.0,
+      "lift": 0.6658,
+      "wilson_lower_95": 0.8063,
       "recipient_edge_validation_rate": 0.0,
-      "gate_pass": false
+      "gate_pass": true
     },
     {
       "species": "petunia",
@@ -147,9 +175,13 @@
     }
   ],
   "species_held_out": {
+    "human": {
+      "independent_cases": 522,
+      "status": "evaluated"
+    },
     "mouse": {
-      "independent_cases": 0,
-      "status": "insufficient_independent_cases"
+      "independent_cases": 565,
+      "status": "evaluated"
     },
     "petunia": {
       "independent_cases": 0,
@@ -168,6 +200,64 @@
       "status": "insufficient_independent_cases"
     }
   },
-  "evolutionary_distance_strata": {},
-  "supported_classes": []
+  "evolutionary_distance_strata": {
+    "close_mammal": {
+      "cases": 1087,
+      "precision": 0.9163
+    }
+  },
+  "supported_classes": [
+    {
+      "species": "human",
+      "relation_type": "activation",
+      "mapping_class": "explicit_one_to_one",
+      "cases": 360,
+      "agreements": 338,
+      "precision": 0.9389,
+      "baseline_rate": 0.8147,
+      "lift": 0.1242,
+      "wilson_lower_95": 0.9092,
+      "recipient_edge_validation_rate": 0.8548,
+      "gate_pass": true
+    },
+    {
+      "species": "human",
+      "relation_type": "repression",
+      "mapping_class": "explicit_one_to_one",
+      "cases": 162,
+      "agreements": 139,
+      "precision": 0.858,
+      "baseline_rate": 0.1853,
+      "lift": 0.6728,
+      "wilson_lower_95": 0.796,
+      "recipient_edge_validation_rate": 0.7225,
+      "gate_pass": true
+    },
+    {
+      "species": "mouse",
+      "relation_type": "activation",
+      "mapping_class": "explicit_one_to_one",
+      "cases": 394,
+      "agreements": 371,
+      "precision": 0.9416,
+      "baseline_rate": 0.8003,
+      "lift": 0.1413,
+      "wilson_lower_95": 0.9139,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": true
+    },
+    {
+      "species": "mouse",
+      "relation_type": "repression",
+      "mapping_class": "explicit_one_to_one",
+      "cases": 171,
+      "agreements": 148,
+      "precision": 0.8655,
+      "baseline_rate": 0.1997,
+      "lift": 0.6658,
+      "wilson_lower_95": 0.8063,
+      "recipient_edge_validation_rate": 0.0,
+      "gate_pass": true
+    }
+  ]
 }

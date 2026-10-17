@@ -3534,17 +3534,33 @@ async def conservation(request: ConservationRequest):
     if not a_edges:
         return {"species_b": request.species_b, "edges": [], "stats": {"edges": 0, "conserved": 0}}
 
-    # orthologs of the involved genes in species B (either orientation)
+    # Prefer normalized mappings so transferred evidence and API joins use the
+    # same canonical gene IDs. Fall back to raw orthologs for older databases.
     orth = defaultdict(set)
-    rows = db.conn.execute(
-        f"SELECT gene_a, gene_b, species_a, species_b FROM orthologs "
-        f"WHERE (gene_a IN ({ph}) AND species_b = ?) OR (gene_b IN ({ph}) AND species_a = ?)",
-        ids + [request.species_b] + ids + [request.species_b]).fetchall()
-    for r in rows:
-        if r["species_b"] == request.species_b:
-            orth[r["gene_a"]].add(r["gene_b"])
-        else:
-            orth[r["gene_b"]].add(r["gene_a"])
+    has_normalized_orthology = db.conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' "
+        "AND name='orthology_transfer_mappings'"
+    ).fetchone()
+    if has_normalized_orthology:
+        rows = db.conn.execute(
+            f"SELECT source_gene,target_gene FROM orthology_transfer_mappings "
+            f"WHERE source_gene IN ({ph}) AND target_species=? AND status='accepted'",
+            ids + [request.species_b],
+        ).fetchall()
+        for r in rows:
+            orth[r["source_gene"]].add(r["target_gene"])
+    else:
+        rows = db.conn.execute(
+            f"SELECT gene_a, gene_b, species_a, species_b FROM orthologs "
+            f"WHERE (gene_a IN ({ph}) AND species_b = ?) OR "
+            f"(gene_b IN ({ph}) AND species_a = ?)",
+            ids + [request.species_b] + ids + [request.species_b],
+        ).fetchall()
+        for r in rows:
+            if r["species_b"] == request.species_b:
+                orth[r["gene_a"]].add(r["gene_b"])
+            else:
+                orth[r["gene_b"]].add(r["gene_a"])
 
     def sym(gene_id):
         r = db.conn.execute("SELECT symbol FROM genes WHERE id = ?", (gene_id,)).fetchone()
@@ -3566,19 +3582,56 @@ async def conservation(request: ConservationRequest):
             "AND name='orthology_transfer_candidates'"
         ).fetchone()
         if request.include_transfer_candidates and has_transfers:
+            has_transfer_support = all(db.conn.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,),
+            ).fetchone() for table in (
+                "regulatory_edge_candidates", "cross_species_transfer_calibration",
+            ))
+            if has_transfer_support:
+                transfer_sql = (
+                    "SELECT t.source_id,t.target_id,t.relation_type,t.mapping_class,"
+                    "t.edge_score,t.sign_score,t.status,t.metadata,c.support_class,"
+                    "c.evidence_tier,m.cases calibration_cases,m.precision calibration_precision,"
+                    "m.wilson_lower_95 calibration_lower,m.gate_pass calibration_gate "
+                    "FROM orthology_transfer_candidates t "
+                    "LEFT JOIN regulatory_edge_candidates c ON c.species=t.species "
+                    "AND c.source_id=t.source_id AND c.target_id=t.target_id "
+                    "AND c.relation_type=t.relation_type "
+                    "LEFT JOIN cross_species_transfer_calibration m ON m.species=t.species "
+                    "AND m.relation_type=t.relation_type AND m.mapping_class=t.mapping_class "
+                    f"WHERE t.species=? AND t.source_id IN ({bph}) "
+                    f"AND t.target_id IN ({bph}) AND t.status<>'sign_conflict'"
+                )
+            else:
+                transfer_sql = (
+                    "SELECT source_id,target_id,relation_type,mapping_class,edge_score,sign_score,"
+                    "status,metadata,NULL support_class,NULL evidence_tier,"
+                    "NULL calibration_cases,NULL calibration_precision,"
+                    "NULL calibration_lower,NULL calibration_gate "
+                    "FROM orthology_transfer_candidates "
+                    f"WHERE species=? AND source_id IN ({bph}) AND target_id IN ({bph}) "
+                    "AND status<>'sign_conflict'"
+                )
             for r in db.conn.execute(
-                f"SELECT source_id,target_id,relation_type,mapping_class,edge_score,sign_score,"
-                f"status,metadata FROM orthology_transfer_candidates "
-                f"WHERE species=? AND source_id IN ({bph}) AND target_id IN ({bph}) "
-                f"AND status<>'sign_conflict'", [request.species_b] + b_ids + b_ids,
+                transfer_sql, [request.species_b] + b_ids + b_ids,
             ).fetchall():
-                transfer_edge[(r["source_id"], r["target_id"])] = {
+                transfer = {
                     "source_ortholog": r["source_id"], "source_ortholog_symbol": sym(r["source_id"]),
                     "target_ortholog": r["target_id"], "target_ortholog_symbol": sym(r["target_id"]),
                     "regulation_type": r["relation_type"], "mapping_class": r["mapping_class"],
                     "edge_score": r["edge_score"], "sign_score": r["sign_score"],
-                    "status": r["status"], "metadata": json.loads(r["metadata"] or "{}"),
+                    "status": r["status"], "support_class": r["support_class"],
+                    "evidence_tier": r["evidence_tier"],
+                    "metadata": json.loads(r["metadata"] or "{}"),
                 }
+                if r["calibration_cases"] is not None:
+                    transfer["calibration"] = {
+                        "cases": r["calibration_cases"],
+                        "precision": r["calibration_precision"],
+                        "wilson_lower_95": r["calibration_lower"],
+                        "gate_pass": bool(r["calibration_gate"]),
+                    }
+                transfer_edge[(r["source_id"], r["target_id"])] = transfer
 
     out, n_cons = [], 0
     for e in a_edges:

@@ -112,6 +112,60 @@ def test_reciprocal_unique_synteny_is_exploratory_and_inferred_donors_are_exclud
     ).fetchone()[0] == "conserved_unvalidated"
 
 
+def test_transfer_resolves_duplicate_ids_to_native_evidence_anchored_gene():
+    conn = base_db()
+    conn.executemany("INSERT INTO genes VALUES (?,?,?,?)", [
+        ("A", "A", "one", 1), ("B", "B", "one", 0),
+        ("OMA_A", "Tf", "two", 1), ("OMA_B", "Target", "two", 0),
+        ("two:Tf", "TF", "two", 0), ("two:Target", "target", "two", 0),
+        ("two:Other", "Other", "two", 0),
+    ])
+    conn.executemany("INSERT INTO interactions VALUES (?,?,?,?,?,?,?,?)", [
+        ("A", "B", "activation", .9, '["donor"]', "[]", "activation", "measured"),
+        ("two:Tf", "two:Target", "activation", .9, '["recipient"]', "[]",
+         "activation", "measured"),
+        ("two:Tf", "two:Other", "activation", .9, '["recipient"]', "[]",
+         "activation", "measured"),
+    ])
+    conn.executemany("INSERT INTO orthologs VALUES (?,?,?,?,?,?)", [
+        ("A", "OMA_A", "one", "two", "1:1", 100),
+        ("B", "OMA_B", "one", "two", "1:1", 100),
+    ])
+
+    build_conserved_regulatory_evidence.build(conn)
+
+    assert conn.execute(
+        "SELECT source_id,target_id FROM orthology_transfer_candidates WHERE species='two'"
+    ).fetchone() == ("two:Tf", "two:Target")
+    assert conn.execute(
+        "SELECT reason FROM orthology_transfer_mappings "
+        "WHERE source_gene='A' AND target_species='two'"
+    ).fetchone()[0].endswith("canonical_alias_resolution")
+
+
+def test_alias_resolution_learns_unambiguous_species_namespace():
+    conn = base_db()
+    conn.execute("INSERT INTO genes VALUES ('two:Anchor','Anchor','two',0)")
+    for index in range(10):
+        conn.executemany("INSERT INTO genes VALUES (?,?,?,?)", [
+            (f"OMA_{index}", f"Gene{index}", "two", 0),
+            (f"two:Gene{index}", f"gene{index}", "two", 0),
+        ])
+        conn.execute(
+            "INSERT INTO interactions VALUES (?,?,?,?,?,?,?,?)",
+            (f"two:Gene{index}", "two:Anchor", "activation", .9, '["native"]', "[]",
+             "activation", "measured"),
+        )
+    conn.executemany("INSERT INTO genes VALUES (?,?,?,?)", [
+        ("OMA_U", "Unobserved", "two", 0),
+        ("two:Unobserved", "unobserved", "two", 0),
+    ])
+
+    aliases = build_conserved_regulatory_evidence._canonical_gene_ids(conn)
+
+    assert aliases["OMA_U"] == "two:Unobserved"
+
+
 def test_multilayer_edges_retain_their_mechanism():
     conn = base_db()
     stored = multilayer_control.replace_source(conn, "reviewed", [{

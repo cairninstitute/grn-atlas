@@ -1,7 +1,55 @@
 {
-  "generated_at": "2026-10-16T22:56:18.169910+00:00",
+  "generated_at": "2026-10-17T01:24:19.072018+00:00",
   "ablated_source": "Conserved signed orthology",
   "species": {
+    "human": {
+      "supported": {
+        "with_transfer": {
+          "graph_edges": 49932,
+          "feedback_cores": 2,
+          "feedback_genes": 951,
+          "feedback_edges": 10043,
+          "macro_circuits": 0
+        },
+        "without_transfer": {
+          "graph_edges": 49906,
+          "feedback_cores": 2,
+          "feedback_genes": 951,
+          "feedback_edges": 10026,
+          "macro_circuits": 0
+        },
+        "delta": {
+          "graph_edges": 26,
+          "feedback_cores": 0,
+          "feedback_genes": 0,
+          "feedback_edges": 17,
+          "macro_circuits": 0
+        }
+      },
+      "exploratory": {
+        "with_transfer": {
+          "graph_edges": 117575,
+          "feedback_cores": 2,
+          "feedback_genes": 1131,
+          "feedback_edges": 15250,
+          "macro_circuits": 0
+        },
+        "without_transfer": {
+          "graph_edges": 117228,
+          "feedback_cores": 2,
+          "feedback_genes": 1125,
+          "feedback_edges": 14978,
+          "macro_circuits": 0
+        },
+        "delta": {
+          "graph_edges": 347,
+          "feedback_cores": 0,
+          "feedback_genes": 6,
+          "feedback_edges": 272,
+          "macro_circuits": 0
+        }
+      }
+    },
     "mouse": {
       "supported": {
         "with_transfer": {
@@ -28,24 +76,24 @@
       },
       "exploratory": {
         "with_transfer": {
-          "graph_edges": 31115,
-          "feedback_cores": 3,
-          "feedback_genes": 764,
-          "feedback_edges": 4880,
+          "graph_edges": 29114,
+          "feedback_cores": 2,
+          "feedback_genes": 594,
+          "feedback_edges": 5080,
           "macro_circuits": 0
         },
         "without_transfer": {
-          "graph_edges": 18498,
+          "graph_edges": 18469,
           "feedback_cores": 2,
-          "feedback_genes": 422,
-          "feedback_edges": 2038,
+          "feedback_genes": 421,
+          "feedback_edges": 2031,
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 12617,
-          "feedback_cores": 1,
-          "feedback_genes": 342,
-          "feedback_edges": 2842,
+          "graph_edges": 10645,
+          "feedback_cores": 0,
+          "feedback_genes": 173,
+          "feedback_edges": 3049,
           "macro_circuits": 0
         }
       }
@@ -76,7 +124,7 @@
       },
       "exploratory": {
         "with_transfer": {
-          "graph_edges": 1644,
+          "graph_edges": 1656,
           "feedback_cores": 11,
           "feedback_genes": 68,
           "feedback_edges": 247,
@@ -90,7 +138,7 @@
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 263,
+          "graph_edges": 275,
           "feedback_cores": 0,
           "feedback_genes": 0,
           "feedback_edges": 0,
@@ -124,7 +172,7 @@
       },
       "exploratory": {
         "with_transfer": {
-          "graph_edges": 35,
+          "graph_edges": 36,
           "feedback_cores": 2,
           "feedback_genes": 4,
           "feedback_edges": 4,
@@ -138,7 +186,7 @@
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 35,
+          "graph_edges": 36,
           "feedback_cores": 2,
           "feedback_genes": 4,
           "feedback_edges": 4,
@@ -172,7 +220,7 @@
       },
       "exploratory": {
         "with_transfer": {
-          "graph_edges": 1701,
+          "graph_edges": 1704,
           "feedback_cores": 6,
           "feedback_genes": 25,
           "feedback_edges": 48,
@@ -186,7 +234,7 @@
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 84,
+          "graph_edges": 87,
           "feedback_cores": 0,
           "feedback_genes": 0,
           "feedback_edges": 0,
@@ -220,7 +268,7 @@
       },
       "exploratory": {
         "with_transfer": {
-          "graph_edges": 2527,
+          "graph_edges": 2537,
           "feedback_cores": 12,
           "feedback_genes": 97,
           "feedback_edges": 329,
@@ -234,7 +282,7 @@
           "macro_circuits": 0
         },
         "delta": {
-          "graph_edges": 385,
+          "graph_edges": 395,
           "feedback_cores": 0,
           "feedback_genes": 0,
           "feedback_edges": 0,
@@ -244,12 +292,13 @@
     }
   },
   "projection_summary": {
+    "qualified": 1937,
     "sign_conflict": 26,
-    "unvalidated": 13460
+    "unvalidated": 14126
   },
   "interpretation": "Observed interactions are unchanged; deltas isolate transfer candidates.",
   "known_circuit_impact": {
-    "supported_graph_changed": false,
-    "interpretation": "Known-circuit recovery cannot regress when the supported graph is unchanged; exploratory additions are reported separately and are not counted as recovery."
+    "supported_graph_changed": true,
+    "interpretation": "Supported transfer changes network structure; known-circuit recovery must be evaluated explicitly rather than inferred from this structural ablation."
   }
 }

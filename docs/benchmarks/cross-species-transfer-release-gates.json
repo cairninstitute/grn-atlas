@@ -1,6 +1,8 @@
 {
-  "generated_at": "2026-10-16T22:56:11.866308+00:00",
+  "generated_at": "2026-10-17T01:30:45.002535+00:00",
   "checks": {
+    "calibration_has_independent_cases": true,
+    "calibration_has_supported_classes": true,
     "conflicts_excluded_from_evidence": true,
     "recursive_inferred_donors_excluded": true,
     "supported_classes_pass_calibration": true,

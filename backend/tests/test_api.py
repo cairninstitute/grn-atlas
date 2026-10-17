@@ -283,6 +283,54 @@ def test_conservation_shape(client):
     assert all(e["conserved"] is False for e in r["edges"])
 
 
+def test_conservation_uses_normalized_orthology_ids(client):
+    import main
+    main.db.conn.executemany(
+        "INSERT INTO orthology_transfer_mappings VALUES (?,?,?,?,?,?,?,?)",
+        [
+            ("TF1", "MX1", "human", "mouse", "explicit_one_to_one", 1.0,
+             "accepted", "canonical_alias_resolution"),
+            ("TG1", "MX2", "human", "mouse", "explicit_one_to_one", 1.0,
+             "accepted", "canonical_alias_resolution"),
+        ],
+    )
+    main.db.conn.execute(
+        "INSERT INTO orthology_transfer_candidates "
+        "(species,source_id,target_id,relation_type,mapping_class,mapping_score,"
+        "donor_species,donor_edges,donor_sources,donor_pmids,donor_species_count,"
+        "independent_donor_count,recipient_binding_sources,recipient_cis_support,"
+        "source_independent,edge_score,sign_score,status,conflict_reason,metadata) "
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        ("mouse", "MX1", "MX2", "activation", "explicit_one_to_one", 1.0,
+         '["human"]', "[]", '["donor"]', "[]", 1, 1, '["binding"]', 0, 1,
+         .8, .9, "qualified", None, "{}"),
+    )
+    main.db.conn.execute(
+        "INSERT INTO regulatory_edge_candidates VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+        ("mouse", "MX1", "MX2", "activation", .8,
+         "supported_cross_species_transfer", '[]', '[]', "candidate", "supported", .8, "{}"),
+    )
+    main.db.conn.execute(
+        "INSERT INTO cross_species_transfer_calibration VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+        ("mouse", "activation", "explicit_one_to_one", 100, 90, .9, .7, .2,
+         .82, .5, 1, "fixture"),
+    )
+    main.db.conn.commit()
+
+    body = client.post(
+        "/api/v1/conservation",
+        json={"gene_ids": ["TF1", "TG1"], "species_b": "mouse"},
+    ).json()
+
+    assert body["stats"]["conserved"] == 1
+    assert body["edges"][0]["b_edges"][0]["source_ortholog"] == "MX1"
+    transfer = body["edges"][0]["transfer_hypotheses"][0]
+    assert transfer["support_class"] == "supported_cross_species_transfer"
+    assert transfer["calibration"] == {
+        "cases": 100, "precision": .9, "wilson_lower_95": .82, "gate_pass": True,
+    }
+
+
 def test_motif_enrichment_shape(client):
     r = client.post("/api/v1/motif_enrichment",
                     json={"gene_ids": ["SlTGT"], "species": "tomato", "min_genes": 1}).json()

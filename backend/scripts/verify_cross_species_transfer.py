@@ -16,6 +16,12 @@ REPORT = ROOT / "docs" / "benchmarks" / "cross-species-transfer-release-gates.js
 
 def verify(conn: sqlite3.Connection) -> dict:
     checks = {}
+    checks["calibration_has_independent_cases"] = conn.execute(
+        "SELECT COALESCE(SUM(cases),0) FROM cross_species_transfer_calibration"
+    ).fetchone()[0] > 0
+    checks["calibration_has_supported_classes"] = conn.execute(
+        "SELECT COUNT(*) FROM cross_species_transfer_calibration WHERE gate_pass=1"
+    ).fetchone()[0] > 0
     checks["conflicts_excluded_from_evidence"] = conn.execute("""
         SELECT COUNT(*) FROM orthology_transfer_candidates c
         JOIN regulatory_evidence r ON r.species=c.species AND r.source_id=c.source_id

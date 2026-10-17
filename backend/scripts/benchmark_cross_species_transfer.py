@@ -68,12 +68,16 @@ def benchmark(conn: sqlite3.Connection) -> dict:
                              for key in with_source[mode]}}
             for mode in ("supported", "exploratory")
         }
+    supported_graph_changed = any(
+        any(value != 0 for value in modes["supported"]["delta"].values())
+        for modes in report["species"].values()
+    )
     report["known_circuit_impact"] = {
-        "supported_graph_changed": any(
-            any(value != 0 for value in modes["supported"]["delta"].values())
-            for modes in report["species"].values()
-        ),
+        "supported_graph_changed": supported_graph_changed,
         "interpretation": (
+            "Supported transfer changes network structure; known-circuit recovery must be "
+            "evaluated explicitly rather than inferred from this structural ablation."
+            if supported_graph_changed else
             "Known-circuit recovery cannot regress when the supported graph is unchanged; "
             "exploratory additions are reported separately and are not counted as recovery."
         ),
