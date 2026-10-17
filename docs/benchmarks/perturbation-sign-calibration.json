@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-17T02:28:17.391904+00:00",
+  "generated_at": "2026-10-17T15:33:14.566860+00:00",
   "model_version": "perturbation-calibration-v1",
   "leakage_controls": [
     "literature_curated observations are excluded from consensus generation",

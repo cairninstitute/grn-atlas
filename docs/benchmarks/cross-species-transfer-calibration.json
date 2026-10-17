@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-17T02:27:17.878196+00:00",
+  "generated_at": "2026-10-17T15:33:22.727883+00:00",
   "model_version": "cross-species-transfer-v1",
   "leakage_controls": [
     "donor and recipient evidence sources must be disjoint",
