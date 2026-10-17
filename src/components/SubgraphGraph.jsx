@@ -60,13 +60,21 @@ export default function SubgraphGraph({ nodes, edges, onNodeClick, tfStyle = 'de
         selector: 'edge[evidence_layer="candidate"]',
         style: {
           'line-style': 'dashed',
-          'opacity': 0.52,
-          'width': 2,
+          'line-color': '#b58b2a',
+          'target-arrow-color': '#b58b2a',
+          'opacity': 0.78,
+          'width': 3,
         },
       },
       {
         selector: 'edge[evidence_tier="exploratory"]',
-        style: { 'line-style': 'dotted', opacity: 0.68 },
+        style: {
+          'line-style': 'dotted',
+          'line-color': '#d66b2c',
+          'target-arrow-color': '#d66b2c',
+          'width': 4,
+          'opacity': 0.92,
+        },
       },
       {
         selector: 'edge[evidence_layer="multilayer"]',
@@ -89,5 +97,18 @@ export default function SubgraphGraph({ nodes, edges, onNodeClick, tfStyle = 'de
     return () => cy.destroy();
   }, [nodes, edges, onNodeClick, tfStyle]);
 
-  return <div ref={containerRef} className="subgraph-canvas" />;
+  const hasSupportedCandidates = edges?.some((edge) => edge.sign_evidence === 'candidate'
+    && edge.evidence_tier !== 'exploratory');
+  const hasExploratoryCandidates = edges?.some((edge) => edge.evidence_tier === 'exploratory');
+  return (
+    <>
+      <div ref={containerRef} className="subgraph-canvas" />
+      {(hasSupportedCandidates || hasExploratoryCandidates) && (
+        <div className="subgraph-evidence-key" aria-label="Edge evidence legend">
+          {hasSupportedCandidates && <span><i className="candidate-supported" />Supported candidate</span>}
+          {hasExploratoryCandidates && <span><i className="candidate-exploratory" />Unpromoted assumption</span>}
+        </div>
+      )}
+    </>
+  );
 }

@@ -270,6 +270,7 @@ class FeedbackControlRequest(BaseModel):
     discover_systems: bool = True
     include_candidates: bool = False
     include_exploratory: bool = False
+    candidate_scope: str = "all"
     include_multilayer: bool = False
     probabilistic_samples: int = Field(0, ge=0, le=200)
     refresh: bool = False
@@ -282,6 +283,13 @@ class FeedbackControlRequest(BaseModel):
         if not cleaned or any(value not in allowed for value in cleaned):
             raise ValueError("evidence_tiers must contain measured and/or perturbation")
         return cleaned
+
+    @field_validator("candidate_scope")
+    @classmethod
+    def validate_candidate_scope(cls, value):
+        if value not in feedback_control.CANDIDATE_SCOPES:
+            raise ValueError("candidate_scope must be all or cross_species_transfer")
+        return value
 
 class CentralityRequest(BaseModel):
     species: Optional[str] = None
@@ -1414,6 +1422,7 @@ async def feedback_control_analysis(request: FeedbackControlRequest):
         discover_systems=request.discover_systems,
         include_candidates=request.include_candidates,
         include_exploratory=request.include_exploratory,
+        candidate_scope=request.candidate_scope,
         include_multilayer=request.include_multilayer,
         probabilistic_samples=request.probabilistic_samples,
     )

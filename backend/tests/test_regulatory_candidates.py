@@ -73,6 +73,37 @@ def test_candidate_policy_and_feedback_opt_in():
     assert exploratory["graph"]["includes_exploratory_candidates"] is True
 
 
+def test_feedback_can_isolate_cross_species_transfer_assumptions():
+    conn = fixture()
+    build_regulatory_candidates.build(conn)
+    conn.execute(
+        "UPDATE regulatory_edge_candidates SET evidence_sources='[\"local evidence\"]'"
+    )
+    conn.execute(
+        "UPDATE regulatory_edge_candidates SET evidence_sources='[\"Conserved signed orthology\"]' "
+        "WHERE source_id='C' AND target_id='A'"
+    )
+    conn.execute(
+        "UPDATE regulatory_edge_candidates SET evidence_tier='exploratory' "
+        "WHERE source_id='B' AND target_id='C'"
+    )
+
+    result = feedback_control.analyze_feedback(
+        conn, "test", feedback_control.FeedbackParameters(
+            include_candidates=True,
+            include_exploratory=True,
+            candidate_scope="cross_species_transfer",
+            min_confidence=0.4,
+        ),
+    )
+
+    assert result["parameters"]["candidate_scope"] == "cross_species_transfer"
+    assert result["graph"]["candidate_scope"] == "cross_species_transfer"
+    assert result["evidence_completion"]["candidate_edges"] == 2
+    assert result["graph"]["candidate_edges_admitted"] == 2
+    assert result["graph"]["exploratory_edges_admitted"] == 1
+
+
 def test_cycle_closing_candidates_are_ranked_by_marginal_impact():
     conn = fixture()
     build_regulatory_candidates.build(conn)

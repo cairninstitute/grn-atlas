@@ -36,6 +36,7 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - `--max-macro-search-edges` — search ceiling for newly admitted condensation edges.
 - `--include-candidates` — opt into conflict-free evidence-completed hypotheses; observed signed edges remain the default.
 - `--include-exploratory` — additionally include explicitly labeled putative-direct, perturbation-only, and conserved-orthology hypotheses.
+- `--candidate-scope cross_species_transfer` — retain observed and supported evidence, but restrict the added exploratory layer to transferred edges for an explicit transfer-validity stress test. Sign-conflict pairs remain excluded.
 - `--include-multilayer` — include reviewed protein-activity, degradation, complex, and post-transcriptional edges.
 - `--probabilistic-samples` — estimate candidate-dependent core membership over up to 200 deterministic Monte Carlo samples.
 - `--topology-only` — skip annotation and context synthesis for topology benchmarks.
@@ -52,6 +53,7 @@ venv/bin/python .agents/skills/grn-feedback-control/scripts/run.py --species hum
 - Binding-plus-perturbation signs enter the supported tier only when that species/sign class passes held-out precision, lift, sample-size, and confidence-bound gates. Failed classes remain exploratory.
 - Ordinary expression correlation is context only and never determines activation or repression.
 - Exploratory mode is a separate opt-in tier and never changes observed or supported-candidate results.
+- Transfer scope keeps observed and supported evidence, then treats nonconflicting transferred edges as additional graph inputs only for the selected run; it preserves their exploratory labels and never promotes them in the atlas.
 - Candidate-impact ranks identify edges that would close cycles or merge cores; impact is a validation priority, not evidence that the edge exists.
 - Probabilistic membership reports stability under candidate uncertainty rather than treating every candidate as certain.
 - Multilayer mode keeps non-transcriptional regulation explicitly labeled instead of recasting it as transcription.

@@ -1,11 +1,11 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import FeedbackControlView from './FeedbackControlView';
 import { analysisAPI } from '../services/apiService';
 
 
 vi.mock('../services/apiService', () => ({
-  analysisAPI: { feedbackControl: vi.fn(), feedbackBackbone: vi.fn(), feedbackCycles: vi.fn() },
+  analysisAPI: { feedbackControl: vi.fn(), feedbackBackbone: vi.fn(), feedbackCycles: vi.fn(), feedbackCandidateImpacts: vi.fn() },
 }));
 
 vi.mock('./SubgraphGraph', () => ({
@@ -142,7 +142,28 @@ describe('FeedbackControlView', () => {
     expect(analysisAPI.feedbackBackbone).toHaveBeenCalledWith('run-1', 'core-1');
     expect(analysisAPI.feedbackControl).toHaveBeenCalledWith('arabidopsis', {
       minConfidence: 0.5, maxLoopLength: 6, includeCandidates: false,
-      includeExploratory: false, includeMultilayer: false, probabilisticSamples: 0,
+      includeExploratory: false, candidateScope: 'all', includeMultilayer: false, probabilisticSamples: 0,
     });
+  });
+
+  it('offers a transfer-only hypothesis stress test', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({
+      json: async () => ({ species_list: ['arabidopsis'] }),
+    })));
+    analysisAPI.feedbackControl.mockResolvedValue(payload);
+    analysisAPI.feedbackBackbone.mockResolvedValue({
+      run_id: 'run-1', core_id: 'core-1', node_count: 3, edge_count: 3, complete: true,
+      nodes: payload.systems[0].genes, edges: payload.systems[0].edges,
+    });
+    render(<FeedbackControlView initialSpecies="arabidopsis" />);
+    await waitFor(() => expect(screen.getByText('Biological control systems')).toBeInTheDocument());
+
+    fireEvent.change(screen.getByLabelText('Network layer'), { target: { value: 'transfer' } });
+
+    await waitFor(() => expect(analysisAPI.feedbackControl).toHaveBeenLastCalledWith('arabidopsis', {
+      minConfidence: 0.4, maxLoopLength: 6, includeCandidates: true,
+      includeExploratory: true, candidateScope: 'cross_species_transfer',
+      includeMultilayer: false, probabilisticSamples: 48,
+    }));
   });
 });

@@ -636,6 +636,7 @@ export const analysisAPI = {
         discover_systems: options.discoverSystems ?? true,
         include_candidates: options.includeCandidates ?? false,
         include_exploratory: options.includeExploratory ?? false,
+        candidate_scope: options.candidateScope || 'all',
         include_multilayer: options.includeMultilayer ?? false,
         probabilistic_samples: options.probabilisticSamples || 0,
         refresh: options.refresh || false,

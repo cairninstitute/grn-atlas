@@ -37,6 +37,8 @@ def main():
     )
     parser.add_argument("--include-exploratory", action="store_true",
                         help="include lower-confidence putative, perturbation-only, and conserved candidates")
+    parser.add_argument("--candidate-scope", choices=("all", "cross_species_transfer"), default="all",
+                        help="restrict candidate completion to one evidence family")
     parser.add_argument("--include-multilayer", action="store_true",
                         help="include reviewed protein/post-transcriptional control edges")
     parser.add_argument("--probabilistic-samples", type=int, default=0,
@@ -65,6 +67,7 @@ def main():
         "max_macro_search_edges": args.max_macro_search_edges,
         "include_candidates": args.include_candidates,
         "include_exploratory": args.include_exploratory,
+        "candidate_scope": args.candidate_scope,
         "include_multilayer": args.include_multilayer,
         "probabilistic_samples": args.probabilistic_samples,
         "discover_systems": not args.topology_only,
@@ -97,6 +100,7 @@ def main():
             max_macro_search_edges=args.max_macro_search_edges,
             include_candidates=args.include_candidates,
             include_exploratory=args.include_exploratory,
+            candidate_scope=args.candidate_scope,
             include_multilayer=args.include_multilayer,
             probabilistic_samples=args.probabilistic_samples,
             discover_systems=not args.topology_only,

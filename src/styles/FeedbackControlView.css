@@ -191,6 +191,12 @@
 .feedback-empty { display: flex; flex-direction: column; gap: 4px; }
 .feedback-footer { padding: 12px 2px 0; color: #60747a; font-size: 10px; }
 .feedback-boundary.exploratory { border-color: #bd7b45; background: #fff6e8; color: #684324; }
+.feedback-boundary.transfer-assumption { border-width: 2px; border-color: #d66b2c; }
+.subgraph-evidence-key { display: flex; justify-content: flex-end; gap: 16px; padding: 6px 2px 0; color: #60747a; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.subgraph-evidence-key span { display: inline-flex; align-items: center; gap: 5px; }
+.subgraph-evidence-key i { display: inline-block; width: 24px; height: 0; border-top-width: 3px; }
+.subgraph-evidence-key .candidate-supported { border-top-style: dashed; border-top-color: #b58b2a; }
+.subgraph-evidence-key .candidate-exploratory { border-top: 4px dotted #d66b2c; }
 .feedback-stability { margin: 14px 0; padding: 16px 18px; border: 1px solid #bfc9c4; background: linear-gradient(115deg, rgba(22,135,122,.08), rgba(255,255,255,.55)); }
 .feedback-stability > div:first-child { display: flex; justify-content: space-between; gap: 16px; color: #126b61; font-size: 10px; letter-spacing: .08em; }
 .feedback-stability p { margin: 6px 0 12px; color: #60747a; font-size: 11px; }

@@ -19,8 +19,9 @@ import networkx as nx
 import control_systems
 
 
-ALGORITHM_VERSION = "feedback-control-v6"
+ALGORITHM_VERSION = "feedback-control-v7"
 STRONG_SIGN_EVIDENCE = ("measured", "perturbation")
+CANDIDATE_SCOPES = {"all", "cross_species_transfer"}
 
 
 def _table_exists(conn: sqlite3.Connection, table: str) -> bool:
@@ -52,10 +53,13 @@ class FeedbackParameters:
     max_macro_search_edges: int = 10_000
     include_candidates: bool = False
     include_exploratory: bool = False
+    candidate_scope: str = "all"
     include_multilayer: bool = False
     probabilistic_samples: int = 0
 
     def normalized(self) -> dict[str, Any]:
+        if self.candidate_scope not in CANDIDATE_SCOPES:
+            raise ValueError(f"unknown candidate scope: {self.candidate_scope}")
         data = asdict(self)
         data["evidence_tiers"] = sorted(set(self.evidence_tiers))
         return data
@@ -67,6 +71,17 @@ def _json_list(value: str | None) -> list[str]:
         return parsed if isinstance(parsed, list) else []
     except (TypeError, json.JSONDecodeError):
         return []
+
+
+def _candidate_scope_filter(scope: str) -> tuple[str, tuple[str, ...]]:
+    if scope == "all":
+        return "", ()
+    if scope == "cross_species_transfer":
+        return (
+            " AND (evidence_tier='supported' OR evidence_sources LIKE ?)",
+            ('%"Conserved signed orthology"%',),
+        )
+    raise ValueError(f"unknown candidate scope: {scope}")
 
 
 def _canonical_cycle(nodes: list[str]) -> tuple[str, ...]:
@@ -148,6 +163,10 @@ def _edge_record(graph: ig.Graph, source: int, target: int) -> dict[str, Any]:
     }
     if "regulatory_layer" in graph.es.attribute_names():
         record["regulatory_layer"] = graph.es[edge_id]["regulatory_layer"]
+    if "evidence_tier" in graph.es.attribute_names() and graph.es[edge_id]["evidence_tier"]:
+        record["evidence_tier"] = graph.es[edge_id]["evidence_tier"]
+    if "support_class" in graph.es.attribute_names() and graph.es[edge_id]["support_class"]:
+        record["support_class"] = graph.es[edge_id]["support_class"]
     return record
 
 
@@ -509,18 +528,19 @@ def _load_signed_graph(
             for edge in graph.es
         }
         columns = {row[1] for row in conn.execute("PRAGMA table_info(regulatory_edge_candidates)")}
+        scope_sql, scope_args = _candidate_scope_filter(params.candidate_scope)
         if "evidence_tier" in columns:
             tiers = ("supported", "exploratory") if params.include_exploratory else ("supported",)
             tier_placeholders = ",".join("?" for _ in tiers)
             candidate_rows = conn.execute(
                 f"SELECT source_id,target_id,relation_type,confidence,evidence_tier,"
-                f"inclusion_probability FROM regulatory_edge_candidates "
+                f"inclusion_probability,support_class FROM regulatory_edge_candidates "
                 f"WHERE species=? AND status='candidate' AND evidence_tier IN ({tier_placeholders}) "
-                f"AND confidence>=? ORDER BY source_id,target_id",
-                (species, *tiers, params.min_confidence),
+                f"AND confidence>=?{scope_sql} ORDER BY source_id,target_id",
+                (species, *tiers, params.min_confidence, *scope_args),
             ).fetchall()
         else:
-            candidate_rows = [(*row, "supported", float(row[3])) for row in conn.execute(
+            candidate_rows = [(*row, "supported", float(row[3]), "legacy_candidate") for row in conn.execute(
                 "SELECT source_id,target_id,relation_type,confidence "
                 "FROM regulatory_edge_candidates WHERE species=? AND status='candidate' "
                 "AND confidence>=? ORDER BY source_id,target_id", (species, params.min_confidence),
@@ -539,6 +559,8 @@ def _load_signed_graph(
                     "evidence": ["candidate"] * len(candidate_rows),
                     "probability": [float(row[5]) for row in candidate_rows],
                     "regulatory_layer": ["transcriptional"] * len(candidate_rows),
+                    "evidence_tier": [row[4] for row in candidate_rows],
+                    "support_class": [row[6] for row in candidate_rows],
                 },
             )
             for row in candidate_rows:
@@ -588,11 +610,12 @@ def _evidence_completion_summary(
     if not tiers:
         return {"candidate_edges": 0, "support_classes": {}, "calibrated_classes": []}
     placeholders = ",".join("?" for _ in tiers)
+    scope_sql, scope_args = _candidate_scope_filter(params.candidate_scope)
     rows = conn.execute(
         f"SELECT support_class,COUNT(*) FROM regulatory_edge_candidates "
         f"WHERE species=? AND status='candidate' AND evidence_tier IN ({placeholders}) "
-        "AND confidence>=? GROUP BY support_class ORDER BY support_class",
-        (species, *tiers, params.min_confidence),
+        f"AND confidence>=?{scope_sql} GROUP BY support_class ORDER BY support_class",
+        (species, *tiers, params.min_confidence, *scope_args),
     ).fetchall()
     calibrated = []
     if _table_exists(conn, "perturbation_sign_calibration"):
@@ -639,6 +662,7 @@ def _evidence_completion_summary(
         ).fetchone()[0]
     support_classes = {row[0]: int(row[1]) for row in rows}
     return {
+        "candidate_scope": params.candidate_scope,
         "candidate_edges": sum(support_classes.values()),
         "support_classes": support_classes,
         "perturbation_conflicts_excluded": int(conflicts),
@@ -882,6 +906,7 @@ def _discover_macro_circuits(
     enabled = params.include_candidates or params.include_exploratory or params.include_multilayer
     layer = (
         "multilayer" if params.include_multilayer else
+        "transfer_assumption" if params.candidate_scope == "cross_species_transfer" else
         "exploratory" if params.include_exploratory else
         "supported"
     )
@@ -1197,6 +1222,13 @@ def analyze_feedback(
     """Analyze bounded representative feedback circuits in one species GRN."""
     params = params or FeedbackParameters()
     graph, genes, graph_hash = _load_signed_graph(conn, species, params)
+    candidate_edge_count = sum(
+        edge["evidence"] == "candidate" for edge in graph.es
+    ) if "evidence" in graph.es.attribute_names() else 0
+    exploratory_edge_count = sum(
+        edge["evidence"] == "candidate" and edge["evidence_tier"] == "exploratory"
+        for edge in graph.es
+    ) if "evidence_tier" in graph.es.attribute_names() else 0
     probabilistic = _probabilistic_membership(graph, params.probabilistic_samples)
     membership_by_gene = {
         row["gene_id"]: row["probability"] for row in probabilistic["memberships"]
@@ -1222,6 +1254,9 @@ def analyze_feedback(
                 ),
                 "includes_evidence_candidates": params.include_candidates,
                 "includes_exploratory_candidates": params.include_exploratory,
+                "candidate_scope": params.candidate_scope,
+                "candidate_edges_admitted": candidate_edge_count,
+                "exploratory_edges_admitted": exploratory_edge_count,
                 "includes_multilayer_edges": params.include_multilayer,
             },
             "summary": {
@@ -1411,6 +1446,9 @@ def analyze_feedback(
             ),
             "includes_evidence_candidates": params.include_candidates,
             "includes_exploratory_candidates": params.include_exploratory,
+            "candidate_scope": params.candidate_scope,
+            "candidate_edges_admitted": candidate_edge_count,
+            "exploratory_edges_admitted": exploratory_edge_count,
             "includes_multilayer_edges": params.include_multilayer,
         },
         "summary": {
@@ -1734,6 +1772,12 @@ class FeedbackStore:
                 "confidence": [float(edge["confidence"]) for edge in edge_records],
                 "repression": [edge["sign"] == "repression" for edge in edge_records],
                 "measured": [edge["sign_evidence"] == "measured" for edge in edge_records],
+                "evidence": [edge["sign_evidence"] for edge in edge_records],
+                "evidence_tier": [edge.get("evidence_tier") for edge in edge_records],
+                "support_class": [edge.get("support_class") for edge in edge_records],
+                "regulatory_layer": [
+                    edge.get("regulatory_layer", "transcriptional") for edge in edge_records
+                ],
             },
         )
         directed = nx.DiGraph()

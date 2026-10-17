@@ -84,9 +84,10 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
     setLoading(true);
     setError(null);
     const includeCandidates = networkLayer !== 'observed';
-    const includeExploratory = ['exploratory', 'multilayer'].includes(networkLayer);
+    const includeExploratory = ['transfer', 'exploratory', 'multilayer'].includes(networkLayer);
+    const candidateScope = networkLayer === 'transfer' ? 'cross_species_transfer' : 'all';
     analysisAPI.feedbackControl(species, {
-      minConfidence, maxLoopLength, includeCandidates, includeExploratory,
+      minConfidence, maxLoopLength, includeCandidates, includeExploratory, candidateScope,
       includeMultilayer: networkLayer === 'multilayer',
       probabilisticSamples: includeCandidates ? 48 : 0,
     })
@@ -108,7 +109,7 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
   }, [species, minConfidence, maxLoopLength, networkLayer]);
 
   useEffect(() => {
-    if (networkLayer === 'observed') {
+    if (networkLayer === 'observed' || networkLayer === 'transfer') {
       setCandidateImpacts([]);
       return;
     }
@@ -240,10 +241,11 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
             <select value={networkLayer} onChange={(event) => {
               const layer = event.target.value;
               setNetworkLayer(layer);
-              if (['exploratory', 'multilayer'].includes(layer) && minConfidence > 0.4) setMinConfidence(0.4);
+              if (['transfer', 'exploratory', 'multilayer'].includes(layer) && minConfidence > 0.4) setMinConfidence(0.4);
             }}>
               <option value="observed">Observed signed edges</option>
               <option value="supported">Evidence-completed hypotheses</option>
+              <option value="transfer">Transfer stress test</option>
               <option value="exploratory">Exploratory completion</option>
               <option value="multilayer">Multilayer control</option>
             </select>
@@ -278,7 +280,14 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
 
           {result.evidence_completion?.candidate_edges > 0 && (
             <section className="feedback-evidence-summary">
-              <div><strong>{number(result.evidence_completion.candidate_edges)}</strong><span>qualified candidate edges in this layer</span></div>
+              {result.evidence_completion.candidate_scope === 'cross_species_transfer' ? (
+                <>
+                  <div><strong>{number(result.graph?.exploratory_edges_admitted)}</strong><span>unpromoted transfer assumptions added</span></div>
+                  <div><strong>{number((result.graph?.candidate_edges_admitted || 0) - (result.graph?.exploratory_edges_admitted || 0))}</strong><span>supported evidence-completed edges retained</span></div>
+                </>
+              ) : (
+                <div><strong>{number(result.graph?.candidate_edges_admitted ?? result.evidence_completion.candidate_edges)}</strong><span>qualified candidate edges in this layer</span></div>
+              )}
               <div><strong>{number(result.evidence_completion.perturbation_conflicts_excluded)}</strong><span>context-conflicting perturbation signs excluded</span></div>
               {(result.evidence_completion.calibrated_classes || []).map((row) => (
                 <div key={row.relation_type} className={row.gate_pass ? 'passed' : 'failed'}>
@@ -296,9 +305,16 @@ export default function FeedbackControlView({ initialSpecies = 'arabidopsis', on
           )}
 
           {result.graph?.includes_exploratory_candidates && (
-            <div className="feedback-boundary exploratory">
-              Exploratory mode adds putative-direct, perturbation-only, and conservatively transferred
-              orthology hypotheses. These edges are intended for prioritization, not mechanistic claims.
+            <div className={`feedback-boundary exploratory ${result.graph?.candidate_scope === 'cross_species_transfer' ? 'transfer-assumption' : ''}`}>
+              {result.graph?.candidate_scope === 'cross_species_transfer' ? (
+                <>Transfer stress test assumes every nonconflicting transferred edge above the confidence floor is valid.
+                  Observed and supported evidence remains in the graph; orange dotted edges are the added
+                  unpromoted assumptions, not measured regulation.{' '}
+                  {number(result.evidence_completion?.cross_species_transfer?.candidate_status?.sign_conflict)} unresolved sign-conflict pairs remain excluded.</>
+              ) : (
+                <>Exploratory mode adds putative-direct, perturbation-only, and conservatively transferred
+                  orthology hypotheses. These edges are intended for prioritization, not mechanistic claims.</>
+              )}
             </div>
           )}
 
