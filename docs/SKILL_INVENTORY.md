@@ -6,7 +6,7 @@ This is the descriptive catalog of the GRN Atlas skill layer. The authoritative 
 is the set of `.agents/skills/<skill>/SKILL.md` files; this document is kept in step with
 that directory.
 
-Skills in `.agents/skills/`: **107** — **106 callable analysis/workflow skills** plus
+Skills in `.agents/skills/`: **115** — **114 callable analysis/workflow skills** plus
 **1 overview/router skill** (`grn-atlas-overview`).
 
 Every skill has a corresponding `SKILL.md` in `.agents/skills/<skill>/SKILL.md`. The table
@@ -25,6 +25,14 @@ original inventory snapshot are documented in their own `SKILL.md` and registere
 | `grn-celltype-upstream` | Find upstream TF regulators for a gene set, constrained to TFs that are expressed in a specific cell type or cluster from an imported dataset. |
 | `grn-centrality` | Compute centrality metrics for genes in a regulatory network. Supports degree (out/in/total), betweenness, closeness, and eigenvector centrality. Identifies hub regulators and key network nodes. |
 | `grn-chromatin-support` | View chromatin accessibility peaks, enhancer-gene links, motif hits in peaks, and cis-regulatory support for a gene's regulatory edges. |
+| `grn-clonelab-sequence` | Parse authenticated FASTA or GenBank DNA into explicit sequence, topology, feature, hash, and provenance records. |
+| `grn-clonelab-restriction` | Calculate exact restriction sites and full-digest fragments for linear or circular DNA. |
+| `grn-clonelab-construct` | Generate complete intended, reverse, empty-vector, and tandem-insert molecular hypotheses with exact junctions. |
+| `grn-clonelab-diagnostic` | Rank single- and double-enzyme diagnostic digests by resolvable hypothesis discrimination and information gain. |
+| `grn-clonelab-gel` | Simulate explicitly predicted gel lanes with migration, merged-band, and fragment traceability data. |
+| `grn-clonelab-interpret` | Compare measured band sizes against every predicted molecular state while retaining ambiguity. |
+| `grn-clonelab-report` | Export a reproducible CloneLab JSON or Markdown analysis record. |
+| `grn-clonelab-workflow` | Run the full deterministic construct-hypothesis, digest-optimization, gel, provenance, and evidence-boundary workflow. |
 | `grn-citations` | Export BibTeX citations for all data sources integrated into the GRN Atlas. Use when writing papers, reports, or documentation that references atlas data and needs proper citations. |
 | `grn-coexpression` | Find genes co-expressed with a given gene based on Pearson correlation of log2 TPM expression profiles. Returns the top co-expressed partners with correlation coefficients. Useful for discovering functionally related genes. |
 | `grn-combinatorial-perturbation` | Use when the researcher wants to compare pairwise or triple perturbation combinations rather than single-gene interventions, such as 'which 2-gene knockout has the biggest predicted effect?'. |

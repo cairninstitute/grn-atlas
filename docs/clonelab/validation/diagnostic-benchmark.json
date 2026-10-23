@@ -1,0 +1,38 @@
+{
+  "schema": "clonelab-diagnostic-benchmark-v1",
+  "generated_at": "2026-10-23T14:24:26.310539+00:00",
+  "benchmark_class": "synthetic_known-truth",
+  "claim_boundary": "These cases verify algorithm behavior; they are not an independent wet-lab or external-tool validation.",
+  "passed": 3,
+  "total": 3,
+  "cases": [
+    {
+      "case_id": "orientation_and_presence",
+      "passed": true,
+      "best_digest": [
+        "EcoRI",
+        "XhoI"
+      ],
+      "fully_discriminatory": true,
+      "no_unique_digest": false
+    },
+    {
+      "case_id": "impossible_identical_states",
+      "passed": true,
+      "best_digest": [
+        "EcoRI"
+      ],
+      "fully_discriminatory": false,
+      "no_unique_digest": true
+    },
+    {
+      "case_id": "single_enzyme_presence_only",
+      "passed": true,
+      "best_digest": [
+        "XhoI"
+      ],
+      "fully_discriminatory": true,
+      "no_unique_digest": false
+    }
+  ]
+}

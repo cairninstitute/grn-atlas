@@ -13,6 +13,12 @@ cd backend && ../venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8000
 npm install && npm run dev            # http://localhost:3001
 ```
 
+CloneLab stores user projects separately in `backend/data/clonelab.sqlite3`; `make db`
+never deletes or rebuilds it. After transcript FASTA files have been fetched, run
+`make clonelab-data` and `make verify-clonelab-data` to create and verify the local,
+versioned reference manifest. CloneLab calculations are available directly from the
+`backend/clonelab` Python package and through `/api/v1/clonelab/*`.
+
 The backend needs `backend/data/grn.sqlite3` (gitignored, ~420 MB). Build it from the
 fetched or locally supplied source caches (see below).
 
@@ -36,7 +42,7 @@ then-current 90 documented skills were executed individually through their own
 `scripts/run.py --http` surface. As of **Saturday, August 22, 2026**, the current broad
 LLM/coverage status is:
 
-- **107 documented skills** in the current inventory (**106 callable + 1 overview/router**)
+- **115 documented skills** in the current inventory (**114 callable + 1 overview/router**)
 - **386** natural-language single-skill cases covering the original **100-skill** matrix snapshot
   (the most recently added skills are covered by the direct skill harness and backend pytest,
   not yet folded into the single-skill routing matrix)

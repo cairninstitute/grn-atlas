@@ -28,6 +28,7 @@ const CrossSpeciesView = lazy(() => import('./components/CrossSpeciesView'));
 const DiseaseToPlantDemo = lazy(() => import('./components/DiseaseToPlantDemo'));
 const RegulatoryWeatherMap = lazy(() => import('./components/RegulatoryWeatherMap'));
 const FeedbackControlView = lazy(() => import('./components/FeedbackControlView'));
+const CloneLabWorkspace = lazy(() => import('./components/clonelab/CloneLabWorkspace'));
 
 const SPECIES_TO_KINGDOM = {
   human: 'Animalia',
@@ -38,12 +39,13 @@ const SPECIES_TO_KINGDOM = {
   rice: 'Plantae',
 };
 
-const LEGACY_VIEW_IDS = new Set(['network', 'organism', 'pathways', 'comparison', 'genome', 'design', 'analysis', 'crossview', 'feedback']);
+const LEGACY_VIEW_IDS = new Set(['network', 'organism', 'pathways', 'comparison', 'genome', 'design', 'analysis', 'crossview', 'feedback', 'clonelab']);
 const ADVANCED_TABS = [
   { id: 'network', label: 'Explorer', icon: '🔗' },
   { id: 'crossview', label: 'Cross-species', icon: '🌍' },
   { id: 'organism', label: 'Organism', icon: '🌐' },
   { id: 'feedback', label: 'Feedback', icon: '↻' },
+  { id: 'clonelab', label: 'CloneLab', icon: 'CL' },
   { id: 'pathways', label: 'Paths', icon: '🛤️' },
   { id: 'comparison', label: 'Orthology', icon: '⚖️' },
   { id: 'genome', label: 'Genome', icon: '🧬' },
@@ -370,6 +372,9 @@ function ExplorerInner() {
         />,
         'Loading feedback architecture…',
       );
+    }
+    if (advancedView === 'clonelab') {
+      return renderWithSuspense(<CloneLabWorkspace />, 'Loading CloneLab…');
     }
 
     if (!selectedGene) {

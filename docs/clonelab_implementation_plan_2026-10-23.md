@@ -2,7 +2,31 @@
 
 Date: October 23, 2026
 
-Status: Proposed implementation sequence; no CloneLab production code exists yet.
+Status: MVP vertical slice implemented on October 23, 2026; advanced assembly and release-reference validation remain staged work.
+
+## Implementation Status
+
+Implemented in the first repository iteration:
+
+- independently callable Python engine plus `/api/v1/clonelab/*` FastAPI routes
+- normalized linear/circular sequence identity, FASTA/GenBank import/export, separate project store
+- exact Biopython-backed restriction mapping and digestion with circular-origin handling
+- sequence-complete intended, reverse, empty-vector, and tandem-insert hypotheses
+- single/double-enzyme diagnostic digest optimization with explicit non-identifiability
+- render-ready predicted gels, manual band interpretation, and JSON/Markdown reports
+- standalone Darwin advanced workspace and eight CloneLab AgentSkills/MCP tools
+- local checksum-verified transcript reference registry for Arabidopsis, petunia, and tomato
+- compatible-end checks, vector/insert feature remapping, and persisted construct/assay/report artifacts
+- synthetic known-truth benchmark (`3/3`) and focused backend tests (`47/47`)
+
+Remaining release-gate work:
+
+- authenticated external plasmid fixtures and independent cross-tool digest comparison
+- measured gel calibration data and held-out migration/resolution validation
+- complete cut-and-ligate reaction modeling beyond coordinate-defined insertion
+- genome FASTA registration for promoter/enhancer interval retrieval; current local references are transcripts
+- Darwin gene-view handoff, research-session artifact restoration, and both scientific demonstrations
+- expanded direct/HTTP/LLM routing matrices for the new skills and Playwright workflow coverage
 
 ## Objective
 
@@ -708,17 +732,24 @@ estimates and should be planned only after MVP benchmark results are available.
 
 ## Recommended Working Order
 
+Implementation priority was refined on October 23, 2026: diagnostic digest optimization is the
+first differentiating vertical slice. It still depends on exact sequence, restriction, and
+construct-hypothesis primitives, but those prerequisites should be implemented narrowly before
+broader project management, gel graphics, or educational UI work.
+
 Implement and merge one gated slice at a time:
 
-1. Phase 0 contracts and fixtures
-2. Phase 1 sequence/store/API foundation
+1. Phase 0 contracts and diagnostic fixtures
+2. minimal Phase 1 sequence primitives, callable directly from Python
 3. Phase 2 restriction engine
-4. Phase 3 construct assembly and hypotheses
-5. Phase 4 gel and diagnostic optimization
-6. Phase 5 standalone UI, interpretation, and reports
-7. Phase 6 Darwin sequence handoff
-8. Phase 7 skills and MCP exposure
-9. Phase 8 demonstrations and release validation
+4. minimal Phase 3 explicit construct hypotheses
+5. Phase 4 diagnostic digest optimizer and its FastAPI endpoint
+6. remaining Phase 1 persistence/import/export foundation
+7. remaining Phase 3 assembly workflows and Phase 4 gel rendering
+8. Phase 5 standalone UI, interpretation, and reports
+9. Phase 6 Darwin sequence handoff
+10. Phase 7 skills and MCP exposure
+11. Phase 8 demonstrations and release validation
 
 Do not begin the interactive plasmid map, AI skills, or public demonstrations before the
 sequence, restriction, and assembly gates pass. This ordering prevents attractive visual output

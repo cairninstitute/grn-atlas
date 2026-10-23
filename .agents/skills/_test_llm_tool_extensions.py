@@ -1,6 +1,14 @@
 """Supplemental tool schemas and arg mappings for newer GRN Atlas skills."""
 
 EXTRA_TOOLS = [
+    {"type": "function", "function": {"name": "grn_clonelab_sequence", "description": "Parse and inspect authenticated FASTA or GenBank DNA without inventing missing bases.", "parameters": {"type": "object", "properties": {"content": {"type": "string"}, "topology": {"type": "string", "enum": ["linear", "circular"]}}, "required": ["content"]}}},
+    {"type": "function", "function": {"name": "grn_clonelab_restriction", "description": "Calculate exact restriction sites and digest fragments for a DNA sequence. Use instead of language-model arithmetic.", "parameters": {"type": "object", "properties": {"sequence": {"type": "string"}, "topology": {"type": "string", "enum": ["linear", "circular"]}, "enzymes": {"type": "string"}}, "required": ["sequence", "enzymes"]}}},
+    {"type": "function", "function": {"name": "grn_clonelab_construct", "description": "Generate complete intended, reverse, empty-vector, and tandem-insert molecular hypotheses.", "parameters": {"type": "object", "properties": {"vector": {"type": "string"}, "insert": {"type": "string"}, "insertion_start": {"type": "integer"}}, "required": ["vector", "insert", "insertion_start"]}}},
+    {"type": "function", "function": {"name": "grn_clonelab_diagnostic", "description": "Rank diagnostic single- and double-enzyme digests against explicit molecular hypotheses and report ambiguity.", "parameters": {"type": "object", "properties": {"hypotheses": {"type": "string", "description": "JSON array of molecular hypotheses"}, "enzymes": {"type": "string"}}, "required": ["hypotheses", "enzymes"]}}},
+    {"type": "function", "function": {"name": "grn_clonelab_gel", "description": "Simulate gel lanes from fragment lengths while retaining merged-band and source-fragment traceability.", "parameters": {"type": "object", "properties": {"fragments": {"type": "string", "description": "JSON array of lanes, each an array of fragment sizes"}}, "required": ["fragments"]}}},
+    {"type": "function", "function": {"name": "grn_clonelab_interpret", "description": "Compare observed band sizes with predicted hypotheses without forcing a unique result.", "parameters": {"type": "object", "properties": {"observed": {"type": "string", "description": "JSON array of measured band sizes"}, "predictions": {"type": "string", "description": "JSON object mapping hypothesis IDs to band-size arrays"}}, "required": ["observed", "predictions"]}}},
+    {"type": "function", "function": {"name": "grn_clonelab_report", "description": "Export a reproducible CloneLab JSON or Markdown analysis record.", "parameters": {"type": "object", "properties": {"project": {"type": "string"}, "analysis": {"type": "string"}, "format": {"type": "string", "enum": ["json", "markdown"]}}, "required": ["project", "analysis"]}}},
+    {"type": "function", "function": {"name": "grn_clonelab_workflow", "description": "Run the full deterministic vector-plus-insert diagnostic digest workflow with hypotheses, ranking, gel, provenance, and claim boundaries.", "parameters": {"type": "object", "properties": {"vector": {"type": "string"}, "insert": {"type": "string"}, "insertion_start": {"type": "integer"}, "enzymes": {"type": "string"}}, "required": ["vector", "insert", "insertion_start", "enzymes"]}}},
     {"type": "function", "function": {"name": "grn_benchmark_status", "description": "View the living validation dashboard with atlas summary, benchmark results, and artifact health.", "parameters": {"type": "object", "properties": {}}}},
     {"type": "function", "function": {"name": "grn_celltype_regulon", "description": "Extract the regulon of one TF filtered to an imported cell type or cluster. Use this when the user asks what a TF regulates in one specific cell state, cluster, or treated/control group. Prefer this over grn_celltype_upstream when the user already has the TF and wants its active targets.", "parameters": {"type": "object", "properties": {"gene_id": {"type": "string"}, "dataset_id": {"type": "string"}, "cluster_id": {"type": "string"}, "species": {"type": "string"}}, "required": ["gene_id"]}}},
     {"type": "function", "function": {"name": "grn_celltype_compare", "description": "Compare TF regulatory activity between two imported cell types or clusters in one dataset.", "parameters": {"type": "object", "properties": {"dataset_id": {"type": "string"}, "cluster_a": {"type": "string"}, "cluster_b": {"type": "string"}, "species": {"type": "string"}}, "required": ["dataset_id", "cluster_a", "cluster_b"]}}},
@@ -50,6 +58,19 @@ EXTRA_TOOL_TO_SKILL = {
 }
 
 EXTRA_ARG_MAP = {
+    "content": "--content",
+    "topology": "--topology",
+    "enzymes": "--enzymes",
+    "vector": "--vector",
+    "insert": "--insert",
+    "insertion_start": "--insertion-start",
+    "hypotheses": "--hypotheses",
+    "fragments": "--fragments",
+    "observed": "--observed",
+    "predictions": "--predictions",
+    "project": "--project",
+    "analysis": "--analysis",
+    "format": "--format",
     "name": "--name",
     "dataset_id": "--dataset-id",
     "cluster_a": "--cluster-a",

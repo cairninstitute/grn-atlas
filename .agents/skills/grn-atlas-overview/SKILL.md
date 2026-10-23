@@ -66,6 +66,9 @@ GRN Atlas is a multi-species gene regulatory network database covering the speci
 | `grn-differential-network` | Compare regulatory-edge activity between two tissues/conditions (gained/strengthened/weakened edges) |
 | `grn-dynamics` | Boolean/attractor simulation of a signed regulatory module (fixed point vs cycle; steady-state ON/OFF after a perturbation) |
 | `grn-feedback-control` | Discover signed feedback loops, feedback-capable backbones, control groups, biological control-system hypotheses, and structural controller genes across a species GRN |
+| `grn-clonelab-workflow` | Turn explicit vector and insert sequences into molecular hypotheses, an optimized diagnostic digest, and predicted gel lanes |
+| `grn-clonelab-diagnostic` | Rank restriction digests against explicit construct states and report unresolved ambiguity |
+| `grn-clonelab-restriction` | Calculate exact restriction sites and fragments for linear or circular DNA |
 | `grn-promoter-edit-prioritization` | Prioritize motif-supported promoter sites as editing targets |
 | `grn-crispr-design` | Suggest sequence-only heuristic CRISPR guides |
 | `grn-primer-design` | Suggest sequence-only heuristic primer pairs |

@@ -18,3 +18,4 @@ websockets==16.1
 scikit-learn>=1.5
 pandas>=2.0
 numpy>=1.26
+biopython==1.88

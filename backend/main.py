@@ -33,6 +33,7 @@ import advanced
 import feedback_control
 import perturbation_evidence
 import candidate_impact
+from clonelab.router import router as clonelab_router
 from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -53,6 +54,7 @@ app = FastAPI(
     description="Gene Regulatory Network visualization backend",
     version="1.0.0"
 )
+app.include_router(clonelab_router)
 
 
 def _normalize_species_input(value: Optional[str]) -> Optional[str]:
