@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1450" viewBox="0 0 1800 1450">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8f4e9"/><stop offset="1" stop-color="#edf4ef"/></linearGradient>
+    <marker id="ag" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#25845a"/></marker>
+    <marker id="ab" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#3978a8"/></marker>
+    <marker id="ao" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#b07820"/></marker>
+    <marker id="ax" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#74817d"/></marker>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#bd4646"/></marker>
+    <marker id="ap" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#8d4d73"/></marker>
+    <marker id="tee" markerWidth="10" markerHeight="12" refX="2" refY="6" orient="auto"><path d="M2,0 L2,12" stroke="#bd4646" stroke-width="3"/></marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#17352c" flood-opacity="0.12"/></filter>
+    <style>
+      .title{font:700 34px 'Aptos','Source Sans 3',sans-serif;fill:#17352c}.sub{font:400 16px 'Aptos','Source Sans 3',sans-serif;fill:#52635e}
+      .section{font:700 17px 'Aptos','Source Sans 3',sans-serif;letter-spacing:1.5px}.gene{font:700 18px 'Aptos','Source Sans 3',sans-serif;fill:#172d27;text-anchor:middle;dominant-baseline:middle}
+      .small{font:500 13px 'Aptos','Source Sans 3',sans-serif;fill:#52635e}.tiny{font:500 11px 'Aptos','Source Sans 3',sans-serif;fill:#62716d}.head{font:700 15px 'Aptos','Source Sans 3',sans-serif;fill:#17352c;text-anchor:middle}
+      .dev{fill:#dcecf4;stroke:#3978a8;stroke-width:2}.reg{fill:#f5dce7;stroke:#ac3f73;stroke-width:2}.direct{fill:#eee6c6;stroke:#9c812e;stroke-width:2}.context{fill:#f5f0dc;stroke:#b89b48;stroke-width:2;stroke-dasharray:6 4}.proc{fill:#dcedd8;stroke:#46834c;stroke-width:2}
+      .act{fill:none;stroke:#25845a;stroke-width:3;marker-end:url(#ag)}.rep{fill:none;stroke:#bd4646;stroke-width:3;marker-end:url(#tee)}
+      .transfer{fill:none;stroke:#3978a8;stroke-width:2.5;stroke-dasharray:8 6;marker-end:url(#ab)}.transfer-r{fill:none;stroke:#bd4646;stroke-width:2.5;stroke-dasharray:8 6;marker-end:url(#tee)}
+      .bio{fill:none;stroke:#b07820;stroke-width:3;marker-end:url(#ao)}.ctx{fill:none;stroke:#74817d;stroke-width:2.5;stroke-dasharray:2 7;marker-end:url(#ax)}.assembly{fill:none;stroke:#8d4d73;stroke-width:3;marker-end:url(#ap)}
+      .regbus{fill:none;stroke:#25845a;stroke-width:3}
+      .effect{fill:none;stroke:#bd4646;stroke-width:3;marker-end:url(#ar)}.effect-dashed{fill:none;stroke:#bd4646;stroke-width:3;stroke-dasharray:7 5;marker-end:url(#ar)}
+    </style>
+  </defs>
+  <rect width="1800" height="1250" fill="url(#bg)"/>
+  <text x="65" y="55" class="title">Petunia flower formation and pigmentation: expanded functional circuit</text>
+  <text x="65" y="84" class="sub">Regulatory evidence, protein-complex assembly, biochemical conversion, transport, and three testable pigmentation interventions</text>
+
+  <!-- Floral identity -->
+  <rect x="50" y="115" width="1700" height="300" rx="24" fill="#f6fbfd" stroke="#b9d2df" stroke-width="2"/>
+  <text x="80" y="150" class="section" fill="#3978a8">1  FLORAL INITIATION AND PETAL IDENTITY</text>
+  <text x="80" y="174" class="small">Selected dashed edges are signed orthology projections and should be tested directly in petunia.</text>
+  <g filter="url(#shadow)">
+    <rect x="90" y="240" width="130" height="62" rx="18" class="dev"/><text x="155" y="271" class="gene">ALF / LFY</text>
+    <rect x="315" y="205" width="100" height="58" rx="17" class="dev"/><text x="365" y="234" class="gene">AP1</text>
+    <rect x="315" y="315" width="100" height="58" rx="17" class="dev"/><text x="365" y="344" class="gene">AP2</text>
+    <rect x="545" y="205" width="100" height="58" rx="17" class="dev"/><text x="595" y="234" class="gene">AP3</text>
+    <rect x="545" y="315" width="100" height="58" rx="17" class="dev"/><text x="595" y="344" class="gene">PI</text>
+    <rect x="775" y="205" width="100" height="58" rx="17" class="dev"/><text x="825" y="234" class="gene">AG</text>
+    <rect x="775" y="315" width="100" height="58" rx="17" class="dev"/><text x="825" y="344" class="gene">AG1</text>
+    <rect x="940" y="190" width="750" height="190" rx="24" fill="#e5f1ed" stroke="#4d8b79" stroke-width="2.5"/>
+  </g>
+  <text x="1315" y="218" class="head">FLORAL ORGAN IDENTITY LOGIC</text>
+  <g>
+    <circle cx="995" cy="253" r="22" fill="#f0d38d" stroke="#9b7520" stroke-width="2"/><text x="995" y="253" class="gene">A</text>
+    <circle cx="1130" cy="253" r="22" fill="#cfe2f1" stroke="#3978a8" stroke-width="2"/><text x="1130" y="253" class="gene">B</text>
+    <circle cx="1265" cy="253" r="22" fill="#e9d7ef" stroke="#80539a" stroke-width="2"/><text x="1265" y="253" class="gene">E</text>
+    <circle cx="1400" cy="253" r="22" fill="#efd1d1" stroke="#a44d4d" stroke-width="2"/><text x="1400" y="253" class="gene">C</text>
+  </g>
+  <text x="995" y="286" class="tiny" text-anchor="middle">AP1 / AP2 function</text>
+  <text x="1130" y="286" class="tiny" text-anchor="middle">AP3-PI heterodimer</text>
+  <text x="1265" y="286" class="tiny" text-anchor="middle">SEP/FBP cofactors*</text>
+  <text x="1400" y="286" class="tiny" text-anchor="middle">AG / AG1 function</text>
+  <rect x="960" y="312" width="150" height="43" rx="14" fill="#f7f3e6" stroke="#b8a874"/><text x="1035" y="329" class="head">SEPAL</text><text x="1035" y="347" class="tiny" text-anchor="middle">A + E</text>
+  <rect x="1125" y="304" width="210" height="59" rx="16" fill="#d8eee4" stroke="#25845a" stroke-width="3"/><text x="1230" y="327" class="head">PETAL / COROLLA</text><text x="1230" y="349" class="small" text-anchor="middle">A + B + E</text>
+  <rect x="1350" y="312" width="150" height="43" rx="14" fill="#f6e5e5" stroke="#c28686"/><text x="1425" y="329" class="head">STAMEN</text><text x="1425" y="347" class="tiny" text-anchor="middle">B + C + E</text>
+  <rect x="1515" y="312" width="145" height="43" rx="14" fill="#f6e5e5" stroke="#c28686"/><text x="1587" y="329" class="head">CARPEL</text><text x="1587" y="347" class="tiny" text-anchor="middle">C + E</text>
+  <text x="1580" y="374" class="tiny" text-anchor="end">*E-class mapping is incomplete in the current petunia atlas</text>
+  <path d="M220 258 C255 240 280 234 315 234" class="transfer"/><path d="M220 271 C340 180 445 195 545 225" class="transfer"/><path d="M220 285 C335 405 460 400 545 357" class="transfer"/><path d="M220 250 C430 135 640 170 775 225" class="transfer"/>
+  <path d="M315 250 C270 280 250 286 220 285" class="transfer"/><path d="M415 234 L545 234" class="transfer"/><path d="M415 344 C470 315 500 265 545 242" class="transfer"/><path d="M415 344 L545 344" class="transfer"/>
+  <path d="M595 263 L595 315" class="transfer"/><path d="M645 344 C690 315 690 265 645 234" class="transfer"/><path d="M775 225 C725 175 680 180 645 220" class="transfer"/><path d="M775 355 C720 400 675 395 645 360" class="transfer"/>
+  <path d="M415 218 C530 145 690 160 775 215" class="transfer-r"/><path d="M415 360 C530 410 680 405 775 360" class="transfer-r"/><path d="M775 250 C650 300 535 285 415 250" class="transfer-r"/><path d="M775 335 C650 285 535 305 415 340" class="transfer-r"/>
+  <path d="M645 234 C770 165 865 180 940 230" class="transfer"/><path d="M645 344 C770 405 865 375 940 335" class="transfer"/><path d="M875 234 L940 260" class="transfer"/>
+  <path d="M1230 363 C1230 420 1080 430 1010 470" class="ctx"/>
+  <rect x="1055" y="393" width="350" height="45" rx="18" fill="#fff" stroke="#9aa8a4" stroke-dasharray="3 5"/>
+  <text x="1230" y="413" class="head">Petal-limb developmental context</text><text x="1230" y="431" class="tiny" text-anchor="middle">competence and timing, not a direct AN2 edge</text>
+
+  <!-- Expanded pigmentation -->
+  <rect x="50" y="455" width="1700" height="875" rx="24" fill="#fffaf7" stroke="#d9bec8" stroke-width="2"/>
+  <text x="80" y="492" class="section" fill="#a93f70">2  EXPANDED MBW REGULATION AND ANTHOCYANIN PRODUCTION</text>
+  <text x="80" y="517" class="small">Green arrows: signed transcriptional regulation. Purple arrows: proteins assembling into the MBW complex. Gold arrows: biochemical pathway context.</text>
+
+  <!-- Explicit MBW complex -->
+  <rect x="75" y="550" width="485" height="355" rx="25" fill="#fbf3f7" stroke="#ddb5c9" stroke-width="2"/>
+  <text x="317" y="580" class="head">MBW ACTIVATOR COMPLEX - EXPANDED</text>
+  <ellipse cx="355" cy="742" rx="158" ry="142" fill="#f3e7ee" stroke="#8d4d73" stroke-width="2.5" stroke-dasharray="7 5"/>
+  <rect x="202" y="874" width="306" height="25" rx="10" fill="#fbf3f7"/>
+  <text x="355" y="892" class="small" text-anchor="middle">AN2 + AN1 + AN11 assemble into the MBW activator</text>
+  <g filter="url(#shadow)">
+    <circle cx="280" cy="680" r="44" class="reg"/><text x="280" y="671" class="gene">AN2</text><text x="280" y="696" class="tiny" text-anchor="middle">R2R3-MYB</text>
+    <circle cx="430" cy="680" r="44" class="reg"/><text x="430" y="671" class="gene">AN1</text><text x="430" y="696" class="tiny" text-anchor="middle">bHLH</text>
+    <circle cx="355" cy="832" r="40" class="reg"/><text x="355" y="823" class="gene">AN11</text><text x="355" y="848" class="tiny" text-anchor="middle">WD40</text>
+    <circle cx="355" cy="748" r="31" fill="#d8bdd0" stroke="#7d3d65" stroke-width="3"/><text x="355" y="740" class="gene">MBW</text><text x="355" y="762" class="tiny" text-anchor="middle">complex</text>
+  </g>
+  <path d="M313 709 L332 729" class="assembly"/>
+  <path d="M397 709 L378 729" class="assembly"/>
+  <path d="M355 792 L355 783" class="assembly"/>
+  <path d="M303 642 C335 615 385 615 410 642" class="act"/>
+  <rect x="292" y="595" width="126" height="23" rx="9" fill="#fbf3f7"/>
+  <text x="355" y="611" class="tiny" text-anchor="middle">AN2 activates AN1</text>
+  <rect x="88" y="690" width="105" height="54" rx="16" class="reg"/><text x="140" y="717" class="gene">DPL</text>
+  <rect x="88" y="778" width="105" height="54" rx="16" class="reg"/><text x="140" y="805" class="gene">JAF13</text>
+  <text x="140" y="858" class="tiny" text-anchor="middle">alternative MYB / bHLH inputs</text>
+  <path d="M193 708 C215 690 225 682 236 681" class="act"/>
+  <path d="M193 805 C230 790 275 770 326 754" class="assembly"/>
+  <rect x="90" y="600" width="125" height="38" rx="14" fill="#f8dddd" stroke="#bd4646" stroke-width="2"/>
+  <text x="152" y="624" class="head" fill="#9d3434">SILENCE AN2</text>
+  <path d="M215 619 C240 620 250 635 258 645" class="rep"/>
+
+  <!-- Biochemical pathway, expanded -->
+  <text x="1100" y="665" class="head">ANTHOCYANIN PATHWAY AND DIRECT MBW OUTPUTS</text>
+  <text x="1100" y="686" class="tiny" text-anchor="middle">solid boxes receive direct regulatory arrows; dashed boxes add biochemical context</text>
+  <g filter="url(#shadow)">
+    <rect x="600" y="735" width="125" height="70" rx="17" class="direct"/><text x="662" y="758" class="head">CHS-A</text><text x="662" y="782" class="tiny" text-anchor="middle">chalcone</text>
+    <rect x="755" y="735" width="125" height="70" rx="17" class="direct"/><text x="817" y="758" class="head">CHI-A</text><text x="817" y="782" class="tiny" text-anchor="middle">naringenin</text>
+    <rect x="910" y="735" width="135" height="70" rx="17" class="context"/><text x="977" y="758" class="head">AN3 / F3H</text><text x="977" y="782" class="tiny" text-anchor="middle">dihydroflavonols</text>
+    <rect x="1075" y="735" width="145" height="70" rx="17" class="direct"/><text x="1147" y="758" class="head">F3'5'H-A</text><text x="1147" y="782" class="tiny" text-anchor="middle">hydroxylation</text>
+    <rect x="1250" y="735" width="125" height="70" rx="17" class="direct"/><text x="1312" y="758" class="head">DFR-A</text><text x="1312" y="782" class="tiny" text-anchor="middle">leucoanthocyanidins</text>
+    <rect x="1405" y="735" width="140" height="70" rx="17" class="context"/><text x="1475" y="758" class="head">ANS / ANT17</text><text x="1475" y="782" class="tiny" text-anchor="middle">anthocyanidins</text>
+    <rect x="1405" y="865" width="140" height="78" rx="17" class="context"/><text x="1475" y="888" class="head">3GT / UGT</text><text x="1475" y="910" class="tiny" text-anchor="middle">stable glycosides</text><text x="1475" y="929" class="tiny" text-anchor="middle">candidate models</text>
+    <rect x="1215" y="865" width="160" height="78" rx="17" class="context"/><text x="1295" y="888" class="head">GST / AN9-like</text><text x="1295" y="910" class="tiny" text-anchor="middle">pigment transport</text><text x="1295" y="929" class="tiny" text-anchor="middle">mapping unresolved</text>
+    <rect x="1015" y="865" width="160" height="78" rx="17" class="proc"/><text x="1095" y="890" class="head">VACUOLE</text><text x="1095" y="914" class="tiny" text-anchor="middle">anthocyanin storage</text><text x="1095" y="932" class="tiny" text-anchor="middle">visible hue</text>
+  </g>
+  <path d="M386 748 C450 748 500 700 550 700" class="act"/>
+  <circle cx="550" cy="700" r="7" fill="#25845a"/>
+  <path d="M557 700 C590 700 630 705 662 735" class="act"/>
+  <path d="M557 700 C635 690 760 695 817 735" class="act"/>
+  <path d="M557 700 C740 675 1070 680 1147 735" class="act"/>
+  <path d="M557 700 C820 660 1235 675 1312 735" class="act"/>
+  <path d="M725 770 L755 770" class="bio"/><path d="M880 770 L910 770" class="bio"/><path d="M1045 770 L1075 770" class="bio"/><path d="M1220 770 L1250 770" class="bio"/><path d="M1375 770 L1405 770" class="bio"/><path d="M1475 805 L1475 865" class="bio"/><path d="M1405 904 L1375 904" class="bio"/><path d="M1215 904 L1175 904" class="bio"/>
+
+  <!-- pH branch and phenotype -->
+  <g filter="url(#shadow)"><rect x="625" y="875" width="100" height="54" rx="16" class="reg"/><text x="675" y="902" class="gene">PH4</text><rect x="760" y="875" width="100" height="54" rx="16" class="reg"/><text x="810" y="902" class="gene">PH1</text></g>
+  <path d="M725 902 L760 902" class="act"/><path d="M860 902 C920 900 965 900 1015 902" class="act"/><text x="810" y="955" class="tiny" text-anchor="middle">vacuolar pH tunes the final color</text>
+
+  <!-- Parallel intervention outcomes -->
+  <rect x="75" y="970" width="1650" height="325" rx="22" fill="#fff" stroke="#d5c8cf" stroke-width="2"/>
+  <text x="900" y="997" class="head">THREE WAYS TO CHANGE PETUNIA PIGMENTATION</text>
+  <text x="900" y="1017" class="tiny" text-anchor="middle">Red arrows trace predicted consequences: regulatory knockdown, direct pigment block, or a branch-dependent hue shift.</text>
+
+  <!-- AN2 intervention -->
+  <rect x="95" y="1035" width="1540" height="68" rx="17" fill="#fff5f6" stroke="#d99a9a" stroke-width="1.8"/>
+  <rect x="115" y="1044" width="190" height="50" rx="14" fill="#f8dddd" stroke="#bd4646"/><text x="210" y="1064" class="head">SUPPRESS AN2</text><text x="210" y="1083" class="tiny" text-anchor="middle">regulatory intervention</text>
+  <rect x="355" y="1044" width="190" height="50" rx="14" fill="#f8e7eb" stroke="#bd657f"/><text x="450" y="1064" class="head">MBW ACTIVITY DOWN</text><text x="450" y="1083" class="tiny" text-anchor="middle">partial redundancy remains</text>
+  <rect x="595" y="1040" width="245" height="58" rx="14" fill="#f7eadf" stroke="#bc7950"/><text x="717" y="1061" class="head">MULTIPLE TARGETS DOWN</text><text x="717" y="1080" class="tiny" text-anchor="middle">CHS-A, CHI-A, F3'5'H-A, DFR-A</text>
+  <rect x="890" y="1044" width="205" height="50" rx="14" fill="#f4ead7" stroke="#ae8735"/><text x="992" y="1064" class="head">LESS ANTHOCYANIN</text><text x="992" y="1083" class="tiny" text-anchor="middle">broad pathway reduction</text>
+  <path d="M305 1069 L355 1069" class="effect"/><path d="M545 1069 L595 1069" class="effect"/><path d="M840 1069 L890 1069" class="effect"/><path d="M1095 1069 L1215 1069" class="effect"/>
+  <g transform="translate(1280 1069) scale(.72)"><ellipse rx="28" ry="15" transform="rotate(0) translate(28 0)" fill="#efd8e4" stroke="#d3a2b9"/><ellipse rx="28" ry="15" transform="rotate(72) translate(28 0)" fill="#f5e7ed" stroke="#d3a2b9"/><ellipse rx="28" ry="15" transform="rotate(144) translate(28 0)" fill="#ead0dd" stroke="#d3a2b9"/><ellipse rx="28" ry="15" transform="rotate(216) translate(28 0)" fill="#f7edf1" stroke="#d3a2b9"/><ellipse rx="28" ry="15" transform="rotate(288) translate(28 0)" fill="#eccbdc" stroke="#d3a2b9"/><circle r="12" fill="#b9658c"/></g>
+  <text x="1435" y="1063" class="head">PALE / SECTORIAL</text><text x="1435" y="1083" class="tiny" text-anchor="middle">network-level demonstration</text>
+
+  <!-- CHS-A intervention -->
+  <rect x="95" y="1114" width="1540" height="68" rx="17" fill="#fff9ef" stroke="#d7b96c" stroke-width="1.8"/>
+  <rect x="115" y="1123" width="190" height="50" rx="14" fill="#f8dddd" stroke="#bd4646"/><text x="210" y="1143" class="head">SUPPRESS CHS-A</text><text x="210" y="1162" class="tiny" text-anchor="middle">direct pathway intervention</text>
+  <rect x="355" y="1123" width="190" height="50" rx="14" fill="#f5edcf" stroke="#a98a31"/><text x="450" y="1143" class="head">ENTRY STEP BLOCKED</text><text x="450" y="1162" class="tiny" text-anchor="middle">chalcone production falls</text>
+  <rect x="595" y="1123" width="245" height="50" rx="14" fill="#f4ead7" stroke="#ae8735"/><text x="717" y="1143" class="head">PATHWAY FLUX COLLAPSES</text><text x="717" y="1162" class="tiny" text-anchor="middle">little substrate reaches later steps</text>
+  <rect x="890" y="1123" width="205" height="50" rx="14" fill="#f4ead7" stroke="#ae8735"/><text x="992" y="1143" class="head">VERY LOW PIGMENT</text><text x="992" y="1162" class="tiny" text-anchor="middle">strongest visible effect</text>
+  <path d="M305 1148 L355 1148" class="effect"/><path d="M545 1148 L595 1148" class="effect"/><path d="M840 1148 L890 1148" class="effect"/><path d="M1095 1148 L1215 1148" class="effect"/>
+  <g transform="translate(1280 1148) scale(.72)"><ellipse rx="28" ry="15" transform="rotate(0) translate(28 0)" fill="#faf6f4" stroke="#d7c8c2"/><ellipse rx="28" ry="15" transform="rotate(72) translate(28 0)" fill="#fffdfb" stroke="#d7c8c2"/><ellipse rx="28" ry="15" transform="rotate(144) translate(28 0)" fill="#f7f0ee" stroke="#d7c8c2"/><ellipse rx="28" ry="15" transform="rotate(216) translate(28 0)" fill="#fffdfb" stroke="#d7c8c2"/><ellipse rx="28" ry="15" transform="rotate(288) translate(28 0)" fill="#f9f3f1" stroke="#d7c8c2"/><circle r="12" fill="#d5b7b7"/></g>
+  <text x="1435" y="1142" class="head">WHITE / PALE SECTORS</text><text x="1435" y="1162" class="tiny" text-anchor="middle">easiest high-contrast result</text>
+
+  <!-- F3'5'H-A intervention -->
+  <rect x="95" y="1193" width="1540" height="82" rx="17" fill="#f7f5ff" stroke="#a8a0cf" stroke-width="1.8"/>
+  <rect x="115" y="1209" width="190" height="50" rx="14" fill="#f8dddd" stroke="#bd4646"/><text x="210" y="1229" class="head">SUPPRESS F3'5'H-A</text><text x="210" y="1248" class="tiny" text-anchor="middle">branch-point intervention</text>
+  <rect x="355" y="1209" width="190" height="50" rx="14" fill="#eeeaf8" stroke="#8376ad"/><text x="450" y="1229" class="head">3',5'-OH FLUX DOWN</text><text x="450" y="1248" class="tiny" text-anchor="middle">less delphinidin precursor</text>
+  <rect x="595" y="1209" width="245" height="50" rx="14" fill="#f7e8e8" stroke="#b66f76"/><text x="717" y="1229" class="head">CYANIDIN BRANCH FAVORED</text><text x="717" y="1248" class="tiny" text-anchor="middle">if competing enzymes accept the substrate</text>
+  <rect x="890" y="1209" width="205" height="50" rx="14" fill="#f4e0e8" stroke="#b55273"/><text x="992" y="1229" class="head">PIGMENT RATIO SHIFTS</text><text x="992" y="1248" class="tiny" text-anchor="middle">not simple pigment loss</text>
+  <path d="M305 1234 L355 1234" class="effect"/><path d="M545 1234 L595 1234" class="effect"/><path d="M840 1234 L890 1234" class="effect"/><path d="M1095 1234 L1215 1234" class="effect"/>
+  <g transform="translate(1280 1234) scale(.72)"><ellipse rx="28" ry="15" transform="rotate(0) translate(28 0)" fill="#df4d72"/><ellipse rx="28" ry="15" transform="rotate(72) translate(28 0)" fill="#ee7188"/><ellipse rx="28" ry="15" transform="rotate(144) translate(28 0)" fill="#c93662"/><ellipse rx="28" ry="15" transform="rotate(216) translate(28 0)" fill="#e65c7b"/><ellipse rx="28" ry="15" transform="rotate(288) translate(28 0)" fill="#f08499"/><circle r="12" fill="#9e294f"/></g>
+  <text x="1435" y="1228" class="head">PURPLE/BLUE → RED/PINK</text><text x="1435" y="1248" class="tiny" text-anchor="middle">conditional on cultivar chemistry</text>
+
+
+  <!-- Legend -->
+  <rect x="50" y="1350" width="1700" height="72" rx="18" fill="#fff" stroke="#ccd5d1"/>
+  <path d="M85 1376 L145 1376" class="act"/><text x="160" y="1381" class="small">signed activation</text>
+  <path d="M335 1376 L395 1376" class="rep"/><text x="410" y="1381" class="small">repression</text>
+  <path d="M545 1376 L605 1376" class="transfer"/><text x="620" y="1381" class="small">orthology-projected edge</text>
+  <path d="M845 1376 L905 1376" class="assembly"/><text x="920" y="1381" class="small">complex assembly</text>
+  <path d="M1110 1376 L1170 1376" class="bio"/><text x="1185" y="1381" class="small">biochemical conversion</text>
+  <path d="M1435 1376 L1495 1376" class="ctx"/><text x="1510" y="1381" class="small">developmental context</text>
+  <text x="85" y="1408" class="small">Dashed-border pathway genes extend the functional interpretation but are not additional curated MBW regulatory edges in the current atlas. Hue shifts are genotype-dependent hypotheses.</text>
+</svg>
