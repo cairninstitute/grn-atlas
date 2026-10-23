@@ -155,6 +155,14 @@ def optimize_digests(
             predictions[hypothesis["hypothesis_id"]] = {
                 "label": hypothesis.get("label") or hypothesis["hypothesis_id"],
                 "fragment_lengths": digest["fragment_lengths"],
+                "cut_sites": [
+                    {
+                        "enzyme": site["enzyme"],
+                        "recognition_start": site["recognition_start"],
+                        "top_cut": site["top_cut"],
+                    }
+                    for site in digest["sites"]
+                ],
                 "visible_signature": list(signature),
                 "merged_band_groups": band_groups,
                 "hidden_fragments": hidden,

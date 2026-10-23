@@ -308,6 +308,23 @@
           687,
           353
         ],
+        "cut_sites": [
+          {
+            "enzyme": "PstI",
+            "recognition_start": 1894,
+            "top_cut": 1899
+          },
+          {
+            "enzyme": "PstI",
+            "recognition_start": 2247,
+            "top_cut": 2252
+          },
+          {
+            "enzyme": "PstI",
+            "recognition_start": 2934,
+            "top_cut": 2939
+          }
+        ],
         "visible_signature": [
           4146,
           687,
@@ -335,6 +352,23 @@
           1542,
           353
         ],
+        "cut_sites": [
+          {
+            "enzyme": "PstI",
+            "recognition_start": 1039,
+            "top_cut": 1044
+          },
+          {
+            "enzyme": "PstI",
+            "recognition_start": 1392,
+            "top_cut": 1397
+          },
+          {
+            "enzyme": "PstI",
+            "recognition_start": 2934,
+            "top_cut": 2939
+          }
+        ],
         "visible_signature": [
           3291,
           1542,
@@ -360,6 +394,13 @@
         "fragment_lengths": [
           2686
         ],
+        "cut_sites": [
+          {
+            "enzyme": "PstI",
+            "recognition_start": 434,
+            "top_cut": 439
+          }
+        ],
         "visible_signature": [
           2686
         ],
@@ -380,6 +421,33 @@
           687,
           353,
           353
+        ],
+        "cut_sites": [
+          {
+            "enzyme": "PstI",
+            "recognition_start": 1894,
+            "top_cut": 1899
+          },
+          {
+            "enzyme": "PstI",
+            "recognition_start": 2247,
+            "top_cut": 2252
+          },
+          {
+            "enzyme": "PstI",
+            "recognition_start": 4394,
+            "top_cut": 4399
+          },
+          {
+            "enzyme": "PstI",
+            "recognition_start": 4747,
+            "top_cut": 4752
+          },
+          {
+            "enzyme": "PstI",
+            "recognition_start": 5434,
+            "top_cut": 5439
+          }
         ],
         "visible_signature": [
           4146,

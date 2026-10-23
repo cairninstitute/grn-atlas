@@ -120,7 +120,11 @@ export default function CloneLabWorkspace() {
       </section>
       {hypotheses.length > 0 && <section className="clonelab-panel">
         <div className="clonelab-panel-heading"><div><span className="clonelab-step">02</span><h2>Sequence-complete hypotheses</h2></div></div>
-        <div className="clonelab-map-grid">{hypotheses.map((state) => <PlasmidMap key={state.hypothesis_id} construct={state} />)}</div>
+        <div className="clonelab-map-grid">{hypotheses.map((state) => <PlasmidMap
+          key={state.hypothesis_id}
+          construct={state}
+          digest={optimization?.best_digest?.predictions?.[state.hypothesis_id]}
+        />)}</div>
       </section>}
       <AssayComparison optimization={optimization} />
       <VirtualGel gel={gel} />

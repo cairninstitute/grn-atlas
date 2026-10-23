@@ -1,4 +1,4 @@
-.clonelab-workspace { --clone-cyan: #49d4c2; --clone-amber: #f0b35a; --clone-ink: #0a111a; padding: 24px; color: var(--text-primary); background: radial-gradient(circle at 80% 0, rgba(73,212,194,.08), transparent 32%), linear-gradient(145deg, rgba(9,17,26,.96), rgba(14,22,32,.94)); min-height: 100%; }
+.clonelab-workspace { --clone-cyan: #49d4c2; --clone-amber: #f0b35a; --clone-ink: #0a111a; --text-primary: #edf7f4; --text-secondary: #bfd0d8; --text-muted: #8499a5; padding: 24px; color: var(--text-primary); background: radial-gradient(circle at 80% 0, rgba(73,212,194,.08), transparent 32%), linear-gradient(145deg, rgba(9,17,26,.96), rgba(14,22,32,.94)); min-height: 100%; }
 .clonelab-hero { display: flex; justify-content: space-between; gap: 32px; align-items: end; max-width: 1400px; margin: 0 auto 20px; padding: 18px 4px 28px; border-bottom: 1px solid rgba(73,212,194,.2); }
 .clonelab-kicker { color: var(--clone-cyan); letter-spacing: .16em; font-size: 11px; font-weight: 800; }
 .clonelab-hero h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(40px, 6vw, 74px); font-weight: 400; margin: 4px 0; letter-spacing: -.04em; }
@@ -35,17 +35,51 @@
 .clonelab-interpretation { margin-top: 16px; padding: 14px; display: grid; gap: 6px; border-left: 3px solid var(--clone-cyan); background: rgba(73,212,194,.07); }
 .clonelab-interpretation.ambiguous { border-color: var(--clone-amber); background: rgba(240,179,90,.07); }
 .clonelab-interpretation span { color: var(--text-muted); font-size: 12px; }
-.clonelab-map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
-.clonelab-map-wrap { text-align: center; background: rgba(3,9,15,.35); padding: 10px; }
-.clonelab-map { width: min(210px, 100%); overflow: visible; }
-.clonelab-map-backbone, .clonelab-map-insert { fill: none; stroke-width: 12; transform: rotate(-90deg); transform-origin: center; }
-.clonelab-map-backbone { stroke: #35485a; }
+.clonelab-map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px; }
+.clonelab-map-wrap { min-width: 0; text-align: center; background: linear-gradient(145deg, rgba(3,9,15,.62), rgba(17,29,40,.48)); border: 1px solid rgba(255,255,255,.08); padding: 15px; }
+.clonelab-structure-heading { display: flex; align-items: start; justify-content: space-between; gap: 12px; text-align: left; }
+.clonelab-structure-heading > div { display: grid; gap: 4px; }
+.clonelab-structure-heading span { color: var(--clone-cyan); font: 800 9px/1 monospace; letter-spacing: .13em; text-transform: uppercase; }
+.clonelab-structure-heading strong { font: 400 18px/1.2 Georgia, 'Times New Roman', serif; }
+.clonelab-structure-heading em { color: var(--text-muted); font-size: 10px; font-style: normal; white-space: nowrap; }
+.clonelab-map { display: block; width: min(340px, 100%); margin: -3px auto -8px; overflow: visible; }
+.clonelab-map-guide { fill: none; stroke: rgba(255,255,255,.035); stroke-width: 1; stroke-dasharray: 2 5; }
+.clonelab-map-backbone, .clonelab-map-insert { fill: none; stroke-width: 18; transform: rotate(-90deg); transform-origin: 170px 170px; }
+.clonelab-map-backbone { stroke: #3d5367; }
 .clonelab-map-insert { stroke: var(--clone-amber); stroke-linecap: butt; }
+.clonelab-insert-arrow { fill: #ffe0a9; }
+.clonelab-junction-dot { fill: var(--clone-cyan); stroke: #061310; stroke-width: 2; }
+.clonelab-junction-label { fill: var(--clone-cyan); font: 800 9px/1 monospace; }
+.clonelab-cut-line { stroke: #ef7070; stroke-width: 2; }
+.clonelab-cut-label { fill: #ffaaa4; font: 700 8px/1 monospace; }
 .clonelab-map-name { fill: var(--text-primary); font-size: 12px; font-weight: 700; }
-.clonelab-map-length { fill: var(--text-muted); font-size: 11px; }
-.clonelab-map-key { color: var(--text-muted); font-size: 11px; display: flex; gap: 6px; justify-content: center; align-items: center; }
-.clonelab-map-key i, .clonelab-map-key span { width: 14px; height: 4px; display: inline-block; background: var(--clone-amber); }
-.clonelab-map-key span { background: #35485a; margin-left: 5px; }
+.clonelab-map-length { fill: var(--clone-amber); font: 700 13px/1 monospace; }
+.clonelab-map-topology { fill: var(--text-muted); font: 700 7px/1 monospace; letter-spacing: .16em; }
+.clonelab-linear-structure { display: flex; align-items: stretch; width: 100%; height: 46px; margin: 2px 0 10px; border-radius: 3px; overflow: hidden; background: #253442; }
+.clonelab-component { min-width: 42px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; border-right: 2px solid #071019; color: #d9e5ed; overflow: hidden; }
+.clonelab-component:last-child { border-right: 0; }
+.clonelab-component.vector { background: #3d5367; }
+.clonelab-component.insert { background: linear-gradient(100deg, #bc703b, var(--clone-amber)); color: #17120a; }
+.clonelab-component strong { font: 800 9px/1 monospace; letter-spacing: .06em; }
+.clonelab-component span { margin-top: 4px; font-size: 9px; white-space: nowrap; }
+.clonelab-structure-key { color: var(--text-muted); font-size: 9px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; }
+.clonelab-structure-key span { display: flex; align-items: center; gap: 4px; }
+.clonelab-structure-key i { width: 12px; height: 4px; display: inline-block; }
+.clonelab-structure-key .insert { background: var(--clone-amber); }
+.clonelab-structure-key .vector { background: #3d5367; }
+.clonelab-structure-key .junction { width: 6px; height: 6px; border-radius: 50%; background: var(--clone-cyan); }
+.clonelab-structure-key .cut { width: 2px; height: 9px; background: #ef7070; }
+.clonelab-junctions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 13px; }
+.clonelab-junction-sequence { min-width: 0; padding: 8px; text-align: left; background: rgba(0,0,0,.2); border: 1px solid rgba(255,255,255,.06); }
+.clonelab-junction-sequence > span { display: block; margin-bottom: 5px; color: var(--text-muted); font: 700 8px/1 monospace; text-transform: uppercase; }
+.clonelab-junction-sequence code { display: block; overflow: hidden; color: var(--text-muted); font-size: 8px; white-space: nowrap; text-overflow: ellipsis; }
+.clonelab-junction-sequence i, .clonelab-junction-sequence b { font-style: normal; font-weight: 500; }
+.clonelab-junction-sequence i { color: #91aabd; }
+.clonelab-junction-sequence b { color: var(--clone-amber); }
+.clonelab-construct-identity { display: flex; align-items: center; gap: 7px; margin-top: 10px; color: var(--text-muted); text-align: left; }
+.clonelab-construct-identity > span { font: 700 8px/1 monospace; letter-spacing: .09em; }
+.clonelab-construct-identity code { color: #879bac; font-size: 9px; }
+.clonelab-construct-identity em { margin-left: auto; color: #ffaaa4; font-size: 9px; font-style: normal; }
 .clonelab-status, .clonelab-prediction-badge { font-size: 10px; letter-spacing: .1em; padding: 6px 9px; border: 1px solid; }
 .clonelab-status.success { color: var(--clone-cyan); border-color: rgba(73,212,194,.5); }
 .clonelab-status.warning { color: var(--clone-amber); border-color: rgba(240,179,90,.5); }
@@ -64,4 +98,4 @@
 .clonelab-band { position: absolute; left: 12%; width: 76%; height: 5px; border: 0; padding: 0; background: #d9fff8; box-shadow: 0 0 7px #6ee7d5; cursor: help; }
 .clonelab-lane-label { position: absolute; bottom: -35px; width: 100%; text-align: center; font-size: 10px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-@media (max-width: 780px) { .clonelab-workspace { padding: 12px; } .clonelab-hero { display: grid; } .clonelab-demo-picker { align-items: stretch; flex-direction: column; } .clonelab-sequence-grid, .clonelab-best-assay { grid-template-columns: 1fr; } .clonelab-best-assay > div { border-right: 0; } .clonelab-table { display: block; overflow-x: auto; } }
+@media (max-width: 780px) { .clonelab-workspace { padding: 12px; } .clonelab-hero { display: grid; } .clonelab-demo-picker { align-items: stretch; flex-direction: column; } .clonelab-sequence-grid, .clonelab-best-assay { grid-template-columns: 1fr; } .clonelab-map-grid { grid-template-columns: minmax(0, 1fr); } .clonelab-junctions { grid-template-columns: 1fr; } .clonelab-best-assay > div { border-right: 0; } .clonelab-table { display: block; overflow-x: auto; } }

@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import AssayComparison from './AssayComparison';
+import PlasmidMap from './PlasmidMap';
 import VirtualGel from './VirtualGel';
 
 describe('CloneLab deterministic result views', () => {
@@ -26,5 +27,27 @@ describe('CloneLab deterministic result views', () => {
     expect(screen.getByRole('cell', { name: 'Intended' })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: '800' })).toBeInTheDocument();
     expect(screen.getByText('SIMULATION')).toBeInTheDocument();
+  });
+
+  it('renders the assembled molecular structure with components, junctions, and digest cuts', () => {
+    render(<PlasmidMap construct={{
+      hypothesis_id: 'intended', label: 'Correct insert orientation', length: 1200,
+      orientation: 'forward', sequence_sha256: 'abcdef1234567890abcdef',
+      insert_interval: { start: 200, end: 600 },
+      components: [
+        { type: 'vector', start: 0, end: 200 },
+        { type: 'insert', start: 200, end: 600, orientation: 'forward' },
+        { type: 'vector', start: 600, end: 1200 },
+      ],
+      junctions: {
+        left: { position: 200, sequence: 'A'.repeat(20) + 'C'.repeat(20) },
+        right: { position: 600, sequence: 'G'.repeat(20) + 'T'.repeat(20) },
+      },
+    }} digest={{ cut_sites: [{ enzyme: 'SalI', top_cut: 850 }] }} />);
+    expect(screen.getByRole('img', { name: /circular molecular structure, 1200 base pairs/i })).toBeInTheDocument();
+    expect(screen.getByText('→ INSERT')).toBeInTheDocument();
+    expect(screen.getByText(/Left junction · 200 bp/)).toBeInTheDocument();
+    expect(screen.getByText(/SalI · 850/)).toBeInTheDocument();
+    expect(screen.getByText(/abcdef1234567890/)).toBeInTheDocument();
   });
 });

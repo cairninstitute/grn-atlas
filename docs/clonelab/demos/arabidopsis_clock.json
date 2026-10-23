@@ -304,6 +304,18 @@
           4466,
           720
         ],
+        "cut_sites": [
+          {
+            "enzyme": "SalI",
+            "recognition_start": 2208,
+            "top_cut": 2209
+          },
+          {
+            "enzyme": "SalI",
+            "recognition_start": 2928,
+            "top_cut": 2929
+          }
+        ],
         "visible_signature": [
           4466,
           720
@@ -326,6 +338,18 @@
           3336,
           1850
         ],
+        "cut_sites": [
+          {
+            "enzyme": "SalI",
+            "recognition_start": 1078,
+            "top_cut": 1079
+          },
+          {
+            "enzyme": "SalI",
+            "recognition_start": 2928,
+            "top_cut": 2929
+          }
+        ],
         "visible_signature": [
           3336,
           1850
@@ -347,6 +371,13 @@
         "fragment_lengths": [
           2686
         ],
+        "cut_sites": [
+          {
+            "enzyme": "SalI",
+            "recognition_start": 428,
+            "top_cut": 429
+          }
+        ],
         "visible_signature": [
           2686
         ],
@@ -365,6 +396,23 @@
           4466,
           2500,
           720
+        ],
+        "cut_sites": [
+          {
+            "enzyme": "SalI",
+            "recognition_start": 2208,
+            "top_cut": 2209
+          },
+          {
+            "enzyme": "SalI",
+            "recognition_start": 4708,
+            "top_cut": 4709
+          },
+          {
+            "enzyme": "SalI",
+            "recognition_start": 5428,
+            "top_cut": 5429
+          }
         ],
         "visible_signature": [
           4466,
