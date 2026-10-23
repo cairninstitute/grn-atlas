@@ -1,0 +1,72 @@
+{
+  "schema": "clonelab-gel-calibration-validation-v1",
+  "generated_at": "2026-10-23T19:37:36.907371+00:00",
+  "calibration_id": "neb_n0550_1pct_tbe_image_v1",
+  "method": "cubic regression in log10(bp), alternating bands used for fit and held-out test",
+  "fit_band_count": 10,
+  "held_out_band_count": 9,
+  "mean_absolute_migration_error": 0.004672,
+  "maximum_absolute_migration_error": 0.009477,
+  "thresholds": {
+    "mean_max": 0.01,
+    "individual_max": 0.02
+  },
+  "held_out": [
+    {
+      "size_bp": 8001,
+      "observed": 0.093447,
+      "predicted": 0.088452,
+      "absolute_error": 0.004995
+    },
+    {
+      "size_bp": 5001,
+      "observed": 0.128641,
+      "predicted": 0.124363,
+      "absolute_error": 0.004278
+    },
+    {
+      "size_bp": 3001,
+      "observed": 0.205097,
+      "predicted": 0.207927,
+      "absolute_error": 0.00283
+    },
+    {
+      "size_bp": 1517,
+      "observed": 0.365291,
+      "predicted": 0.369282,
+      "absolute_error": 0.003991
+    },
+    {
+      "size_bp": 1000,
+      "observed": 0.490291,
+      "predicted": 0.483491,
+      "absolute_error": 0.0068
+    },
+    {
+      "size_bp": 800,
+      "observed": 0.550971,
+      "predicted": 0.546362,
+      "absolute_error": 0.004609
+    },
+    {
+      "size_bp": 600,
+      "observed": 0.629854,
+      "predicted": 0.626903,
+      "absolute_error": 0.002951
+    },
+    {
+      "size_bp": 400,
+      "observed": 0.73301,
+      "predicted": 0.735125,
+      "absolute_error": 0.002115
+    },
+    {
+      "size_bp": 200,
+      "observed": 0.878641,
+      "predicted": 0.888118,
+      "absolute_error": 0.009477
+    }
+  ],
+  "release_gate": "pass",
+  "boundary": "Image-derived calibration, not a locally measured instrument run. Voltage, run time, and lot are unspecified by the source image."
+}

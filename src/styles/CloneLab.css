@@ -16,6 +16,16 @@
 .clonelab-workspace textarea { min-height: 135px; resize: vertical; line-height: 1.5; }
 .clonelab-workspace textarea:focus, .clonelab-workspace input:focus { outline: 1px solid var(--clone-cyan); border-color: var(--clone-cyan); }
 .clonelab-controls { display: flex; align-items: end; gap: 14px; margin-top: 16px; flex-wrap: wrap; }
+.clonelab-demo-picker { display: flex; align-items: center; gap: 12px; padding: 14px 16px; margin-bottom: 18px; border: 1px solid rgba(73,212,194,.24); background: linear-gradient(100deg, rgba(73,212,194,.08), rgba(240,179,90,.05)); }
+.clonelab-demo-picker div { flex: 1; display: grid; gap: 3px; }
+.clonelab-demo-picker span { color: var(--text-muted); font-size: 12px; }
+.clonelab-demo-picker button { border: 1px solid rgba(73,212,194,.55); border-radius: 3px; background: transparent; color: var(--clone-cyan); padding: 9px 13px; font-weight: 700; cursor: pointer; }
+.clonelab-demo-picker button:hover { background: var(--clone-cyan); color: #061310; }
+.clonelab-demo-context { margin: -4px 0 18px; padding: 14px 16px; border-left: 3px solid var(--clone-amber); background: rgba(240,179,90,.06); }
+.clonelab-demo-context div { display: flex; gap: 10px; align-items: baseline; }
+.clonelab-demo-context span { color: var(--clone-amber); font-size: 10px; font-weight: 800; letter-spacing: .12em; }
+.clonelab-demo-context p { margin: 7px 0; font-size: 13px; }
+.clonelab-demo-context code, .clonelab-calibration { font-size: 11px; color: var(--text-muted); }
 .clonelab-controls label { min-width: 220px; }
 .clonelab-controls .clonelab-enzyme-input { flex: 1; }
 .clonelab-run { border: 0; border-radius: 3px; background: var(--clone-cyan); color: #061310; padding: 12px 18px; font-weight: 800; cursor: pointer; }
@@ -54,4 +64,4 @@
 .clonelab-band { position: absolute; left: 12%; width: 76%; height: 5px; border: 0; padding: 0; background: #d9fff8; box-shadow: 0 0 7px #6ee7d5; cursor: help; }
 .clonelab-lane-label { position: absolute; bottom: -35px; width: 100%; text-align: center; font-size: 10px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-@media (max-width: 780px) { .clonelab-workspace { padding: 12px; } .clonelab-hero { display: grid; } .clonelab-sequence-grid, .clonelab-best-assay { grid-template-columns: 1fr; } .clonelab-best-assay > div { border-right: 0; } .clonelab-table { display: block; overflow-x: auto; } }
+@media (max-width: 780px) { .clonelab-workspace { padding: 12px; } .clonelab-hero { display: grid; } .clonelab-demo-picker { align-items: stretch; flex-direction: column; } .clonelab-sequence-grid, .clonelab-best-assay { grid-template-columns: 1fr; } .clonelab-best-assay > div { border-right: 0; } .clonelab-table { display: block; overflow-x: auto; } }

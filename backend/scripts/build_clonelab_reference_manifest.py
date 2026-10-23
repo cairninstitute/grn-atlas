@@ -39,6 +39,16 @@ def main():
             "source": source,
             "accession": assembly,
         })
+    genome_manifest = DATA / "clonelab/genomes/genome_sources.json"
+    if genome_manifest.exists():
+        for reference in json.loads(genome_manifest.read_text()).get("references", []):
+            rows.append({
+                "species": reference["species"], "assembly": reference["assembly"],
+                "molecule_type": "genome", "path": reference["path"],
+                "index_path": reference["index_path"], "sha256": reference["sha256"],
+                "source": reference["source"], "accession": reference["assembly"],
+                "url": reference["url"],
+            })
     OUTPUT.write_text(json.dumps({"schema": "clonelab-reference-manifest-v1", "references": rows}, indent=2) + "\n")
     print(f"Wrote {OUTPUT} with {len(rows)} local references")
 

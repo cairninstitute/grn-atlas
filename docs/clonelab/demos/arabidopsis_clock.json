@@ -1,0 +1,878 @@
+{
+  "schema": "clonelab-demonstration-result-v1",
+  "demonstration": {
+    "demonstration_id": "arabidopsis_clock",
+    "title": "Arabidopsis CCA1 promoter construct verification",
+    "species": "arabidopsis",
+    "gene_id": "AT2G46830",
+    "gene_symbol": "CCA1",
+    "biological_context": "CCA1 is a morning-phased transcription factor in the Arabidopsis circadian regulatory network.",
+    "hypothesis": "Clone the 2 kb upstream / 500 bp downstream CCA1 TSS region for subsequent regulatory testing.",
+    "upstream": 2000,
+    "downstream": 500,
+    "candidate_enzymes": [
+      "EcoRI",
+      "BamHI",
+      "HindIII",
+      "PstI",
+      "SalI",
+      "SmaI",
+      "XbaI",
+      "KpnI",
+      "XhoI",
+      "NcoI"
+    ],
+    "boundary": "The pUC19 construct is a molecular verification demonstration, not a plant expression vector or evidence that the promoter is functional in vivo."
+  },
+  "darwin_target": {
+    "species": "arabidopsis",
+    "gene_id": "AT2G46830",
+    "gene_symbol": "CCA1",
+    "network_context": {
+      "incoming_edges": 74,
+      "outgoing_edges": 410,
+      "distinct_evidence_sources": 4
+    }
+  },
+  "promoter": {
+    "species": "arabidopsis",
+    "assembly": "TAIR10",
+    "record_id": "Chr2",
+    "interval": {
+      "start": 19243590,
+      "end": 19246090,
+      "strand": 1
+    },
+    "coordinate_system": "zero_based_half_open",
+    "length": 2500,
+    "sequence_sha256": "2c67c643f59235f657905ccf93220cfdd8c45a131709695295489cb5208cde64",
+    "reference_sha256": "0eaba0b4929b634cf777d2997d59ddd574e034f6697486d1fa1598284e3c14a1",
+    "source": "PLAZA Dicots 5.0",
+    "accession": "TAIR10",
+    "molecule_type": "genome",
+    "gene_id": "AT2G46830",
+    "external_gene_id": "AT2G46830",
+    "region_type": "promoter",
+    "tss_zero_based": 19245590,
+    "upstream_bp": 2000,
+    "downstream_bp": 500,
+    "orientation": "transcriptional_5_to_3",
+    "coordinate_source": "atlas gene_id_crosswalk + gene_windows"
+  },
+  "vector": {
+    "name": "pUC19",
+    "accession": "L09137.2",
+    "length": 2686,
+    "sequence_sha256": "8a205af08518dae1b0045c7b098986dca18824ef654e75233603602ab89cad04",
+    "topology": "circular"
+  },
+  "insertion_start": 396,
+  "constructs": [
+    {
+      "hypothesis_id": "intended",
+      "label": "Correct insert orientation",
+      "length": 5186,
+      "topology": "circular",
+      "orientation": "forward",
+      "replaced_vector_interval": {
+        "start": 396,
+        "end": 396
+      },
+      "insert_interval": {
+        "start": 396,
+        "end": 2896
+      },
+      "junctions": {
+        "left": {
+          "position": 396,
+          "sequence": "TTGTAAAACGACGGCCAGTGTAACAGAGAAAGCATCTCCA",
+          "window_start": 376
+        },
+        "right": {
+          "position": 2896,
+          "sequence": "GATGATTGTTTTAGGTGTCAAATTCGAGCTCGGTACCCGG",
+          "window_start": 2876
+        }
+      },
+      "sequence_sha256": "ceb3d7ea72ffe9d083b6355affc094e2bf6cdb4bf9190d05fda99715f84d5378",
+      "molecule_sha256": "610ee67f2178d4a3904deb37c6125cc8d7b5c9576d409dcd9f46d72a3fdcc6ab",
+      "components": [
+        {
+          "type": "vector",
+          "start": 0,
+          "end": 396,
+          "source_start": 0,
+          "source_end": 396
+        },
+        {
+          "type": "insert",
+          "start": 396,
+          "end": 2896,
+          "orientation": "forward"
+        },
+        {
+          "type": "vector",
+          "start": 2896,
+          "end": 5186,
+          "source_start": 396,
+          "source_end": 2686
+        }
+      ],
+      "features": [],
+      "warnings": []
+    },
+    {
+      "hypothesis_id": "reverse",
+      "label": "Reverse insert orientation",
+      "length": 5186,
+      "topology": "circular",
+      "orientation": "reverse",
+      "replaced_vector_interval": {
+        "start": 396,
+        "end": 396
+      },
+      "insert_interval": {
+        "start": 396,
+        "end": 2896
+      },
+      "junctions": {
+        "left": {
+          "position": 396,
+          "sequence": "TTGTAAAACGACGGCCAGTGTGACACCTAAAACAATCATC",
+          "window_start": 376
+        },
+        "right": {
+          "position": 2896,
+          "sequence": "TGGAGATGCTTTCTCTGTTAAATTCGAGCTCGGTACCCGG",
+          "window_start": 2876
+        }
+      },
+      "sequence_sha256": "0b64e8caec3e328a15b8dbcdf59b95359e0be4ba2a528306639cd2b3b114336b",
+      "molecule_sha256": "daf2141851b3c0e64632e90ae1bd0c691f29e604a82f03213bf1546d62468525",
+      "components": [
+        {
+          "type": "vector",
+          "start": 0,
+          "end": 396,
+          "source_start": 0,
+          "source_end": 396
+        },
+        {
+          "type": "insert",
+          "start": 396,
+          "end": 2896,
+          "orientation": "reverse"
+        },
+        {
+          "type": "vector",
+          "start": 2896,
+          "end": 5186,
+          "source_start": 396,
+          "source_end": 2686
+        }
+      ],
+      "features": [],
+      "warnings": []
+    },
+    {
+      "hypothesis_id": "empty",
+      "label": "Empty vector",
+      "length": 2686,
+      "topology": "circular",
+      "sequence_sha256": "8a205af08518dae1b0045c7b098986dca18824ef654e75233603602ab89cad04",
+      "molecule_sha256": "4a9da025ff81f65a25a73137e5e528ee8923dc47b29a6d12a64989d67aec5f2a"
+    },
+    {
+      "hypothesis_id": "tandem",
+      "label": "Tandem insert",
+      "length": 7686,
+      "topology": "circular",
+      "orientation": "forward",
+      "replaced_vector_interval": {
+        "start": 396,
+        "end": 396
+      },
+      "insert_interval": {
+        "start": 396,
+        "end": 5396
+      },
+      "junctions": {
+        "left": {
+          "position": 396,
+          "sequence": "TTGTAAAACGACGGCCAGTGTAACAGAGAAAGCATCTCCA",
+          "window_start": 376
+        },
+        "right": {
+          "position": 5396,
+          "sequence": "GATGATTGTTTTAGGTGTCAAATTCGAGCTCGGTACCCGG",
+          "window_start": 5376
+        }
+      },
+      "sequence_sha256": "cc9f74e8f572d63375da2b8225957a312d325d479967ca1c57c81140cb43e9b2",
+      "molecule_sha256": "3c328eb5dcf9437715a08e30794395f311f2e26f6292bb15b89f2534ff2e6364",
+      "components": [
+        {
+          "type": "vector",
+          "start": 0,
+          "end": 396,
+          "source_start": 0,
+          "source_end": 396
+        },
+        {
+          "type": "insert",
+          "start": 396,
+          "end": 5396,
+          "orientation": "forward"
+        },
+        {
+          "type": "vector",
+          "start": 5396,
+          "end": 7686,
+          "source_start": 396,
+          "source_end": 2686
+        }
+      ],
+      "features": [],
+      "warnings": []
+    }
+  ],
+  "best_digest": {
+    "enzymes": [
+      "SalI"
+    ],
+    "score": 1.0,
+    "information_bits": 2.0,
+    "pairwise_distinguishable": 6,
+    "pairwise_total": 6,
+    "unique_hypotheses": [
+      "empty",
+      "intended",
+      "reverse",
+      "tandem"
+    ],
+    "unique_fraction": 1.0,
+    "signature_groups": [
+      {
+        "hypotheses": [
+          "empty"
+        ],
+        "signatures": {
+          "empty": [
+            2686
+          ]
+        }
+      },
+      {
+        "hypotheses": [
+          "intended"
+        ],
+        "signatures": {
+          "intended": [
+            4466,
+            720
+          ]
+        }
+      },
+      {
+        "hypotheses": [
+          "reverse"
+        ],
+        "signatures": {
+          "reverse": [
+            3336,
+            1850
+          ]
+        }
+      },
+      {
+        "hypotheses": [
+          "tandem"
+        ],
+        "signatures": {
+          "tandem": [
+            4466,
+            2500,
+            720
+          ]
+        }
+      }
+    ],
+    "predictions": {
+      "intended": {
+        "label": "Correct insert orientation",
+        "fragment_lengths": [
+          4466,
+          720
+        ],
+        "visible_signature": [
+          4466,
+          720
+        ],
+        "merged_band_groups": [
+          [
+            4466
+          ],
+          [
+            720
+          ]
+        ],
+        "hidden_fragments": [],
+        "uncut": false,
+        "warnings": []
+      },
+      "reverse": {
+        "label": "Reverse insert orientation",
+        "fragment_lengths": [
+          3336,
+          1850
+        ],
+        "visible_signature": [
+          3336,
+          1850
+        ],
+        "merged_band_groups": [
+          [
+            3336
+          ],
+          [
+            1850
+          ]
+        ],
+        "hidden_fragments": [],
+        "uncut": false,
+        "warnings": []
+      },
+      "empty": {
+        "label": "Empty vector",
+        "fragment_lengths": [
+          2686
+        ],
+        "visible_signature": [
+          2686
+        ],
+        "merged_band_groups": [
+          [
+            2686
+          ]
+        ],
+        "hidden_fragments": [],
+        "uncut": false,
+        "warnings": []
+      },
+      "tandem": {
+        "label": "Tandem insert",
+        "fragment_lengths": [
+          4466,
+          2500,
+          720
+        ],
+        "visible_signature": [
+          4466,
+          2500,
+          720
+        ],
+        "merged_band_groups": [
+          [
+            4466
+          ],
+          [
+            2500
+          ],
+          [
+            720
+          ]
+        ],
+        "hidden_fragments": [],
+        "uncut": false,
+        "warnings": []
+      }
+    },
+    "pairwise": [
+      {
+        "left": "intended",
+        "right": "reverse",
+        "distinguishable": true
+      },
+      {
+        "left": "intended",
+        "right": "empty",
+        "distinguishable": true
+      },
+      {
+        "left": "intended",
+        "right": "tandem",
+        "distinguishable": true
+      },
+      {
+        "left": "reverse",
+        "right": "empty",
+        "distinguishable": true
+      },
+      {
+        "left": "reverse",
+        "right": "tandem",
+        "distinguishable": true
+      },
+      {
+        "left": "empty",
+        "right": "tandem",
+        "distinguishable": true
+      }
+    ],
+    "uncut_hypotheses": 0,
+    "hidden_fragment_count": 0,
+    "fully_discriminatory": true
+  },
+  "gel": {
+    "simulation": true,
+    "model": "source_calibrated_log_piecewise_v2",
+    "model_boundary": "Predicted migration is calibrated to a manufacturer reference image, not a local instrument run.",
+    "calibration": {
+      "calibration_id": "neb_n0550_1pct_tbe_image_v1",
+      "label": "NEB N0550 1 kb Plus, 1.0% TBE reference gel",
+      "evidence_type": "manufacturer_reference_image_digitization",
+      "gel_system": {
+        "agarose_percent": 1.0,
+        "buffer": "TBE",
+        "stain": "ethidium bromide",
+        "ladder": "NEB Quick-Load Purple 1 kb Plus DNA Ladder (N0550)",
+        "run_voltage": null,
+        "run_time_minutes": null
+      },
+      "source": {
+        "organization": "New England Biolabs",
+        "product": "N0550",
+        "url": "https://www.neb.com/en-us/products/n0550-quick-load-purple-1-kb-plus-dna-ladder",
+        "image_url": "https://media.neb.com/asset/3d29e0d3-905a-4157-abbb-ec093c91af16/Webp/N0559_N0550_N0469_N3270_N3200_1kbPlusDNALadder.webp",
+        "image_dimensions_px": [
+          354,
+          824
+        ],
+        "accessed": "2026-10-23"
+      },
+      "limitation": "Image-derived calibration, not a locally measured instrument run. Voltage, run time, and lot are unspecified by the source image."
+    },
+    "ladder": "neb_1kb_plus_n0550",
+    "resolution_fraction": 0.02,
+    "lanes": [
+      {
+        "lane_id": "ladder",
+        "label": "neb_1kb_plus_n0550",
+        "lane_index": 0,
+        "bands": [
+          {
+            "band_id": "ladder_band_1",
+            "representative_bp": 9002,
+            "source_fragments_bp": [
+              10002,
+              8001
+            ],
+            "merged": true,
+            "migration": 0.08832,
+            "migration_interval": [
+              0.07832,
+              0.09832
+            ],
+            "relative_intensity": 0.385025
+          },
+          {
+            "band_id": "ladder_band_2",
+            "representative_bp": 5501,
+            "source_fragments_bp": [
+              6001,
+              5001
+            ],
+            "merged": true,
+            "migration": 0.121662,
+            "migration_interval": [
+              0.111662,
+              0.131662
+            ],
+            "relative_intensity": 0.235297
+          },
+          {
+            "band_id": "ladder_band_3",
+            "representative_bp": 4001,
+            "source_fragments_bp": [
+              4001
+            ],
+            "merged": false,
+            "migration": 0.15534,
+            "migration_interval": [
+              0.14534,
+              0.16534
+            ],
+            "relative_intensity": 0.085568
+          },
+          {
+            "band_id": "ladder_band_4",
+            "representative_bp": 3001,
+            "source_fragments_bp": [
+              3001
+            ],
+            "merged": false,
+            "migration": 0.205097,
+            "migration_interval": [
+              0.195097,
+              0.215097
+            ],
+            "relative_intensity": 0.064182
+          },
+          {
+            "band_id": "ladder_band_5",
+            "representative_bp": 2017,
+            "source_fragments_bp": [
+              2017
+            ],
+            "merged": false,
+            "migration": 0.286408,
+            "migration_interval": [
+              0.276408,
+              0.296408
+            ],
+            "relative_intensity": 0.043137
+          },
+          {
+            "band_id": "ladder_band_6",
+            "representative_bp": 1517,
+            "source_fragments_bp": [
+              1517
+            ],
+            "merged": false,
+            "migration": 0.365291,
+            "migration_interval": [
+              0.355291,
+              0.375291
+            ],
+            "relative_intensity": 0.032444
+          },
+          {
+            "band_id": "ladder_band_7",
+            "representative_bp": 1200,
+            "source_fragments_bp": [
+              1200
+            ],
+            "merged": false,
+            "migration": 0.430825,
+            "migration_interval": [
+              0.420825,
+              0.440825
+            ],
+            "relative_intensity": 0.025664
+          },
+          {
+            "band_id": "ladder_band_8",
+            "representative_bp": 1000,
+            "source_fragments_bp": [
+              1000
+            ],
+            "merged": false,
+            "migration": 0.490291,
+            "migration_interval": [
+              0.480291,
+              0.500291
+            ],
+            "relative_intensity": 0.021387
+          },
+          {
+            "band_id": "ladder_band_9",
+            "representative_bp": 900,
+            "source_fragments_bp": [
+              900
+            ],
+            "merged": false,
+            "migration": 0.518204,
+            "migration_interval": [
+              0.508204,
+              0.528204
+            ],
+            "relative_intensity": 0.019248
+          },
+          {
+            "band_id": "ladder_band_10",
+            "representative_bp": 800,
+            "source_fragments_bp": [
+              800
+            ],
+            "merged": false,
+            "migration": 0.550971,
+            "migration_interval": [
+              0.540971,
+              0.560971
+            ],
+            "relative_intensity": 0.017109
+          },
+          {
+            "band_id": "ladder_band_11",
+            "representative_bp": 700,
+            "source_fragments_bp": [
+              700
+            ],
+            "merged": false,
+            "migration": 0.588592,
+            "migration_interval": [
+              0.578592,
+              0.598592
+            ],
+            "relative_intensity": 0.014971
+          },
+          {
+            "band_id": "ladder_band_12",
+            "representative_bp": 600,
+            "source_fragments_bp": [
+              600
+            ],
+            "merged": false,
+            "migration": 0.629854,
+            "migration_interval": [
+              0.619854,
+              0.639854
+            ],
+            "relative_intensity": 0.012832
+          },
+          {
+            "band_id": "ladder_band_13",
+            "representative_bp": 508,
+            "source_fragments_bp": [
+              517,
+              500
+            ],
+            "merged": true,
+            "migration": 0.67233,
+            "migration_interval": [
+              0.66233,
+              0.68233
+            ],
+            "relative_intensity": 0.02175
+          },
+          {
+            "band_id": "ladder_band_14",
+            "representative_bp": 400,
+            "source_fragments_bp": [
+              400
+            ],
+            "merged": false,
+            "migration": 0.73301,
+            "migration_interval": [
+              0.72301,
+              0.74301
+            ],
+            "relative_intensity": 0.008555
+          },
+          {
+            "band_id": "ladder_band_15",
+            "representative_bp": 300,
+            "source_fragments_bp": [
+              300
+            ],
+            "merged": false,
+            "migration": 0.802184,
+            "migration_interval": [
+              0.792184,
+              0.812184
+            ],
+            "relative_intensity": 0.006416
+          },
+          {
+            "band_id": "ladder_band_16",
+            "representative_bp": 200,
+            "source_fragments_bp": [
+              200
+            ],
+            "merged": false,
+            "migration": 0.878641,
+            "migration_interval": [
+              0.868641,
+              0.888641
+            ],
+            "relative_intensity": 0.004277
+          },
+          {
+            "band_id": "ladder_band_17",
+            "representative_bp": 100,
+            "source_fragments_bp": [
+              100
+            ],
+            "merged": false,
+            "migration": 0.972087,
+            "migration_interval": [
+              0.962087,
+              0.982087
+            ],
+            "relative_intensity": 0.002139
+          }
+        ],
+        "hidden_fragments": [],
+        "warning": null
+      },
+      {
+        "lane_id": "intended",
+        "label": "Correct insert orientation",
+        "lane_index": 1,
+        "bands": [
+          {
+            "band_id": "intended_band_1",
+            "representative_bp": 4466,
+            "source_fragments_bp": [
+              4466
+            ],
+            "merged": false,
+            "migration": 0.142182,
+            "migration_interval": [
+              0.132182,
+              0.152182
+            ],
+            "relative_intensity": 0.861165
+          },
+          {
+            "band_id": "intended_band_2",
+            "representative_bp": 720,
+            "source_fragments_bp": [
+              720
+            ],
+            "merged": false,
+            "migration": 0.580655,
+            "migration_interval": [
+              0.570655,
+              0.590655
+            ],
+            "relative_intensity": 0.138835
+          }
+        ],
+        "hidden_fragments": [],
+        "warning": null
+      },
+      {
+        "lane_id": "reverse",
+        "label": "Reverse insert orientation",
+        "lane_index": 2,
+        "bands": [
+          {
+            "band_id": "reverse_band_1",
+            "representative_bp": 3336,
+            "source_fragments_bp": [
+              3336
+            ],
+            "merged": false,
+            "migration": 0.186788,
+            "migration_interval": [
+              0.176788,
+              0.196788
+            ],
+            "relative_intensity": 0.64327
+          },
+          {
+            "band_id": "reverse_band_2",
+            "representative_bp": 1850,
+            "source_fragments_bp": [
+              1850
+            ],
+            "merged": false,
+            "migration": 0.310339,
+            "migration_interval": [
+              0.300339,
+              0.320339
+            ],
+            "relative_intensity": 0.35673
+          }
+        ],
+        "hidden_fragments": [],
+        "warning": null
+      },
+      {
+        "lane_id": "empty",
+        "label": "Empty vector",
+        "lane_index": 3,
+        "bands": [
+          {
+            "band_id": "empty_band_1",
+            "representative_bp": 2686,
+            "source_fragments_bp": [
+              2686
+            ],
+            "merged": false,
+            "migration": 0.22779,
+            "migration_interval": [
+              0.21779,
+              0.23779
+            ],
+            "relative_intensity": 1.0
+          }
+        ],
+        "hidden_fragments": [],
+        "warning": null
+      },
+      {
+        "lane_id": "tandem",
+        "label": "Tandem insert",
+        "lane_index": 4,
+        "bands": [
+          {
+            "band_id": "tandem_band_1",
+            "representative_bp": 4466,
+            "source_fragments_bp": [
+              4466
+            ],
+            "merged": false,
+            "migration": 0.142182,
+            "migration_interval": [
+              0.132182,
+              0.152182
+            ],
+            "relative_intensity": 0.581056
+          },
+          {
+            "band_id": "tandem_band_2",
+            "representative_bp": 2500,
+            "source_fragments_bp": [
+              2500
+            ],
+            "merged": false,
+            "migration": 0.242476,
+            "migration_interval": [
+              0.232476,
+              0.252476
+            ],
+            "relative_intensity": 0.325267
+          },
+          {
+            "band_id": "tandem_band_3",
+            "representative_bp": 720,
+            "source_fragments_bp": [
+              720
+            ],
+            "merged": false,
+            "migration": 0.580655,
+            "migration_interval": [
+              0.570655,
+              0.590655
+            ],
+            "relative_intensity": 0.093677
+          }
+        ],
+        "hidden_fragments": [],
+        "warning": null
+      }
+    ]
+  },
+  "verification_scope": {
+    "calculated": [
+      "construct sequences",
+      "junctions",
+      "restriction sites",
+      "fragment lengths",
+      "digest ranking"
+    ],
+    "simulated": [
+      "gel migration",
+      "band merging",
+      "relative intensity"
+    ],
+    "not_established": [
+      "base-perfect sequence identity",
+      "construct viability",
+      "biological function"
+    ]
+  },
+  "release_gate": "pass"
+}

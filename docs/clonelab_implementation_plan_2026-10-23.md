@@ -2,7 +2,7 @@
 
 Date: October 23, 2026
 
-Status: MVP vertical slice implemented on October 23, 2026; advanced assembly and release-reference validation remain staged work.
+Status: MVP and long-roadmap release gates implemented on October 23, 2026; advanced cut-and-ligate chemistry remains staged work.
 
 ## Implementation Status
 
@@ -19,14 +19,20 @@ Implemented in the first repository iteration:
 - compatible-end checks, vector/insert feature remapping, and persisted construct/assay/report artifacts
 - synthetic known-truth benchmark (`3/3`) and focused backend tests (`47/47`)
 
-Remaining release-gate work:
+Completed long-roadmap release gates:
 
-- authenticated external plasmid fixtures and independent cross-tool digest comparison
-- measured gel calibration data and held-out migration/resolution validation
+- authenticated pUC19 fixture and exact independent EMBOSS cross-tool comparison
+- source-image gel calibration with alternating-band held-out migration validation
+- indexed TAIR10 and Petunia axillaris genome retrieval with atlas gene-to-promoter handoff
+- executable Arabidopsis CCA1 and petunia AN2 demonstrations exposed in the CloneLab UI
+- promoter retrieval through the sequence AgentSkill in direct and HTTP modes
+
+Remaining post-release extensions:
+
 - complete cut-and-ligate reaction modeling beyond coordinate-defined insertion
-- genome FASTA registration for promoter/enhancer interval retrieval; current local references are transcripts
-- Darwin gene-view handoff, research-session artifact restoration, and both scientific demonstrations
-- expanded direct/HTTP/LLM routing matrices for the new skills and Playwright workflow coverage
+- research-session artifact restoration and direct gene-view launch controls
+- expanded LLM routing matrices and Playwright browser coverage for CloneLab
+- locally measured, instrument-specific gel calibration profiles
 
 ## Objective
 

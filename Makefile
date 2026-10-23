@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - release data setup from a fresh clone, including all external evidence and KnockTF species"
@@ -23,8 +23,9 @@ help:
 	@echo "make direct-binding  - fetch+load direct TF-binding data (GTRD, Cistrome, GEO) for all species"
 	@echo "make qualify-evidence - build conflict-aware candidates and source qualification report"
 	@echo "make verify-data    - fail unless all release data layers and minimum coverage are present"
-	@echo "make clonelab-data  - register locally fetched transcript references for CloneLab"
+	@echo "make clonelab-data  - fetch/index CloneLab plasmid, transcript, Arabidopsis, and petunia references"
 	@echo "make verify-clonelab-data - verify registered CloneLab reference checksums"
+	@echo "make validate-clonelab-release - validate gel calibration and both species demonstrations"
 	@echo "make enrich         - load ConnecTF edges+perturbations, curated pathway edges, display names (needs make db)"
 	@echo "make tissue-weights - compute per-tissue coexpression weights (also run by make db)"
 	@echo "make validate       - run gold-standard + population-level network validation"
@@ -176,10 +177,15 @@ tissue-weights:
 
 clonelab-data:
 	venv/bin/python backend/scripts/fetch_clonelab_references.py
+	venv/bin/python backend/scripts/fetch_clonelab_genomes.py --species all
 	venv/bin/python backend/scripts/build_clonelab_reference_manifest.py
 
 verify-clonelab-data:
 	venv/bin/python backend/scripts/verify_clonelab_references.py
+
+validate-clonelab-release: verify-clonelab-data
+	venv/bin/python backend/scripts/validate_clonelab_gel_calibration.py
+	venv/bin/python backend/scripts/run_clonelab_demonstrations.py
 
 validate:
 	venv/bin/python backend/scripts/validate_regulation_quality.py

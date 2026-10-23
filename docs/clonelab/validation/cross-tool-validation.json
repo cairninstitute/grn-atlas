@@ -1,0 +1,136 @@
+{
+  "schema": "clonelab-cross-tool-validation-v1",
+  "generated_at": "2026-10-23T19:38:00.283820+00:00",
+  "fixture": {
+    "name": "pUC19",
+    "accession": "L09137.2",
+    "length": 2686,
+    "sequence_sha256": "8a205af08518dae1b0045c7b098986dca18824ef654e75233603602ab89cad04"
+  },
+  "enzymes": [
+    "EcoRI",
+    "BamHI",
+    "HindIII",
+    "PstI",
+    "SalI",
+    "SmaI",
+    "XbaI",
+    "KpnI"
+  ],
+  "internal_engine": {
+    "name": "Biopython.Restriction",
+    "version": "1.88"
+  },
+  "external_engine": {
+    "tool": "EMBOSS restrict",
+    "version": "EMBOSS:6.6.0.0"
+  },
+  "internal_sites": [
+    {
+      "enzyme": "bamhi",
+      "recognition_start": 416,
+      "top_cut": 417
+    },
+    {
+      "enzyme": "ecori",
+      "recognition_start": 395,
+      "top_cut": 396
+    },
+    {
+      "enzyme": "hindiii",
+      "recognition_start": 446,
+      "top_cut": 447
+    },
+    {
+      "enzyme": "kpni",
+      "recognition_start": 407,
+      "top_cut": 412
+    },
+    {
+      "enzyme": "psti",
+      "recognition_start": 434,
+      "top_cut": 439
+    },
+    {
+      "enzyme": "sali",
+      "recognition_start": 428,
+      "top_cut": 429
+    },
+    {
+      "enzyme": "smai",
+      "recognition_start": 411,
+      "top_cut": 414
+    },
+    {
+      "enzyme": "xbai",
+      "recognition_start": 422,
+      "top_cut": 423
+    }
+  ],
+  "external_sites": [
+    {
+      "enzyme": "bamhi",
+      "recognition_start": 416,
+      "top_cut": 417
+    },
+    {
+      "enzyme": "ecori",
+      "recognition_start": 395,
+      "top_cut": 396
+    },
+    {
+      "enzyme": "hindiii",
+      "recognition_start": 446,
+      "top_cut": 447
+    },
+    {
+      "enzyme": "kpni",
+      "recognition_start": 407,
+      "top_cut": 412
+    },
+    {
+      "enzyme": "psti",
+      "recognition_start": 434,
+      "top_cut": 439
+    },
+    {
+      "enzyme": "sali",
+      "recognition_start": 428,
+      "top_cut": 429
+    },
+    {
+      "enzyme": "smai",
+      "recognition_start": 411,
+      "top_cut": 414
+    },
+    {
+      "enzyme": "xbai",
+      "recognition_start": 422,
+      "top_cut": 423
+    }
+  ],
+  "internal_fragment_lengths": [
+    2635,
+    16,
+    10,
+    8,
+    6,
+    6,
+    3,
+    2
+  ],
+  "external_fragment_lengths": [
+    2635,
+    16,
+    10,
+    8,
+    6,
+    6,
+    3,
+    2
+  ],
+  "exact_site_and_cut_match": true,
+  "exact_fragment_match": true,
+  "exact_match": true,
+  "release_gate": "pass"
+}

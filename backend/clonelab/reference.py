@@ -9,6 +9,7 @@ from pathlib import Path
 
 from Bio import SeqIO
 
+from .indexed_fasta import IndexedFasta
 from .sequence import canonical_sequence, reverse_complement, sequence_sha256
 
 
@@ -24,22 +25,33 @@ class ReferenceRegistry:
         payload = json.loads(self.manifest_path.read_text())
         self.entries = payload.get("references", [])
         self._records: dict[str, dict[str, str]] = {}
+        self._indexes: dict[str, IndexedFasta] = {}
 
     def list(self) -> list[dict]:
         return [{key: value for key, value in entry.items() if key != "path"} for entry in self.entries]
 
     def retrieve(self, *, species: str, assembly: str, record_id: str,
-                 start: int, end: int, strand: int = 1) -> dict:
-        entry = next((item for item in self.entries if item["species"] == species and item["assembly"] == assembly), None)
+                 start: int, end: int, strand: int = 1,
+                 molecule_type: str | None = None) -> dict:
+        entry = next((item for item in self.entries if item["species"] == species
+                      and item["assembly"] == assembly
+                      and (molecule_type is None or item.get("molecule_type") == molecule_type)), None)
         if not entry:
             raise ReferenceNotReadyError(f"no local CloneLab reference for {species} assembly {assembly}")
-        records = self._load(entry)
-        if record_id not in records:
-            raise ReferenceNotReadyError(f"record {record_id} is absent from {species} {assembly}")
-        parent = records[record_id]
-        if not (0 <= start < end <= len(parent)):
-            raise ValueError(f"interval [{start}, {end}) is outside record length {len(parent)}")
-        sequence = parent[start:end]
+        if entry.get("index_path"):
+            indexed = self._index(entry)
+            try:
+                sequence = indexed.fetch(record_id, start, end)
+            except KeyError as exc:
+                raise ReferenceNotReadyError(str(exc)) from exc
+        else:
+            records = self._load(entry)
+            if record_id not in records:
+                raise ReferenceNotReadyError(f"record {record_id} is absent from {species} {assembly}")
+            parent = records[record_id]
+            if not (0 <= start < end <= len(parent)):
+                raise ValueError(f"interval [{start}, {end}) is outside record length {len(parent)}")
+            sequence = parent[start:end]
         if strand == -1:
             sequence = reverse_complement(sequence)
         elif strand != 1:
@@ -56,6 +68,7 @@ class ReferenceRegistry:
             "reference_sha256": entry.get("sha256"),
             "source": entry.get("source"),
             "accession": entry.get("accession"),
+            "molecule_type": entry.get("molecule_type"),
         }
 
     def verify(self) -> list[dict]:
@@ -68,7 +81,14 @@ class ReferenceRegistry:
                 "path": str(path), "exists": path.exists(), "sha256": digest,
                 "expected_sha256": entry.get("sha256"),
                 "valid": path.exists() and (not entry.get("sha256") or digest == entry["sha256"]),
+                "index_exists": (
+                    (self.manifest_path.parent / entry["index_path"]).exists()
+                    if entry.get("index_path") and not Path(entry["index_path"]).is_absolute()
+                    else Path(entry["index_path"]).exists() if entry.get("index_path") else None
+                ),
             })
+            if entry.get("index_path") and not results[-1]["index_exists"]:
+                results[-1]["valid"] = False
         return results
 
     def _path(self, entry: dict) -> Path:
@@ -87,6 +107,15 @@ class ReferenceRegistry:
             records = {record.id: canonical_sequence(str(record.seq)) for record in SeqIO.parse(handle, "fasta")}
         self._records[key] = records
         return records
+
+    def _index(self, entry: dict) -> IndexedFasta:
+        key = f"{entry['species']}:{entry['assembly']}:{entry.get('molecule_type')}"
+        if key not in self._indexes:
+            index_path = Path(entry["index_path"])
+            if not index_path.is_absolute():
+                index_path = self.manifest_path.parent / index_path
+            self._indexes[key] = IndexedFasta(self._path(entry), index_path)
+        return self._indexes[key]
 
 
 def _file_sha256(path: Path) -> str:

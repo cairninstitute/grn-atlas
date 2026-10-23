@@ -1,0 +1,48 @@
+{
+  "schema": "clonelab-gel-calibration-v1",
+  "calibration_id": "neb_n0550_1pct_tbe_image_v1",
+  "label": "NEB N0550 1 kb Plus, 1.0% TBE reference gel",
+  "evidence_type": "manufacturer_reference_image_digitization",
+  "gel_system": {
+    "agarose_percent": 1.0,
+    "buffer": "TBE",
+    "stain": "ethidium bromide",
+    "ladder": "NEB Quick-Load Purple 1 kb Plus DNA Ladder (N0550)",
+    "run_voltage": null,
+    "run_time_minutes": null
+  },
+  "source": {
+    "organization": "New England Biolabs",
+    "product": "N0550",
+    "url": "https://www.neb.com/en-us/products/n0550-quick-load-purple-1-kb-plus-dna-ladder",
+    "image_url": "https://media.neb.com/asset/3d29e0d3-905a-4157-abbb-ec093c91af16/Webp/N0559_N0550_N0469_N3270_N3200_1kbPlusDNALadder.webp",
+    "image_dimensions_px": [354, 824],
+    "accessed": "2026-10-23"
+  },
+  "measurement": {
+    "method": "Band centers digitized from the manufacturer's 1.0% TBE reference image; migration is image y divided by image height.",
+    "lane_x_range_px": [225, 321],
+    "limitation": "Image-derived calibration, not a locally measured instrument run. Voltage, run time, and lot are unspecified by the source image."
+  },
+  "points": [
+    {"size_bp": 10002, "band_center_y_px": 69, "migration_normalized": 0.083738},
+    {"size_bp": 8001, "band_center_y_px": 77, "migration_normalized": 0.093447},
+    {"size_bp": 6001, "band_center_y_px": 95, "migration_normalized": 0.115291},
+    {"size_bp": 5001, "band_center_y_px": 106, "migration_normalized": 0.128641},
+    {"size_bp": 4001, "band_center_y_px": 128, "migration_normalized": 0.155340},
+    {"size_bp": 3001, "band_center_y_px": 169, "migration_normalized": 0.205097},
+    {"size_bp": 2017, "band_center_y_px": 236, "migration_normalized": 0.286408},
+    {"size_bp": 1517, "band_center_y_px": 301, "migration_normalized": 0.365291},
+    {"size_bp": 1200, "band_center_y_px": 355, "migration_normalized": 0.430825},
+    {"size_bp": 1000, "band_center_y_px": 404, "migration_normalized": 0.490291},
+    {"size_bp": 900, "band_center_y_px": 427, "migration_normalized": 0.518204},
+    {"size_bp": 800, "band_center_y_px": 454, "migration_normalized": 0.550971},
+    {"size_bp": 700, "band_center_y_px": 485, "migration_normalized": 0.588592},
+    {"size_bp": 600, "band_center_y_px": 519, "migration_normalized": 0.629854},
+    {"size_bp": 508, "band_center_y_px": 554, "migration_normalized": 0.672330},
+    {"size_bp": 400, "band_center_y_px": 604, "migration_normalized": 0.733010},
+    {"size_bp": 300, "band_center_y_px": 661, "migration_normalized": 0.802184},
+    {"size_bp": 200, "band_center_y_px": 724, "migration_normalized": 0.878641},
+    {"size_bp": 100, "band_center_y_px": 801, "migration_normalized": 0.972087}
+  ]
+}

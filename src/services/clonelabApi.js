@@ -11,6 +11,8 @@ async function request(path, options = {}) {
 }
 
 export const clonelabAPI = {
+  listDemonstrations: () => request('/demonstrations'),
+  loadDemonstration: (id) => request(`/demonstrations/${encodeURIComponent(id)}`),
   generateHypotheses: (payload) => request('/constructs/hypotheses', {
     method: 'POST', body: JSON.stringify(payload),
   }),

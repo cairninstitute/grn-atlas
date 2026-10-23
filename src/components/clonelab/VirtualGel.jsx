@@ -24,6 +24,7 @@ export default function VirtualGel({ gel }) {
         ))}
       </div>
       <p className="clonelab-boundary">{gel.model_boundary}</p>
+      {gel.calibration && <p className="clonelab-calibration"><strong>{gel.calibration.label}</strong> · {gel.calibration.evidence_type.replaceAll('_', ' ')}</p>}
       <table className="clonelab-table">
         <thead><tr><th>Lane</th><th>Predicted bands</th><th>Hidden</th></tr></thead>
         <tbody>{gel.lanes.map((lane) => <tr key={lane.lane_id}>

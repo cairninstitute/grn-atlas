@@ -1,0 +1,13 @@
+{
+  "demonstration_id": "petunia_pigmentation",
+  "title": "Petunia AN2 promoter construct verification",
+  "species": "petunia",
+  "gene_id": "Peaxi162Scf00118g00310",
+  "gene_symbol": "AN2",
+  "biological_context": "AN2 is an R2R3-MYB regulator associated with the petunia anthocyanin pigmentation program.",
+  "hypothesis": "Clone the 2 kb upstream / 500 bp downstream AN2 TSS region for subsequent regulatory testing.",
+  "upstream": 2000,
+  "downstream": 500,
+  "candidate_enzymes": ["EcoRI", "BamHI", "HindIII", "PstI", "SalI", "SmaI", "XbaI", "KpnI", "XhoI", "NcoI"],
+  "boundary": "The pUC19 construct is a molecular verification demonstration, not a plant expression vector or evidence that changing AN2 regulation alters flower color."
+}

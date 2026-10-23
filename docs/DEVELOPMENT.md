@@ -14,10 +14,18 @@ npm install && npm run dev            # http://localhost:3001
 ```
 
 CloneLab stores user projects separately in `backend/data/clonelab.sqlite3`; `make db`
-never deletes or rebuilds it. After transcript FASTA files have been fetched, run
-`make clonelab-data` and `make verify-clonelab-data` to create and verify the local,
-versioned reference manifest. CloneLab calculations are available directly from the
+never deletes or rebuilds it. Run `make clonelab-data` to fetch authenticated pUC19 plus
+PLAZA Arabidopsis and petunia genomes, create seek indexes, and build the versioned reference
+manifest. The download is approximately 405 MB compressed and expands to approximately 1.4 GB.
+`make validate-clonelab-release` verifies checksums, validates the source-image gel calibration,
+and runs both release demonstrations. CloneLab calculations are available directly from the
 `backend/clonelab` Python package and through `/api/v1/clonelab/*`.
+
+Independent restriction validation uses EMBOSS `restrict` and is deliberately separate from
+the Biopython runtime engine. Install EMBOSS, initialize its REBASE files, and run
+`backend/scripts/benchmark_clonelab_cross_tool.py`. For a locally unpacked installation, pass
+`--emboss-restrict`, `--emboss-root`, and `--emboss-lib`. The committed validation result records
+the pUC19 accession and hash, engine versions, enzyme panel, and normalized site coordinates.
 
 The backend needs `backend/data/grn.sqlite3` (gitignored, ~420 MB). Build it from the
 fetched or locally supplied source caches (see below).

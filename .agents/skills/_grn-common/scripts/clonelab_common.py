@@ -33,6 +33,10 @@ def run(action):
     parser.add_argument("--project", type=_json)
     parser.add_argument("--analysis", type=_json)
     parser.add_argument("--format", choices=("json", "markdown"), default="json")
+    parser.add_argument("--species")
+    parser.add_argument("--gene-id")
+    parser.add_argument("--upstream", type=int, default=2000)
+    parser.add_argument("--downstream", type=int, default=500)
     args = parser.parse_args()
     enzymes = [value.strip() for value in args.enzymes.split(",") if value.strip()]
     if args.http:
@@ -46,6 +50,15 @@ def run(action):
 
 def _direct(action, args, enzymes):
     if action == "sequence":
+        if args.gene_id:
+            from clonelab.promoter import retrieve_promoter
+            from clonelab.reference import ReferenceRegistry
+            backend = Path(__file__).resolve().parents[4] / "backend"
+            return retrieve_promoter(
+                ReferenceRegistry(backend / "data/clonelab_references.json"),
+                backend / "data/grn.sqlite3", species=args.species, gene_id=args.gene_id,
+                upstream=args.upstream, downstream=args.downstream,
+            )
         from clonelab.formats import parse_sequences
         return {"sequences": parse_sequences(args.content, default_topology=args.topology)}
     if action == "restriction":
@@ -83,6 +96,11 @@ def _http(action, args, enzymes):
         "workflow": ("/api/v1/clonelab/workflows/diagnostic-digest", {"vector": {"name": "vector", "sequence": args.vector, "topology": "circular"}, "insert": {"name": "insert", "sequence": args.insert, "topology": "linear"}, "insertion_start": args.insertion_start, "candidate_enzymes": enzymes}),
     }
     if action == "sequence":
+        if args.gene_id:
+            return common.http_post(args.http, "/api/v1/clonelab/sequences/promoter", {
+                "species": args.species, "gene_id": args.gene_id,
+                "upstream": args.upstream, "downstream": args.downstream,
+            })
         return common.http_post(args.http, "/api/v1/clonelab/sequences/parse", {"content": args.content, "default_topology": args.topology})
     path, payload = routes[action]
     return common.http_post(args.http, path, payload)

@@ -8,12 +8,15 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException
 
 from .diagnostics import optimize_digests
+from .demos import list_demonstrations, run_demonstration
 from .formats import parse_sequences
+from .calibration import list_calibrations
 from .gel import simulate_gel
 from .hypotheses import construct_hypotheses
 from .interpretation import interpret_bands
 from .reports import export_report
 from .reference import ReferenceNotReadyError, ReferenceRegistry
+from .promoter import retrieve_promoter
 from .restriction import UnknownEnzymeError, digest_sequence, restriction_map
 from .schemas import (
     ConstructHypothesesRequest,
@@ -21,6 +24,7 @@ from .schemas import (
     DiagnosticOptimizeRequest,
     DigestRequest,
     ProjectCreateRequest,
+    PromoterRetrieveRequest,
     GelSimulationRequest,
     ReportExportRequest,
     ReferenceRetrieveRequest,
@@ -46,6 +50,36 @@ def _max_input_bases() -> int:
 def _reference_registry() -> ReferenceRegistry:
     default = Path(__file__).resolve().parents[1] / "data" / "clonelab_references.json"
     return ReferenceRegistry(os.environ.get("CLONELAB_REFERENCE_MANIFEST", str(default)))
+
+
+def _atlas_database() -> Path:
+    default = Path(__file__).resolve().parents[1] / "data" / "grn.sqlite3"
+    return Path(os.environ.get("GRN_DB_PATH", str(default)))
+
+
+def _plasmid_fixture() -> Path:
+    default = Path(__file__).resolve().parents[1] / "data/clonelab/pUC19_L09137.2.gb"
+    return Path(os.environ.get("CLONELAB_PUC19", str(default)))
+
+
+@router.get("/demonstrations")
+def demonstrations():
+    return {"demonstrations": list_demonstrations()}
+
+
+@router.get("/demonstrations/{demonstration_id}")
+def demonstration(demonstration_id: str):
+    try:
+        return run_demonstration(
+            demonstration_id, registry=_reference_registry(),
+            database_path=_atlas_database(), plasmid_path=_plasmid_fixture(),
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=409, detail="CloneLab release references are not installed") from exc
+    except ReferenceNotReadyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @router.post("/projects")
@@ -122,6 +156,23 @@ def retrieve_reference_sequence(request: ReferenceRetrieveRequest):
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
+@router.post("/sequences/promoter")
+def retrieve_promoter_sequence(request: PromoterRetrieveRequest):
+    try:
+        return retrieve_promoter(
+            _reference_registry(), _atlas_database(), **request.model_dump()
+        )
+    except ReferenceNotReadyError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.get("/gels/calibrations")
+def gel_calibrations():
+    return {"calibrations": list_calibrations()}
+
+
 @router.post("/constructs/hypotheses")
 def generate_construct_hypotheses(request: ConstructHypothesesRequest):
     try:
@@ -147,6 +198,7 @@ def simulate_gel_endpoint(request: GelSimulationRequest):
             min_visible_bp=request.min_visible_bp,
             max_visible_bp=request.max_visible_bp,
             resolution_fraction=request.resolution_fraction,
+            calibration_id=request.calibration_id,
         )
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

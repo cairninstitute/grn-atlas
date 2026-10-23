@@ -1,0 +1,13 @@
+{
+  "demonstration_id": "arabidopsis_clock",
+  "title": "Arabidopsis CCA1 promoter construct verification",
+  "species": "arabidopsis",
+  "gene_id": "AT2G46830",
+  "gene_symbol": "CCA1",
+  "biological_context": "CCA1 is a morning-phased transcription factor in the Arabidopsis circadian regulatory network.",
+  "hypothesis": "Clone the 2 kb upstream / 500 bp downstream CCA1 TSS region for subsequent regulatory testing.",
+  "upstream": 2000,
+  "downstream": 500,
+  "candidate_enzymes": ["EcoRI", "BamHI", "HindIII", "PstI", "SalI", "SmaI", "XbaI", "KpnI", "XhoI", "NcoI"],
+  "boundary": "The pUC19 construct is a molecular verification demonstration, not a plant expression vector or evidence that the promoter is functional in vivo."
+}

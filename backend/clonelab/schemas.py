@@ -103,7 +103,8 @@ class GelLaneInput(BaseModel):
 
 class GelSimulationRequest(BaseModel):
     lanes: list[GelLaneInput] = Field(min_length=1, max_length=30)
-    ladder: str | None = "1kb_plus_illustrative"
+    ladder: str | None = "neb_1kb_plus_n0550"
+    calibration_id: str | None = "neb_n0550_1pct_tbe_image_v1"
     min_visible_bp: int = Field(default=50, ge=1)
     max_visible_bp: int = Field(default=20_000, ge=1)
     resolution_fraction: float = Field(default=0.02, gt=0, le=0.25)
@@ -142,3 +143,11 @@ class ReferenceRetrieveRequest(BaseModel):
     start: int = Field(ge=0)
     end: int = Field(gt=0)
     strand: Literal[-1, 1] = 1
+    molecule_type: Literal["transcript", "genome"] | None = None
+
+
+class PromoterRetrieveRequest(BaseModel):
+    species: str = Field(min_length=1, max_length=100)
+    gene_id: str = Field(min_length=1, max_length=200)
+    upstream: int = Field(default=2000, ge=0, le=20_000)
+    downstream: int = Field(default=500, ge=0, le=5_000)

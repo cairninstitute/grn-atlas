@@ -19,6 +19,22 @@ export default function CloneLabWorkspace() {
   const [interpretation, setInterpretation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [demo, setDemo] = useState(null);
+
+  const loadDemo = async (demonstrationId) => {
+    setLoading(true); setError(null); setInterpretation(null);
+    try {
+      const result = await clonelabAPI.loadDemonstration(demonstrationId);
+      setVector(result.vector.sequence);
+      setInsert(result.promoter.sequence);
+      setPosition(result.insertion_start);
+      setEnzymes(result.demonstration.candidate_enzymes.join(', '));
+      setHypotheses(result.analysis.hypotheses);
+      setOptimization(result.analysis.optimization);
+      setGel(result.analysis.gel);
+      setDemo(result);
+    } catch (err) { setError(err.message); } finally { setLoading(false); }
+  };
 
   const analyze = async () => {
     setLoading(true); setError(null); setOptimization(null); setGel(null); setInterpretation(null);
@@ -44,7 +60,7 @@ export default function CloneLabWorkspace() {
           lane_id: id, label: prediction.label, fragment_lengths: prediction.fragment_lengths,
           uncut_circular: prediction.uncut,
         })),
-        ladder: '1kb_plus_illustrative', min_visible_bp: 25,
+        ladder: 'neb_1kb_plus_n0550', calibration_id: 'neb_n0550_1pct_tbe_image_v1', min_visible_bp: 25,
       }));
     } catch (err) { setError(err.message); } finally { setLoading(false); }
   };
@@ -80,6 +96,17 @@ export default function CloneLabWorkspace() {
       </header>
       <section className="clonelab-panel clonelab-input-panel">
         <div className="clonelab-panel-heading"><div><span className="clonelab-step">01</span><h2>Define the molecular design</h2></div></div>
+        <div className="clonelab-demo-picker">
+          <div><strong>Release demonstrations</strong><span>Load an atlas target, genome-derived promoter, authenticated pUC19 vector, and optimized assay.</span></div>
+          <button disabled={loading} onClick={() => loadDemo('arabidopsis_clock')}>Arabidopsis / CCA1</button>
+          <button disabled={loading} onClick={() => loadDemo('petunia_pigmentation')}>Petunia / AN2</button>
+        </div>
+        {demo && <div className="clonelab-demo-context">
+          <div><span>ATLAS TARGET</span><strong>{demo.demonstration.gene_symbol} · {demo.demonstration.species}</strong></div>
+          <p>{demo.demonstration.hypothesis}</p>
+          <p>{demo.demonstration.boundary}</p>
+          <code>{demo.promoter.record_id}:{demo.promoter.interval.start.toLocaleString()}-{demo.promoter.interval.end.toLocaleString()} · {demo.promoter.length.toLocaleString()} bp · {demo.promoter.sequence_sha256.slice(0, 12)}…</code>
+        </div>}
         <div className="clonelab-sequence-grid">
           <label><span>Circular vector sequence</span><textarea value={vector} onChange={(e) => setVector(e.target.value)} placeholder="Paste vector DNA (FASTA header optional only through import API)" /></label>
           <label><span>Linear insert sequence</span><textarea value={insert} onChange={(e) => setInsert(e.target.value)} placeholder="Paste insert DNA" /></label>

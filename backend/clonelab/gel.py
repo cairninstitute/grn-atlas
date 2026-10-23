@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import math
 
-MODEL_VERSION = "idealized_log_piecewise_v1"
+from .calibration import DEFAULT_CALIBRATION_ID, calibration_points, load_calibration
+
+MODEL_VERSION = "source_calibrated_log_piecewise_v2"
 
 # Normalized migration measurements for an illustrative 1% agarose profile.
 # These are model defaults, not instrument calibration data.
@@ -15,6 +17,7 @@ DEFAULT_CALIBRATION = [
 ]
 
 LADDERS = {
+    "neb_1kb_plus_n0550": [10_002, 8_001, 6_001, 5_001, 4_001, 3_001, 2_017, 1_517, 1_200, 1_000, 900, 800, 700, 600, 517, 500, 400, 300, 200, 100],
     "1kb_plus_illustrative": [10_000, 8_000, 6_000, 5_000, 4_000, 3_000, 2_000, 1_500, 1_000, 500],
     "100bp_illustrative": [1_500, 1_000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
 }
@@ -46,8 +49,9 @@ def migration_for_size(size_bp: int, calibration: list[tuple[int, float]] | None
 def simulate_gel(
     lanes: list[dict],
     *,
-    ladder: str | None = "1kb_plus_illustrative",
+    ladder: str | None = "neb_1kb_plus_n0550",
     calibration: list[tuple[int, float]] | None = None,
+    calibration_id: str | None = DEFAULT_CALIBRATION_ID,
     min_visible_bp: int = 50,
     max_visible_bp: int = 20_000,
     resolution_fraction: float = 0.02,
@@ -55,6 +59,10 @@ def simulate_gel(
     """Return lane/band geometry while retaining fragment-level traceability."""
     if ladder is not None and ladder not in LADDERS:
         raise ValueError(f"unknown ladder: {ladder}")
+    profile = None
+    if calibration is None and calibration_id is not None:
+        profile = load_calibration(calibration_id)
+        calibration = calibration_points(calibration_id)
     rendered = []
     lane_inputs = list(lanes)
     if ladder:
@@ -104,7 +112,18 @@ def simulate_gel(
     return {
         "simulation": True,
         "model": MODEL_VERSION,
-        "model_boundary": "Predicted migration is illustrative unless calibrated to a measured gel system.",
+        "model_boundary": (
+            "Predicted migration is calibrated to a manufacturer reference image, not a local instrument run."
+            if profile else "Predicted migration is illustrative unless calibrated to a measured gel system."
+        ),
+        "calibration": ({
+            "calibration_id": profile["calibration_id"],
+            "label": profile["label"],
+            "evidence_type": profile["evidence_type"],
+            "gel_system": profile["gel_system"],
+            "source": profile["source"],
+            "limitation": profile["measurement"]["limitation"],
+        } if profile else None),
         "ladder": ladder,
         "resolution_fraction": resolution_fraction,
         "lanes": rendered,

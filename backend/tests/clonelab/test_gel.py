@@ -1,5 +1,6 @@
 import pytest
 
+from clonelab.calibration import load_calibration
 from clonelab.gel import migration_for_size, simulate_gel
 
 
@@ -31,3 +32,11 @@ def test_uncut_circular_lane_is_not_given_linear_migration():
 def test_unknown_ladder_fails_explicitly():
     with pytest.raises(ValueError, match="unknown ladder"):
         simulate_gel([{"lane_id": "x", "fragment_lengths": [100]}], ladder="unknown")
+
+
+def test_measured_profile_is_traceable_and_used_by_default():
+    profile = load_calibration()
+    assert profile["evidence_type"] == "manufacturer_reference_image_digitization"
+    result = simulate_gel([{"lane_id": "x", "fragment_lengths": [1000]}], ladder=None)
+    assert result["calibration"]["calibration_id"] == profile["calibration_id"]
+    assert result["lanes"][0]["bands"][0]["migration"] == pytest.approx(404 / 824, abs=1e-6)
