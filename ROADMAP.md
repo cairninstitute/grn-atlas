@@ -6,7 +6,7 @@
 > Iteration Log. The working loop is: _build → test → document here → find gaps →
 > plan → repeat._
 
-Last updated: 2026-10-16 · Current broad status: 107 documented skills (106 callable + 1 overview/router); direct skill harness 342/342 PASS, backend suite 380 passed / 6 skipped. (Earlier LLM routing snapshot, 61-skill era: GPT-5.4 single-skill matrix 347/347, orchestration 59/59; the single-skill/orchestration matrices have not been re-run against the current skill set.)
+Last updated: 2026-11-03 · Current broad status: 116 documented skills (115 callable + 1 overview/router); direct skill harness 342/342 PASS, backend suite 380 passed / 6 skipped. (Earlier LLM routing snapshot, 61-skill era: GPT-5.4 single-skill matrix 347/347, orchestration 59/59; the single-skill/orchestration matrices have not been re-run against the current skill set.)
 
 ---
 
@@ -82,7 +82,7 @@ Last updated: 2026-10-16 · Current broad status: 107 documented skills (106 cal
 - **Teach** — student scaffolding (examples, glossary, inferred-edge explainers).
 
 ### Species & data
-- 5 species: human, mouse, arabidopsis, tomato, petunia.
+- 8 species: human, mouse, arabidopsis, tomato, petunia, rice, potato, pepper.
 - Measured edges: TRRUST v2 (human), PlantRegMap FunTFBS (tomato, arabidopsis).
 - Inferred edges: Arabidopsis network projected onto tomato/petunia (`Inferred:Arabidopsis`).
 - Sequence context: promoter/gene-body windows + JASPAR-scan binding sites (tomato/petunia).
@@ -96,7 +96,7 @@ Last updated: 2026-10-16 · Current broad status: 107 documented skills (106 cal
   (petunia 29, tomato 20, arabidopsis 18); relative/co-expression signal, not absolute.
   Human/mouse have no expression axis. (Tomato: only atlas genes whose PLAZA CDS version
   matches get expression.)
-- **No dynamics** — the cascade/intervention view is a toy, not a quantitative model.
+- ~~No dynamics~~ ✅ shipped: `grn-dynamics` Boolean/threshold attractor simulation on signed subnetworks.
 - **Petunia edges are inferred** — hypotheses, not evidence; no measured petunia GRN.
 - **No accessibility (ATAC), PPI/complexes, or phenotype/QTL linkage.**
 - **Data currency** — PLAZA 4.5 is 2018 (dicots 5.0 now exists, flagged by the freshness
@@ -111,45 +111,27 @@ sites, BLAST_curated symbols). New inferred layers inherit this rule.
 
 ## 3. Expansion plan — items 1–6 (value-ranked)
 
-Numbered by research value. **Execution order differs** (feasibility-first): the
-data-free item ships first, then the expression linchpin, then the rest.
+All six core items have shipped increments. Remaining follow-ups are tracked in section 4 (Known gaps).
 
-| # | Feature | Unlocks | New data needed | Effort |
-|---|---------|---------|-----------------|--------|
-| 1 | **Expression integration** | condition/tissue-specificity, co-expression, expression-weighted TFBS | RNA-seq atlases | High |
-| 2 | **Network inference from expression** (GENIE3/ARACNe-style) | a data-driven petunia network (not just projected) | uses #1 data | High |
-| 3 | **Perturbation modeling upgrade** | "predict effect of knocking out AN2" via signed-path propagation | none | Medium |
-| 4 | **Base-resolution binding for human/arabidopsis** | motif enrichment + seq context for best-measured species | JASPAR/ReMap ChIP | Medium |
-| 5 | **Broader enrichment + trait linkage** | KEGG/MapMan pathways; QTL/GWAS→gene | KEGG, GWAS/QTL | Medium |
-| 6 | **Taxonomic scope / freshness** | wheat/cotton homoeologs; refreshed PLAZA/TRRUST | newer releases | Medium |
+| # | Feature | Status |
+|---|---------|--------|
+| 1 | **Expression integration** | ✅ Shipped: 3 plant species (petunia 29, tomato 20, arabidopsis 18 samples) |
+| 2 | **Network inference from expression** | ✅ Shipped: co-expression (`Inferred:Expression`). GENIE3 tree-based deferred (not viable on available data) |
+| 3 | **Perturbation modeling upgrade** | ✅ Shipped: signed-path propagation (`/api/v1/perturb`) |
+| 4 | **Base-resolution binding** | ✅ Shipped (plant): TAIR10 + tomato + petunia JASPAR scans. Human ReMap deferred |
+| 5 | **Broader enrichment + trait linkage** | ✅ Shipped: Plant Reactome + Reactome/WikiPathways (human) + GWAS Catalog traits |
+| 6 | **Taxonomic scope / freshness** | ✅ Shipped (freshness half): currency audit. Scope expanded to 8 species. PLAZA 5.0 refresh deferred |
 
-### Execution sequence (feasibility-first)
-1. **#3 perturbation** — no external data; uses existing signed edges. *Start here.*
-2. **#1 + #2 expression + inference** — the linchpin; do together (inference consumes
-   the loaded expression). Removes the static + petunia-only-inferred ceiling.
-3. **#4 base-resolution binding** — extends the strongest existing analysis to human/arabidopsis.
-4. **#5 enrichment + trait linkage.**
-5. **#6 scope/freshness.**
+### Enhancement tiers (post-core)
 
-### Per-item design sketch
-- **#3:** replace toy cascade with signed-path propagation over `interactions`
-  (sign = activation/repression product along path, with sign-flip on repression;
-  damped by confidence & depth). Endpoint `POST /api/v1/perturb` (KO/OE list →
-  predicted up/down per reachable gene, with path evidence). Honest labeling:
-  output is "predicted direction," qualitative, gated by inferred-edge inclusion.
-- **#1:** new `expression(gene_id, species, sample, tpm)` + `samples(...)` tables from
-  public RNA-seq (tomato PRJNA980935 / expression atlases; Arabidopsis; petunia if
-  available). Endpoints: per-gene expression profile; expression-weighted edge/motif
-  views. Cache to committed JSON like other fetchers; runtime stays offline.
-- **#2:** `infer_network.py` — GENIE3-style tree importance (or correlation fallback)
-  per species from #1's matrix → `Inferred:Expression` edges, labeled distinct from
-  both measured and Arabidopsis-projected. Compare against projection in the UI.
-- **#4:** extend `motifs`/`motif_hits` + crosswalk to human/arabidopsis using
-  JASPAR/ReMap; reuse existing motif-enrichment + seq-context machinery.
-- **#5:** `go_annotations`-style tables for KEGG/MapMan; QTL/GWAS→gene mapping table;
-  reuse hypergeometric+BH; new "trait" lookup endpoint.
-- **#6:** refresh fetchers to current PLAZA/TRRUST; add wheat/cotton with homoeolog
-  handling.
+| Tier | Feature | Skill | Status |
+|---|---|---|---|
+| 1 | Allele-specific affinity | `grn-allele-affinity` | ✅ Shipped (JASPAR PWM cache: 1,287 entries) |
+| 1 | GWAS to mechanism | `grn-gwas-to-mechanism` | ✅ Shipped |
+| 1 | Biosafety screen | `grn-biosafety-screen` | ✅ Shipped |
+| 2 | Network control | `grn-network-control` | ✅ Shipped |
+| 2 | Differential network | `grn-differential-network` | ✅ Shipped |
+| 3 | Boolean dynamics | `grn-dynamics` | ✅ Shipped |
 
 ---
 

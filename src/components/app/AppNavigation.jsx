@@ -1,11 +1,9 @@
 import React from 'react';
 
 const WORKFLOW_TABS = [
-  { id: 'home', label: 'Home', icon: '🏠' },
-  { id: 'gene', label: 'Start from a gene', icon: '🧬' },
-  { id: 'dataset', label: 'Unified workflow', icon: '📥' },
-  { id: 'decision', label: 'Decide and hand off', icon: '🧭' },
-  { id: 'advanced', label: 'Advanced tools', icon: '🔬' },
+  { id: 'explore', label: 'Explore', icon: '🔗' },
+  { id: 'design', label: 'Design', icon: '✏️' },
+  { id: 'toolbox', label: 'Toolbox', icon: '🔬' },
 ];
 
 export default function AppNavigation({ mode, onChange }) {

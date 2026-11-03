@@ -6,7 +6,7 @@ This is the descriptive catalog of the GRN Atlas skill layer. The authoritative 
 is the set of `.agents/skills/<skill>/SKILL.md` files; this document is kept in step with
 that directory.
 
-Skills in `.agents/skills/`: **115** — **114 callable analysis/workflow skills** plus
+Skills in `.agents/skills/`: **116** — **115 callable analysis/workflow skills** plus
 **1 overview/router skill** (`grn-atlas-overview`).
 
 Every skill has a corresponding `SKILL.md` in `.agents/skills/<skill>/SKILL.md`. The table
@@ -119,6 +119,7 @@ original inventory snapshot are documented in their own `SKILL.md` and registere
 | `grn-network-control` | Find a minimal set of TFs to perturb to steer a target gene program (greedy set-cover over regulatory reachability), with sign-aware overexpress/knockdown recommendations where the edge sign is known. Reachability + known signs, not a dynamical control guarantee. |
 | `grn-differential-network` | Compare regulatory-edge activity between two tissues/conditions using per-tissue TF-target coexpression: edges gained in each tissue, strengthened/weakened edges, with edge sign where known. A coexpression-based activity contrast, not measured physical rewiring. |
 | `grn-dynamics` | Boolean/threshold attractor simulation on the signed induced subnetwork of a gene module: reports fixed point vs cycle and steady-state ON/OFF after clamped perturbations. Qualitative abstraction over signed edges only; unsigned edges excluded and reported as coverage. |
+| `grn-binding-prediction` | Query or trigger structural TF-DNA binding predictions (Boltz-2 NIM). Scores whether a TF protein can physically bind a target gene's promoter DNA. Use for validating candidate regulatory edges or prioritizing wet-lab experiments. Labeled as predicted structural evidence, not measured. |
 | `grn-feedback-control` | Discover signed feedback loops, feedback-capable backbones, linked control groups, biological control-system hypotheses (oscillators, toggle switches, repressilators), and structural controller genes across a species GRN. Supports evidence-tier filtering, candidate-edge completion, exploratory and multilayer modes, and probabilistic core-membership estimation. |
 | `grn-workflow` | Run a packaged end-to-end research workflow. Available: deg-to-regulators (DEG list → upstream TFs), target-to-perturbation (gene → RNAi/CRISPR strategy), import-to-activity (dataset → TF scoring). |
 

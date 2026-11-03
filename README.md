@@ -289,7 +289,7 @@ Key: **Coherence (σ)** = permutation test effect size (higher = more significan
 
 ## Analysis capabilities
 
-The **Analysis** tab (frontend) and matching agent skills provide advanced network analysis:
+The frontend and matching agent skills provide advanced network analysis:
 
 | Feature | Skill | Description |
 |---|---|---|
@@ -302,6 +302,13 @@ The **Analysis** tab (frontend) and matching agent skills provide advanced netwo
 | Module / community detection | `grn-module` | Detect co-regulated gene modules via louvain, leiden, infomap, or label propagation |
 | Differential regulation | `grn-diff-regulation` | Compare TF regulatory activity between tissue groups using expression + edge concordance |
 | Network inference | `grn-infer` | GRNBoost2 / GENIE3 inferred regulatory edges from expression data; compare with curated network |
+| Allele affinity | `grn-allele-affinity` | Quantitative ΔPWM scoring of single-base promoter variants (ref vs alt), with predicted expression direction |
+| GWAS to mechanism | `grn-gwas-to-mechanism` | Chain trait association → upstream regulators → downstream program for a GWAS-linked gene |
+| Biosafety screen | `grn-biosafety-screen` | Cross-organism dsRNA/guide off-target screening across all 8 species' transcriptomes |
+| Network control | `grn-network-control` | Minimal TF driver set to steer a gene program (set-cover + sign-aware recommendations) |
+| Differential network | `grn-differential-network` | Edge-level rewiring between tissues/conditions via per-tissue coexpression contrast |
+| Boolean dynamics | `grn-dynamics` | Attractor simulation on signed subnetworks: fixed point vs cycle after clamped perturbations |
+| Structural binding | `grn-binding-prediction` | Boltz-2 structural TF-DNA binding plausibility predictions for candidate regulatory edges |
 
 ### Network inference (GRNBoost2 / GENIE3)
 
@@ -323,18 +330,15 @@ range 0–0.73 (not the unbounded scores from dask-based GRNBoost2). All inferre
 clearly labeled `Inferred:GRNBoost2` or `Inferred:GENIE3` and never mixed with curated
 edges without distinction.
 
-### Frontend panels
+### Frontend layout
 
-All current skills are exposed in the React frontend. The **Analysis** tab organizes them into
-grouped sections:
+The React frontend uses three primary areas:
 
-| Section | Panels |
+| Area | Sub-tabs / content |
 |---|---|
-| **Regulon & Upstream** | Regulon Extraction, Regulon Comparison, Upstream Regulators |
-| **Network Structure** | Network Patterns, Centrality Metrics, Module Detection, Motif Query |
-| **Inference & Comparison** | Inferred Edges, Differential Regulation |
-| **Export** | Edge Export (JSON/TSV with genomic context) |
-| **Workflows** | 7 multi-skill chained panels (see below) |
+| **Explore** | Network Explorer, Cross-species, Organism, Feedback, Paths, Orthology, Genome, TF Map |
+| **Design** | Intervention Designer, CloneLab, CRISPR vs dsRNA |
+| **Toolbox** | Flat searchable card grid — 24 analysis tools in 6 categories (Regulators, Phenotype, Evidence, Intervention, Workflow, Import/Export) |
 
 Cross-panel integration: extract a regulon → one click sends the gene set to upstream
 regulator analysis.
@@ -359,9 +363,9 @@ direct (SQLite) and HTTP (`--http URL`) modes.
 
 ### Complete skill inventory
 
-The repository currently contains **107 documented GRN Atlas skills**:
+The repository currently contains **116 documented GRN Atlas skills**:
 
-- **106 callable analysis/workflow skills**
+- **115 callable analysis/workflow skills**
 - **1 overview/router skill**: `grn-atlas-overview`
 
 The full live inventory, with every skill name and current description, is maintained in:
@@ -402,7 +406,7 @@ orchestration. The current repo status as of **Saturday, August 22, 2026** is:
 | **Direct skill harness** | 319 | 319 | 100% (319/319) | Local skill execution, argument handling, output validation against ground truth for the legacy 41-skill harness |
 | **HTTP skill harness** | 83 | 83 | 100% (83/83) | Same legacy 41-skill harness exercised through the REST API |
 | **Integration** | 49 | 49 | 100% (49/49) | Cross-skill consistency, boundary/adversarial, performance regression, idempotency |
-| **E2E (Playwright)** | 22 | 22 | 100% (22/22) | Browser tests: all views, 14 analysis panels, 4 workflow chains, URL state |
+| **E2E (Playwright)** | 22 | 22 | 100% (22/22) | Browser tests: Explore/Design/Toolbox views, analysis panels, workflow chains, URL state |
 | **Backend API pytest** | 165 | 165 | 100% (165/165) | API contracts, science helpers, and milestone 1-7 workflow endpoints including the newer researcher-facing skills |
 | **Frontend Vitest** | 9 | 9 | 100% (9/9) | Frontend component / utility regression coverage |
 | **Historical direct HTTP all-skill pass** | 90 | 90 | 100% (90/90) | One-by-one execution across the then-current Aug. 21, 2026 90-skill inventory via each skill's `scripts/run.py --http ...` surface |
@@ -412,7 +416,7 @@ orchestration. The current repo status as of **Saturday, August 22, 2026** is:
 | **Multi-skill orchestration (GPT-5.4 full rerun)** | 111 | 111 | 100% (111/111) | Latest full GPT-5.4 rerun on Saturday, August 22, 2026 across the current 111-question orchestration matrix |
 | **Multi-skill orchestration (Nemotron partial rerun)** | 40 | 37 | 92.5% (37/40) | Latest Saturday, August 22, 2026 paced partial rerun before provider/model exit; useful as a health check, not a full benchmark |
 
-All **107 documented skills** are documented in-repo. The older direct/HTTP harnesses still
+All **116 documented skills** are documented in-repo. The older direct/HTTP harnesses still
 cover the legacy 41-skill subset, while the current skill inventory, coverage audit, and LLM matrices
 cover the current expanded surface.
 

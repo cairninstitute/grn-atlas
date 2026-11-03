@@ -50,7 +50,7 @@ then-current 90 documented skills were executed individually through their own
 `scripts/run.py --http` surface. As of **Saturday, August 22, 2026**, the current broad
 LLM/coverage status is:
 
-- **115 documented skills** in the current inventory (**114 callable + 1 overview/router**)
+- **116 documented skills** in the current inventory (**115 callable + 1 overview/router**)
 - **386** natural-language single-skill cases covering the original **100-skill** matrix snapshot
   (the most recently added skills are covered by the direct skill harness and backend pytest,
   not yet folded into the single-skill routing matrix)

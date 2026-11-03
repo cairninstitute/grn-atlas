@@ -18,17 +18,13 @@ const GeneSetPanel = lazy(() => import('./components/GeneSetPanel'));
 const DsRnaPanel = lazy(() => import('./components/DsRnaPanel'));
 const OrganismView = lazy(() => import('./components/OrganismView'));
 const InterventionDesigner = lazy(() => import('./components/InterventionDesigner'));
-const AnalysisView = lazy(() => import('./components/AnalysisView'));
+const ToolboxView = lazy(() => import('./components/ToolboxView'));
 const PathwayView = lazy(() => import('./components/PathwayView'));
-const HomeWorkspace = lazy(() => import('./components/home/HomeWorkspace'));
-const DatasetWorkflow = lazy(() => import('./components/workflows/DatasetWorkflow'));
-const DecisionWorkflow = lazy(() => import('./components/workflows/DecisionWorkflow'));
-const GeneWorkflow = lazy(() => import('./components/workflows/GeneWorkflow'));
 const CrossSpeciesView = lazy(() => import('./components/CrossSpeciesView'));
-const DiseaseToPlantDemo = lazy(() => import('./components/DiseaseToPlantDemo'));
 const RegulatoryWeatherMap = lazy(() => import('./components/RegulatoryWeatherMap'));
 const FeedbackControlView = lazy(() => import('./components/FeedbackControlView'));
 const CloneLabWorkspace = lazy(() => import('./components/clonelab/CloneLabWorkspace'));
+const CrisprVsDsrnaPanel = lazy(() => import('./components/CrisprVsDsrnaPanel'));
 
 const SPECIES_TO_KINGDOM = {
   human: 'Animalia',
@@ -39,26 +35,31 @@ const SPECIES_TO_KINGDOM = {
   rice: 'Plantae',
 };
 
-const LEGACY_VIEW_IDS = new Set(['network', 'organism', 'pathways', 'comparison', 'genome', 'design', 'analysis', 'crossview', 'feedback', 'clonelab']);
-const ADVANCED_TABS = [
+const EXPLORE_TABS = [
   { id: 'network', label: 'Explorer', icon: '🔗' },
   { id: 'crossview', label: 'Cross-species', icon: '🌍' },
   { id: 'organism', label: 'Organism', icon: '🌐' },
   { id: 'feedback', label: 'Feedback', icon: '↻' },
-  { id: 'clonelab', label: 'CloneLab', icon: 'CL' },
   { id: 'pathways', label: 'Paths', icon: '🛤️' },
   { id: 'comparison', label: 'Orthology', icon: '⚖️' },
   { id: 'genome', label: 'Genome', icon: '🧬' },
-  { id: 'design', label: 'Design', icon: '✏️' },
-  { id: 'analysis', label: 'Lab', icon: '🔬' },
   { id: 'weathermap', label: 'TF Map', icon: '🗺️' },
 ];
+
+const DESIGN_TABS = [
+  { id: 'intervention', label: 'Intervention', icon: '✏️' },
+  { id: 'clonelab', label: 'CloneLab', icon: 'CL' },
+  { id: 'crispr-compare', label: 'CRISPR vs dsRNA', icon: '⚖️' },
+];
+
+const EXPLORE_VIEW_IDS = new Set(EXPLORE_TABS.map(t => t.id));
+const DESIGN_VIEW_IDS = new Set(DESIGN_TABS.map(t => t.id));
 
 function ExplorerInner() {
   const { dispatch } = useResearchSession();
   const [selectedGene, setSelectedGene] = useState(null);
-  const [viewMode, setViewMode] = useState('home');
-  const [advancedView, setAdvancedView] = useState('crossview');
+  const [viewMode, setViewMode] = useState('explore');
+  const [subView, setSubView] = useState('network');
   const [filters, setFilters] = useState({
     kingdom: [],
     species: [],
@@ -81,7 +82,6 @@ function ExplorerInner() {
   const [dsRnaTarget, setDsRnaTarget] = useState(null);
   const [dsRnaCompareTarget, setDsRnaCompareTarget] = useState(null);
   const [dsRnaSet, setDsRnaSet] = useState([]);
-  const [workflowDsRnaSeed, setWorkflowDsRnaSeed] = useState(null);
   const [collection, setCollection] = useState(null);
   const [chromeCollapsed, setChromeCollapsed] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
@@ -130,22 +130,24 @@ function ExplorerInner() {
   }, [dispatch]);
 
   const handlePrimaryModeChange = useCallback((mode) => {
-    setViewMode(mode === 'advanced' ? 'advanced' : mode);
+    setViewMode(mode);
+    if (mode === 'explore') setSubView('network');
+    else if (mode === 'design') setSubView('intervention');
   }, []);
 
   const handleNavigate = useCallback((target) => {
     if (!target) return;
-    if (target.startsWith('advanced:')) {
-      setAdvancedView(target.split(':')[1] || 'network');
-      setViewMode('advanced');
-      return;
+    if (EXPLORE_VIEW_IDS.has(target)) {
+      setSubView(target);
+      setViewMode('explore');
+    } else if (DESIGN_VIEW_IDS.has(target)) {
+      setSubView(target);
+      setViewMode('design');
+    } else if (target === 'toolbox') {
+      setViewMode('toolbox');
+    } else {
+      setViewMode(target);
     }
-    if (LEGACY_VIEW_IDS.has(target)) {
-      setAdvancedView(target);
-      setViewMode('advanced');
-      return;
-    }
-    setViewMode(target);
   }, []);
 
   const focusGeneByRecord = useCallback(async (geneLike) => {
@@ -211,9 +213,14 @@ function ExplorerInner() {
     const p = new URLSearchParams(window.location.search);
     const requestedView = p.get('view');
     if (requestedView) {
-      if (LEGACY_VIEW_IDS.has(requestedView)) {
-        setViewMode('advanced');
-        setAdvancedView(requestedView);
+      if (EXPLORE_VIEW_IDS.has(requestedView)) {
+        setViewMode('explore');
+        setSubView(requestedView);
+      } else if (DESIGN_VIEW_IDS.has(requestedView)) {
+        setViewMode('design');
+        setSubView(requestedView);
+      } else if (requestedView === 'toolbox') {
+        setViewMode('toolbox');
       } else {
         setViewMode(requestedView);
       }
@@ -232,7 +239,7 @@ function ExplorerInner() {
   useEffect(() => {
     const p = new URLSearchParams();
     if (selectedGene) p.set('gene', selectedGene.symbol);
-    p.set('view', viewMode === 'advanced' ? advancedView : viewMode);
+    p.set('view', viewMode === 'toolbox' ? 'toolbox' : subView);
     if (filters.species?.length) p.set('species', filters.species.join(','));
     p.set('reg', filters.regulationType.join(','));
     p.set('conf', String(filters.minConfidence));
@@ -240,7 +247,7 @@ function ExplorerInner() {
     p.set('dir', filters.direction);
     p.set('inferred', filters.includeInferred ? '1' : '0');
     window.history.replaceState(null, '', `?${p.toString()}`);
-  }, [selectedGene, viewMode, advancedView, filters]);
+  }, [selectedGene, viewMode, subView, filters]);
 
   useEffect(() => {
     const sessionSpecies = selectedGene?.species || filters?.species?.[0] || null;
@@ -273,13 +280,13 @@ function ExplorerInner() {
     } else if (action === 'path-from') {
       setPathwaySource(geneSymbol);
       setPathwayTarget(null);
-      setAdvancedView('pathways');
-      setViewMode('advanced');
+      setSubView('pathways');
+      setViewMode('explore');
     } else if (action === 'path-to') {
       setPathwaySource(null);
       setPathwayTarget(geneSymbol);
-      setAdvancedView('pathways');
-      setViewMode('advanced');
+      setSubView('pathways');
+      setViewMode('explore');
     }
   }, [handleGeneSearch]);
 
@@ -316,101 +323,68 @@ function ExplorerInner() {
     });
   }, []);
 
-  const handleWorkflowSessionSync = useCallback((payload) => {
-    dispatch({ type: 'SYNC_WORKFLOW', payload });
-  }, [dispatch]);
+  const renderEmptyState = () => (
+    <div className="empty-state">
+      <div className="empty-icon">🧬</div>
+      <h2>Gene Regulatory Network Atlas</h2>
+      <p>Search for a gene, or try an example:</p>
+      <div className="example-genes">
+        {[
+          { symbol: 'TP53', note: 'human tumor suppressor' },
+          { symbol: 'MYC', note: 'human oncogene' },
+          { symbol: 'LHY', note: 'Arabidopsis clock' },
+          { symbol: 'LFY', note: 'plant flowering' },
+        ].map((ex) => (
+          <button key={ex.symbol} className="example-gene-btn" onClick={() => handleGeneSearch(ex.symbol)}>
+            <strong>{ex.symbol}</strong>
+            <span>{ex.note}</span>
+          </button>
+        ))}
+      </div>
+      <div className="collections">
+        <div className="collections-label">Curated collections</div>
+        <div className="collection-btns">
+          {COLLECTIONS.map((col) => (
+            <button key={col.id} className="collection-btn" onClick={() => openCollection(col)} title={col.description}>
+              {col.name}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
-  const sharedWorkflowProps = {
-    selectedGene,
-    networkData,
-    filters,
-    onNavigate: handleNavigate,
-    onSpeciesChange: handleSpeciesChange,
-    onFocusGeneChange: focusGeneByRecord,
-    onOpenGeneSetAnalysis: () => setShowGeneSet(true),
-    onDsRnaSeedChange: setWorkflowDsRnaSeed,
-    onNetworkDepthChange: (depth) => setFilters((prev) => ({ ...prev, maxDepth: depth })),
-    onSessionSync: handleWorkflowSessionSync,
-    onOpenDsRna: (payload) => {
-      setDsRnaTarget(payload?.target || selectedGene);
-      setDsRnaCompareTarget(payload?.compareTarget || null);
-      setDsRnaSet(payload?.geneSet || analysisGeneIds);
-      setShowDsRna(true);
-    },
-  };
-
-  const renderAdvancedView = () => {
-    if (advancedView === 'analysis') {
-      return renderWithSuspense(
-        <AnalysisView
-          gene={selectedGene}
-          networkData={networkData}
-          filters={filters}
-          onNodeAction={handleNodeAction}
-          onDepthChange={(depth) => setFilters((prev) => ({ ...prev, maxDepth: depth }))}
-        />,
-        'Loading analysis lab…',
-      );
-    }
-    if (advancedView === 'genome') return renderWithSuspense(<GenomeComparisonView />, 'Loading genome view…');
-    if (advancedView === 'organism') {
+  const renderExploreView = () => {
+    if (subView === 'organism') {
       return renderWithSuspense(
         <OrganismView
           initialSpecies={filters?.species?.[0]}
           onSpeciesChange={handleSpeciesChange}
-          onSelectGene={(symbol) => { handleGeneSearch(symbol); setAdvancedView('network'); }}
+          onSelectGene={(symbol) => { handleGeneSearch(symbol); setSubView('network'); }}
         />,
         'Loading organism view…',
       );
     }
-    if (advancedView === 'feedback') {
+    if (subView === 'feedback') {
       return renderWithSuspense(
         <FeedbackControlView
           initialSpecies={filters?.species?.[0] || 'arabidopsis'}
           onSpeciesChange={handleSpeciesChange}
-          onSelectGene={(symbol) => { handleGeneSearch(symbol); setAdvancedView('network'); }}
+          onSelectGene={(symbol) => { handleGeneSearch(symbol); setSubView('network'); }}
         />,
         'Loading feedback architecture…',
       );
     }
-    if (advancedView === 'clonelab') {
-      return renderWithSuspense(<CloneLabWorkspace />, 'Loading CloneLab…');
+    if (subView === 'weathermap') {
+      return renderWithSuspense(<RegulatoryWeatherMap />, 'Loading regulatory map…');
+    }
+    if (subView === 'genome') {
+      return renderWithSuspense(<GenomeComparisonView />, 'Loading genome view…');
     }
 
-    if (!selectedGene) {
-      return (
-        <div className="empty-state">
-          <div className="empty-icon">🧬</div>
-          <h2>Gene Regulatory Network Atlas</h2>
-          <p>Search for a gene, or try an example:</p>
-          <div className="example-genes">
-            {[
-              { symbol: 'TP53', note: 'human tumor suppressor' },
-              { symbol: 'MYC', note: 'human oncogene' },
-              { symbol: 'LHY', note: 'Arabidopsis clock' },
-              { symbol: 'LFY', note: 'plant flowering' },
-            ].map((ex) => (
-              <button key={ex.symbol} className="example-gene-btn" onClick={() => handleGeneSearch(ex.symbol)}>
-                <strong>{ex.symbol}</strong>
-                <span>{ex.note}</span>
-              </button>
-            ))}
-          </div>
-          <div className="collections">
-            <div className="collections-label">Curated collections</div>
-            <div className="collection-btns">
-              {COLLECTIONS.map((col) => (
-                <button key={col.id} className="collection-btn" onClick={() => openCollection(col)} title={col.description}>
-                  {col.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      );
-    }
+    if (!selectedGene) return renderEmptyState();
 
-    if (advancedView === 'network') {
+    if (subView === 'network') {
       return renderWithSuspense(
         <>
           <NetworkVisualization
@@ -437,8 +411,7 @@ function ExplorerInner() {
         'Loading explorer…',
       );
     }
-
-    if (advancedView === 'pathways') {
+    if (subView === 'pathways') {
       return renderWithSuspense(
         <PathwayView
           gene={selectedGene}
@@ -451,37 +424,39 @@ function ExplorerInner() {
         'Loading path view…',
       );
     }
-
-    if (advancedView === 'crossview') {
+    if (subView === 'crossview') {
       return renderWithSuspense(
         <CrossSpeciesView selectedGene={selectedGene} onGeneSelect={(id) => focusGeneByRecord({ id })} filters={filters} />,
         'Loading cross-species view…',
       );
     }
-
-    if (advancedView === 'comparison') {
+    if (subView === 'comparison') {
       return renderWithSuspense(
         <ComparisonView gene={selectedGene} currentSpecies={filters.species[0]} />,
         'Loading orthology view…',
       );
     }
 
-    if (advancedView === 'design') {
-      return renderWithSuspense(
-        <InterventionDesigner gene={selectedGene} networkData={networkData} />,
-        'Loading design tools…',
-      );
-    }
-
-    if (advancedView === 'weathermap') {
-      return renderWithSuspense(
-        <RegulatoryWeatherMap />,
-        'Loading regulatory map…',
-      );
-    }
-
-    return <div className="empty-state">Unknown advanced view.</div>;
+    return renderEmptyState();
   };
+
+  const renderDesignView = () => {
+    if (subView === 'clonelab') {
+      return renderWithSuspense(<CloneLabWorkspace />, 'Loading CloneLab…');
+    }
+    if (subView === 'crispr-compare') {
+      return renderWithSuspense(
+        <CrisprVsDsrnaPanel currentGene={selectedGene} currentSpecies={filters?.species?.[0] || ''} />,
+        'Loading CRISPR comparison…',
+      );
+    }
+    return renderWithSuspense(
+      <InterventionDesigner gene={selectedGene} networkData={networkData} />,
+      'Loading intervention designer…',
+    );
+  };
+
+  const currentSubTabs = viewMode === 'explore' ? EXPLORE_TABS : viewMode === 'design' ? DESIGN_TABS : null;
 
   return (
     <div className="grn-explorer">
@@ -512,8 +487,8 @@ function ExplorerInner() {
           >
             {chromeCollapsed ? '▼' : '▲'}
           </button>
-          {viewMode === 'advanced' && (
-            <ViewTabs viewMode={advancedView} onViewChange={setAdvancedView} tabs={ADVANCED_TABS} />
+          {currentSubTabs && (
+            <ViewTabs viewMode={subView} onViewChange={setSubView} tabs={currentSubTabs} />
           )}
           <div className="tabs-actions">
             <button className="copy-link-btn" onClick={() => setShowArtifacts(true)} title="Open the current workflow artifacts">
@@ -525,9 +500,9 @@ function ExplorerInner() {
             <button
               className="copy-link-btn"
               onClick={() => {
-                setDsRnaTarget(workflowDsRnaSeed?.target || selectedGene || null);
-                setDsRnaCompareTarget(workflowDsRnaSeed?.compareTarget || null);
-                setDsRnaSet(workflowDsRnaSeed?.geneSet?.length ? workflowDsRnaSeed.geneSet : analysisGeneIds);
+                setDsRnaTarget(selectedGene || null);
+                setDsRnaCompareTarget(null);
+                setDsRnaSet(analysisGeneIds);
                 setShowDsRna(true);
               }}
               title="Design a dsRNA / predict RNAi silencing + off-targets"
@@ -573,23 +548,18 @@ function ExplorerInner() {
             </div>
           )}
 
-          {viewMode === 'home' && renderWithSuspense(<HomeWorkspace onSelectMode={handlePrimaryModeChange} />, 'Loading home…')}
-          {viewMode === 'gene' && renderWithSuspense(<GeneWorkflow {...sharedWorkflowProps} />, 'Loading gene workflow…')}
-          {viewMode === 'dataset' && renderWithSuspense(<DatasetWorkflow {...sharedWorkflowProps} />, 'Loading unified workflow…')}
-          {viewMode === 'phenotype' && renderWithSuspense(<DatasetWorkflow {...sharedWorkflowProps} />, 'Loading unified workflow…')}
-          {viewMode === 'decision' && renderWithSuspense(<DecisionWorkflow {...sharedWorkflowProps} />, 'Loading decision workflow…')}
-          {viewMode === 'demo' && renderWithSuspense(
-            <DiseaseToPlantDemo
-              onOpenDsRna={(seed) => {
-                setDsRnaTarget(seed?.target || null);
-                setDsRnaCompareTarget(null);
-                setShowDsRna(true);
-              }}
-              onGeneSelect={(id) => focusGeneByRecord({ id })}
+          {viewMode === 'explore' && renderExploreView()}
+          {viewMode === 'design' && renderDesignView()}
+          {viewMode === 'toolbox' && renderWithSuspense(
+            <ToolboxView
+              gene={selectedGene}
+              networkData={networkData}
+              filters={filters}
+              onNodeAction={handleNodeAction}
+              onDepthChange={(depth) => setFilters((prev) => ({ ...prev, maxDepth: depth }))}
             />,
-            'Loading demo…',
+            'Loading toolbox…',
           )}
-          {viewMode === 'advanced' && renderAdvancedView()}
         </div>
       </div>
 
