@@ -759,6 +759,55 @@ def build():
         );
         CREATE INDEX idx_cse_source ON cis_support_edges(source_id);
         CREATE INDEX idx_cse_target ON cis_support_edges(target_id);
+
+        CREATE TABLE protein_sequences (
+            gene_id       TEXT NOT NULL,
+            species       TEXT NOT NULL,
+            uniprot_acc   TEXT,
+            sequence      TEXT,
+            sequence_len  INTEGER,
+            fetch_status  TEXT NOT NULL DEFAULT 'pending',
+            fetched_at    TEXT,
+            PRIMARY KEY (gene_id, species)
+        );
+        CREATE INDEX idx_protseq_status ON protein_sequences(fetch_status);
+
+        CREATE TABLE promoter_dna_sequences (
+            gene_id       TEXT NOT NULL,
+            species       TEXT NOT NULL,
+            chromosome    TEXT,
+            start         INTEGER,
+            end           INTEGER,
+            strand        INTEGER,
+            sequence      TEXT,
+            sequence_len  INTEGER,
+            source        TEXT NOT NULL DEFAULT 'ensembl_rest',
+            fetch_status  TEXT NOT NULL DEFAULT 'pending',
+            fetched_at    TEXT,
+            PRIMARY KEY (gene_id, species)
+        );
+        CREATE INDEX idx_dnaseq_status ON promoter_dna_sequences(fetch_status);
+
+        CREATE TABLE structural_binding_predictions (
+            species           TEXT NOT NULL,
+            source_id         TEXT NOT NULL,
+            target_id         TEXT NOT NULL,
+            relation_type     TEXT NOT NULL,
+            confidence_score  REAL,
+            binding_class     TEXT NOT NULL,
+            protein_length    INTEGER,
+            dna_length        INTEGER,
+            recycling_steps   INTEGER DEFAULT 3,
+            sampling_steps    INTEGER DEFAULT 50,
+            diffusion_samples INTEGER DEFAULT 1,
+            raw_output        TEXT,
+            error_message     TEXT,
+            predicted_at      TEXT NOT NULL,
+            model_version     TEXT DEFAULT 'boltz2-nim-v1',
+            PRIMARY KEY (species, source_id, target_id, relation_type)
+        );
+        CREATE INDEX idx_sbp_species_class ON structural_binding_predictions(species, binding_class);
+        CREATE INDEX idx_sbp_confidence ON structural_binding_predictions(confidence_score DESC);
     """)
     ensure_schema(conn)
 
