@@ -1,0 +1,405 @@
+{
+  "model": "AlphaFold DB (pre-computed structures)",
+  "tasks": {
+    "tf_vs_nontf_arabidopsis": {
+      "task": "tf_vs_nontf_arabidopsis",
+      "best_C": 1.0,
+      "best_cv_auc": 0.8824,
+      "probe_results": {
+        "0.01": {
+          "cv_auc_mean": 0.5,
+          "cv_auc_std": 0.0
+        },
+        "0.1": {
+          "cv_auc_mean": 0.5444,
+          "cv_auc_std": 0.0889
+        },
+        "1.0": {
+          "cv_auc_mean": 0.8824,
+          "cv_auc_std": 0.119
+        },
+        "10.0": {
+          "cv_auc_mean": 0.7972,
+          "cv_auc_std": 0.1152
+        }
+      },
+      "n_tf": 14,
+      "n_nontf": 43,
+      "features_used": [
+        "global_plddt",
+        "frac_very_high",
+        "frac_confident",
+        "frac_low",
+        "frac_very_low",
+        "seq_length",
+        "plddt_std",
+        "frac_disordered",
+        "frac_core"
+      ],
+      "stats": {
+        "tf_mean_plddt": 63.6,
+        "nontf_mean_plddt": 76.4,
+        "tf_mean_core_frac": 0.0,
+        "nontf_mean_core_frac": 0.0,
+        "tf_mean_length": 370.0,
+        "nontf_mean_length": 399.0
+      }
+    },
+    "tf_vs_nontf_human": {
+      "task": "tf_vs_nontf_human",
+      "best_C": 10.0,
+      "best_cv_auc": 0.8473,
+      "probe_results": {
+        "0.01": {
+          "cv_auc_mean": 0.5,
+          "cv_auc_std": 0.0
+        },
+        "0.1": {
+          "cv_auc_mean": 0.7631,
+          "cv_auc_std": 0.113
+        },
+        "1.0": {
+          "cv_auc_mean": 0.8278,
+          "cv_auc_std": 0.1036
+        },
+        "10.0": {
+          "cv_auc_mean": 0.8473,
+          "cv_auc_std": 0.0913
+        }
+      },
+      "n_tf": 49,
+      "n_nontf": 48,
+      "features_used": [
+        "global_plddt",
+        "frac_very_high",
+        "frac_confident",
+        "frac_low",
+        "frac_very_low",
+        "seq_length",
+        "plddt_std",
+        "frac_disordered",
+        "frac_core"
+      ],
+      "stats": {
+        "tf_mean_plddt": 63.1,
+        "nontf_mean_plddt": 75.4,
+        "tf_mean_core_frac": 0.0,
+        "nontf_mean_core_frac": 0.0,
+        "tf_mean_length": 779.0,
+        "nontf_mean_length": 457.0
+      }
+    },
+    "tf_vs_nontf_mouse": {
+      "task": "tf_vs_nontf_mouse",
+      "best_C": 0.1,
+      "best_cv_auc": 0.7837,
+      "probe_results": {
+        "0.01": {
+          "cv_auc_mean": 0.5,
+          "cv_auc_std": 0.0
+        },
+        "0.1": {
+          "cv_auc_mean": 0.7837,
+          "cv_auc_std": 0.091
+        },
+        "1.0": {
+          "cv_auc_mean": 0.7595,
+          "cv_auc_std": 0.1017
+        },
+        "10.0": {
+          "cv_auc_mean": 0.7351,
+          "cv_auc_std": 0.1047
+        }
+      },
+      "n_tf": 49,
+      "n_nontf": 38,
+      "features_used": [
+        "global_plddt",
+        "frac_very_high",
+        "frac_confident",
+        "frac_low",
+        "frac_very_low",
+        "seq_length",
+        "plddt_std",
+        "frac_disordered",
+        "frac_core"
+      ],
+      "stats": {
+        "tf_mean_plddt": 62.9,
+        "nontf_mean_plddt": 76.1,
+        "tf_mean_core_frac": 0.0,
+        "nontf_mean_core_frac": 0.0,
+        "tf_mean_length": 564.0,
+        "nontf_mean_length": 479.0
+      }
+    },
+    "tf_family_structure": {
+      "species": "arabidopsis",
+      "families": {
+        "WRKY": {
+          "n": 15,
+          "mean_plddt": 66.7,
+          "mean_core": 0.0
+        },
+        "MYB": {
+          "n": 15,
+          "mean_plddt": 63.4,
+          "mean_core": 0.0
+        },
+        "bHLH": {
+          "n": 3,
+          "mean_plddt": 65.6,
+          "mean_core": 0.0
+        },
+        "ERF": {
+          "n": 15,
+          "mean_plddt": 66.7,
+          "mean_core": 0.0
+        },
+        "NAC": {
+          "n": 14,
+          "mean_plddt": 63.5,
+          "mean_core": 0.0
+        },
+        "bZIP": {
+          "n": 11,
+          "mean_plddt": 66.8,
+          "mean_core": 0.0
+        }
+      },
+      "pairwise_results": {
+        "WRKY_vs_MYB": {
+          "task": "WRKY_vs_MYB",
+          "best_C": 1.0,
+          "best_cv_auc": 0.7778,
+          "probe_results": {
+            "0.01": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "0.1": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "1.0": {
+              "cv_auc_mean": 0.7778,
+              "cv_auc_std": 0.1217
+            },
+            "10.0": {
+              "cv_auc_mean": 0.7333,
+              "cv_auc_std": 0.1507
+            }
+          }
+        },
+        "WRKY_vs_ERF": {
+          "task": "WRKY_vs_ERF",
+          "best_C": 1.0,
+          "best_cv_auc": 0.8889,
+          "probe_results": {
+            "0.01": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "0.1": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "1.0": {
+              "cv_auc_mean": 0.8889,
+              "cv_auc_std": 0.1405
+            },
+            "10.0": {
+              "cv_auc_mean": 0.8889,
+              "cv_auc_std": 0.1405
+            }
+          }
+        },
+        "WRKY_vs_NAC": {
+          "task": "WRKY_vs_NAC",
+          "best_C": 10.0,
+          "best_cv_auc": 0.8889,
+          "probe_results": {
+            "0.01": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "0.1": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "1.0": {
+              "cv_auc_mean": 0.8667,
+              "cv_auc_std": 0.1296
+            },
+            "10.0": {
+              "cv_auc_mean": 0.8889,
+              "cv_auc_std": 0.1405
+            }
+          }
+        },
+        "WRKY_vs_bZIP": {
+          "task": "WRKY_vs_bZIP",
+          "best_C": 10.0,
+          "best_cv_auc": 0.6333,
+          "probe_results": {
+            "0.01": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "0.1": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "1.0": {
+              "cv_auc_mean": 0.1111,
+              "cv_auc_std": 0.1405
+            },
+            "10.0": {
+              "cv_auc_mean": 0.6333,
+              "cv_auc_std": 0.2211
+            }
+          }
+        },
+        "MYB_vs_ERF": {
+          "task": "MYB_vs_ERF",
+          "best_C": 1.0,
+          "best_cv_auc": 0.9333,
+          "probe_results": {
+            "0.01": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "0.1": {
+              "cv_auc_mean": 0.8333,
+              "cv_auc_std": 0.2108
+            },
+            "1.0": {
+              "cv_auc_mean": 0.9333,
+              "cv_auc_std": 0.1333
+            },
+            "10.0": {
+              "cv_auc_mean": 0.9333,
+              "cv_auc_std": 0.1333
+            }
+          }
+        },
+        "MYB_vs_NAC": {
+          "task": "MYB_vs_NAC",
+          "best_C": 10.0,
+          "best_cv_auc": 0.9,
+          "probe_results": {
+            "0.01": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "0.1": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "1.0": {
+              "cv_auc_mean": 0.8778,
+              "cv_auc_std": 0.1018
+            },
+            "10.0": {
+              "cv_auc_mean": 0.9,
+              "cv_auc_std": 0.0889
+            }
+          }
+        },
+        "MYB_vs_bZIP": {
+          "task": "MYB_vs_bZIP",
+          "best_C": 10.0,
+          "best_cv_auc": 0.8333,
+          "probe_results": {
+            "0.01": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "0.1": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "1.0": {
+              "cv_auc_mean": 0.6889,
+              "cv_auc_std": 0.1879
+            },
+            "10.0": {
+              "cv_auc_mean": 0.8333,
+              "cv_auc_std": 0.1491
+            }
+          }
+        },
+        "ERF_vs_NAC": {
+          "task": "ERF_vs_NAC",
+          "best_C": 10.0,
+          "best_cv_auc": 1.0,
+          "probe_results": {
+            "0.01": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "0.1": {
+              "cv_auc_mean": 0.6333,
+              "cv_auc_std": 0.1944
+            },
+            "1.0": {
+              "cv_auc_mean": 0.9333,
+              "cv_auc_std": 0.1333
+            },
+            "10.0": {
+              "cv_auc_mean": 1.0,
+              "cv_auc_std": 0.0
+            }
+          }
+        },
+        "ERF_vs_bZIP": {
+          "task": "ERF_vs_bZIP",
+          "best_C": 10.0,
+          "best_cv_auc": 0.9667,
+          "probe_results": {
+            "0.01": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "0.1": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "1.0": {
+              "cv_auc_mean": 0.9333,
+              "cv_auc_std": 0.1333
+            },
+            "10.0": {
+              "cv_auc_mean": 0.9667,
+              "cv_auc_std": 0.0667
+            }
+          }
+        },
+        "NAC_vs_bZIP": {
+          "task": "NAC_vs_bZIP",
+          "best_C": 1.0,
+          "best_cv_auc": 0.9667,
+          "probe_results": {
+            "0.01": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "0.1": {
+              "cv_auc_mean": 0.5,
+              "cv_auc_std": 0.0
+            },
+            "1.0": {
+              "cv_auc_mean": 0.9667,
+              "cv_auc_std": 0.0667
+            },
+            "10.0": {
+              "cv_auc_mean": 0.9,
+              "cv_auc_std": 0.1333
+            }
+          }
+        }
+      }
+    }
+  },
+  "timestamp": "2026-10-31T03:33:19"
+}

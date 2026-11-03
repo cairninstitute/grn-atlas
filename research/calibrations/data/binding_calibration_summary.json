@@ -1,0 +1,512 @@
+{
+  "calibration_date": "2026-10-27",
+  "purpose": "Evaluate deep learning approaches for predicting TF-DNA binding plausibility",
+  "species_tested": "arabidopsis (Boltz-2/MSA/JASPAR/deepTFBS/AgroNT), human (DeepBind/Enformer/Borzoi)",
+  "approaches": {
+    "boltz2_200bp": {
+      "model": "Boltz-2 NIM",
+      "dna_window": 200,
+      "positive_controls": {
+        "n": 20,
+        "mean": 0.332,
+        "min": 0.285,
+        "max": 0.442
+      },
+      "negative_controls": {
+        "n": 20,
+        "mean": 0.332,
+        "min": 0.276,
+        "max": 0.372
+      },
+      "mean_separation": -0.0003,
+      "verdict": "No signal \u2014 scores cluster 0.28-0.44 regardless of true binding"
+    },
+    "boltz2_500bp": {
+      "model": "Boltz-2 NIM",
+      "dna_window": 500,
+      "positive_controls": {
+        "n": 19,
+        "mean": 0.3297,
+        "min": 0.285,
+        "max": 0.4418
+      },
+      "negative_controls": {
+        "n": 20,
+        "mean": 0.3464,
+        "min": 0.3276,
+        "max": 0.3718
+      },
+      "mean_separation": -0.0167,
+      "verdict": "No signal \u2014 random pairs score slightly higher than known bindings"
+    },
+    "msa_boltz2": {
+      "model": "MSA-assisted Boltz-2 (ColabFold MSA-Search + Boltz-2 NIM)",
+      "dna_window": 200,
+      "msa_stats": {
+        "total_tfs": 14,
+        "with_msa": 0,
+        "without_msa": 14
+      },
+      "positive_controls": {
+        "n": 19,
+        "mean": 0.3302,
+        "min": 0.2826,
+        "max": 0.4383
+      },
+      "negative_controls": {
+        "n": 16,
+        "mean": 0.3552,
+        "min": 0.3401,
+        "max": 0.3904
+      },
+      "mean_separation": -0.025,
+      "verdict": "No signal \u2014 ColabFold has zero plant protein MSA coverage; scores identical to plain Boltz-2"
+    },
+    "enformer": {
+      "model": "Enformer (DeepMind, via TF Hub, GPU RTX 5070 Ti)",
+      "tf_coverage": "753 TFs with 1993 ChIP-seq tracks (human only)",
+      "input_length": 393216,
+      "pilot_n20": {
+        "note": "Initial pilot with duplicate-target bug \u2014 superseded by large-scale validation",
+        "positive_controls": {
+          "n": 20,
+          "mean": 5.3416
+        },
+        "negative_controls": {
+          "n": 20,
+          "mean": 2.7336
+        },
+        "mean_separation": 2.608,
+        "caveats": [
+          "Negative controls had duplicate targets (TBXAS1/HSD11B2 reused)"
+        ]
+      },
+      "large_scale_validation": {
+        "date": "2026-10-25",
+        "n_requested": {
+          "positives": 50,
+          "negatives": 50
+        },
+        "n_scored": {
+          "positives": 40,
+          "negatives": 33
+        },
+        "n_failed_dna_fetch": 27,
+        "unique_targets": true,
+        "overall_auc": 0.5182,
+        "positive_controls": {
+          "n": 40,
+          "mean": 3.203,
+          "std": 3.146,
+          "median": 2.044
+        },
+        "negative_controls": {
+          "n": 33,
+          "mean": 2.366,
+          "std": 1.518,
+          "median": 2.046
+        },
+        "mean_separation": 0.837,
+        "top_tfs": {
+          "STAT3": {
+            "separation": 3.702,
+            "n": "1+1"
+          },
+          "RELB": {
+            "separation": 1.946,
+            "auc": 0.833,
+            "n": "2+3"
+          },
+          "SP1": {
+            "separation": 0.744,
+            "auc": 0.667,
+            "n": "3+2"
+          }
+        },
+        "reversed_tfs": {
+          "ATF7": {
+            "separation": -5.99,
+            "n": "1+1"
+          },
+          "MTA1": {
+            "separation": -1.978,
+            "n": "1+1"
+          },
+          "TCF7": {
+            "separation": -1.393,
+            "n": "1+1"
+          }
+        },
+        "verdict": "Weak overall signal (AUC=0.518) \u2014 far weaker than the n=20 pilot suggested (+2.61 shrinks to +0.84). Signal is TF-specific and noisy with most TFs having only 1+1 edges. Not reliable as a global binding discriminator."
+      },
+      "caveats": [
+        "Human-only \u2014 no plant TF ChIP tracks in Enformer",
+        "27% of edges failed DNA sequence fetch (Ensembl REST errors)",
+        "Most TFs have only 1 positive + 1 negative \u2014 insufficient for per-TF AUC",
+        "Pilot n=20 AUC was inflated by duplicate-target bug and small sample"
+      ]
+    },
+    "evo2": {
+      "model": "Evo2-40B (NVIDIA NIM forward pass)",
+      "species": "arabidopsis",
+      "dna_window": 200,
+      "positive_controls": {
+        "n": 20,
+        "mean": 0.5461,
+        "min": 0.4727,
+        "max": 0.6545,
+        "median": 0.5386
+      },
+      "negative_controls": {
+        "n": 20,
+        "mean": 0.5807,
+        "min": 0.4707,
+        "max": 1.0665,
+        "median": 0.5506
+      },
+      "mean_separation": -0.0346,
+      "verdict": "No signal \u2014 mean logit scores indistinguishable between positive and negative controls"
+    },
+    "evo2_sae": {
+      "model": "Evo2-7B + Goodfire SAE (layer 26, BatchTopK sparse autoencoder)",
+      "dna_window": 200,
+      "sae_features": 32768,
+      "sae_topk": 64,
+      "binding_verdict": "No signal for TF-DNA binding specificity",
+      "large_scale_validation": {
+        "date": "2026-10-24",
+        "total_sequences": 1500,
+        "species": [
+          "arabidopsis",
+          "human",
+          "mouse",
+          "rice",
+          "potato"
+        ],
+        "per_species_region_classification": {
+          "arabidopsis": {
+            "promoter_vs_coding": {
+              "n": "100+100",
+              "auc": 0.889,
+              "best_C": 0.1,
+              "verdict": "STRONG"
+            },
+            "promoter_vs_intergenic": {
+              "n": "100+100",
+              "auc": 0.802,
+              "best_C": 0.1,
+              "verdict": "STRONG"
+            }
+          },
+          "potato": {
+            "promoter_vs_coding": {
+              "n": "100+100",
+              "auc": 0.763,
+              "best_C": 1.0,
+              "verdict": "STRONG"
+            },
+            "promoter_vs_intergenic": {
+              "n": "100+100",
+              "auc": 0.707,
+              "best_C": 0.1,
+              "verdict": "MODERATE"
+            }
+          },
+          "rice": {
+            "promoter_vs_coding": {
+              "n": "100+100",
+              "auc": 0.636,
+              "best_C": 0.1,
+              "verdict": "WEAK"
+            },
+            "promoter_vs_intergenic": {
+              "n": "100+100",
+              "auc": 0.616,
+              "best_C": 1.0,
+              "verdict": "WEAK"
+            }
+          },
+          "human": {
+            "promoter_vs_coding": {
+              "n": "100+100",
+              "auc": 0.545,
+              "best_C": 10.0,
+              "verdict": "NONE"
+            },
+            "promoter_vs_intergenic": {
+              "n": "100+100",
+              "auc": 0.668,
+              "best_C": 0.1,
+              "verdict": "MODERATE"
+            }
+          },
+          "mouse": {
+            "promoter_vs_coding": {
+              "n": "100+100",
+              "auc": 0.5,
+              "best_C": null,
+              "verdict": "NONE"
+            },
+            "promoter_vs_intergenic": {
+              "n": "100+100",
+              "auc": 0.528,
+              "best_C": 0.1,
+              "verdict": "NONE"
+            }
+          },
+          "gradient": "Dicots (0.889/0.802, 0.763/0.707) > Monocots (0.636/0.616) > Mammals (0.545/0.500, 0.528/0.500)"
+        },
+        "cross_species_discrimination": {
+          "all_plant_vs_animal_pairs": {
+            "n": "50+50",
+            "auc": 1.0,
+            "note": "6 pairs, all perfect"
+          },
+          "dicot_vs_monocot": {
+            "n": "50+50",
+            "auc": 1.0,
+            "note": "arabidopsis/rice, rice/potato"
+          },
+          "dicot_vs_dicot": {
+            "n": "50+50",
+            "auc": 0.906,
+            "note": "arabidopsis/potato"
+          },
+          "mammal_vs_mammal": {
+            "n": "50+50",
+            "auc": 0.774,
+            "note": "human/mouse"
+          },
+          "conclusion": "Discrimination scales with phylogenetic distance"
+        },
+        "activator_vs_repressor": {
+          "arabidopsis": {
+            "n": "50+50",
+            "auc": 0.506,
+            "verdict": "NONE"
+          },
+          "human": {
+            "n": "50+50",
+            "auc": 0.57,
+            "verdict": "NONE (noise)"
+          },
+          "mouse": {
+            "verdict": "SKIPPED \u2014 insufficient data (2+2)"
+          },
+          "conclusion": "Definitively no regulatory sign signal in promoter sequence"
+        },
+        "small_sample_inflation": {
+          "promoter_vs_coding_n20": 1.0,
+          "promoter_vs_coding_n100": 0.889,
+          "features_large_d_n20": 6203,
+          "features_large_d_n100": 11,
+          "note": "n=20 inflated AUC and effect sizes dramatically; n=100 is authoritative"
+        }
+      },
+      "small_scale_diagnostics": {
+        "note": "Initial results at n=20 per class \u2014 superseded by large-scale validation above",
+        "promoter_vs_coding_n20": {
+          "auc": 1.0,
+          "features_large_d": 6203
+        },
+        "species_discrimination_n20": {
+          "auc": 1.0,
+          "features_large_d": 6055
+        },
+        "gc_content_correlation": {
+          "features_r_above_0.3": 230,
+          "max_abs_r": 0.603
+        },
+        "dap_binding_vs_intergenic_n20": {
+          "auc": 0.5,
+          "features_large_d": 5
+        },
+        "promoter_vs_intergenic_n20": {
+          "auc": 0.675,
+          "features_large_d": 22
+        }
+      },
+      "key_finding": "The SAE is a phylogenomic composition encoder. Region discrimination follows a dicot > monocot > mammal gradient (arabidopsis AUC=0.889, potato 0.763, rice 0.636, human 0.545, mouse 0.500). Cross-species discrimination scales with evolutionary distance (all cross-kingdom=1.0, within-dicot=0.906, within-mammal=0.774). Zero encoding of regulatory function (activator/repressor AUC=0.506 at n=50+50). The Goodfire SAE learned plant genomic structure preferentially.",
+      "caveats": [
+        "SAE was trained on mixed genomic data \u2014 encodes general genomic features, not regulatory specificity",
+        "Region discrimination is plant-biased: strong for dicots, weak-to-absent for mammals",
+        "C-sweep is critical: C\u22640.01 zeros all coefficients in 32K-feature space; C=0.1 optimal for n=200",
+        "Small samples (n=20) inflate AUC and Cohen's d dramatically \u2014 always use n\u2265100",
+        "Activator/repressor result confirms regulatory sign depends on TF-DNA interaction context, not promoter sequence alone",
+        "DAP-seq binding sites have same SAE signature as random intergenic \u2014 the SAE does not see motifs"
+      ]
+    },
+    "boltz2_large_scale": {
+      "model": "Boltz-2 (NVIDIA NIM)",
+      "date": "2026-10-25",
+      "dna_window": 200,
+      "species_results": {
+        "arabidopsis": {
+          "n_scored": {
+            "positives": 40,
+            "negatives": 38
+          },
+          "overall_auc": 0.4204,
+          "mean_separation": -0.0166,
+          "verdict": "No signal \u2014 AUC below chance"
+        },
+        "human": {
+          "n_scored": {
+            "positives": 50,
+            "negatives": 45
+          },
+          "overall_auc": 0.52,
+          "mean_separation": 0.002,
+          "verdict": "No signal \u2014 indistinguishable from chance"
+        }
+      },
+      "verdict": "Definitively no binding signal across two species (n=50+50 each). Confirms n=20 pilot findings at scale."
+    },
+    "jaspar_calibration": {
+      "model": "JASPAR 2024 motif scanning",
+      "date": "2026-10-25",
+      "method": "Best motif hit -log10(p_value) in target promoter; positive=measured interactions, negative=random genes",
+      "species_results": {
+        "arabidopsis": {
+          "assembly": "TAIR10",
+          "tfs_tested": 55,
+          "total_pairs": {
+            "positives": 1397,
+            "negatives": 1397
+          },
+          "overall_pos_hit_rate": 0.594,
+          "overall_neg_hit_rate": 0.002,
+          "overall_auc": 0.7953,
+          "mean_per_tf_auc": 0.7963,
+          "verdict": "STRONG \u2014 motif presence is highly discriminative; 59% hit rate in real targets vs 0.2% in random"
+        },
+        "petunia": {
+          "assembly": "Peaxi162v1.6.2",
+          "tfs_tested": 141,
+          "total_pairs": {
+            "positives": 2803,
+            "negatives": 2803
+          },
+          "overall_auc": 0.7153,
+          "verdict": "STRONG \u2014 cross-species motif scanning works well"
+        },
+        "tomato": {
+          "assembly": "SL4.0",
+          "tfs_tested": 81,
+          "total_pairs": {
+            "positives": 1593,
+            "negatives": 1593
+          },
+          "overall_pos_hit_rate": 0.0,
+          "overall_neg_hit_rate": 0.0,
+          "overall_auc": 0.5,
+          "verdict": "No hits in DB \u2014 motif scanning table may be incomplete for SL4.0"
+        }
+      },
+      "verdict": "JASPAR is the best binding discriminator for plant species. Arabidopsis AUC=0.795 with dramatic hit rate separation (59.4% vs 0.2%). Petunia AUC=0.715. Tomato motif_hits table appears empty."
+    },
+    "deepbind": {
+      "model": "DeepBind (Kipoi)",
+      "tf_coverage": "515 human + 165 mouse SELEX-trained models",
+      "verdict": "Dead end \u2014 model files on sandbox.zenodo.org return 404",
+      "note": "Model weights no longer downloadable"
+    },
+    "evo2_linear_probe": {
+      "model": "Evo2-40B layer-26 mean-pooled hidden states + L1 logistic regression",
+      "species": "arabidopsis",
+      "dna_window": 200,
+      "d_model": 8192,
+      "positive_controls": {
+        "n": 152,
+        "source": "direct_signed edges from AGRIS AtRegNet"
+      },
+      "negative_controls": {
+        "n": 250,
+        "source": "random TF-gene pairs excluding all known edges"
+      },
+      "c_sweep": [
+        {
+          "C": 0.001,
+          "auc": 0.5,
+          "accuracy": 0.422
+        },
+        {
+          "C": 0.01,
+          "auc": 0.5,
+          "accuracy": 0.4
+        },
+        {
+          "C": 0.1,
+          "auc": 0.45,
+          "accuracy": 0.44
+        },
+        {
+          "C": 1.0,
+          "auc": 0.442,
+          "accuracy": 0.468
+        },
+        {
+          "C": 10.0,
+          "auc": 0.441,
+          "accuracy": 0.47
+        }
+      ],
+      "verdict": "NO SIGNAL \u2014 AUC=0.50 across all regularization strengths. At strong regularization (C\u22640.01) all coefficients are exactly zero; at weak regularization (C\u22650.1) the probe overfits to noise (AUC<0.50). Zero of 8192 features carry binding-discriminative information.",
+      "caveats": [
+        "152 positive controls (37% of direct_signed edges skipped due to missing promoter DNA)",
+        "250 negative controls with near-100% DNA availability",
+        "Mean-pooling across 200bp sequence positions may lose positional binding signal",
+        "Only tested layer 26; other layers untested but unlikely to differ given SAE results"
+      ]
+    },
+    "borzoi": {
+      "model": "Borzoi (borzoi-pytorch replicate-0)",
+      "species": "human",
+      "input_window": 524288,
+      "n_positive": 50,
+      "n_negative": 50,
+      "overall_auc": 0.5092,
+      "mean_positive": 1.8812,
+      "mean_negative": 2.0494,
+      "n_tf_tracks": 685,
+      "approach": "ChIP-seq track signal at TSS center bins (\u00b11 bin around center_bin=3072)",
+      "verdict": "Chance level (AUC=0.509) \u2014 no improvement over Enformer despite 524K bp context"
+    },
+    "deeptfbs": {
+      "model": "deepTFBS (per-TF fine-tuned CNN+BiLSTM+Attention)",
+      "species": "arabidopsis",
+      "input_window": 1000,
+      "n_positive": 50,
+      "n_negative": 50,
+      "n_tf_models": 512,
+      "overall_auc": 0.3584,
+      "mean_positive": 0.3478,
+      "mean_negative": 0.4631,
+      "approach": "Per-TF transfer-learned model from DAP-seq, single sigmoid binding probability",
+      "verdict": "Below chance (AUC=0.358) \u2014 anti-discriminates. DAP-seq in vitro training doesn't predict in vivo regulatory edges"
+    },
+    "agront": {
+      "model": "AgroNT-1B (agro-nucleotide-transformer-1b)",
+      "species": "arabidopsis",
+      "input_window": 1000,
+      "n_positive": 50,
+      "n_negative": 50,
+      "embedding_dim": 1500,
+      "best_cv_auc": 0.594,
+      "best_C": 10.0,
+      "train_auc_at_best_C": 0.9986,
+      "approach": "L1 logistic probe on mean-pooled last-hidden-state embeddings",
+      "verdict": "Weak signal (CV-AUC=0.594) with massive overfitting (train=0.999). Not generalizable"
+    },
+    "jaspar_bpnet": {
+      "model": "JASPAR 2026 BPNet (deep learning collection)",
+      "verdict": "Not testable \u2014 CWMs (contribution weight matrices) not runnable neural networks. REST API returns 0 results for collection=deep_learning"
+    },
+    "plantcaduceus": {
+      "model": "PlantCaduceus (kuleshov-group/PlantCaduceus_l24, 40M params)",
+      "verdict": "Abandoned \u2014 requires mamba_ssm which cannot compile on CUDA 13.0/compute 12.0"
+    }
+  },
+  "conclusion": "Large-scale validation (n=50+50 per condition, multiple species) substantially revised the initial n=20 findings. JASPAR motif scanning is the strongest binding discriminator (arabidopsis AUC=0.795, petunia 0.715). Enformer shows only weak overall signal at scale (AUC=0.518, down from pilot's 0.608 which had duplicate-target bug) \u2014 signal is real but TF-specific and noisy. Boltz-2 confirmed uninformative across both arabidopsis (AUC=0.420) and human (AUC=0.520). Evo2 (all variants: raw logits, SAE, linear probe) uninformative for binding. The Evo2 SAE is a phylogenomic composition encoder with dicot > monocot > mammal gradient. DeepBind inaccessible.",
+  "recommendation": "For TF-DNA binding prediction: (1) JASPAR motif scanning is the primary tool for plant species \u2014 fast, database-driven, AUC=0.795. (2) Enformer provides weak supplementary signal for human TFs with strong ChIP-seq coverage, but should not be used as a global discriminator. (3) Boltz-2 and Evo2 approaches should not be used for binding prediction. The Evo2 SAE remains useful as a plant DNA region quality filter (arabidopsis AUC=0.889 for promoter vs coding). Regulatory sign cannot be predicted from promoter sequence alone \u2014 requires perturbation data."
+}

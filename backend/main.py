@@ -7565,6 +7565,94 @@ async def regulatory_map():
     }
 
 
+@app.get("/api/v1/structural-binding/stats")
+async def structural_binding_stats():
+    """Summary statistics for structural binding predictions."""
+    rows = db.conn.execute("""
+        SELECT species, binding_class, COUNT(*) as count,
+               AVG(confidence_score) as avg_confidence
+        FROM structural_binding_predictions
+        GROUP BY species, binding_class
+        ORDER BY species, binding_class
+    """).fetchall()
+    if not rows:
+        return {"stats": {}, "message": "No predictions yet. Run predict_structural_binding.py first."}
+    stats: dict = {}
+    for sp, bc, cnt, avg_conf in rows:
+        if sp not in stats:
+            stats[sp] = {}
+        stats[sp][bc] = {"count": cnt, "avg_confidence": round(avg_conf, 4) if avg_conf else None}
+    return {"stats": stats}
+
+
+@app.get("/api/v1/structural-binding/{species}/{source_id}/{target_id}")
+async def structural_binding_lookup(species: str, source_id: str, target_id: str):
+    """Retrieve a specific structural binding prediction."""
+    species = _normalize_species_input(species)
+    row = db.conn.execute("""
+        SELECT * FROM structural_binding_predictions
+        WHERE species = ? AND source_id = ? AND target_id = ?
+    """, (species, source_id, target_id)).fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="No structural binding prediction for this edge")
+    cols = [d[0] for d in db.conn.execute(
+        "SELECT * FROM structural_binding_predictions LIMIT 0").description]
+    result = dict(zip(cols, row))
+    src = db.get_gene(source_id)
+    tgt = db.get_gene(target_id)
+    if src:
+        result["source_symbol"] = src.symbol
+    if tgt:
+        result["target_symbol"] = tgt.symbol
+    result["interpretation_boundary"] = (
+        "Structural binding confidence is a computational prediction from Boltz-2, "
+        "not an experimental measurement. Use for prioritization, not as definitive evidence."
+    )
+    return result
+
+
+@app.get("/api/v1/structural-binding/{species}")
+async def structural_binding_list(
+    species: str,
+    binding_class: Optional[str] = Query(None),
+    min_confidence: float = Query(0.0, ge=0.0, le=1.0),
+    limit: int = Query(50, ge=1, le=500),
+):
+    """List structural binding predictions for a species."""
+    species = _normalize_species_input(species)
+    clauses = ["species = ?"]
+    params: list = [species]
+    if binding_class:
+        clauses.append("binding_class = ?")
+        params.append(binding_class)
+    if min_confidence > 0:
+        clauses.append("confidence_score >= ?")
+        params.append(min_confidence)
+    where = " AND ".join(clauses)
+    params.append(limit)
+    rows = db.conn.execute(f"""
+        SELECT species, source_id, target_id, relation_type,
+               confidence_score, binding_class, protein_length, dna_length, predicted_at
+        FROM structural_binding_predictions
+        WHERE {where}
+        ORDER BY confidence_score DESC NULLS LAST
+        LIMIT ?
+    """, params).fetchall()
+    cols = ["species", "source_id", "target_id", "relation_type",
+            "confidence_score", "binding_class", "protein_length", "dna_length", "predicted_at"]
+    predictions = []
+    for row in rows:
+        d = dict(zip(cols, row))
+        src = db.get_gene(d["source_id"])
+        tgt = db.get_gene(d["target_id"])
+        if src:
+            d["source_symbol"] = src.symbol
+        if tgt:
+            d["target_symbol"] = tgt.symbol
+        predictions.append(d)
+    return {"predictions": predictions, "count": len(predictions)}
+
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring"""

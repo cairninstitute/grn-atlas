@@ -69,3 +69,19 @@ backend/data/clonelab/
 !backend/data/sign_validation_report.json
 
 test-results/
+
+# Research artifacts — logs, large embeddings, generated images
+research/calibrations/data/*.log
+research/calibrations/data/evo2_embeddings/
+research/visuals/*.png
+
+# Cloned third-party repos used during calibration
+deepTFBS/
+darwin-sae-validation-blog/
+
+# Stray log files
+activations_debug.log
+
+# Feedback circuit diagrams (generated, not part of atlas)
+*_feedback*.png
+*_megacore*.png

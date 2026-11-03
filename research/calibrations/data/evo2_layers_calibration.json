@@ -1,0 +1,223 @@
+{
+  "model": "Evo2-40B intermediate layers",
+  "species": "arabidopsis",
+  "dna_window": 200,
+  "layers": {
+    "blocks.10": {
+      "n_positive": 20,
+      "n_negative": 19,
+      "features": {
+        "l2_norm": {
+          "pos_mean": 17.310611,
+          "neg_mean": 17.182204,
+          "separation": 0.128407,
+          "cohens_d": 0.3693
+        },
+        "mean_activation": {
+          "pos_mean": 0.055959,
+          "neg_mean": 0.055772,
+          "separation": 0.000187,
+          "cohens_d": 0.0722
+        },
+        "max_activation": {
+          "pos_mean": 13.63009,
+          "neg_mean": 13.449814,
+          "separation": 0.180276,
+          "cohens_d": 0.4258
+        },
+        "variance": {
+          "pos_mean": 0.036591,
+          "neg_mean": 0.036047,
+          "separation": 0.000543,
+          "cohens_d": 0.3729
+        },
+        "top10_mean": {
+          "pos_mean": 3.794103,
+          "neg_mean": 3.778545,
+          "separation": 0.015558,
+          "cohens_d": 0.2386
+        },
+        "top50_mean": {
+          "pos_mean": 1.058771,
+          "neg_mean": 1.056516,
+          "separation": 0.002256,
+          "cohens_d": 0.1469
+        },
+        "positive_fraction": {
+          "pos_mean": 0.504749,
+          "neg_mean": 0.504613,
+          "separation": 0.000136,
+          "cohens_d": 0.0456
+        },
+        "sparsity": {
+          "pos_mean": 0.238922,
+          "neg_mean": 0.239296,
+          "separation": -0.000374,
+          "cohens_d": -0.0311
+        }
+      }
+    },
+    "blocks.20": {
+      "n_positive": 20,
+      "n_negative": 19,
+      "features": {
+        "l2_norm": {
+          "pos_mean": 165.428978,
+          "neg_mean": 169.908567,
+          "separation": -4.479589,
+          "cohens_d": -0.2654
+        },
+        "mean_activation": {
+          "pos_mean": 1.290437,
+          "neg_mean": 1.331612,
+          "separation": -0.041175,
+          "cohens_d": -0.3044
+        },
+        "max_activation": {
+          "pos_mean": 55.409089,
+          "neg_mean": 54.794248,
+          "separation": 0.61484,
+          "cohens_d": 0.1244
+        },
+        "variance": {
+          "pos_mean": 3.366041,
+          "neg_mean": 3.566753,
+          "separation": -0.200712,
+          "cohens_d": -0.3097
+        },
+        "top10_mean": {
+          "pos_mean": 17.299226,
+          "neg_mean": 17.551791,
+          "separation": -0.252565,
+          "cohens_d": -0.1476
+        },
+        "top50_mean": {
+          "pos_mean": 8.134695,
+          "neg_mean": 8.330698,
+          "separation": -0.196003,
+          "cohens_d": -0.2275
+        },
+        "positive_fraction": {
+          "pos_mean": 0.507074,
+          "neg_mean": 0.508397,
+          "separation": -0.001323,
+          "cohens_d": -0.5722
+        },
+        "sparsity": {
+          "pos_mean": 0.092688,
+          "neg_mean": 0.092863,
+          "separation": -0.000175,
+          "cohens_d": -0.0676
+        }
+      }
+    },
+    "blocks.30": {
+      "n_positive": 20,
+      "n_negative": 19,
+      "features": {
+        "l2_norm": {
+          "pos_mean": 3.271217760776201e+18,
+          "neg_mean": 3.1425235596388116e+18,
+          "separation": 1.2869420113738957e+17,
+          "cohens_d": 0.915
+        },
+        "mean_activation": {
+          "pos_mean": 2.8348351173539556e+16,
+          "neg_mean": 2.7174295888264908e+16,
+          "separation": 1174055285274648.0,
+          "cohens_d": 0.9154
+        },
+        "max_activation": {
+          "pos_mean": 2.2434153955725677e+17,
+          "neg_mean": 2.148780660167715e+17,
+          "separation": 9463473540485280.0,
+          "cohens_d": 0.8624
+        },
+        "variance": {
+          "pos_mean": 1.3087831402507113e+33,
+          "neg_mean": 1.2077611135425392e+33,
+          "separation": 1.0102202670817216e+32,
+          "cohens_d": 0.9172
+        },
+        "top10_mean": {
+          "pos_mean": 1.867882903078341e+17,
+          "neg_mean": 1.797809878542334e+17,
+          "separation": 7007302453600704.0,
+          "cohens_d": 0.8413
+        },
+        "top50_mean": {
+          "pos_mean": 1.4995511111225306e+17,
+          "neg_mean": 1.4422195811157427e+17,
+          "separation": 5733153000678784.0,
+          "cohens_d": 0.8633
+        },
+        "positive_fraction": {
+          "pos_mean": 0.501447,
+          "neg_mean": 0.500617,
+          "separation": 0.00083,
+          "cohens_d": 1.0021
+        },
+        "sparsity": {
+          "pos_mean": 0.065741,
+          "neg_mean": 0.065648,
+          "separation": 9.3e-05,
+          "cohens_d": 0.0907
+        }
+      }
+    },
+    "norm": {
+      "n_positive": 20,
+      "n_negative": 19,
+      "features": {
+        "l2_norm": {
+          "pos_mean": 4.616562,
+          "neg_mean": 4.610854,
+          "separation": 0.005708,
+          "cohens_d": 0.1797
+        },
+        "mean_activation": {
+          "pos_mean": 0.026105,
+          "neg_mean": 0.026038,
+          "separation": 6.7e-05,
+          "cohens_d": 0.1421
+        },
+        "max_activation": {
+          "pos_mean": 1.092034,
+          "neg_mean": 1.088407,
+          "separation": 0.003627,
+          "cohens_d": 0.1451
+        },
+        "variance": {
+          "pos_mean": 0.002602,
+          "neg_mean": 0.002595,
+          "separation": 6e-06,
+          "cohens_d": 0.18
+        },
+        "top10_mean": {
+          "pos_mean": 0.816687,
+          "neg_mean": 0.813673,
+          "separation": 0.003013,
+          "cohens_d": 0.1449
+        },
+        "top50_mean": {
+          "pos_mean": 0.417896,
+          "neg_mean": 0.417469,
+          "separation": 0.000427,
+          "cohens_d": 0.1246
+        },
+        "positive_fraction": {
+          "pos_mean": 0.500256,
+          "neg_mean": 0.499949,
+          "separation": 0.000308,
+          "cohens_d": 0.3361
+        },
+        "sparsity": {
+          "pos_mean": 0.168054,
+          "neg_mean": 0.168977,
+          "separation": -0.000923,
+          "cohens_d": -0.518
+        }
+      }
+    }
+  }
+}

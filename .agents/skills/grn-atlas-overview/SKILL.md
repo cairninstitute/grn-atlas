@@ -76,6 +76,7 @@ GRN Atlas is a multi-species gene regulatory network database covering the speci
 | `grn-trajectory-regulation` | Report readiness and missing layers for trajectory / time-series analysis |
 | `grn-combinatorial-perturbation` | Rank pairwise or triple perturbation combinations by predicted downstream impact |
 | `grn-species-onboarding-plan` | Generate a staged plan for onboarding a new species |
+| `grn-binding-prediction` | Query or trigger structural binding predictions — scores whether a TF protein can bind a target promoter (Boltz-2) |
 
 ## Additional skills
 

@@ -1,0 +1,23 @@
+{
+  "model": "CADD-v1.7",
+  "species": "human",
+  "tasks": {
+    "tss_vs_intergenic": {
+      "n_tss": 30,
+      "n_intergenic": 30,
+      "mean_tss_phred": 15.67,
+      "mean_intergenic_phred": 5.19,
+      "auc": 0.8511,
+      "tss_median": 15.06,
+      "intergenic_median": 4.35
+    },
+    "high_vs_low_target_tss": {
+      "n_high": 20,
+      "n_low": 20,
+      "mean_high_phred": 22.41,
+      "mean_low_phred": 21.42,
+      "auc": 0.5225
+    }
+  },
+  "timestamp": "2026-10-30T18:04:47"
+}

@@ -1,0 +1,578 @@
+{
+  "model": "ProteinMPNN (sequence design scoring)",
+  "tasks": {
+    "tf_vs_nontf_designability": {
+      "n_tf": 29,
+      "n_nontf": 20,
+      "tf_mean_recovery": 0.269,
+      "nontf_mean_recovery": 0.5194,
+      "recovery_auc": 0.0052,
+      "recovery_pvalue": 0.0,
+      "tf_mean_perplexity": 11.38,
+      "nontf_mean_perplexity": 4.7,
+      "perplexity_pvalue": 0.0,
+      "tf_scores": [
+        {
+          "recovery": 0.2291,
+          "perplexity": 11.95,
+          "mean_log_prob": -2.4811,
+          "n_residues": 323,
+          "seq_length": 323,
+          "symbol": "MYB56",
+          "uniprot_acc": "Q6R053",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.4045,
+          "perplexity": 6.62,
+          "mean_log_prob": -1.8894,
+          "n_residues": 445,
+          "seq_length": 445,
+          "symbol": "LAS",
+          "uniprot_acc": "Q9ZWC5",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.2509,
+          "perplexity": 11.46,
+          "mean_log_prob": -2.4389,
+          "n_residues": 267,
+          "seq_length": 267,
+          "symbol": "MSX2",
+          "uniprot_acc": "P35548",
+          "species": "human"
+        },
+        {
+          "recovery": 0.3352,
+          "perplexity": 9.47,
+          "mean_log_prob": -2.2486,
+          "n_residues": 179,
+          "seq_length": 179,
+          "symbol": "WRKY24",
+          "uniprot_acc": "Q9FFS3",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.3033,
+          "perplexity": 10.06,
+          "mean_log_prob": -2.3084,
+          "n_residues": 244,
+          "seq_length": 244,
+          "symbol": "AT1G77200",
+          "uniprot_acc": "O80654",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.2279,
+          "perplexity": 14.08,
+          "mean_log_prob": -2.645,
+          "n_residues": 272,
+          "seq_length": 272,
+          "symbol": "HOXA9",
+          "uniprot_acc": "P31269",
+          "species": "human"
+        },
+        {
+          "recovery": 0.3002,
+          "perplexity": 9.82,
+          "mean_log_prob": -2.2841,
+          "n_residues": 623,
+          "seq_length": 623,
+          "symbol": "MYC2",
+          "uniprot_acc": "Q39204",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.1952,
+          "perplexity": 15.04,
+          "mean_log_prob": -2.7105,
+          "n_residues": 292,
+          "seq_length": 292,
+          "symbol": "WUS",
+          "uniprot_acc": "Q9SB92",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.2107,
+          "perplexity": 14.18,
+          "mean_log_prob": -2.652,
+          "n_residues": 375,
+          "seq_length": 375,
+          "symbol": "SPL9",
+          "uniprot_acc": "Q700W2",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.2735,
+          "perplexity": 10.18,
+          "mean_log_prob": -2.3205,
+          "n_residues": 596,
+          "seq_length": 596,
+          "symbol": "EGL3",
+          "uniprot_acc": "Q9CAD0",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.242,
+          "perplexity": 11.17,
+          "mean_log_prob": -2.4135,
+          "n_residues": 2492,
+          "seq_length": 2492,
+          "symbol": "ATRX",
+          "uniprot_acc": "P46100",
+          "species": "human"
+        },
+        {
+          "recovery": 0.2183,
+          "perplexity": 12.81,
+          "mean_log_prob": -2.5504,
+          "n_residues": 953,
+          "seq_length": 953,
+          "symbol": "LD",
+          "uniprot_acc": "Q38796",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.3887,
+          "perplexity": 7.0,
+          "mean_log_prob": -1.9456,
+          "n_residues": 1096,
+          "seq_length": 1096,
+          "symbol": "KDM4B",
+          "uniprot_acc": "O94953",
+          "species": "human"
+        },
+        {
+          "recovery": 0.2746,
+          "perplexity": 11.36,
+          "mean_log_prob": -2.4302,
+          "n_residues": 244,
+          "seq_length": 244,
+          "symbol": "ERF7",
+          "uniprot_acc": "Q9LDE4",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.1877,
+          "perplexity": 13.03,
+          "mean_log_prob": -2.567,
+          "n_residues": 309,
+          "seq_length": 309,
+          "symbol": "ZIM",
+          "uniprot_acc": "Q9LRH6",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.1796,
+          "perplexity": 14.12,
+          "mean_log_prob": -2.6479,
+          "n_residues": 373,
+          "seq_length": 373,
+          "symbol": "CO",
+          "uniprot_acc": "Q39057",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.2797,
+          "perplexity": 12.72,
+          "mean_log_prob": -2.5432,
+          "n_residues": 472,
+          "seq_length": 472,
+          "symbol": "FOXA1",
+          "uniprot_acc": "P55317",
+          "species": "human"
+        },
+        {
+          "recovery": 0.1803,
+          "perplexity": 15.67,
+          "mean_log_prob": -2.752,
+          "n_residues": 2063,
+          "seq_length": 2063,
+          "symbol": "NCOA6",
+          "uniprot_acc": "Q14686",
+          "species": "human"
+        },
+        {
+          "recovery": 0.2181,
+          "perplexity": 12.99,
+          "mean_log_prob": -2.5642,
+          "n_residues": 298,
+          "seq_length": 298,
+          "symbol": "WRKY22",
+          "uniprot_acc": "O04609",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.3325,
+          "perplexity": 9.95,
+          "mean_log_prob": -2.298,
+          "n_residues": 415,
+          "seq_length": 415,
+          "symbol": "RUNX3",
+          "uniprot_acc": "Q13761",
+          "species": "human"
+        },
+        {
+          "recovery": 0.203,
+          "perplexity": 12.3,
+          "mean_log_prob": -2.5094,
+          "n_residues": 271,
+          "seq_length": 271,
+          "symbol": "ATF1",
+          "uniprot_acc": "P18846",
+          "species": "human"
+        },
+        {
+          "recovery": 0.2515,
+          "perplexity": 11.16,
+          "mean_log_prob": -2.4123,
+          "n_residues": 485,
+          "seq_length": 485,
+          "symbol": "E2F3",
+          "uniprot_acc": "Q9FNY0",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.2363,
+          "perplexity": 12.8,
+          "mean_log_prob": -2.5493,
+          "n_residues": 512,
+          "seq_length": 512,
+          "symbol": "KLF11",
+          "uniprot_acc": "O14901",
+          "species": "human"
+        },
+        {
+          "recovery": 0.188,
+          "perplexity": 14.35,
+          "mean_log_prob": -2.6636,
+          "n_residues": 367,
+          "seq_length": 367,
+          "symbol": "AT2G40620",
+          "uniprot_acc": "O22873",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.3484,
+          "perplexity": 9.36,
+          "mean_log_prob": -2.2366,
+          "n_residues": 287,
+          "seq_length": 287,
+          "symbol": "AT1G72740",
+          "uniprot_acc": "F4IEY4",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.2857,
+          "perplexity": 11.15,
+          "mean_log_prob": -2.4118,
+          "n_residues": 343,
+          "seq_length": 343,
+          "symbol": "AT3G62610",
+          "uniprot_acc": "Q9LZK4",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.458,
+          "perplexity": 6.0,
+          "mean_log_prob": -1.7915,
+          "n_residues": 500,
+          "seq_length": 500,
+          "symbol": "RBPJ",
+          "uniprot_acc": "Q06330",
+          "species": "human"
+        },
+        {
+          "recovery": 0.3199,
+          "perplexity": 9.03,
+          "mean_log_prob": -2.2007,
+          "n_residues": 372,
+          "seq_length": 372,
+          "symbol": "AT3G25990",
+          "uniprot_acc": "Q9LU92",
+          "species": "arabidopsis"
+        },
+        {
+          "recovery": 0.2796,
+          "perplexity": 10.16,
+          "mean_log_prob": -2.3182,
+          "n_residues": 422,
+          "seq_length": 422,
+          "symbol": "PAX6",
+          "uniprot_acc": "P26367",
+          "species": "human"
+        }
+      ],
+      "nontf_scores": [
+        {
+          "recovery": 0.5403,
+          "perplexity": 4.22,
+          "mean_log_prob": -1.439,
+          "n_residues": 335,
+          "seq_length": 335,
+          "symbol": "GAPDH",
+          "uniprot_acc": "P04406",
+          "species": "human"
+        },
+        {
+          "recovery": 0.536,
+          "perplexity": 4.45,
+          "mean_log_prob": -1.4923,
+          "n_residues": 375,
+          "seq_length": 375,
+          "symbol": "ACTB",
+          "uniprot_acc": "P60709",
+          "species": "human"
+        },
+        {
+          "recovery": 0.4459,
+          "perplexity": 5.8,
+          "mean_log_prob": -1.758,
+          "n_residues": 444,
+          "seq_length": 444,
+          "symbol": "TUBB",
+          "uniprot_acc": "P07437",
+          "species": "human"
+        },
+        {
+          "recovery": 0.5014,
+          "perplexity": 5.15,
+          "mean_log_prob": -1.6388,
+          "n_residues": 732,
+          "seq_length": 732,
+          "symbol": "HSP90AA1",
+          "uniprot_acc": "P07900",
+          "species": "human"
+        },
+        {
+          "recovery": 0.4985,
+          "perplexity": 4.68,
+          "mean_log_prob": -1.5422,
+          "n_residues": 646,
+          "seq_length": 646,
+          "symbol": "HSPA8",
+          "uniprot_acc": "P11142",
+          "species": "human"
+        },
+        {
+          "recovery": 0.5631,
+          "perplexity": 4.26,
+          "mean_log_prob": -1.4484,
+          "n_residues": 531,
+          "seq_length": 531,
+          "symbol": "PKM",
+          "uniprot_acc": "P14618",
+          "species": "human"
+        },
+        {
+          "recovery": 0.5968,
+          "perplexity": 3.78,
+          "mean_log_prob": -1.33,
+          "n_residues": 434,
+          "seq_length": 434,
+          "symbol": "ENO1",
+          "uniprot_acc": "P06733",
+          "species": "human"
+        },
+        {
+          "recovery": 0.5241,
+          "perplexity": 4.41,
+          "mean_log_prob": -1.4843,
+          "n_residues": 332,
+          "seq_length": 332,
+          "symbol": "LDHA",
+          "uniprot_acc": "P00338",
+          "species": "human"
+        },
+        {
+          "recovery": 0.5549,
+          "perplexity": 4.01,
+          "mean_log_prob": -1.3889,
+          "n_residues": 364,
+          "seq_length": 364,
+          "symbol": "ALDOA",
+          "uniprot_acc": "P04075",
+          "species": "human"
+        },
+        {
+          "recovery": 0.5502,
+          "perplexity": 4.28,
+          "mean_log_prob": -1.4537,
+          "n_residues": 249,
+          "seq_length": 249,
+          "symbol": "TPI1",
+          "uniprot_acc": "P60174",
+          "species": "human"
+        },
+        {
+          "recovery": 0.5899,
+          "perplexity": 3.42,
+          "mean_log_prob": -1.2295,
+          "n_residues": 417,
+          "seq_length": 417,
+          "symbol": "PGK1",
+          "uniprot_acc": "P00558",
+          "species": "human"
+        },
+        {
+          "recovery": 0.4713,
+          "perplexity": 5.42,
+          "mean_log_prob": -1.6902,
+          "n_residues": 558,
+          "seq_length": 558,
+          "symbol": "GPI",
+          "uniprot_acc": "P06744",
+          "species": "human"
+        },
+        {
+          "recovery": 0.6242,
+          "perplexity": 3.19,
+          "mean_log_prob": -1.1613,
+          "n_residues": 165,
+          "seq_length": 165,
+          "symbol": "PPIA",
+          "uniprot_acc": "P62937",
+          "species": "human"
+        },
+        {
+          "recovery": 0.565,
+          "perplexity": 4.19,
+          "mean_log_prob": -1.4324,
+          "n_residues": 685,
+          "seq_length": 685,
+          "symbol": "UBC",
+          "uniprot_acc": "P0CG48",
+          "species": "human"
+        },
+        {
+          "recovery": 0.4744,
+          "perplexity": 5.96,
+          "mean_log_prob": -1.7857,
+          "n_residues": 156,
+          "seq_length": 156,
+          "symbol": "RPS27A",
+          "uniprot_acc": "P62979",
+          "species": "human"
+        },
+        {
+          "recovery": 0.5281,
+          "perplexity": 4.47,
+          "mean_log_prob": -1.4974,
+          "n_residues": 462,
+          "seq_length": 462,
+          "symbol": "EEF1A1",
+          "uniprot_acc": "P68104",
+          "species": "human"
+        },
+        {
+          "recovery": 0.5058,
+          "perplexity": 4.66,
+          "mean_log_prob": -1.5388,
+          "n_residues": 858,
+          "seq_length": 858,
+          "symbol": "EEF2",
+          "uniprot_acc": "P13639",
+          "species": "human"
+        },
+        {
+          "recovery": 0.4234,
+          "perplexity": 6.16,
+          "mean_log_prob": -1.8175,
+          "n_residues": 248,
+          "seq_length": 248,
+          "symbol": "RPL7",
+          "uniprot_acc": "P18124",
+          "species": "human"
+        },
+        {
+          "recovery": 0.4074,
+          "perplexity": 6.39,
+          "mean_log_prob": -1.8548,
+          "n_residues": 243,
+          "seq_length": 243,
+          "symbol": "RPS3",
+          "uniprot_acc": "P23396",
+          "species": "human"
+        },
+        {
+          "recovery": 0.4877,
+          "perplexity": 5.04,
+          "mean_log_prob": -1.6174,
+          "n_residues": 529,
+          "seq_length": 529,
+          "symbol": "ATP5F1B",
+          "uniprot_acc": "P06576",
+          "species": "human"
+        }
+      ]
+    },
+    "tf_family_designability": {
+      "species": "arabidopsis",
+      "families": {
+        "WRKY": {
+          "n": 10,
+          "mean_recovery": 0.2535,
+          "mean_perplexity": 11.47
+        },
+        "MYB": {
+          "n": 10,
+          "mean_recovery": 0.2977,
+          "mean_perplexity": 10.1
+        },
+        "bHLH": {
+          "n": 1,
+          "mean_recovery": 0.2529,
+          "mean_perplexity": 12.37
+        },
+        "ERF": {
+          "n": 3,
+          "mean_recovery": 0.2549,
+          "mean_perplexity": 11.85
+        },
+        "NAC": {
+          "n": 3,
+          "mean_recovery": 0.2732,
+          "mean_perplexity": 10.89
+        },
+        "bZIP": {
+          "n": 2,
+          "mean_recovery": 0.1975,
+          "mean_perplexity": 13.95
+        }
+      },
+      "pairwise": {
+        "WRKY_vs_MYB": {
+          "f1_mean_recovery": 0.2535,
+          "f2_mean_recovery": 0.2977,
+          "pvalue": 0.0757
+        },
+        "WRKY_vs_ERF": {
+          "f1_mean_recovery": 0.2535,
+          "f2_mean_recovery": 0.2549,
+          "pvalue": 0.9371
+        },
+        "WRKY_vs_NAC": {
+          "f1_mean_recovery": 0.2535,
+          "f2_mean_recovery": 0.2732,
+          "pvalue": 0.8112
+        },
+        "MYB_vs_ERF": {
+          "f1_mean_recovery": 0.2977,
+          "f2_mean_recovery": 0.2549,
+          "pvalue": 0.1119
+        },
+        "MYB_vs_NAC": {
+          "f1_mean_recovery": 0.2977,
+          "f2_mean_recovery": 0.2732,
+          "pvalue": 0.4685
+        },
+        "ERF_vs_NAC": {
+          "f1_mean_recovery": 0.2549,
+          "f2_mean_recovery": 0.2732,
+          "pvalue": 1.0
+        }
+      }
+    }
+  },
+  "timestamp": "2026-10-31T03:37:23"
+}

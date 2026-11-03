@@ -1,0 +1,413 @@
+{
+  "model": "DeepBind",
+  "species": "human",
+  "positive_controls": {
+    "n": 0
+  },
+  "negative_controls": {
+    "n": 0
+  },
+  "mean_separation": null,
+  "all_results": [
+    {
+      "source_id": "CEBPB",
+      "source_symbol": "CEBPB",
+      "target_id": "CSRP1",
+      "target_symbol": "CSRP1",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "FOS",
+      "source_symbol": "FOS",
+      "target_id": "CCND1",
+      "target_symbol": "CCND1",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "STAT3",
+      "source_symbol": "STAT3",
+      "target_id": "SALL4",
+      "target_symbol": "SALL4",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "ATF2",
+      "source_symbol": "ATF2",
+      "target_id": "DUSP1",
+      "target_symbol": "DUSP1",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "SP1",
+      "source_symbol": "SP1",
+      "target_id": "POLB",
+      "target_symbol": "POLB",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "NFKB2",
+      "source_symbol": "NFKB2",
+      "target_id": "CD44",
+      "target_symbol": "CD44",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "AR",
+      "source_symbol": "AR",
+      "target_id": "NAT1",
+      "target_symbol": "NAT1",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "NFKB1",
+      "source_symbol": "NFKB1",
+      "target_id": "CXCL8",
+      "target_symbol": "CXCL8",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "EGR1",
+      "source_symbol": "EGR1",
+      "target_id": "TP53",
+      "target_symbol": "TP53",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "GLI2",
+      "source_symbol": "GLI2",
+      "target_id": "FOXF1",
+      "target_symbol": "FOXF1",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "FOXA1",
+      "source_symbol": "FOXA1",
+      "target_id": "PDX1",
+      "target_symbol": "PDX1",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "FOXO1",
+      "source_symbol": "FOXO1",
+      "target_id": "CNR1",
+      "target_symbol": "CNR1",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "AR",
+      "source_symbol": "AR",
+      "target_id": "ELF3",
+      "target_symbol": "ELF3",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "FOSL1",
+      "source_symbol": "FOSL1",
+      "target_id": "ITGB3",
+      "target_symbol": "ITGB3",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "USF1",
+      "source_symbol": "USF1",
+      "target_id": "SF1",
+      "target_symbol": "SF1",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "JUN",
+      "source_symbol": "JUN",
+      "target_id": "ICAM1",
+      "target_symbol": "ICAM1",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "MYC",
+      "source_symbol": "MYC",
+      "target_id": "AXIN2",
+      "target_symbol": "AXIN2",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "IRF7",
+      "source_symbol": "IRF7",
+      "target_id": "IFNB1",
+      "target_symbol": "IFNB1",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "FOSL2",
+      "source_symbol": "FOSL2",
+      "target_id": "BCL6",
+      "target_symbol": "BCL6",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "ESRRA",
+      "source_symbol": "ESRRA",
+      "target_id": "SNAI2",
+      "target_symbol": "SNAI2",
+      "species": "human",
+      "control_type": "positive",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "CEBPB",
+      "source_symbol": "CEBPB",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "FOS",
+      "source_symbol": "FOS",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "STAT3",
+      "source_symbol": "STAT3",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "ATF2",
+      "source_symbol": "ATF2",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "SP1",
+      "source_symbol": "SP1",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "NFKB2",
+      "source_symbol": "NFKB2",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "AR",
+      "source_symbol": "AR",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "NFKB1",
+      "source_symbol": "NFKB1",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "EGR1",
+      "source_symbol": "EGR1",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "GLI2",
+      "source_symbol": "GLI2",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "FOXA1",
+      "source_symbol": "FOXA1",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "FOXO1",
+      "source_symbol": "FOXO1",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "AR",
+      "source_symbol": "AR",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "FOSL1",
+      "source_symbol": "FOSL1",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "USF1",
+      "source_symbol": "USF1",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "JUN",
+      "source_symbol": "JUN",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "MYC",
+      "source_symbol": "MYC",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "IRF7",
+      "source_symbol": "IRF7",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "FOSL2",
+      "source_symbol": "FOSL2",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    },
+    {
+      "source_id": "ESRRA",
+      "source_symbol": "ESRRA",
+      "target_id": "CD247",
+      "target_symbol": "CD247",
+      "species": "human",
+      "control_type": "negative",
+      "score": null,
+      "status": "no_model"
+    }
+  ]
+}

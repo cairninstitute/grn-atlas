@@ -1,0 +1,1173 @@
+{
+  "model": "Evo2-7B + Goodfire SAE (layer 26)",
+  "species": "arabidopsis",
+  "dna_window": 200,
+  "sae_features": 32768,
+  "sae_topk": 64,
+  "n_positive": 18,
+  "n_negative": 13,
+  "feature_analysis": {
+    "top_positive_features": [
+      {
+        "feature_id": 27115,
+        "pos_mean": 11.087051391601562,
+        "neg_mean": 9.724602699279785,
+        "cohens_d": 1.0546376705169678
+      },
+      {
+        "feature_id": 8583,
+        "pos_mean": 7.249186038970947,
+        "neg_mean": 6.438845634460449,
+        "cohens_d": 1.1130867004394531
+      },
+      {
+        "feature_id": 10518,
+        "pos_mean": 5.73879337310791,
+        "neg_mean": 4.963972091674805,
+        "cohens_d": 1.0320359468460083
+      },
+      {
+        "feature_id": 2771,
+        "pos_mean": 2.6927578449249268,
+        "neg_mean": 2.286165475845337,
+        "cohens_d": 1.0935152769088745
+      },
+      {
+        "feature_id": 27630,
+        "pos_mean": 2.5843119621276855,
+        "neg_mean": 2.190962076187134,
+        "cohens_d": 1.1056874990463257
+      },
+      {
+        "feature_id": 9854,
+        "pos_mean": 2.524815559387207,
+        "neg_mean": 2.1706223487854004,
+        "cohens_d": 1.0734814405441284
+      },
+      {
+        "feature_id": 13744,
+        "pos_mean": 2.1563827991485596,
+        "neg_mean": 1.8104534149169922,
+        "cohens_d": 1.1228080987930298
+      },
+      {
+        "feature_id": 9682,
+        "pos_mean": 2.0305161476135254,
+        "neg_mean": 1.6968882083892822,
+        "cohens_d": 1.1429656744003296
+      },
+      {
+        "feature_id": 7948,
+        "pos_mean": 1.9027091264724731,
+        "neg_mean": 1.5957075357437134,
+        "cohens_d": 1.1803340911865234
+      },
+      {
+        "feature_id": 12970,
+        "pos_mean": 1.7989686727523804,
+        "neg_mean": 1.5159318447113037,
+        "cohens_d": 1.172930359840393
+      },
+      {
+        "feature_id": 25827,
+        "pos_mean": 1.8115363121032715,
+        "neg_mean": 1.5293102264404297,
+        "cohens_d": 1.1276936531066895
+      },
+      {
+        "feature_id": 31382,
+        "pos_mean": 1.755645751953125,
+        "neg_mean": 1.4786245822906494,
+        "cohens_d": 1.1517313718795776
+      },
+      {
+        "feature_id": 20033,
+        "pos_mean": 1.5499343872070312,
+        "neg_mean": 1.2744128704071045,
+        "cohens_d": 1.4378706216812134
+      },
+      {
+        "feature_id": 23151,
+        "pos_mean": 1.7677984237670898,
+        "neg_mean": 1.499146819114685,
+        "cohens_d": 1.122299313545227
+      },
+      {
+        "feature_id": 14871,
+        "pos_mean": 1.6740120649337769,
+        "neg_mean": 1.4153883457183838,
+        "cohens_d": 1.1536924839019775
+      },
+      {
+        "feature_id": 32710,
+        "pos_mean": 3.1127207279205322,
+        "neg_mean": 2.860456705093384,
+        "cohens_d": 1.1681265830993652
+      },
+      {
+        "feature_id": 9101,
+        "pos_mean": 1.593407154083252,
+        "neg_mean": 1.3467828035354614,
+        "cohens_d": 1.1305081844329834
+      },
+      {
+        "feature_id": 13989,
+        "pos_mean": 1.502061367034912,
+        "neg_mean": 1.2573237419128418,
+        "cohens_d": 1.2974216938018799
+      },
+      {
+        "feature_id": 2206,
+        "pos_mean": 1.6228623390197754,
+        "neg_mean": 1.37929105758667,
+        "cohens_d": 1.1008964776992798
+      },
+      {
+        "feature_id": 14149,
+        "pos_mean": 1.4818459749221802,
+        "neg_mean": 1.2395882606506348,
+        "cohens_d": 1.3042742013931274
+      }
+    ],
+    "top_negative_features": [
+      {
+        "feature_id": 3221,
+        "pos_mean": 0.003447256051003933,
+        "neg_mean": 0.028305402025580406,
+        "cohens_d": -1.0426514148712158
+      },
+      {
+        "feature_id": 23755,
+        "pos_mean": 0.0034598996862769127,
+        "neg_mean": 0.028310390189290047,
+        "cohens_d": -1.0414838790893555
+      },
+      {
+        "feature_id": 18835,
+        "pos_mean": 0.003451532917097211,
+        "neg_mean": 0.028299082070589066,
+        "cohens_d": -1.0421628952026367
+      },
+      {
+        "feature_id": 13467,
+        "pos_mean": 0.0034527175594121218,
+        "neg_mean": 0.028291452676057816,
+        "cohens_d": -1.0419551134109497
+      },
+      {
+        "feature_id": 6169,
+        "pos_mean": 0.0034497990272939205,
+        "neg_mean": 0.028279198333621025,
+        "cohens_d": -1.042096495628357
+      },
+      {
+        "feature_id": 26136,
+        "pos_mean": 0.0034476493019610643,
+        "neg_mean": 0.028270451352000237,
+        "cohens_d": -1.0421967506408691
+      },
+      {
+        "feature_id": 5845,
+        "pos_mean": 0.0034457435831427574,
+        "neg_mean": 0.028264889493584633,
+        "cohens_d": -1.0423187017440796
+      },
+      {
+        "feature_id": 15726,
+        "pos_mean": 0.0034437538124620914,
+        "neg_mean": 0.028257496654987335,
+        "cohens_d": -1.0424267053604126
+      },
+      {
+        "feature_id": 12363,
+        "pos_mean": 0.0034408068750053644,
+        "neg_mean": 0.028251809999346733,
+        "cohens_d": -1.0426440238952637
+      },
+      {
+        "feature_id": 660,
+        "pos_mean": 0.003448978764936328,
+        "neg_mean": 0.028259526938199997,
+        "cohens_d": -1.0419414043426514
+      },
+      {
+        "feature_id": 14653,
+        "pos_mean": 0.0034473075065761805,
+        "neg_mean": 0.028256384655833244,
+        "cohens_d": -1.042067527770996
+      },
+      {
+        "feature_id": 28873,
+        "pos_mean": 0.00344092957675457,
+        "neg_mean": 0.028246330097317696,
+        "cohens_d": -1.042567491531372
+      },
+      {
+        "feature_id": 11748,
+        "pos_mean": 0.003447731025516987,
+        "neg_mean": 0.028252962976694107,
+        "cohens_d": -1.0419838428497314
+      },
+      {
+        "feature_id": 20492,
+        "pos_mean": 0.0034434341359883547,
+        "neg_mean": 0.02823615074157715,
+        "cohens_d": -1.042203664779663
+      },
+      {
+        "feature_id": 16891,
+        "pos_mean": 0.003448017407208681,
+        "neg_mean": 0.02823711559176445,
+        "cohens_d": -1.0417710542678833
+      },
+      {
+        "feature_id": 8341,
+        "pos_mean": 0.003446097020059824,
+        "neg_mean": 0.028233610093593597,
+        "cohens_d": -1.041914939880371
+      },
+      {
+        "feature_id": 13880,
+        "pos_mean": 0.0034466444049030542,
+        "neg_mean": 0.028231309726834297,
+        "cohens_d": -1.0418344736099243
+      },
+      {
+        "feature_id": 13611,
+        "pos_mean": 0.003442537272349,
+        "neg_mean": 0.028227146714925766,
+        "cohens_d": -1.0421826839447021
+      },
+      {
+        "feature_id": 28455,
+        "pos_mean": 0.0034393472597002983,
+        "neg_mean": 0.028222689405083656,
+        "cohens_d": -1.0424424409866333
+      },
+      {
+        "feature_id": 31857,
+        "pos_mean": 0.0034352648071944714,
+        "neg_mean": 0.028217436745762825,
+        "cohens_d": -1.0427745580673218
+      }
+    ],
+    "effect_size_counts": {
+      "large": 654,
+      "medium": 2930,
+      "small": 4265
+    },
+    "global_metrics": {
+      "pos_total_activation": 2686.73388671875,
+      "neg_total_activation": 2631.06494140625,
+      "pos_active_features": 12748.722222222223,
+      "neg_active_features": 13358.23076923077
+    }
+  },
+  "all_results": [
+    {
+      "source_id": "AT2G36270",
+      "source_symbol": "ABI5",
+      "target_id": "AT4G16160",
+      "target_symbol": "ATOEP16-2",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 9879,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        2771,
+        27630
+      ],
+      "top_activations": [
+        14.216367721557617,
+        8.831342697143555,
+        7.584183692932129,
+        3.4759418964385986,
+        3.318009853363037
+      ]
+    },
+    {
+      "source_id": "AT1G27730",
+      "source_symbol": "STZ",
+      "target_id": "AT4G25100",
+      "target_symbol": "FSD1",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 13044,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        10.638911247253418,
+        7.012792587280273,
+        5.455013751983643,
+        3.0934815406799316,
+        2.585186004638672
+      ]
+    },
+    {
+      "source_id": "AT5G61850",
+      "source_symbol": "LFY",
+      "target_id": "AT5G51600",
+      "target_symbol": "PLE",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 13460,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        10.395339012145996,
+        6.924647808074951,
+        5.320260047912598,
+        3.05544114112854,
+        2.5382425785064697
+      ]
+    },
+    {
+      "source_id": "AT3G02990",
+      "source_symbol": "HSFA1E",
+      "target_id": "AT2G26150",
+      "target_symbol": "HSFA2",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 11704,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        11.659193992614746,
+        7.483743190765381,
+        6.150510311126709,
+        3.201019525527954,
+        2.8764777183532715
+      ]
+    },
+    {
+      "source_id": "AT2G42200",
+      "source_symbol": "SPL9",
+      "target_id": "AT5G53200",
+      "target_symbol": "TRY",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 13610,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        10.490092277526855,
+        6.961004257202148,
+        5.363272666931152,
+        3.1512465476989746,
+        2.5258188247680664
+      ]
+    },
+    {
+      "source_id": "AT4G15090",
+      "source_symbol": "FAR1",
+      "target_id": "AT2G40080",
+      "target_symbol": "ELF4",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 13858,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        9854
+      ],
+      "top_activations": [
+        9.738040924072266,
+        6.513164043426514,
+        4.960681438446045,
+        2.9330108165740967,
+        2.2672483921051025
+      ]
+    },
+    {
+      "source_id": "AT5G16820",
+      "source_symbol": "HSF3",
+      "target_id": "AT1G56600",
+      "target_symbol": "GolS2",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 11135,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        13.169605255126953,
+        8.395665168762207,
+        6.8032917976379395,
+        3.2814698219299316,
+        3.2724030017852783
+      ]
+    },
+    {
+      "source_id": "AT1G79180",
+      "source_symbol": "MYB63",
+      "target_id": "AT1G15950",
+      "target_symbol": "CCR1",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 13488,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        10.302952766418457,
+        6.899230003356934,
+        5.184191703796387,
+        3.0176494121551514,
+        2.4577736854553223
+      ]
+    },
+    {
+      "source_id": "AT4G23550",
+      "source_symbol": "WRKY29",
+      "target_id": "AT4G23550",
+      "target_symbol": "WRKY29",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 12605,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        11.119202613830566,
+        7.220794677734375,
+        5.832454204559326,
+        3.1095235347747803,
+        2.6893019676208496
+      ]
+    },
+    {
+      "source_id": "AT5G62380",
+      "source_symbol": "NAC101",
+      "target_id": "AT1G28470",
+      "target_symbol": "NAC010",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 14061,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        8.919499397277832,
+        5.965641975402832,
+        4.460438251495361,
+        2.74387526512146,
+        2.04097843170166
+      ]
+    },
+    {
+      "source_id": "AT2G22300",
+      "source_symbol": "SR1",
+      "target_id": "AT4G25470",
+      "target_symbol": "CBF2",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 12705,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        11.59780216217041,
+        7.492854118347168,
+        6.106994152069092,
+        3.1921026706695557,
+        2.8686203956604004
+      ]
+    },
+    {
+      "source_id": "AT2G36270",
+      "source_symbol": "ABI5",
+      "target_id": "AT5G65165",
+      "target_symbol": "SDH2-3",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 12625,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        11.494096755981445,
+        7.4717631340026855,
+        5.9453654289245605,
+        3.164193868637085,
+        2.8296706676483154
+      ]
+    },
+    {
+      "source_id": "AT1G45249",
+      "source_symbol": "ABF2",
+      "target_id": "AT5G52300",
+      "target_symbol": "LTI65",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 11820,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        12.810952186584473,
+        8.2139253616333,
+        6.804833889007568,
+        3.4993069171905518,
+        3.2004129886627197
+      ]
+    },
+    {
+      "source_id": "AT2G22540",
+      "source_symbol": "SVP",
+      "target_id": "AT4G35900",
+      "target_symbol": "FD",
+      "sign": "repression",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "repression",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 13867,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        9.841757774353027,
+        6.605327606201172,
+        5.050265312194824,
+        3.0237815380096436,
+        2.369828224182129
+      ]
+    },
+    {
+      "source_id": "AT2G20180",
+      "source_symbol": "PIL5",
+      "target_id": "AT5G53290",
+      "target_symbol": "CRF3",
+      "sign": "repression",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "repression",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 13568,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        9.83127498626709,
+        6.572841167449951,
+        5.0098772048950195,
+        2.925462484359741,
+        2.3116772174835205
+      ]
+    },
+    {
+      "source_id": "AT1G16490",
+      "source_symbol": "MYB58",
+      "target_id": "AT2G37040",
+      "target_symbol": "PAL1",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 12240,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        11.452679634094238,
+        7.489212989807129,
+        5.961462020874023,
+        3.1574697494506836,
+        2.836430788040161
+      ]
+    },
+    {
+      "source_id": "AT2G46770",
+      "source_symbol": "NST1",
+      "target_id": "AT1G62990",
+      "target_symbol": "KNAT7",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 12779,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        11.367244720458984,
+        7.492007732391357,
+        5.899594306945801,
+        3.2362606525421143,
+        2.7632808685302734
+      ]
+    },
+    {
+      "source_id": "AT2G46770",
+      "source_symbol": "NST1",
+      "target_id": "AT5G12870",
+      "target_symbol": "MYB46",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "scored",
+      "n_active_features": 13029,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        10.521889686584473,
+        6.939394950866699,
+        5.4055867195129395,
+        3.064734697341919,
+        2.5621118545532227
+      ]
+    },
+    {
+      "source_id": "AT1G52880",
+      "source_symbol": "NAM",
+      "target_id": "AT5G61850",
+      "target_symbol": "LFY",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "api_error"
+    },
+    {
+      "source_id": "AT5G16820",
+      "source_symbol": "HSF3",
+      "target_id": "AT2G47180",
+      "target_symbol": "GolS1",
+      "sign": "activation",
+      "interaction_confidence": 0.99,
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "positive",
+      "status": "api_error"
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT4G17150",
+      "target_symbol": "AT4G17150",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "api_error"
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT2G23460",
+      "target_symbol": "XLG1",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "api_error"
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT5G16250",
+      "target_symbol": "AT5G16250",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "api_error"
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT3G56690",
+      "target_symbol": "CIP111",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "api_error"
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT5G44265",
+      "target_symbol": "AT5G44265",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 13624,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        9.804823875427246,
+        6.534393310546875,
+        5.058157444000244,
+        2.9466726779937744,
+        2.3666038513183594
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT1G66520",
+      "target_symbol": "AT1G66520",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 14010,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        8.230997085571289,
+        5.5706562995910645,
+        4.133615970611572,
+        2.5473952293395996,
+        1.8884432315826416
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT2G34390",
+      "target_symbol": "NIP2;1",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 12344,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        11.584338188171387,
+        7.522343635559082,
+        6.049321174621582,
+        3.236241340637207,
+        2.8442704677581787
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT1G66830",
+      "target_symbol": "AT1G66830",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 12534,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        10.676132202148438,
+        7.023591995239258,
+        5.510889053344727,
+        3.00773024559021,
+        2.539806365966797
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT1G61760",
+      "target_symbol": "AT1G61760",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 12946,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        10.67491340637207,
+        6.944757461547852,
+        5.575870037078857,
+        2.942819118499756,
+        2.5239789485931396
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT5G59770",
+      "target_symbol": "AT5G59770",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 14050,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        9854
+      ],
+      "top_activations": [
+        8.286378860473633,
+        5.593277931213379,
+        4.106654167175293,
+        2.6233747005462646,
+        1.8232040405273438
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT1G50890",
+      "target_symbol": "AT1G50890",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 13931,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        9.747319221496582,
+        6.534228801727295,
+        4.861600399017334,
+        3.0492751598358154,
+        2.2811214923858643
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT3G13700",
+      "target_symbol": "AT3G13700",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 13092,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        10.589632034301758,
+        6.981586456298828,
+        5.5024590492248535,
+        3.075897693634033,
+        2.568840742111206
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT1G69640",
+      "target_symbol": "SBH1",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 12490,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        10.935162544250488,
+        7.104870319366455,
+        5.644755840301514,
+        3.0674614906311035,
+        2.6740005016326904
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT1G72700",
+      "target_symbol": "AT1G72700",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "api_error"
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT4G10840",
+      "target_symbol": "KLCR1",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "api_error"
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT5G63620",
+      "target_symbol": "AT5G63620",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "api_error"
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT1G48780",
+      "target_symbol": "AT1G48780",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 12533,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        11.35361099243164,
+        7.384948253631592,
+        5.860737323760986,
+        3.124499559402466,
+        2.7273786067962646
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT5G40700",
+      "target_symbol": "AT5G40700",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 13994,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        8.65572738647461,
+        5.742133617401123,
+        4.304388999938965,
+        2.6341629028320312,
+        2.0251524448394775
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT2G42890",
+      "target_symbol": "AT2G42890",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 14107,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        7.978888034820557,
+        5.381963729858398,
+        4.046339511871338,
+        2.4322705268859863,
+        1.7028034925460815
+      ]
+    },
+    {
+      "source_id": "AT5G56840",
+      "source_symbol": "AT5G56840",
+      "target_id": "AT2G46370",
+      "target_symbol": "JAR1",
+      "species": "arabidopsis",
+      "relation_type": "activation",
+      "control_type": "negative",
+      "status": "scored",
+      "n_active_features": 14002,
+      "top_features": [
+        27115,
+        8583,
+        10518,
+        32710,
+        2771
+      ],
+      "top_activations": [
+        7.901900768280029,
+        5.386242389678955,
+        3.8768489360809326,
+        2.498133420944214,
+        1.7562847137451172
+      ]
+    }
+  ]
+}
