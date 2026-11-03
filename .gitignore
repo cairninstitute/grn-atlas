@@ -73,7 +73,8 @@ test-results/
 # Research artifacts — logs, large embeddings, generated images
 research/calibrations/data/*.log
 research/calibrations/data/evo2_embeddings/
-research/visuals/*.png
+
+
 
 # Cloned third-party repos used during calibration
 deepTFBS/
