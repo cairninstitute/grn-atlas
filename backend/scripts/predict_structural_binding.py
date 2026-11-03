@@ -134,7 +134,7 @@ def _http_get(url: str, headers: dict | None = None, retries: int = 4,
             with urllib.request.urlopen(req, timeout=30) as resp:
                 return resp.read().decode()
         except urllib.error.HTTPError as e:
-            if e.code == 404:
+            if e.code in (400, 404):
                 return None
             if e.code in (429, 500, 502, 503, 504) and attempt < retries - 1:
                 time.sleep(2 ** attempt)
