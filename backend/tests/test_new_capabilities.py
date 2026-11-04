@@ -72,11 +72,11 @@ def test_no_directional_sign_from_correlation():
     tiers = {r[0] for r in main.db.conn.execute(
         "SELECT DISTINCT sign_evidence FROM interactions")}
     assert "inferred" not in tiers  # correlation is never a directional tier
-    assert tiers <= {"measured", "perturbation", "unknown"}
+    assert tiers <= {"measured", "perturbation", "ortholog_transfer", "unknown"}
     # Every row carrying a directional sign must come from a trustworthy tier, never correlation.
     bad = main.db.conn.execute(
         "SELECT COUNT(*) FROM interactions WHERE sign IS NOT NULL "
-        "AND sign_evidence NOT IN ('measured','perturbation')"
+        "AND sign_evidence NOT IN ('measured','perturbation','ortholog_transfer')"
     ).fetchone()[0]
     assert bad == 0
 

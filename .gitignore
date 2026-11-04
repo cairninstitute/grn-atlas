@@ -50,6 +50,7 @@ backend/data/*.tsv
 backend/data/*.fasta.gz
 backend/data/*.assembly.gz
 backend/data/external_sources/
+backend/data/direct_binding/
 backend/data/clonelab/
 
 # Exception: hand-curated files that cannot be regenerated from upstream sources.

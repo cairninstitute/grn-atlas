@@ -808,6 +808,31 @@ def build():
         );
         CREATE INDEX idx_sbp_species_class ON structural_binding_predictions(species, binding_class);
         CREATE INDEX idx_sbp_confidence ON structural_binding_predictions(confidence_score DESC);
+
+        CREATE TABLE IF NOT EXISTS esm2_embeddings (
+            gene_id       TEXT NOT NULL,
+            species       TEXT NOT NULL,
+            embedding     BLOB NOT NULL,
+            embedding_dim INTEGER NOT NULL,
+            sequence_len  INTEGER NOT NULL,
+            model_version TEXT NOT NULL,
+            computed_at   TEXT NOT NULL,
+            PRIMARY KEY (gene_id, species)
+        );
+
+        CREATE TABLE IF NOT EXISTS alphafold_features (
+            gene_id                  TEXT NOT NULL,
+            species                  TEXT NOT NULL,
+            uniprot_acc              TEXT,
+            protein_length           INTEGER,
+            mean_plddt               REAL,
+            disorder_fraction        REAL,
+            low_confidence_fraction  REAL,
+            high_confidence_fraction REAL,
+            fetch_status             TEXT NOT NULL DEFAULT 'pending',
+            fetched_at               TEXT,
+            PRIMARY KEY (gene_id, species)
+        );
     """)
     ensure_schema(conn)
 

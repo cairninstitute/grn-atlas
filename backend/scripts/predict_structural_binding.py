@@ -139,12 +139,12 @@ def _http_get(url: str, headers: dict | None = None, retries: int = 4,
             if e.code in (429, 500, 502, 503, 504) and attempt < retries - 1:
                 time.sleep(2 ** attempt)
                 continue
-            raise
+            return None
         except (urllib.error.URLError, TimeoutError):
             if attempt < retries - 1:
                 time.sleep(2 ** attempt)
                 continue
-            raise
+            return None
     return None
 
 
@@ -611,8 +611,9 @@ def main() -> int:
                         help="Show selected edges without fetching or predicting")
     args = parser.parse_args()
 
-    conn = sqlite3.connect(str(args.db))
+    conn = sqlite3.connect(str(args.db), timeout=30)
     conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA busy_timeout=30000")
     conn.execute("PRAGMA foreign_keys=ON")
     ensure_tables(conn)
 

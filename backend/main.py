@@ -7653,6 +7653,49 @@ async def structural_binding_list(
     return {"predictions": predictions, "count": len(predictions)}
 
 
+@app.get("/api/v1/esm2-embeddings/stats")
+async def esm2_stats():
+    """Summary statistics for ESM2 protein embeddings."""
+    try:
+        rows = db.conn.execute(
+            "SELECT species, COUNT(*), AVG(sequence_len) FROM esm2_embeddings GROUP BY species"
+        ).fetchall()
+    except Exception:
+        return {"stats": {}, "message": "No ESM2 embeddings yet."}
+    return {"stats": {r[0]: {"count": r[1], "avg_seq_len": round(r[2], 1)} for r in rows},
+            "total": sum(r[1] for r in rows)}
+
+
+@app.get("/api/v1/esm2-embeddings/{gene_id}")
+async def esm2_lookup(gene_id: str):
+    """Check if ESM2 embedding exists for a gene."""
+    try:
+        row = db.conn.execute(
+            "SELECT species, embedding_dim, sequence_len, model_version, computed_at "
+            "FROM esm2_embeddings WHERE gene_id = ?", (gene_id,)
+        ).fetchone()
+    except Exception:
+        raise HTTPException(status_code=404, detail="ESM2 embeddings table not available")
+    if not row:
+        raise HTTPException(status_code=404, detail="No ESM2 embedding for this gene")
+    return {"gene_id": gene_id, "species": row[0], "embedding_dim": row[1],
+            "sequence_len": row[2], "model_version": row[3], "computed_at": row[4]}
+
+
+@app.get("/api/v1/sign-transfer/stats")
+async def sign_transfer_stats():
+    """Statistics for ortholog-transferred signs."""
+    rows = db.conn.execute("""
+        SELECT sign, sign_evidence, COUNT(*)
+        FROM interactions
+        WHERE sign IS NOT NULL AND sign != ''
+        GROUP BY sign, sign_evidence
+        ORDER BY COUNT(*) DESC
+    """).fetchall()
+    return {"distribution": [{"sign": r[0], "evidence": r[1], "count": r[2]} for r in rows],
+            "ortholog_transferred": sum(r[2] for r in rows if r[1] == "ortholog_transfer")}
+
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring"""

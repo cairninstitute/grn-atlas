@@ -92,11 +92,11 @@ def test_window_coords_wellformed(db):
 
 
 def test_motif_hits_lie_within_a_promoter_window(db):
-    total = one(db, "SELECT COUNT(*) FROM motif_hits")
+    total = one(db, "SELECT COUNT(*) FROM motif_hits WHERE chromosome != 'scan'")
     if total == 0:
-        pytest.skip("no motif hits loaded")
+        pytest.skip("no genomic-coordinate motif hits loaded")
     contained = one(db,
-        "SELECT COUNT(*) FROM motif_hits h WHERE EXISTS ("
+        "SELECT COUNT(*) FROM motif_hits h WHERE h.chromosome != 'scan' AND EXISTS ("
         "  SELECT 1 FROM gene_windows w WHERE w.ext_gene_id=h.ext_gene_id "
         "  AND w.window_type='promoter' AND w.assembly=h.assembly "
         "  AND w.chromosome=h.chromosome AND h.start >= w.start AND h.end <= w.end)")

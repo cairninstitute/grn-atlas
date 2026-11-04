@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs esm2-embeddings alphafold-features structural-predictions data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - release data setup from a fresh clone, including all external evidence and KnockTF species"
@@ -35,15 +35,24 @@ help:
 	@echo "make frontend       - run the Vite dev server on :3001"
 	@echo "make test           - run backend + frontend tests"
 	@echo "make test-skills    - run agent skill tests (342 direct-mode tests)"
+	@echo "make connectf-api   - fetch ConnecTF TF-target edges via API + load into atlas"
+	@echo "make jaspar-vertebrate - fetch JASPAR 2024 vertebrate motifs + scan human/mouse promoters"
+	@echo "make ortholog-signs - transfer signed edges across species via ortholog mapping"
+	@echo "make esm2-embeddings - generate ESM2 protein embeddings for all TFs (needs GPU + pip install -r backend/requirements-gpu.txt)"
+	@echo "make alphafold-features - fetch AlphaFold pLDDT/disorder features for TF proteins"
+	@echo "make structural-predictions - run Boltz-2 structural binding predictions (needs NVIDIA_NIM_API_KEY)"
+	@echo "make data-expansion - run all enrichment steps (connectf-api through alphafold-features)"
 
 # One command to take a fresh clone to the verified release source-data profile. Each step is
 # individually re-runnable. Some download stages self-skip on transient failures, but the final
 # verifier rejects a degraded build that is missing a release-required layer.
-bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion direct-binding allele-pwms chromatin-peaks qualify-evidence verify-data
+bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion direct-binding allele-pwms chromatin-peaks qualify-evidence verify-data data-expansion
 	@echo ""
 	@echo "=== GRN Atlas bootstrap complete ==="
 	@echo "Verify:  make test-backend"
 	@echo "Run:     make backend        (API on :8000)   then   make frontend (UI on :3001)"
+	@echo "GPU:     make esm2-embeddings  (requires pip install -r backend/requirements-gpu.txt)"
+	@echo "Boltz-2: make structural-predictions  (requires NVIDIA_NIM_API_KEY)"
 
 setup:
 	python3 -m venv venv
@@ -213,6 +222,43 @@ test-frontend:
 
 test-skills:
 	venv/bin/python .agents/skills/_test_all_skills.py
+
+connectf-api:
+	venv/bin/python backend/scripts/fetch_connectf.py
+	venv/bin/python backend/scripts/load_direct_binding.py
+
+jaspar-vertebrate:
+	venv/bin/python backend/scripts/fetch_jaspar_vertebrate.py
+
+ortholog-signs:
+	venv/bin/python backend/scripts/transfer_ortholog_signs.py
+
+esm2-embeddings:
+	@if venv/bin/python -c "import torch" 2>/dev/null; then \
+		venv/bin/python backend/scripts/generate_esm2_embeddings.py; \
+	else \
+		echo "torch not installed. Run: venv/bin/pip install -r backend/requirements-gpu.txt"; \
+		echo "Skipping ESM2 embeddings (optional GPU step)."; \
+	fi
+
+alphafold-features:
+	venv/bin/python backend/scripts/fetch_alphafold_features.py
+
+structural-predictions:
+	@if [ -z "$${NVIDIA_NIM_API_KEY:-}" ] && [ -f ~/.secrets.env ]; then \
+		. ~/.secrets.env 2>/dev/null; \
+	fi; \
+	if [ -z "$${NVIDIA_NIM_API_KEY:-}" ]; then \
+		echo "NVIDIA_NIM_API_KEY not set. Get a free key at https://build.nvidia.com"; \
+		echo "Skipping structural predictions (optional)."; \
+	else \
+		venv/bin/python backend/scripts/predict_structural_binding.py --tier all --max-edges 500; \
+	fi
+
+data-expansion: connectf-api jaspar-vertebrate ortholog-signs alphafold-features
+	@echo "Data expansion complete. Optional GPU steps:"
+	@echo "  make esm2-embeddings          (needs torch + GPU)"
+	@echo "  make structural-predictions   (needs NVIDIA_NIM_API_KEY)"
 
 clean-db:
 	rm -f backend/data/grn.sqlite3
