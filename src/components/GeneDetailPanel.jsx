@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { geneLabel } from '../utils/geneLabel';
+import { proteinAPI } from '../services/apiService';
 import ExpressionPanel from './ExpressionPanel';
 import '../styles/GeneDetailPanel.css';
 
@@ -141,6 +142,9 @@ export default function GeneDetailPanel({ gene, data, onDesignDsRna }) {
 
       {/* Tissue coexpression — self-hides if no data */}
       <TissueCoexpression geneId={gene.id} />
+
+      {/* Protein features (ESM2 + AlphaFold) — self-hides if no data */}
+      <ProteinFeatures geneId={gene.id} />
 
       {/* Regulators Section */}
       <div className="detail-section">
@@ -345,6 +349,64 @@ function TissueCoexpression({ geneId }) {
           {expanded ? '− Collapse' : `+ Show ${data.edges.length - 5} more`}
         </button>
       )}
+    </div>
+  );
+}
+
+function ProteinFeatures({ geneId }) {
+  const [esm2, setEsm2] = useState(null);
+  const [alphafold, setAlphafold] = useState(null);
+
+  useEffect(() => {
+    if (!geneId) return;
+    setEsm2(null);
+    setAlphafold(null);
+    proteinAPI.esm2Lookup(geneId).then(setEsm2).catch(() => {});
+    proteinAPI.alphafoldLookup(geneId).then(setAlphafold).catch(() => {});
+  }, [geneId]);
+
+  if (!esm2 && !alphafold) return null;
+
+  const plddt = alphafold?.mean_plddt;
+  const plddtColor = plddt >= 70 ? '#58a06c' : plddt >= 50 ? '#c89020' : '#e05050';
+
+  return (
+    <div className="detail-section">
+      <h3 className="section-title">Protein features</h3>
+      <div className="info-grid">
+        {esm2 && (
+          <div className="info-item">
+            <label>ESM2 embedding</label>
+            <value className="value-secondary">
+              {esm2.embedding_dim}D, {esm2.sequence_len} aa
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-3)', marginLeft: 4 }}>(predicted)</span>
+            </value>
+          </div>
+        )}
+        {alphafold && (
+          <>
+            <div className="info-item">
+              <label>AlphaFold pLDDT</label>
+              <value className="value-secondary">
+                <span style={{ color: plddtColor, fontWeight: 600 }}>{plddt?.toFixed(1)}</span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-3)', marginLeft: 4 }}>
+                  ({alphafold.protein_length} aa)
+                </span>
+              </value>
+            </div>
+            <div className="info-item">
+              <label>Disorder fraction</label>
+              <value className="value-secondary">
+                {(alphafold.disorder_fraction * 100).toFixed(0)}%
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-3)', marginLeft: 4 }}>
+                  (low-conf: {(alphafold.low_confidence_fraction * 100).toFixed(0)}%,
+                   high-conf: {(alphafold.high_confidence_fraction * 100).toFixed(0)}%)
+                </span>
+              </value>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

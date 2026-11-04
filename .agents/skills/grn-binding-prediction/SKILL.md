@@ -1,6 +1,6 @@
 ---
 name: grn-binding-prediction
-description: Query or trigger structural binding predictions — scores whether a TF protein can physically bind a target gene's promoter DNA using Boltz-2. Use for validating candidate regulatory edges or prioritizing wet-lab experiments.
+description: Query structural binding predictions — Boltz-2 TF-DNA complex confidence scores. UNCALIBRATED — calibration found no signal between known and random pairs. Do not use for edge validation or ranking; scores are descriptive only.
 compatibility: Requires the grn-atlas backend virtualenv (backend/venv/bin/python) or a running GRN Atlas server.
 metadata:
   author: grn-atlas
@@ -47,7 +47,7 @@ python backend/scripts/predict_structural_binding.py --species arabidopsis --tie
 
 Each prediction includes:
 - **confidence_score** (0.0-1.0): Boltz-2 structural confidence for the TF-DNA complex
-- **binding_class**: `likely` (≥0.7), `uncertain` (0.4-0.7), `unlikely` (<0.4), `no_sequence`, `error`
+- **binding_class**: `uncalibrated_likely` (≥0.7), `uncalibrated_uncertain` (0.4-0.7), `uncalibrated_unlikely` (<0.4), `no_sequence`, `error`
 - **protein_length**: TF protein sequence length (amino acids)
 - **dna_length**: Promoter DNA window length (base pairs)
 
@@ -55,7 +55,7 @@ Each prediction includes:
 
 These are **computational structure predictions**, not experimental binding measurements. A high confidence score means the model predicts the TF protein *can* fold into a complex with the DNA sequence — it does not prove the TF binds that promoter *in vivo*. Always label as predicted_structural evidence, never as measured.
 
-Confidence thresholds (0.7/0.4) are preliminary and have not been calibrated against gold-standard ChIP-seq data. Use for prioritization, not as definitive evidence.
+**Calibration status: no signal detected.** Calibration against known TF-DNA pairs showed no separation from random pairs — random pairs sometimes score higher. Confidence thresholds (0.7/0.4) are arbitrary until calibration succeeds. Do not use scores to rank or validate edges.
 
 ### API key
 

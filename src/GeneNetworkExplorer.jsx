@@ -146,7 +146,7 @@ function ExplorerInner() {
     } else if (target === 'toolbox') {
       setViewMode('toolbox');
     } else {
-      setViewMode(target);
+      setViewMode('explore');
     }
   }, []);
 

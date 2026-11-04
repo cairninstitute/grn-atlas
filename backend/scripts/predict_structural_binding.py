@@ -56,6 +56,8 @@ SPECIES_CONFIG = {
 }
 
 CONFIDENCE_THRESHOLDS = {"likely": 0.7, "uncertain": 0.4}
+# Thresholds are uncalibrated — calibration showed no signal between known and
+# random TF-DNA pairs. Labels are descriptive placeholders, not validated.
 
 
 # ---------------------------------------------------------------------------
@@ -200,6 +202,7 @@ def select_candidate_edges(conn: sqlite3.Connection, species: str | None,
                   AND sbp.source_id = rci.source_id
                   AND sbp.target_id = rci.target_id
                   AND sbp.relation_type = rci.relation_type
+                  AND sbp.binding_class NOT IN ('error', 'no_sequence')
               )
             ORDER BY rci.impact_score DESC
             LIMIT ?
@@ -227,6 +230,7 @@ def select_candidate_edges(conn: sqlite3.Connection, species: str | None,
                   AND sbp.source_id = rec.source_id
                   AND sbp.target_id = rec.target_id
                   AND sbp.relation_type = rec.relation_type
+                  AND sbp.binding_class NOT IN ('error', 'no_sequence')
               )
             ORDER BY rec.confidence DESC
             LIMIT ?
@@ -460,10 +464,10 @@ def classify_binding(confidence: float | None) -> str:
     if confidence is None:
         return "error"
     if confidence >= CONFIDENCE_THRESHOLDS["likely"]:
-        return "likely"
+        return "uncalibrated_likely"
     if confidence >= CONFIDENCE_THRESHOLDS["uncertain"]:
-        return "uncertain"
-    return "unlikely"
+        return "uncalibrated_uncertain"
+    return "uncalibrated_unlikely"
 
 
 # ---------------------------------------------------------------------------
@@ -483,16 +487,20 @@ def process_edge(edge: dict, conn: sqlite3.Connection, api_key: str,
     ).fetchone()
     symbol = src_row[0] if src_row else source_id
 
+    store_kw = dict(recycling_steps=recycling_steps,
+                     sampling_steps=sampling_steps,
+                     diffusion_samples=diffusion_samples)
+
     protein_seq = fetch_protein_sequence(source_id, symbol, species, conn)
     if not protein_seq:
         return _store_prediction(conn, edge, None, "no_sequence", None, None,
-                                 error_message="protein sequence not found")
+                                 error_message="protein sequence not found", **store_kw)
 
     dna_seq = fetch_promoter_dna(target_id, species, conn, dna_window)
     if not dna_seq:
         return _store_prediction(conn, edge, None, "no_sequence",
                                  len(protein_seq), None,
-                                 error_message="promoter DNA not found")
+                                 error_message="promoter DNA not found", **store_kw)
 
     result = call_boltz2(protein_seq, dna_seq, api_key,
                          recycling_steps, sampling_steps, diffusion_samples)
@@ -501,7 +509,7 @@ def process_edge(edge: dict, conn: sqlite3.Connection, api_key: str,
         err_msg = str(result.get("error", "unknown")) if result else "no response"
         return _store_prediction(conn, edge, None, "error",
                                  len(protein_seq), len(dna_seq),
-                                 error_message=err_msg[:1000])
+                                 error_message=err_msg[:1000], **store_kw)
 
     scores = result.get("confidence_scores", [])
     confidence = scores[0] if scores else None
@@ -514,24 +522,29 @@ def process_edge(edge: dict, conn: sqlite3.Connection, api_key: str,
 
     return _store_prediction(conn, edge, confidence, binding_class,
                              len(protein_seq), len(dna_seq),
-                             raw_output=raw_output)
+                             raw_output=raw_output, **store_kw)
 
 
 def _store_prediction(conn: sqlite3.Connection, edge: dict,
                       confidence: float | None, binding_class: str,
                       protein_len: int | None, dna_len: int | None,
                       raw_output: str | None = None,
-                      error_message: str | None = None) -> dict:
+                      error_message: str | None = None,
+                      recycling_steps: int = 3,
+                      sampling_steps: int = 50,
+                      diffusion_samples: int = 1) -> dict:
     now = datetime.now(timezone.utc).isoformat()
     conn.execute(
         "INSERT OR REPLACE INTO structural_binding_predictions "
         "(species, source_id, target_id, relation_type, confidence_score, "
-        "binding_class, protein_length, dna_length, raw_output, "
+        "binding_class, protein_length, dna_length, recycling_steps, "
+        "sampling_steps, diffusion_samples, raw_output, "
         "error_message, predicted_at) "
-        "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (edge["species"], edge["source_id"], edge["target_id"],
          edge["relation_type"], confidence, binding_class,
-         protein_len, dna_len, raw_output, error_message, now),
+         protein_len, dna_len, recycling_steps, sampling_steps,
+         diffusion_samples, raw_output, error_message, now),
     )
     conn.commit()
     return {
@@ -642,7 +655,8 @@ def main() -> int:
         return 1
 
     results = {"predicted": 0, "no_sequence": 0, "error": 0,
-               "likely": 0, "uncertain": 0, "unlikely": 0}
+               "uncalibrated_likely": 0, "uncalibrated_uncertain": 0,
+               "uncalibrated_unlikely": 0}
 
     for i, edge in enumerate(edges):
         print(f"[{i+1}/{len(edges)}] {edge['source_id']} -> {edge['target_id']} "

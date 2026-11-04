@@ -7568,13 +7568,16 @@ async def regulatory_map():
 @app.get("/api/v1/structural-binding/stats")
 async def structural_binding_stats():
     """Summary statistics for structural binding predictions."""
-    rows = db.conn.execute("""
-        SELECT species, binding_class, COUNT(*) as count,
-               AVG(confidence_score) as avg_confidence
-        FROM structural_binding_predictions
-        GROUP BY species, binding_class
-        ORDER BY species, binding_class
-    """).fetchall()
+    try:
+        rows = db.conn.execute("""
+            SELECT species, binding_class, COUNT(*) as count,
+                   AVG(confidence_score) as avg_confidence
+            FROM structural_binding_predictions
+            GROUP BY species, binding_class
+            ORDER BY species, binding_class
+        """).fetchall()
+    except Exception:
+        return {"stats": {}, "message": "Structural binding predictions table not available."}
     if not rows:
         return {"stats": {}, "message": "No predictions yet. Run predict_structural_binding.py first."}
     stats: dict = {}
@@ -7589,10 +7592,13 @@ async def structural_binding_stats():
 async def structural_binding_lookup(species: str, source_id: str, target_id: str):
     """Retrieve a specific structural binding prediction."""
     species = _normalize_species_input(species)
-    row = db.conn.execute("""
-        SELECT * FROM structural_binding_predictions
-        WHERE species = ? AND source_id = ? AND target_id = ?
-    """, (species, source_id, target_id)).fetchone()
+    try:
+        row = db.conn.execute("""
+            SELECT * FROM structural_binding_predictions
+            WHERE species = ? AND source_id = ? AND target_id = ?
+        """, (species, source_id, target_id)).fetchone()
+    except Exception:
+        raise HTTPException(status_code=404, detail="Structural binding predictions table not available")
     if not row:
         raise HTTPException(status_code=404, detail="No structural binding prediction for this edge")
     cols = [d[0] for d in db.conn.execute(
@@ -7606,7 +7612,9 @@ async def structural_binding_lookup(species: str, source_id: str, target_id: str
         result["target_symbol"] = tgt.symbol
     result["interpretation_boundary"] = (
         "Structural binding confidence is a computational prediction from Boltz-2, "
-        "not an experimental measurement. Use for prioritization, not as definitive evidence."
+        "not an experimental measurement. Calibration found no signal between known "
+        "and random TF-DNA pairs — scores are uncalibrated and should not be used "
+        "to rank or validate edges."
     )
     return result
 
@@ -7630,14 +7638,17 @@ async def structural_binding_list(
         params.append(min_confidence)
     where = " AND ".join(clauses)
     params.append(limit)
-    rows = db.conn.execute(f"""
-        SELECT species, source_id, target_id, relation_type,
-               confidence_score, binding_class, protein_length, dna_length, predicted_at
+    try:
+        rows = db.conn.execute(f"""
+            SELECT species, source_id, target_id, relation_type,
+                   confidence_score, binding_class, protein_length, dna_length, predicted_at
         FROM structural_binding_predictions
         WHERE {where}
         ORDER BY confidence_score DESC NULLS LAST
         LIMIT ?
     """, params).fetchall()
+    except Exception:
+        return {"predictions": [], "count": 0, "message": "Structural binding predictions table not available."}
     cols = ["species", "source_id", "target_id", "relation_type",
             "confidence_score", "binding_class", "protein_length", "dna_length", "predicted_at"]
     predictions = []
@@ -7694,6 +7705,46 @@ async def sign_transfer_stats():
     """).fetchall()
     return {"distribution": [{"sign": r[0], "evidence": r[1], "count": r[2]} for r in rows],
             "ortholog_transferred": sum(r[2] for r in rows if r[1] == "ortholog_transfer")}
+
+
+@app.get("/api/v1/alphafold-features/stats")
+async def alphafold_stats():
+    """Summary statistics for AlphaFold protein features."""
+    try:
+        rows = db.conn.execute("""
+            SELECT species, COUNT(*), AVG(mean_plddt), AVG(disorder_fraction)
+            FROM alphafold_features WHERE fetch_status = 'found'
+            GROUP BY species
+        """).fetchall()
+    except Exception:
+        return {"stats": {}, "message": "No AlphaFold features yet."}
+    return {
+        "stats": {r[0]: {"count": r[1], "avg_plddt": round(r[2], 1) if r[2] else None,
+                         "avg_disorder": round(r[3], 3) if r[3] else None} for r in rows},
+        "total": sum(r[1] for r in rows),
+    }
+
+
+@app.get("/api/v1/alphafold-features/{gene_id}")
+async def alphafold_lookup(gene_id: str):
+    """Retrieve AlphaFold features for a gene."""
+    try:
+        row = db.conn.execute(
+            "SELECT species, uniprot_acc, protein_length, mean_plddt, disorder_fraction, "
+            "low_confidence_fraction, high_confidence_fraction, fetch_status, fetched_at "
+            "FROM alphafold_features WHERE gene_id = ? AND fetch_status = 'found'",
+            (gene_id,),
+        ).fetchone()
+    except Exception:
+        raise HTTPException(status_code=404, detail="AlphaFold features table not available")
+    if not row:
+        raise HTTPException(status_code=404, detail="No AlphaFold features for this gene")
+    return {
+        "gene_id": gene_id, "species": row[0], "uniprot_acc": row[1],
+        "protein_length": row[2], "mean_plddt": row[3], "disorder_fraction": row[4],
+        "low_confidence_fraction": row[5], "high_confidence_fraction": row[6],
+        "fetch_status": row[7], "fetched_at": row[8],
+    }
 
 
 @app.get("/health")

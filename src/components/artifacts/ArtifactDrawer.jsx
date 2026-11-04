@@ -42,7 +42,7 @@ export default function ArtifactDrawer({ open, onClose, onNavigate }) {
             summary={artifacts.firstPass?.summary}
             detail={artifacts.firstPass?.detail}
             actionLabel="Open dataset workflow"
-            onAction={() => onNavigate?.('dataset')}
+            onAction={() => onNavigate?.('toolbox')}
           />
           <ArtifactCard
             title="Consensus ranking"
@@ -50,7 +50,7 @@ export default function ArtifactDrawer({ open, onClose, onNavigate }) {
             summary={artifacts.consensus?.summary}
             detail={artifacts.consensus?.detail}
             actionLabel="Open decision workflow"
-            onAction={() => onNavigate?.('decision')}
+            onAction={() => onNavigate?.('intervention')}
           />
           <ArtifactCard
             title="Study plan"
@@ -58,7 +58,7 @@ export default function ArtifactDrawer({ open, onClose, onNavigate }) {
             summary={artifacts.plan?.summary}
             detail={artifacts.plan?.detail}
             actionLabel="Open decision workflow"
-            onAction={() => onNavigate?.('decision')}
+            onAction={() => onNavigate?.('intervention')}
           />
           <ArtifactCard
             title="Collaborator report"
@@ -66,7 +66,7 @@ export default function ArtifactDrawer({ open, onClose, onNavigate }) {
             summary={artifacts.report?.summary}
             detail={artifacts.report?.detail}
             actionLabel="Open decision workflow"
-            onAction={() => onNavigate?.('decision')}
+            onAction={() => onNavigate?.('intervention')}
           />
         </div>
       </aside>

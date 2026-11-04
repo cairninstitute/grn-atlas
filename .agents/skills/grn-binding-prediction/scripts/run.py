@@ -14,7 +14,9 @@ def main():
     parser.add_argument("--species", help="Species name")
     parser.add_argument("--source-id", help="TF gene ID")
     parser.add_argument("--target-id", help="Target gene ID")
-    parser.add_argument("--binding-class", choices=["likely", "uncertain", "unlikely", "no_sequence", "error"])
+    parser.add_argument("--binding-class", choices=[
+        "uncalibrated_likely", "uncalibrated_uncertain", "uncalibrated_unlikely",
+        "no_sequence", "error"])
     parser.add_argument("--min-confidence", type=float, default=0.0)
     parser.add_argument("--top", type=int, default=50)
     parser.add_argument("--stats", action="store_true", help="Show summary statistics")
@@ -29,16 +31,16 @@ def main():
                 f"/api/v1/structural-binding/{args.species}/{args.source_id}/{args.target_id}",
             )
         else:
-            params = {}
-            if args.species:
-                params["species"] = args.species
-            if args.binding_class:
-                params["binding_class"] = args.binding_class
-            if args.min_confidence > 0:
-                params["min_confidence"] = args.min_confidence
-            params["limit"] = args.top
-            sp = args.species or "all"
-            data = common.http_get(args.http, f"/api/v1/structural-binding/{sp}", params=params)
+            if not args.species:
+                data = common.http_get(args.http, "/api/v1/structural-binding/stats")
+            else:
+                params = {}
+                if args.binding_class:
+                    params["binding_class"] = args.binding_class
+                if args.min_confidence > 0:
+                    params["min_confidence"] = args.min_confidence
+                params["limit"] = args.top
+                data = common.http_get(args.http, f"/api/v1/structural-binding/{args.species}", params=params)
     else:
         import sqlite3
         conn = sqlite3.connect(str(common.DB_PATH))

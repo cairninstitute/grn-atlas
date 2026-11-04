@@ -826,6 +826,41 @@ export const analyticsAPI = {
   }
 };
 
+// Protein features & structural predictions
+export const proteinAPI = {
+  esm2Stats: async () => {
+    const response = await fetch(`${API_BASE}/esm2-embeddings/stats`);
+    return response.json();
+  },
+
+  esm2Lookup: async (geneId) => {
+    const response = await fetch(`${API_BASE}/esm2-embeddings/${encodeURIComponent(geneId)}`);
+    if (!response.ok) return null;
+    return response.json();
+  },
+
+  alphafoldStats: async () => {
+    const response = await fetch(`${API_BASE}/alphafold-features/stats`);
+    return response.json();
+  },
+
+  alphafoldLookup: async (geneId) => {
+    const response = await fetch(`${API_BASE}/alphafold-features/${encodeURIComponent(geneId)}`);
+    if (!response.ok) return null;
+    return response.json();
+  },
+
+  structuralBindingStats: async () => {
+    const response = await fetch(`${API_BASE}/structural-binding/stats`);
+    return response.json();
+  },
+
+  signTransferStats: async () => {
+    const response = await fetch(`${API_BASE}/sign-transfer/stats`);
+    return response.json();
+  },
+};
+
 export const workflowAPI = {
   importDataset: async (options = {}) => {
     const response = await fetch(`${API_BASE}/datasets/import`, {
