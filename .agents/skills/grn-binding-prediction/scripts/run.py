@@ -46,7 +46,7 @@ def main():
         conn = sqlite3.connect(str(common.DB_PATH))
         conn.row_factory = sqlite3.Row
 
-        if args.stats:
+        if args.stats or (not args.species and not args.source_id):
             data = _query_stats(conn)
         elif args.source_id and args.target_id and args.species:
             data = _query_single(conn, args.species, args.source_id, args.target_id)

@@ -222,7 +222,7 @@ function ExplorerInner() {
       } else if (requestedView === 'toolbox') {
         setViewMode('toolbox');
       } else {
-        setViewMode(requestedView);
+        setViewMode('explore');
       }
     }
     const fp = {};

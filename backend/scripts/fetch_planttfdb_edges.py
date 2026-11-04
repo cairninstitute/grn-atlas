@@ -188,8 +188,9 @@ def load_edges(edges: list[dict], species: str, conn: sqlite3.Connection) -> Cou
     resolve = gene_resolver(conn, species)
 
     run_id = begin_import(conn, SOURCE_NAME, SOURCE_VERSION,
-                          f"https://planttfdb.gao-lab.org ({species})")
+                          f"https://planttfdb.gao-lab.org ({species})", sha256=None)
 
+    evidence_rows = []
     for edge in edges:
         stats["input"] += 1
         source_id = resolve(edge["tf_id"])
@@ -202,21 +203,19 @@ def load_edges(edges: list[dict], species: str, conn: sqlite3.Connection) -> Cou
             continue
 
         stats["resolved"] += 1
-        replace_source_evidence(
-            conn,
-            species=species,
-            source_id=source_id,
-            target_id=target_id,
-            relation_type="regulation",
-            evidence_layer="direct_unsigned",
-            source_name=SOURCE_NAME,
-            source_version=SOURCE_VERSION,
-            record_key=f"planttfdb:{edge['tf_id']}:{edge['target_id']}:{species}",
-            confidence=0.55,
-            pmids=[],
-            import_run_id=run_id,
-        )
+        evidence_rows.append({
+            "species": species,
+            "source_id": source_id,
+            "target_id": target_id,
+            "relation_type": "regulation",
+            "evidence_layer": "direct_unsigned",
+            "record_key": f"planttfdb:{edge['tf_id']}:{edge['target_id']}:{species}",
+            "confidence": 0.55,
+            "pmids": [],
+        })
 
+    if evidence_rows:
+        replace_source_evidence(conn, SOURCE_NAME, SOURCE_VERSION, run_id, evidence_rows)
     finish_import(conn, run_id, dict(stats))
     conn.commit()
     return stats

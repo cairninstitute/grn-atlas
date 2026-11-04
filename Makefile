@@ -255,10 +255,11 @@ structural-predictions:
 		venv/bin/python backend/scripts/predict_structural_binding.py --tier all --max-edges 500; \
 	fi
 
-data-expansion: connectf-api jaspar-vertebrate ortholog-signs alphafold-features
-	@echo "Data expansion complete. Optional GPU steps:"
+data-expansion: connectf-api jaspar-vertebrate ortholog-signs
+	@echo "Data expansion complete. Optional steps requiring prior protein sequence population:"
+	@echo "  make structural-predictions   (needs NVIDIA_NIM_API_KEY; populates protein_sequences)"
+	@echo "  make alphafold-features       (needs protein_sequences table; run after structural-predictions)"
 	@echo "  make esm2-embeddings          (needs torch + GPU)"
-	@echo "  make structural-predictions   (needs NVIDIA_NIM_API_KEY)"
 
 clean-db:
 	rm -f backend/data/grn.sqlite3

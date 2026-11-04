@@ -98,6 +98,7 @@ REMAINING=$(sqlite3 "$DB" "
         WHERE sbp.species = rec.species
         AND sbp.source_id = rec.source_id
         AND sbp.target_id = rec.target_id
+        AND sbp.binding_class NOT IN ('error', 'no_sequence')
     )
 ")
 echo "  $REMAINING candidate edges remaining for structural prediction"
@@ -114,6 +115,7 @@ if [ "$REMAINING" -gt 0 ] && [ -n "$NVIDIA_NIM_API_KEY" ]; then
                 WHERE sbp.species = rec.species
                 AND sbp.source_id = rec.source_id
                 AND sbp.target_id = rec.target_id
+                AND sbp.binding_class NOT IN ('error', 'no_sequence')
             )
         ")
         if [ "$SP_REMAINING" -gt 0 ]; then

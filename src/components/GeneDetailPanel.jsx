@@ -395,12 +395,11 @@ function ProteinFeatures({ geneId }) {
               </value>
             </div>
             <div className="info-item">
-              <label>Disorder fraction</label>
+              <label>Low-confidence fraction</label>
               <value className="value-secondary">
                 {(alphafold.disorder_fraction * 100).toFixed(0)}%
                 <span style={{ fontSize: '0.7rem', color: 'var(--text-3)', marginLeft: 4 }}>
-                  (low-conf: {(alphafold.low_confidence_fraction * 100).toFixed(0)}%,
-                   high-conf: {(alphafold.high_confidence_fraction * 100).toFixed(0)}%)
+                  (pLDDT &lt; 50; high-conf: {(alphafold.high_confidence_fraction * 100).toFixed(0)}%)
                 </span>
               </value>
             </div>

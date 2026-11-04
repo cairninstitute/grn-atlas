@@ -182,8 +182,9 @@ def load_edges(edges: list[dict], conn: sqlite3.Connection) -> Counter:
     stats = Counter()
     resolve = gene_resolver(conn, "rice")
 
-    run_id = begin_import(conn, SOURCE_NAME, SOURCE_VERSION, "https://grassius.org")
+    run_id = begin_import(conn, SOURCE_NAME, SOURCE_VERSION, "https://grassius.org", sha256=None)
 
+    evidence_rows = []
     for edge in edges:
         stats["input"] += 1
         source_id = resolve(edge["tf_id"])
@@ -196,21 +197,19 @@ def load_edges(edges: list[dict], conn: sqlite3.Connection) -> Counter:
             continue
 
         stats["resolved"] += 1
-        replace_source_evidence(
-            conn,
-            species="rice",
-            source_id=source_id,
-            target_id=target_id,
-            relation_type="regulation",
-            evidence_layer="direct_unsigned",
-            source_name=SOURCE_NAME,
-            source_version=SOURCE_VERSION,
-            record_key=f"grassius:{edge['tf_id']}:{edge['target_id']}",
-            confidence=0.60,
-            pmids=[],
-            import_run_id=run_id,
-        )
+        evidence_rows.append({
+            "species": "rice",
+            "source_id": source_id,
+            "target_id": target_id,
+            "relation_type": "regulation",
+            "evidence_layer": "direct_unsigned",
+            "record_key": f"grassius:{edge['tf_id']}:{edge['target_id']}",
+            "confidence": 0.60,
+            "pmids": [],
+        })
 
+    if evidence_rows:
+        replace_source_evidence(conn, SOURCE_NAME, SOURCE_VERSION, run_id, evidence_rows)
     finish_import(conn, run_id, dict(stats))
     conn.commit()
     return stats

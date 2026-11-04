@@ -105,8 +105,9 @@ def load_into_db(rows: list[dict], dataset: str, species: str, conn: sqlite3.Con
     resolve = gene_resolver(conn, species)
 
     run_id = begin_import(conn, cfg["source_name"], cfg["source_version"],
-                          f"https://omnipathdb.org ({dataset})")
+                          f"https://omnipathdb.org ({dataset})", sha256=None)
 
+    evidence_rows = []
     for row in rows:
         stats["input"] += 1
         source_id = resolve(row["tf_symbol"])
@@ -119,20 +120,19 @@ def load_into_db(rows: list[dict], dataset: str, species: str, conn: sqlite3.Con
             continue
 
         stats["resolved"] += 1
-        replace_source_evidence(
-            conn,
-            species=species,
-            source_id=source_id,
-            target_id=target_id,
-            relation_type=row["sign"],
-            evidence_layer=cfg["evidence_layer"],
-            source_name=cfg["source_name"],
-            source_version=cfg["source_version"],
-            record_key=row["record_key"],
-            confidence=0.80 if row["sign"] != "regulation" else 0.60,
-            pmids=row["pmids"],
-            import_run_id=run_id,
-        )
+        evidence_rows.append({
+            "species": species,
+            "source_id": source_id,
+            "target_id": target_id,
+            "relation_type": row["sign"],
+            "evidence_layer": cfg["evidence_layer"],
+            "record_key": row["record_key"],
+            "confidence": 0.80 if row["sign"] != "regulation" else 0.60,
+            "pmids": row["pmids"],
+        })
+
+    if evidence_rows:
+        replace_source_evidence(conn, cfg["source_name"], cfg["source_version"], run_id, evidence_rows)
 
         # Also promote to interactions table
         existing = conn.execute(
