@@ -44,16 +44,33 @@ def client(tmp_path_factory):
     os.environ.pop("GRN_DB", None)
 
 
-def test_celltype_regulation_reports_blocked(client):
+def test_celltype_regulation_reports_blocked_for_missing_species(client):
+    r = client.post("/api/v1/celltype/regulation", json={"species": "potato"}).json()
+    assert r["supported"] is False
+    assert "scrna" in r["reason"].lower() or "no scrna" in r["reason"].lower()
+
+
+def test_celltype_regulation_returns_results_when_data_loaded(client):
     r = client.post("/api/v1/celltype/regulation", json={"species": "human"}).json()
+    if r.get("supported"):
+        assert r["n_clusters"] > 0
+        assert r["cluster_regulation"]
+    else:
+        assert "reason" in r
+
+
+def test_trajectory_regulation_reports_blocked_for_missing_species(client):
+    r = client.post("/api/v1/trajectory/regulation", json={"species": "potato"}).json()
     assert r["supported"] is False
-    assert "single-cell" in r["reason"].lower()
+    assert "scrna" in r["reason"].lower() or "no scrna" in r["reason"].lower()
 
 
-def test_trajectory_regulation_reports_blocked(client):
+def test_trajectory_regulation_returns_results_when_data_loaded(client):
     r = client.post("/api/v1/trajectory/regulation", json={"species": "human"}).json()
-    assert r["supported"] is False
-    assert "trajectory" in r["reason"].lower()
+    if r.get("supported"):
+        assert "dynamic_regulators" in r
+    else:
+        assert "reason" in r
 
 
 def test_combinatorial_perturbation_returns_ranked_combo(client):

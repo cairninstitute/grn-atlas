@@ -7765,6 +7765,125 @@ async def alphafold_lookup(gene_id: str):
     }
 
 
+@app.get("/api/v1/scrna/datasets")
+async def scrna_datasets():
+    """List available pre-loaded scRNA-seq datasets."""
+    conn = db.conn
+    try:
+        rows = conn.execute(
+            "SELECT dataset_id, name, species, tissue, n_cells, n_genes, n_clusters, citation "
+            "FROM scrna_datasets ORDER BY species"
+        ).fetchall()
+    except Exception:
+        return {"datasets": [], "note": "No scRNA-seq data loaded. Run: make scrna-data"}
+    return {"datasets": [
+        {"dataset_id": r[0], "name": r[1], "species": r[2], "tissue": r[3],
+         "n_cells": r[4], "n_genes": r[5], "n_clusters": r[6], "citation": r[7]}
+        for r in rows
+    ]}
+
+
+@app.get("/api/v1/scrna/{species}/clusters")
+async def scrna_clusters(species: str):
+    """List cell-type clusters for a species with pre-loaded scRNA-seq data."""
+    conn = db.conn
+    dataset_id = f"scrna_{species}"
+    try:
+        clusters = conn.execute(
+            "SELECT cluster_id, cluster_name, n_cells FROM scrna_clusters "
+            "WHERE dataset_id = ? ORDER BY cluster_id", (dataset_id,)
+        ).fetchall()
+    except Exception:
+        raise HTTPException(status_code=404, detail=f"No scRNA-seq data for {species}")
+    if not clusters:
+        raise HTTPException(status_code=404, detail=f"No scRNA-seq data for {species}")
+    return {"species": species, "dataset_id": dataset_id,
+            "clusters": [{"cluster_id": r[0], "cluster_name": r[1], "n_cells": r[2]} for r in clusters]}
+
+
+@app.get("/api/v1/scrna/{species}/cluster/{cluster_id}/expression")
+async def scrna_cluster_expression(species: str, cluster_id: str, limit: int = 100, min_expr: float = 0.1):
+    """Get top expressed genes in a cluster."""
+    conn = db.conn
+    dataset_id = f"scrna_{species}"
+    rows = conn.execute(
+        "SELECT ce.gene_id, ce.mean_expression, g.symbol FROM scrna_cluster_expression ce "
+        "LEFT JOIN genes g ON g.id = ce.gene_id "
+        "WHERE ce.dataset_id = ? AND ce.cluster_id = ? AND ce.mean_expression >= ? "
+        "ORDER BY ce.mean_expression DESC LIMIT ?",
+        (dataset_id, cluster_id, min_expr, limit),
+    ).fetchall()
+    return {"species": species, "cluster_id": cluster_id, "n_genes": len(rows),
+            "genes": [{"gene_id": r[0], "mean_expression": r[1], "symbol": r[2]} for r in rows]}
+
+
+@app.get("/api/v1/directed-network/{species}/stats")
+async def directed_network_stats(species: str):
+    """Get statistics for the directed inferred network."""
+    conn = db.conn
+    try:
+        stats = conn.execute(
+            "SELECT COUNT(*), "
+            "SUM(CASE WHEN sign IS NOT NULL THEN 1 ELSE 0 END), "
+            "SUM(CASE WHEN perturbation_support = 1 THEN 1 ELSE 0 END), "
+            "AVG(confidence), AVG(importance) "
+            "FROM directed_inferred_edges WHERE species = ?", (species,)
+        ).fetchone()
+    except Exception:
+        return {"species": species, "available": False}
+    if not stats or not stats[0]:
+        return {"species": species, "available": False}
+    sign_breakdown = conn.execute(
+        "SELECT sign, COUNT(*) FROM directed_inferred_edges "
+        "WHERE species = ? AND sign IS NOT NULL GROUP BY sign", (species,)
+    ).fetchall()
+    return {
+        "species": species, "available": True,
+        "total_edges": stats[0], "signed_edges": stats[1],
+        "perturbation_supported": stats[2],
+        "mean_confidence": round(stats[3], 4), "mean_importance": round(stats[4], 6),
+        "sign_breakdown": {r[0]: r[1] for r in sign_breakdown},
+    }
+
+
+@app.get("/api/v1/evo2-scores/stats")
+async def evo2_stats():
+    """Get Evo2 promoter quality score statistics."""
+    conn = db.conn
+    try:
+        rows = conn.execute(
+            "SELECT species, COUNT(*), AVG(quality_score), MIN(quality_score), MAX(quality_score) "
+            "FROM evo2_promoter_scores GROUP BY species"
+        ).fetchall()
+    except Exception:
+        return {"available": False, "species": []}
+    return {"available": bool(rows), "species": [
+        {"species": r[0], "n_scored": r[1], "mean_quality": round(r[2], 4),
+         "min_quality": round(r[3], 4), "max_quality": round(r[4], 4)}
+        for r in rows
+    ]}
+
+
+@app.get("/api/v1/geneformer/stats")
+async def geneformer_stats():
+    """Get Geneformer embedding statistics."""
+    conn = db.conn
+    try:
+        cell_stats = conn.execute(
+            "SELECT species, COUNT(*) FROM geneformer_cell_embeddings GROUP BY species"
+        ).fetchall()
+        cluster_stats = conn.execute(
+            "SELECT species, COUNT(*), MAX(embedding_dim) FROM geneformer_cluster_embeddings GROUP BY species"
+        ).fetchall()
+    except Exception:
+        return {"available": False}
+    return {
+        "available": bool(cell_stats),
+        "cell_embeddings": {r[0]: r[1] for r in cell_stats},
+        "cluster_embeddings": {r[0]: {"n_clusters": r[1], "embedding_dim": r[2]} for r in cluster_stats},
+    }
+
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring"""

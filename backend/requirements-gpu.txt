@@ -1,4 +1,4 @@
-# Optional GPU dependencies for ESM2 protein embeddings.
+# Optional GPU dependencies for ESM2 embeddings and Geneformer.
 # Install with: pip install -r backend/requirements-gpu.txt
 # Requires CUDA-capable GPU and compatible PyTorch build.
 torch>=2.0

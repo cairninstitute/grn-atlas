@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding promote-evidence esm2-embeddings alphafold-features structural-predictions data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding promote-evidence esm2-embeddings alphafold-features structural-predictions directed-inference scrna-data geneformer-embeddings celltype-regulation evo2-scores data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - release data setup from a fresh clone, including all external evidence and KnockTF species"
@@ -45,6 +45,11 @@ help:
 	@echo "make remap-binding  - load ReMap 2022 ChIP-seq TF binding (human, mouse, arabidopsis)"
 	@echo "make unibind-binding - load UniBind 2022 motif-validated binding (human, mouse, arabidopsis)"
 	@echo "make promote-evidence - promote all evidence sources into the interactions table"
+	@echo "make directed-inference - run perturbation-supervised directed GRN inference"
+	@echo "make scrna-data     - fetch public scRNA-seq datasets (human PBMC, mouse marrow, arabidopsis root)"
+	@echo "make geneformer-embeddings - generate Geneformer cell embeddings from scRNA-seq (needs GPU)"
+	@echo "make celltype-regulation - derive cell-type-specific regulatory edges from scRNA-seq"
+	@echo "make evo2-scores    - score promoters with Evo2 DNA model (needs NVIDIA_NIM_API_KEY)"
 	@echo "make data-expansion - run all enrichment steps including new binding sources"
 
 # One command to take a fresh clone to the verified release source-data profile. Each step is
@@ -271,11 +276,41 @@ structural-predictions:
 		venv/bin/python backend/scripts/predict_structural_binding.py --tier all --max-edges 500; \
 	fi
 
-data-expansion: connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding promote-evidence
+directed-inference:
+	venv/bin/python backend/scripts/infer_directed_grn.py --all
+
+scrna-data:
+	venv/bin/python backend/scripts/fetch_scrna_data.py --species all
+
+geneformer-embeddings:
+	@if venv/bin/python -c "import torch" 2>/dev/null; then \
+		venv/bin/python backend/scripts/run_geneformer.py --species all; \
+	else \
+		echo "torch not installed. Run: venv/bin/pip install -r backend/requirements-gpu.txt"; \
+		echo "Skipping Geneformer embeddings (optional GPU step)."; \
+	fi
+
+celltype-regulation: scrna-data
+	venv/bin/python backend/scripts/derive_celltype_regulation.py --species all
+
+evo2-scores:
+	@if [ -z "$${NVIDIA_NIM_API_KEY:-}" ] && [ -f ~/.secrets.env ]; then \
+		. ~/.secrets.env 2>/dev/null; \
+	fi; \
+	if [ -z "$${NVIDIA_NIM_API_KEY:-}" ]; then \
+		echo "NVIDIA_NIM_API_KEY not set. Get a free key at https://build.nvidia.com"; \
+		echo "Skipping Evo2 promoter scoring (optional)."; \
+	else \
+		venv/bin/python backend/scripts/score_evo2_promoters.py --species all; \
+	fi
+
+data-expansion: connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding promote-evidence directed-inference scrna-data celltype-regulation
 	@echo "Data expansion complete. Additional optional steps:"
 	@echo "  make structural-predictions   (needs NVIDIA_NIM_API_KEY; populates protein_sequences)"
 	@echo "  make alphafold-features       (needs protein_sequences table populated by structural-predictions)"
 	@echo "  make esm2-embeddings          (needs torch + GPU)"
+	@echo "  make geneformer-embeddings    (needs torch + GPU; run after scrna-data)"
+	@echo "  make evo2-scores              (needs NVIDIA_NIM_API_KEY)"
 
 clean-db:
 	rm -f backend/data/grn.sqlite3

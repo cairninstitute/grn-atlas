@@ -89,3 +89,7 @@ activations_debug.log
 *_megacore*.png
 backend/data/remap_cache/
 backend/data/unibind_cache/
+backend/data/scrna_cache/
+backend/data/paul15/
+data/
+backend/grn.sqlite3
