@@ -93,6 +93,7 @@ def fetch_omnipath(dataset: str, species: str) -> list[dict]:
                     ref = ref.rsplit(":", 1)[-1]
                 if ref.isdigit():
                     pmid_list.append(ref)
+        pmid_list = list(dict.fromkeys(pmid_list))
 
         key = f"{dataset}:{tf}:{target}:{species}"
         if key in rows:
