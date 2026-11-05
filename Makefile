@@ -41,7 +41,7 @@ help:
 	@echo "make esm2-embeddings - generate ESM2 protein embeddings for all TFs (needs GPU + pip install -r backend/requirements-gpu.txt)"
 	@echo "make alphafold-features - fetch AlphaFold pLDDT/disorder features for TF proteins"
 	@echo "make structural-predictions - run Boltz-2 structural binding predictions (needs NVIDIA_NIM_API_KEY)"
-	@echo "make data-expansion - run all enrichment steps (connectf-api through alphafold-features)"
+	@echo "make data-expansion - run enrichment steps (connectf-api, jaspar-vertebrate, ortholog-signs)"
 
 # One command to take a fresh clone to the verified release source-data profile. Each step is
 # individually re-runnable. Some download stages self-skip on transient failures, but the final
@@ -256,9 +256,9 @@ structural-predictions:
 	fi
 
 data-expansion: connectf-api jaspar-vertebrate ortholog-signs
-	@echo "Data expansion complete. Optional steps requiring prior protein sequence population:"
+	@echo "Data expansion complete. Additional optional steps:"
 	@echo "  make structural-predictions   (needs NVIDIA_NIM_API_KEY; populates protein_sequences)"
-	@echo "  make alphafold-features       (needs protein_sequences table; run after structural-predictions)"
+	@echo "  make alphafold-features       (needs protein_sequences table populated by structural-predictions)"
 	@echo "  make esm2-embeddings          (needs torch + GPU)"
 
 clean-db:

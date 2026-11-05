@@ -89,15 +89,20 @@ $PYTHON backend/scripts/fetch_alphafold_features.py --db "$DB" --delay 0.3 || ec
 echo ""
 echo "=== STEP 5: Structural binding predictions — $(TIMESTAMP) ==="
 
-# Check remaining candidates
+# Check remaining candidates (supported from edge_candidates + cycle-closing from candidate_impacts)
 REMAINING=$(sqlite3 "$DB" "
-    SELECT COUNT(*) FROM regulatory_edge_candidates rec
-    WHERE rec.evidence_tier IN ('cycle_closing', 'supported')
-    AND NOT EXISTS (
+    SELECT COUNT(*) FROM (
+        SELECT species, source_id, target_id FROM regulatory_edge_candidates
+        WHERE evidence_tier = 'supported'
+        UNION
+        SELECT species, source_id, target_id FROM regulatory_candidate_impacts
+        WHERE closes_cycle = 1
+    ) c
+    WHERE NOT EXISTS (
         SELECT 1 FROM structural_binding_predictions sbp
-        WHERE sbp.species = rec.species
-        AND sbp.source_id = rec.source_id
-        AND sbp.target_id = rec.target_id
+        WHERE sbp.species = c.species
+        AND sbp.source_id = c.source_id
+        AND sbp.target_id = c.target_id
         AND sbp.binding_class NOT IN ('error', 'no_sequence')
     )
 ")
@@ -107,14 +112,18 @@ if [ "$REMAINING" -gt 0 ] && [ -n "$NVIDIA_NIM_API_KEY" ]; then
     # Run species sequentially to avoid concurrent writes
     for species in human mouse arabidopsis tomato rice petunia; do
         SP_REMAINING=$(sqlite3 "$DB" "
-            SELECT COUNT(*) FROM regulatory_edge_candidates rec
-            WHERE rec.species = '$species'
-            AND rec.evidence_tier IN ('cycle_closing', 'supported')
-            AND NOT EXISTS (
+            SELECT COUNT(*) FROM (
+                SELECT species, source_id, target_id FROM regulatory_edge_candidates
+                WHERE species = '$species' AND evidence_tier = 'supported'
+                UNION
+                SELECT species, source_id, target_id FROM regulatory_candidate_impacts
+                WHERE species = '$species' AND closes_cycle = 1
+            ) c
+            WHERE NOT EXISTS (
                 SELECT 1 FROM structural_binding_predictions sbp
-                WHERE sbp.species = rec.species
-                AND sbp.source_id = rec.source_id
-                AND sbp.target_id = rec.target_id
+                WHERE sbp.species = c.species
+                AND sbp.source_id = c.source_id
+                AND sbp.target_id = c.target_id
                 AND sbp.binding_class NOT IN ('error', 'no_sequence')
             )
         ")

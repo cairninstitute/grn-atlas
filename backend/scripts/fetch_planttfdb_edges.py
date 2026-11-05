@@ -224,6 +224,7 @@ def main():
     all_stats = {}
     all_evidence = []
     combined_stats = Counter()
+    fetched_species = []
 
     for species in args.species:
         print(f"\n[{species}] Fetching PlantTFDB data...", flush=True)
@@ -237,6 +238,7 @@ def main():
             evidence_rows, stats = resolve_edges(edges, species, conn)
             all_evidence.extend(evidence_rows)
             combined_stats += stats
+            fetched_species.append(species)
             all_stats[f"{species}_edges"] = dict(stats)
             print(f"  [{species}] Resolved: {dict(stats)}", flush=True)
         else:
@@ -247,7 +249,8 @@ def main():
     if all_evidence:
         run_id = begin_import(conn, SOURCE_NAME, SOURCE_VERSION,
                               "https://planttfdb.gao-lab.org", sha256=None)
-        replace_source_evidence(conn, SOURCE_NAME, SOURCE_VERSION, run_id, all_evidence)
+        replace_source_evidence(conn, SOURCE_NAME, SOURCE_VERSION, run_id, all_evidence,
+                                species=fetched_species)
         finish_import(conn, run_id, dict(combined_stats))
         conn.commit()
         print(f"  Loaded {len(all_evidence)} total evidence rows", flush=True)

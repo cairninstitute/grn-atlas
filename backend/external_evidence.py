@@ -148,8 +148,17 @@ def replace_source_evidence(
     source_version: str,
     import_run_id: int,
     rows: Iterable[dict],
+    *,
+    species: list[str] | None = None,
 ) -> int:
-    conn.execute("DELETE FROM regulatory_evidence WHERE source_name = ?", (source_name,))
+    if species:
+        placeholders = ",".join("?" for _ in species)
+        conn.execute(
+            f"DELETE FROM regulatory_evidence WHERE source_name = ? AND species IN ({placeholders})",
+            [source_name] + species,
+        )
+    else:
+        conn.execute("DELETE FROM regulatory_evidence WHERE source_name = ?", (source_name,))
     values = []
     for row in rows:
         relation = row["relation_type"]

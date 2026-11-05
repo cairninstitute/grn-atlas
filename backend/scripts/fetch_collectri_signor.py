@@ -99,7 +99,8 @@ def fetch_omnipath(dataset: str, species: str) -> list[dict]:
     return rows
 
 
-def resolve_rows(rows: list[dict], species: str, conn: sqlite3.Connection) -> tuple[list[dict], list[dict], Counter]:
+def resolve_rows(rows: list[dict], species: str, conn: sqlite3.Connection,
+                 evidence_layer: str = "direct_signed") -> tuple[list[dict], list[dict], Counter]:
     """Resolve gene symbols and return (evidence_rows, promotion_rows, stats)."""
     stats = Counter()
     resolve = gene_resolver(conn, species)
@@ -121,7 +122,7 @@ def resolve_rows(rows: list[dict], species: str, conn: sqlite3.Connection) -> tu
             "source_id": source_id,
             "target_id": target_id,
             "relation_type": row["sign"],
-            "evidence_layer": "signed_curated",
+            "evidence_layer": evidence_layer,
             "record_key": row["record_key"],
             "confidence": 0.80 if row["sign"] != "regulation" else 0.60,
             "pmids": row["pmids"],
@@ -155,14 +156,17 @@ def main():
         all_evidence = []
         all_promotions = []
         combined_stats = Counter()
+        fetched_species = []
 
         for species in args.species:
             rows = fetch_omnipath(dataset, species)
             if rows:
-                evidence_rows, promotion_rows, stats = resolve_rows(rows, species, conn)
+                evidence_rows, promotion_rows, stats = resolve_rows(
+                    rows, species, conn, evidence_layer=cfg["evidence_layer"])
                 all_evidence.extend(evidence_rows)
                 all_promotions.extend(promotion_rows)
                 combined_stats += stats
+                fetched_species.append(species)
                 all_stats[f"{dataset}_{species}"] = dict(stats)
                 print(f"  {dataset} {species}: {dict(stats)}", flush=True)
             else:
@@ -173,7 +177,7 @@ def main():
             run_id = begin_import(conn, cfg["source_name"], cfg["source_version"],
                                   f"https://omnipathdb.org ({dataset})", sha256=None)
             replace_source_evidence(conn, cfg["source_name"], cfg["source_version"],
-                                    run_id, all_evidence)
+                                    run_id, all_evidence, species=fetched_species)
             for pr in all_promotions:
                 existing = conn.execute(
                     "SELECT sign, sign_evidence FROM interactions WHERE source_id=? AND target_id=?",
