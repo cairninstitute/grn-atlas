@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding promote-evidence esm2-embeddings alphafold-features structural-predictions directed-inference scrna-data geneformer-embeddings celltype-regulation evo2-scores data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding promote-evidence esm2-embeddings alphafold-features structural-predictions directed-inference scrna-data geneformer-embeddings celltype-regulation evo2-scores grassius-data cistrome-data data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - release data setup from a fresh clone, including all external evidence and KnockTF species"
@@ -50,6 +50,8 @@ help:
 	@echo "make geneformer-embeddings - generate Geneformer cell embeddings from scRNA-seq (needs GPU)"
 	@echo "make celltype-regulation - derive cell-type-specific regulatory edges from scRNA-seq"
 	@echo "make evo2-scores    - score promoters with Evo2 DNA model (needs NVIDIA_NIM_API_KEY)"
+	@echo "make grassius-data  - load GRASSIUS grass TF regulatory data (rice, maize)"
+	@echo "make cistrome-data  - load Cistrome DB ChIP-seq TF binding (human, mouse)"
 	@echo "make data-expansion - run all enrichment steps including new binding sources"
 
 # One command to take a fresh clone to the verified release source-data profile. Each step is
@@ -303,6 +305,12 @@ evo2-scores:
 	else \
 		venv/bin/python backend/scripts/score_evo2_promoters.py --species all; \
 	fi
+
+grassius-data:
+	venv/bin/python backend/scripts/load_grassius.py
+
+cistrome-data:
+	venv/bin/python backend/scripts/load_cistrome.py
 
 data-expansion: connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding promote-evidence directed-inference scrna-data celltype-regulation
 	@echo "Data expansion complete. Additional optional steps:"

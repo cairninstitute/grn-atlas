@@ -44,10 +44,10 @@ def get_api_key() -> str | None:
     if secrets.exists():
         for line in secrets.read_text().splitlines():
             line = line.strip()
+            if line.startswith("export "):
+                line = line[7:]
             if line.startswith("NVIDIA_NIM_API_KEY="):
                 return line.split("=", 1)[1].strip().strip('"').strip("'")
-            if line.startswith("NVIDIA_NIM_API_KEY "):
-                return line.split(None, 1)[1].strip().strip('"').strip("'")
     return None
 
 
