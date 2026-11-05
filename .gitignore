@@ -87,3 +87,5 @@ activations_debug.log
 # Feedback circuit diagrams (generated, not part of atlas)
 *_feedback*.png
 *_megacore*.png
+backend/data/remap_cache/
+backend/data/unibind_cache/

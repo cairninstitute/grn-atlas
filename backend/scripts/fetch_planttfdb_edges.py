@@ -45,9 +45,18 @@ PLANTTFDB_TF_LISTS = {
 }
 
 PLANTREGMAP_REGULATION = {
-    "arabidopsis": "https://plantregmap.gao-lab.org/download/regulation/3702_regulation_At.txt",
-    "rice": "https://plantregmap.gao-lab.org/download/regulation/39947_regulation_Os.txt",
-    "tomato": "https://plantregmap.gao-lab.org/download/regulation/4081_regulation_Sl.txt",
+    "arabidopsis": [
+        "https://plantregmap.gao-lab.org/download/regulation/3702_regulation_At.txt",
+        "ftp://ftp.cbi.pku.edu.cn/pub/database/PlantRegMap/08-download/Arabidopsis_thaliana/binding/regulation_merged_Ath.txt",
+    ],
+    "rice": [
+        "https://plantregmap.gao-lab.org/download/regulation/39947_regulation_Os.txt",
+        "ftp://ftp.cbi.pku.edu.cn/pub/database/PlantRegMap/08-download/Oryza_sativa_Japonica_Group/binding/regulation_merged_Osj.txt",
+    ],
+    "tomato": [
+        "https://plantregmap.gao-lab.org/download/regulation/4081_regulation_Sl.txt",
+        "ftp://ftp.cbi.pku.edu.cn/pub/database/PlantRegMap/08-download/Solanum_lycopersicum/binding/regulation_merged_Sly.txt",
+    ],
 }
 
 PLANTTFDB_REGULATION = {
@@ -102,21 +111,18 @@ def fetch_tf_list(species: str) -> list[dict]:
 
 
 def fetch_regulation_edges(species: str) -> list[dict]:
-    edges = []
-
-    # Try PlantRegMap first (better edge data)
-    url = PLANTREGMAP_REGULATION.get(species)
-    if url:
-        print(f"  Trying PlantRegMap regulation for {species}...", flush=True)
-        data = fetch_url(url)
+    urls = PLANTREGMAP_REGULATION.get(species, [])
+    for url in urls:
+        label = "FTP" if url.startswith("ftp://") else "HTTP"
+        print(f"  Trying PlantRegMap regulation ({label}) for {species}...", flush=True)
+        data = fetch_url(url, timeout=180)
         if data:
             text = data.decode("utf-8", errors="replace")
             parsed = parse_regulation_file(text, species)
             if parsed:
-                print(f"    Got {len(parsed)} edges from PlantRegMap", flush=True)
+                print(f"    Got {len(parsed)} edges from PlantRegMap ({label})", flush=True)
                 return parsed
 
-    # Fall back to PlantTFDB binding site predictions
     url = PLANTTFDB_REGULATION.get(species)
     if url:
         print(f"  Trying PlantTFDB binding predictions for {species}...", flush=True)
@@ -145,7 +151,14 @@ def parse_regulation_file(text: str, species: str) -> list[dict]:
         if len(parts) < 2:
             continue
         tf = parts[0].strip()
-        target = parts[1].strip()
+        # FTP merged format: TF \t "regulates" \t target \t species \t evidence_types
+        # HTTP format: TF \t target \t evidence_type \t score
+        if len(parts) >= 3 and parts[1].strip() == "regulates":
+            target = parts[2].strip()
+            evidence_type = parts[4].strip() if len(parts) > 4 else "predicted"
+        else:
+            target = parts[1].strip()
+            evidence_type = parts[2].strip() if len(parts) > 2 else "predicted"
         key = (tf, target)
         if key in seen:
             continue
@@ -153,8 +166,8 @@ def parse_regulation_file(text: str, species: str) -> list[dict]:
         edges.append({
             "tf_id": tf,
             "target_id": target,
-            "evidence_type": parts[2].strip() if len(parts) > 2 else "predicted",
-            "score": parts[3].strip() if len(parts) > 3 else "",
+            "evidence_type": evidence_type,
+            "score": "",
         })
     return edges
 

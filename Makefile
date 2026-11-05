@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs esm2-embeddings alphafold-features structural-predictions data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding promote-evidence esm2-embeddings alphafold-features structural-predictions data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - release data setup from a fresh clone, including all external evidence and KnockTF species"
@@ -41,7 +41,11 @@ help:
 	@echo "make esm2-embeddings - generate ESM2 protein embeddings for all TFs (needs GPU + pip install -r backend/requirements-gpu.txt)"
 	@echo "make alphafold-features - fetch AlphaFold pLDDT/disorder features for TF proteins"
 	@echo "make structural-predictions - run Boltz-2 structural binding predictions (needs NVIDIA_NIM_API_KEY)"
-	@echo "make data-expansion - run enrichment steps (connectf-api, jaspar-vertebrate, ortholog-signs)"
+	@echo "make planttfdb-edges - fetch PlantTFDB/PlantRegMap regulatory edges (arabidopsis, rice, tomato)"
+	@echo "make remap-binding  - load ReMap 2022 ChIP-seq TF binding (human, mouse, arabidopsis)"
+	@echo "make unibind-binding - load UniBind 2022 motif-validated binding (human, mouse, arabidopsis)"
+	@echo "make promote-evidence - promote all evidence sources into the interactions table"
+	@echo "make data-expansion - run all enrichment steps including new binding sources"
 
 # One command to take a fresh clone to the verified release source-data profile. Each step is
 # individually re-runnable. Some download stages self-skip on transient failures, but the final
@@ -233,6 +237,18 @@ jaspar-vertebrate:
 ortholog-signs:
 	venv/bin/python backend/scripts/transfer_ortholog_signs.py
 
+planttfdb-edges:
+	venv/bin/python backend/scripts/fetch_planttfdb_edges.py
+
+remap-binding:
+	venv/bin/python backend/scripts/load_remap.py
+
+unibind-binding:
+	venv/bin/python backend/scripts/load_unibind.py
+
+promote-evidence:
+	venv/bin/python backend/scripts/promote_evidence_to_interactions.py
+
 esm2-embeddings:
 	@if venv/bin/python -c "import torch" 2>/dev/null; then \
 		venv/bin/python backend/scripts/generate_esm2_embeddings.py; \
@@ -255,7 +271,7 @@ structural-predictions:
 		venv/bin/python backend/scripts/predict_structural_binding.py --tier all --max-edges 500; \
 	fi
 
-data-expansion: connectf-api jaspar-vertebrate ortholog-signs
+data-expansion: connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding promote-evidence
 	@echo "Data expansion complete. Additional optional steps:"
 	@echo "  make structural-predictions   (needs NVIDIA_NIM_API_KEY; populates protein_sequences)"
 	@echo "  make alphafold-features       (needs protein_sequences table populated by structural-predictions)"

@@ -38,6 +38,9 @@ PROMOTABLE_SOURCES = {
     "TFLink small-scale": {"label": "TFLink small-scale", "min_confidence": 0.50},
     "CollecTRI": {"label": "CollecTRI", "min_confidence": 0.50},
     "SIGNOR": {"label": "SIGNOR", "min_confidence": 0.50},
+    "ReMap": {"label": "ReMap", "min_confidence": 0.50},
+    "UniBind": {"label": "UniBind", "min_confidence": 0.55},
+    "PlantTFDB": {"label": "PlantTFDB", "min_confidence": 0.50},
 }
 
 MULTI_EVIDENCE_BOOST = 0.05
@@ -111,7 +114,10 @@ def promote(conn: sqlite3.Connection, dry_run: bool = False) -> dict:
         ).fetchone()
 
         if existing:
-            raw_sources = json.loads(existing[0])
+            try:
+                raw_sources = json.loads(existing[0])
+            except (json.JSONDecodeError, TypeError):
+                raw_sources = [existing[0]] if existing[0] else []
             old_sources = _canonical_sources(raw_sources)
             new_labels = entry["sources"] - old_sources
             merged = sorted(old_sources | entry["sources"])
