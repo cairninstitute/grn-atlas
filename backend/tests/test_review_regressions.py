@@ -70,13 +70,9 @@ def test_evo2_scores_table_exists(db):
 
 def test_geneformer_uses_mean_pooling():
     """embed_cells must use masked mean pooling, not position-0 extraction."""
-    import inspect
-    import sys
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from scripts.run_geneformer import embed_cells
-    source = inspect.getsource(embed_cells)
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "run_geneformer.py").read_text()
     assert "[:, 0, :]" not in source, "embed_cells still uses position-0 (CLS) extraction"
-    assert "mask" in source or "mean" in source, "embed_cells should use mean pooling"
+    assert "mask" in source, "embed_cells should use masked mean pooling"
 
 
 # ---------- Finding #4: Cell-type gene truncation ----------
@@ -89,6 +85,12 @@ def test_score_tf_activity_batches_all_genes():
     from advanced import _score_tf_activity
     source = inspect.getsource(_score_tf_activity)
     assert "[:500]" not in source, "_score_tf_activity still truncates gene list to 500"
+
+
+def test_derive_celltype_batches_all_genes():
+    """derive_celltype_regulation must not truncate gene list to 999."""
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "derive_celltype_regulation.py").read_text()
+    assert "[:999]" not in source, "derive_celltype_regulation still truncates gene list to 999"
 
 
 def test_celltype_regulation_covers_all_expressed_genes(db):
@@ -105,11 +107,8 @@ def test_celltype_regulation_covers_all_expressed_genes(db):
     if not row:
         pytest.skip("no cluster expression data")
     n_genes = row[2]
-    # The old bug truncated to 500; clusters routinely have 2000+ genes
     if n_genes <= 500:
         pytest.skip(f"cluster only has {n_genes} genes, need >500 to test truncation")
-    # If we get here, the cluster has >500 genes and the code should handle them all.
-    # The actual fix is verified by test_score_tf_activity_batches_all_genes above.
 
 
 # ---------- Finding #5: Trajectory honest labeling ----------
@@ -138,16 +137,17 @@ def test_trajectory_note_disclaims_pseudotime():
 
 # ---------- Finding #7: OmniPath citation parsing ----------
 
-def test_omnipath_pmid_parser_handles_namespace_prefix():
-    """PMID parser must strip 'PMID:' prefix from OmniPath references."""
-    import sys
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-    from fetch_collectri_signor import fetch_omnipath  # noqa: F401
-    # Verify the parser source handles PMID: prefix
-    import inspect
-    source_file = Path(__file__).resolve().parents[1] / "scripts" / "fetch_collectri_signor.py"
-    source = source_file.read_text()
-    assert "PMID:" in source, "Parser should handle PMID: prefix in references"
+def test_omnipath_url_requests_references_field():
+    """OmniPath URL must include fields=references to get citation data."""
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "fetch_collectri_signor.py").read_text()
+    assert "fields=references" in source, "OmniPath URL missing fields=references"
+
+
+def test_omnipath_pmid_parser_handles_any_namespace_prefix():
+    """PMID parser must strip any namespace prefix (PMID:, CollecTRI:, SIGNOR:)."""
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "fetch_collectri_signor.py").read_text()
+    assert "rsplit" in source or 'split(":", 1)' in source or "rsplit(\":\", 1)" in source, \
+        "Parser should strip arbitrary namespace prefixes from references"
 
 
 # ---------- Finding #8: Directed inference calibration split ----------
@@ -185,3 +185,12 @@ def test_calibration_produces_held_out_metrics():
     assert stats["n_gt_train"] > 0
     assert stats["n_gt_test"] > 0
     assert stats["n_gt_train"] + stats["n_gt_test"] == stats["n_gt"]
+
+
+def test_calibration_caller_uses_correct_key():
+    """infer_directed_grn.py must not reference the old calibration['auprc'] key."""
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "infer_directed_grn.py").read_text()
+    assert "calibration['auprc']" not in source, \
+        "Caller still reads calibration['auprc'] — renamed to auprc_held_out"
+    assert 'calibration["auprc"]' not in source, \
+        "Caller still reads calibration[\"auprc\"] — renamed to auprc_held_out"

@@ -33,14 +33,14 @@ DB = BACKEND / "data" / "grn.sqlite3"
 OMNIPATH_BASE = "https://omnipathdb.org/interactions?"
 SOURCES = {
     "collectri": {
-        "url_params": "datasets=collectri&genesymbols=yes&organisms={taxid}",
+        "url_params": "datasets=collectri&genesymbols=yes&organisms={taxid}&fields=references",
         "species": {"human": 9606, "mouse": 10090},
         "source_name": "CollecTRI",
         "source_version": "OmniPath 2026",
         "evidence_layer": "direct_signed",
     },
     "signor": {
-        "url_params": "resources=SIGNOR&genesymbols=yes&organisms={taxid}",
+        "url_params": "resources=SIGNOR&genesymbols=yes&organisms={taxid}&fields=references",
         "species": {"human": 9606, "mouse": 10090},
         "source_name": "SIGNOR",
         "source_version": "October 2026",
@@ -89,8 +89,8 @@ def fetch_omnipath(dataset: str, species: str) -> list[dict]:
         if pmids:
             for ref in pmids.split(";"):
                 ref = ref.strip()
-                if ref.startswith("PMID:"):
-                    ref = ref[5:]
+                if ":" in ref:
+                    ref = ref.rsplit(":", 1)[-1]
                 if ref.isdigit():
                     pmid_list.append(ref)
 

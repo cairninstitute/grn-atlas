@@ -289,7 +289,7 @@ def run_directed_inference(
 
     print(f"  Calibrating against perturbation ground truth...", flush=True)
     threshold, calibration = calibrate_threshold(all_edges, ground_truth)
-    print(f"  Calibration: AUPRC={calibration['auprc']}, "
+    print(f"  Calibration: AUPRC(held-out)={calibration.get('auprc_held_out', 'N/A')}, "
           f"threshold={calibration.get('optimal_threshold', 'N/A')}")
 
     directed_edges = []

@@ -76,17 +76,20 @@ def derive_for_species(conn: sqlite3.Connection, species: str) -> dict:
             continue
 
         gene_set = set(expressed)
-        sample = list(gene_set)[:999]
-        placeholders = ",".join("?" * len(sample))
-
-        edges = conn.execute(
-            f"SELECT source_id, target_id, confidence, regulation_type "
-            f"FROM interactions "
-            f"WHERE source_id IN ({placeholders}) "
-            f"AND target_id IN ({placeholders}) "
-            f"AND confidence >= ?",
-            sample + sample + [MIN_CONFIDENCE]
-        ).fetchall()
+        gene_list = list(gene_set)
+        edges = []
+        batch_size = 500
+        for batch_start in range(0, len(gene_list), batch_size):
+            batch = gene_list[batch_start:batch_start + batch_size]
+            placeholders = ",".join("?" * len(batch))
+            batch_edges = conn.execute(
+                f"SELECT source_id, target_id, confidence, regulation_type "
+                f"FROM interactions "
+                f"WHERE source_id IN ({placeholders}) "
+                f"AND confidence >= ?",
+                batch + [MIN_CONFIDENCE]
+            ).fetchall()
+            edges.extend(batch_edges)
 
         cluster_edges = []
         for src, tgt, conf, reg in edges:
