@@ -119,6 +119,15 @@ def ensure_tables(conn: sqlite3.Connection) -> None:
         CREATE INDEX IF NOT EXISTS idx_sbp_confidence
             ON structural_binding_predictions(confidence_score DESC);
     """)
+    # Migrate legacy binding class names to uncalibrated_* prefix
+    for old, new in [("likely", "uncalibrated_likely"),
+                     ("uncertain", "uncalibrated_uncertain"),
+                     ("unlikely", "uncalibrated_unlikely")]:
+        conn.execute(
+            "UPDATE structural_binding_predictions SET binding_class=? WHERE binding_class=?",
+            (new, old),
+        )
+    conn.commit()
 
 
 # ---------------------------------------------------------------------------

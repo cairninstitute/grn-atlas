@@ -99,15 +99,12 @@ def fetch_omnipath(dataset: str, species: str) -> list[dict]:
     return rows
 
 
-def load_into_db(rows: list[dict], dataset: str, species: str, conn: sqlite3.Connection) -> Counter:
-    cfg = SOURCES[dataset]
+def resolve_rows(rows: list[dict], species: str, conn: sqlite3.Connection) -> tuple[list[dict], list[dict], Counter]:
+    """Resolve gene symbols and return (evidence_rows, promotion_rows, stats)."""
     stats = Counter()
     resolve = gene_resolver(conn, species)
-
-    run_id = begin_import(conn, cfg["source_name"], cfg["source_version"],
-                          f"https://omnipathdb.org ({dataset})", sha256=None)
-
     evidence_rows = []
+    promotion_rows = []
     for row in rows:
         stats["input"] += 1
         source_id = resolve(row["tf_symbol"])
@@ -118,51 +115,24 @@ def load_into_db(rows: list[dict], dataset: str, species: str, conn: sqlite3.Con
         if source_id == target_id:
             stats["self_loop"] += 1
             continue
-
         stats["resolved"] += 1
         evidence_rows.append({
             "species": species,
             "source_id": source_id,
             "target_id": target_id,
             "relation_type": row["sign"],
-            "evidence_layer": cfg["evidence_layer"],
+            "evidence_layer": "signed_curated",
             "record_key": row["record_key"],
             "confidence": 0.80 if row["sign"] != "regulation" else 0.60,
             "pmids": row["pmids"],
         })
-
-    if evidence_rows:
-        replace_source_evidence(conn, cfg["source_name"], cfg["source_version"], run_id, evidence_rows)
-
-        # Also promote to interactions table
-        existing = conn.execute(
-            "SELECT sign, sign_evidence FROM interactions WHERE source_id=? AND target_id=?",
-            (source_id, target_id)
-        ).fetchone()
-
-        if existing is None:
-            conn.execute(
-                "INSERT OR IGNORE INTO interactions (source_id, target_id, regulation_type, confidence, sources, pmids, sign, sign_evidence) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                (source_id, target_id, row["sign"], 0.80 if row["sign"] != "regulation" else 0.60,
-                 cfg["source_name"], json.dumps(row["pmids"]),
-                 row["sign"] if row["sign"] != "regulation" else None,
-                 "measured" if row["sign"] != "regulation" else "unknown")
-            )
-            stats["new_edges"] += 1
-        elif existing[0] is None and row["sign"] != "regulation":
-            conn.execute(
-                "UPDATE interactions SET sign=?, sign_evidence='measured' "
-                "WHERE source_id=? AND target_id=?",
-                (row["sign"], source_id, target_id)
-            )
-            stats["sign_added"] += 1
-        else:
-            stats["already_present"] += 1
-
-    finish_import(conn, run_id, dict(stats))
-    conn.commit()
-    return stats
+        promotion_rows.append({
+            "source_id": source_id,
+            "target_id": target_id,
+            "sign": row["sign"],
+            "pmids": row["pmids"],
+        })
+    return evidence_rows, promotion_rows, stats
 
 
 def main():
@@ -181,15 +151,57 @@ def main():
         if dataset not in SOURCES:
             print(f"Unknown dataset: {dataset}")
             continue
+        cfg = SOURCES[dataset]
+        all_evidence = []
+        all_promotions = []
+        combined_stats = Counter()
+
         for species in args.species:
             rows = fetch_omnipath(dataset, species)
             if rows:
-                stats = load_into_db(rows, dataset, species, conn)
+                evidence_rows, promotion_rows, stats = resolve_rows(rows, species, conn)
+                all_evidence.extend(evidence_rows)
+                all_promotions.extend(promotion_rows)
+                combined_stats += stats
                 all_stats[f"{dataset}_{species}"] = dict(stats)
                 print(f"  {dataset} {species}: {dict(stats)}", flush=True)
             else:
                 all_stats[f"{dataset}_{species}"] = {"status": "no_data"}
             time.sleep(2)
+
+        if all_evidence:
+            run_id = begin_import(conn, cfg["source_name"], cfg["source_version"],
+                                  f"https://omnipathdb.org ({dataset})", sha256=None)
+            replace_source_evidence(conn, cfg["source_name"], cfg["source_version"],
+                                    run_id, all_evidence)
+            for pr in all_promotions:
+                existing = conn.execute(
+                    "SELECT sign, sign_evidence FROM interactions WHERE source_id=? AND target_id=?",
+                    (pr["source_id"], pr["target_id"])
+                ).fetchone()
+                if existing is None:
+                    conn.execute(
+                        "INSERT OR IGNORE INTO interactions "
+                        "(source_id, target_id, regulation_type, confidence, sources, pmids, sign, sign_evidence) "
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        (pr["source_id"], pr["target_id"], pr["sign"],
+                         0.80 if pr["sign"] != "regulation" else 0.60,
+                         cfg["source_name"], json.dumps(pr["pmids"]),
+                         pr["sign"] if pr["sign"] != "regulation" else None,
+                         "measured" if pr["sign"] != "regulation" else "unknown")
+                    )
+                    combined_stats["new_edges"] += 1
+                elif existing[0] is None and pr["sign"] != "regulation":
+                    conn.execute(
+                        "UPDATE interactions SET sign=?, sign_evidence='measured' "
+                        "WHERE source_id=? AND target_id=?",
+                        (pr["sign"], pr["source_id"], pr["target_id"])
+                    )
+                    combined_stats["sign_added"] += 1
+                else:
+                    combined_stats["already_present"] += 1
+            finish_import(conn, run_id, dict(combined_stats))
+            conn.commit()
 
     conn.close()
     print(f"\n=== Sign Expansion Results ===")

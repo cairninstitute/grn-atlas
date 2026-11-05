@@ -183,13 +183,9 @@ def parse_binding_predictions(text: str, species: str) -> list[dict]:
     return edges
 
 
-def load_edges(edges: list[dict], species: str, conn: sqlite3.Connection) -> Counter:
+def resolve_edges(edges: list[dict], species: str, conn: sqlite3.Connection) -> tuple[list[dict], Counter]:
     stats = Counter()
     resolve = gene_resolver(conn, species)
-
-    run_id = begin_import(conn, SOURCE_NAME, SOURCE_VERSION,
-                          f"https://planttfdb.gao-lab.org ({species})", sha256=None)
-
     evidence_rows = []
     for edge in edges:
         stats["input"] += 1
@@ -201,7 +197,6 @@ def load_edges(edges: list[dict], species: str, conn: sqlite3.Connection) -> Cou
         if source_id == target_id:
             stats["self_loop"] += 1
             continue
-
         stats["resolved"] += 1
         evidence_rows.append({
             "species": species,
@@ -213,12 +208,7 @@ def load_edges(edges: list[dict], species: str, conn: sqlite3.Connection) -> Cou
             "confidence": 0.55,
             "pmids": [],
         })
-
-    if evidence_rows:
-        replace_source_evidence(conn, SOURCE_NAME, SOURCE_VERSION, run_id, evidence_rows)
-    finish_import(conn, run_id, dict(stats))
-    conn.commit()
-    return stats
+    return evidence_rows, stats
 
 
 def main():
@@ -232,24 +222,35 @@ def main():
     conn.execute("PRAGMA busy_timeout=30000")
 
     all_stats = {}
+    all_evidence = []
+    combined_stats = Counter()
+
     for species in args.species:
         print(f"\n[{species}] Fetching PlantTFDB data...", flush=True)
 
-        # Fetch TF list (informational)
         tfs = fetch_tf_list(species)
         if tfs:
             all_stats[f"{species}_tfs"] = len(tfs)
 
-        # Fetch and load regulation edges
         edges = fetch_regulation_edges(species)
         if edges:
-            stats = load_edges(edges, species, conn)
+            evidence_rows, stats = resolve_edges(edges, species, conn)
+            all_evidence.extend(evidence_rows)
+            combined_stats += stats
             all_stats[f"{species}_edges"] = dict(stats)
-            print(f"  [{species}] Loaded: {dict(stats)}", flush=True)
+            print(f"  [{species}] Resolved: {dict(stats)}", flush=True)
         else:
             all_stats[f"{species}_edges"] = {"status": "no_data"}
 
         time.sleep(2)
+
+    if all_evidence:
+        run_id = begin_import(conn, SOURCE_NAME, SOURCE_VERSION,
+                              "https://planttfdb.gao-lab.org", sha256=None)
+        replace_source_evidence(conn, SOURCE_NAME, SOURCE_VERSION, run_id, all_evidence)
+        finish_import(conn, run_id, dict(combined_stats))
+        conn.commit()
+        print(f"  Loaded {len(all_evidence)} total evidence rows", flush=True)
 
     conn.close()
     print(f"\n=== PlantTFDB Results ===")

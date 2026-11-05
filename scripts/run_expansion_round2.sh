@@ -92,7 +92,7 @@ echo "=== STEP 5: Structural binding predictions — $(TIMESTAMP) ==="
 # Check remaining candidates
 REMAINING=$(sqlite3 "$DB" "
     SELECT COUNT(*) FROM regulatory_edge_candidates rec
-    WHERE rec.tier IN ('cycle_closing', 'supported')
+    WHERE rec.evidence_tier IN ('cycle_closing', 'supported')
     AND NOT EXISTS (
         SELECT 1 FROM structural_binding_predictions sbp
         WHERE sbp.species = rec.species
@@ -109,7 +109,7 @@ if [ "$REMAINING" -gt 0 ] && [ -n "$NVIDIA_NIM_API_KEY" ]; then
         SP_REMAINING=$(sqlite3 "$DB" "
             SELECT COUNT(*) FROM regulatory_edge_candidates rec
             WHERE rec.species = '$species'
-            AND rec.tier IN ('cycle_closing', 'supported')
+            AND rec.evidence_tier IN ('cycle_closing', 'supported')
             AND NOT EXISTS (
                 SELECT 1 FROM structural_binding_predictions sbp
                 WHERE sbp.species = rec.species
@@ -123,7 +123,7 @@ if [ "$REMAINING" -gt 0 ] && [ -n "$NVIDIA_NIM_API_KEY" ]; then
             $PYTHON backend/scripts/predict_structural_binding.py \
                 --db "$DB" \
                 --species "$species" \
-                --tier cycle_closing \
+                --tier all \
                 --max-edges 500 \
                 --rate-limit 1.5 || echo "  [WARN] $species structural predictions had errors"
             echo "  [$species] Done at $(TIMESTAMP)"

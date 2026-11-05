@@ -5252,6 +5252,24 @@ _ensure_phase2_tables()
 @app.on_event("startup")
 async def startup_event():
     logger.info("GRN Atlas API starting up...")
+    try:
+        conn = sqlite3.connect(str(DB_PATH), timeout=30)
+        conn.execute("PRAGMA busy_timeout=30000")
+        has_table = conn.execute(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='structural_binding_predictions'"
+        ).fetchone()[0]
+        if has_table:
+            for old, new in [("likely", "uncalibrated_likely"),
+                             ("uncertain", "uncalibrated_uncertain"),
+                             ("unlikely", "uncalibrated_unlikely")]:
+                conn.execute(
+                    "UPDATE structural_binding_predictions SET binding_class=? WHERE binding_class=?",
+                    (new, old),
+                )
+            conn.commit()
+        conn.close()
+    except Exception as e:
+        logger.warning(f"Binding-class migration skipped: {e}")
     logger.info("Database initialized with mock data")
     logger.info("CORS enabled for frontend development")
 
