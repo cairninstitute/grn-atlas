@@ -7848,7 +7848,7 @@ async def directed_network_stats(species: str):
 
 @app.get("/api/v1/evo2-scores/stats")
 async def evo2_stats():
-    """Get Evo2 promoter quality score statistics."""
+    """Get Evo2 promoter sequence plausibility statistics."""
     conn = db.conn
     try:
         rows = conn.execute(
@@ -7857,11 +7857,16 @@ async def evo2_stats():
         ).fetchall()
     except Exception:
         return {"available": False, "species": []}
-    return {"available": bool(rows), "species": [
-        {"species": r[0], "n_scored": r[1], "mean_quality": round(r[2], 4),
-         "min_quality": round(r[3], 4), "max_quality": round(r[4], 4)}
-        for r in rows
-    ]}
+    return {
+        "available": bool(rows),
+        "method": "mean_max_logit_sigmoid",
+        "note": "Relative sequence plausibility ranking, not a calibrated promoter probability. The SAE-based classifier is not available via the NIM API.",
+        "species": [
+            {"species": r[0], "n_scored": r[1], "mean_plausibility": round(r[2], 4),
+             "min_plausibility": round(r[3], 4), "max_plausibility": round(r[4], 4)}
+            for r in rows
+        ],
+    }
 
 
 @app.get("/api/v1/geneformer/stats")

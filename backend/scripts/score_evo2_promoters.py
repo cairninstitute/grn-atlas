@@ -94,11 +94,10 @@ def score_sequence(sequence: str, api_key: str) -> dict:
 
 
 def score_sequence_loglikelihood(sequence: str, api_key: str) -> dict:
-    """Score using character-level log-likelihood from the generate endpoint.
+    """Score using mean max-logit from the Evo2 generate endpoint.
 
-    Approach: submit the sequence as a "prompt" and request 0 new tokens
-    with enable_logits=true. The logits on the input tokens give us
-    per-position log-likelihoods.
+    NOT a calibrated promoter likelihood — the SAE-based classifier (AUC=0.889)
+    is not available via the NIM API. Scores are relative rankings only.
     """
     import urllib.request
     import urllib.error
@@ -134,13 +133,16 @@ def score_sequence_loglikelihood(sequence: str, api_key: str) -> dict:
             else:
                 mean_logit = 0.0
 
-            quality_score = 1.0 / (1.0 + np.exp(-mean_logit * 0.1))
+            sequence_plausibility = 1.0 / (1.0 + np.exp(-mean_logit * 0.1))
 
             return {
                 "status": "scored",
                 "mean_logit": round(mean_logit, 4),
-                "quality_score": round(float(quality_score), 4),
+                "sequence_plausibility": round(float(sequence_plausibility), 4),
+                "quality_score": round(float(sequence_plausibility), 4),
                 "sequence_length": len(sequence),
+                "method": "mean_max_logit_sigmoid",
+                "note": "Relative ranking only; not a calibrated promoter probability",
             }
     except urllib.error.HTTPError as e:
         body = e.read().decode() if e.fp else ""

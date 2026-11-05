@@ -85,7 +85,14 @@ def fetch_omnipath(dataset: str, species: str) -> list[dict]:
             sign = "regulation"
 
         pmids = record.get("references", "")
-        pmid_list = [p.strip() for p in pmids.split(";") if p.strip().isdigit()] if pmids else []
+        pmid_list = []
+        if pmids:
+            for ref in pmids.split(";"):
+                ref = ref.strip()
+                if ref.startswith("PMID:"):
+                    ref = ref[5:]
+                if ref.isdigit():
+                    pmid_list.append(ref)
 
         key = f"{dataset}:{tf}:{target}:{species}"
         if key in rows:
@@ -197,7 +204,7 @@ def main():
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                         (pr["source_id"], pr["target_id"], pr["sign"],
                          0.80 if pr["sign"] != "regulation" else 0.60,
-                         cfg["source_name"], json.dumps(pr["pmids"]),
+                         json.dumps([cfg["source_name"]]), json.dumps(pr["pmids"]),
                          pr["sign"] if pr["sign"] != "regulation" else None,
                          "measured" if pr["sign"] != "regulation" else "unknown")
                     )

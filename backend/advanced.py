@@ -114,14 +114,20 @@ def _score_tf_activity(db, species: str, expressed_genes: dict[str, float],
     if not gene_set:
         return []
 
-    sample = list(gene_set)[:500]
-    placeholders = ",".join("?" * len(sample))
-    tfs = db.conn.execute(
-        f"SELECT DISTINCT i.source_id, g.symbol FROM interactions i "
-        f"JOIN genes g ON g.id = i.source_id "
-        f"WHERE g.species = ? AND i.confidence >= ? AND i.target_id IN ({placeholders})",
-        [species, min_confidence] + sample
-    ).fetchall()
+    gene_list = list(gene_set)
+    tfs_set: set[tuple[str, str]] = set()
+    batch_size = 500
+    for batch_start in range(0, len(gene_list), batch_size):
+        batch = gene_list[batch_start:batch_start + batch_size]
+        placeholders = ",".join("?" * len(batch))
+        rows = db.conn.execute(
+            f"SELECT DISTINCT i.source_id, g.symbol FROM interactions i "
+            f"JOIN genes g ON g.id = i.source_id "
+            f"WHERE g.species = ? AND i.confidence >= ? AND i.target_id IN ({placeholders})",
+            [species, min_confidence] + batch
+        ).fetchall()
+        tfs_set.update((r[0], r[1]) for r in rows)
+    tfs = list(tfs_set)
 
     total_expr = sum(expressed_genes.values()) or 1.0
     results = []
@@ -329,11 +335,15 @@ def trajectory_regulation(db, species: str, gene_ids: list[str] | None = None) -
     result = {
         "species": species,
         "supported": True,
+        "analysis_type": "cluster_variation",
         "n_clusters": len(clusters),
         "cluster_order": cluster_order,
         "dynamic_regulators": dynamic_tfs[:25],
         "requested_gene_ids": gene_ids or [],
-        "note": "Trajectory is approximated from cluster ordering. True pseudotime requires trajectory inference on the scRNA-seq data.",
+        "note": "This is cluster-level variation analysis, NOT pseudotime trajectory inference. "
+                "Cluster order is arbitrary (database insertion order). TFs are ranked by activity "
+                "score range across clusters, not by temporal dynamics. True trajectory analysis "
+                "requires pseudotime inference (e.g. Monocle, PAGA) on the original count matrix.",
     }
 
     if gene_ids:

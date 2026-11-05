@@ -157,7 +157,9 @@ def embed_cells(
 
         with torch.no_grad():
             outputs = model(input_ids=input_ids, attention_mask=attn)
-            cls_embeddings = outputs.last_hidden_state[:, 0, :].cpu().numpy()
+            mask = attn.unsqueeze(-1).float()
+            cls_embeddings = (outputs.last_hidden_state * mask).sum(dim=1) / mask.sum(dim=1)
+            cls_embeddings = cls_embeddings.cpu().numpy()
             all_embeddings[batch_start:batch_end] = cls_embeddings
 
         if (batch_start // BATCH_SIZE) % 50 == 0:

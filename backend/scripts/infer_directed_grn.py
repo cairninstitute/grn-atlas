@@ -158,37 +158,62 @@ def _fit_one_target(target_idx, expr_matrix, tf_indices, gene_names, seed):
 def calibrate_threshold(
     inferred: list[tuple], ground_truth: dict[tuple[str, str], dict]
 ) -> tuple[float, dict]:
-    """Find optimal importance threshold using perturbation ground truth."""
+    """Find optimal importance threshold using perturbation ground truth.
+
+    Uses a 50/50 TF-stratified split: threshold is chosen on the train half
+    and AUPRC is reported on the held-out test half to avoid optimistic bias.
+    """
     gt_set = set(ground_truth.keys())
     if not gt_set or not inferred:
         return 0.0, {"auprc": 0.0, "n_gt": 0, "n_inferred": 0}
 
-    labels = []
-    scores = []
-    for tf, target, importance, _, _ in inferred:
-        labels.append(1 if (tf, target) in gt_set else 0)
-        scores.append(importance)
+    gt_tfs = sorted({tf for tf, _ in gt_set})
+    rng = np.random.RandomState(42)
+    rng.shuffle(gt_tfs)
+    mid = max(1, len(gt_tfs) // 2)
+    train_tfs = set(gt_tfs[:mid])
+    test_tfs = set(gt_tfs[mid:])
 
-    labels = np.array(labels)
-    scores = np.array(scores)
+    def _score_split(tf_subset):
+        labs, scs = [], []
+        subset_gt = {(t, tgt) for t, tgt in gt_set if t in tf_subset}
+        for tf, target, importance, _, _ in inferred:
+            if tf not in tf_subset:
+                continue
+            labs.append(1 if (tf, target) in subset_gt else 0)
+            scs.append(importance)
+        return np.array(labs), np.array(scs)
 
-    if labels.sum() == 0:
-        return 0.0, {"auprc": 0.0, "n_gt": len(gt_set), "n_inferred": len(inferred)}
+    train_labels, train_scores = _score_split(train_tfs)
+    test_labels, test_scores = _score_split(test_tfs)
 
-    precision, recall, thresholds = precision_recall_curve(labels, scores)
-    auprc = auc(recall, precision)
+    if train_labels.sum() == 0 or test_labels.sum() == 0:
+        return 0.0, {"auprc": 0.0, "n_gt": len(gt_set), "n_inferred": len(inferred),
+                      "note": "too few ground-truth edges for train/test split"}
 
-    f1_scores = 2 * precision * recall / (precision + recall + 1e-10)
-    best_idx = np.argmax(f1_scores[:-1])
-    optimal_threshold = float(thresholds[best_idx])
+    train_prec, train_rec, train_thresh = precision_recall_curve(train_labels, train_scores)
+    train_f1 = 2 * train_prec * train_rec / (train_prec + train_rec + 1e-10)
+    best_idx = np.argmax(train_f1[:-1])
+    optimal_threshold = float(train_thresh[best_idx])
+
+    test_prec, test_rec, _ = precision_recall_curve(test_labels, test_scores)
+    test_auprc = auc(test_rec, test_prec)
+
+    above = test_scores >= optimal_threshold
+    if above.sum() > 0:
+        held_out_prec = float(test_labels[above].sum() / above.sum())
+        held_out_rec = float(test_labels[above].sum() / max(1, test_labels.sum()))
+    else:
+        held_out_prec, held_out_rec = 0.0, 0.0
 
     return optimal_threshold, {
-        "auprc": round(float(auprc), 4),
+        "auprc_held_out": round(float(test_auprc), 4),
         "optimal_threshold": round(optimal_threshold, 6),
-        "precision_at_threshold": round(float(precision[best_idx]), 4),
-        "recall_at_threshold": round(float(recall[best_idx]), 4),
-        "f1_at_threshold": round(float(f1_scores[best_idx]), 4),
-        "n_gt": int(labels.sum()),
+        "precision_held_out": round(held_out_prec, 4),
+        "recall_held_out": round(held_out_rec, 4),
+        "n_gt": int(train_labels.sum() + test_labels.sum()),
+        "n_gt_train": int(train_labels.sum()),
+        "n_gt_test": int(test_labels.sum()),
         "n_inferred": len(inferred),
     }
 
