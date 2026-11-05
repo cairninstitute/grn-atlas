@@ -33,14 +33,14 @@ DB = BACKEND / "data" / "grn.sqlite3"
 OMNIPATH_BASE = "https://omnipathdb.org/interactions?"
 SOURCES = {
     "collectri": {
-        "url_params": "datasets=collectri&genesymbols=yes&fields=collectri_tf,extra_attrs&organisms={taxid}",
+        "url_params": "datasets=collectri&genesymbols=yes&organisms={taxid}",
         "species": {"human": 9606, "mouse": 10090},
         "source_name": "CollecTRI",
         "source_version": "OmniPath 2026",
         "evidence_layer": "direct_signed",
     },
     "signor": {
-        "url_params": "datasets=signor&genesymbols=yes&fields=extra_attrs&organisms={taxid}&types=stimulation,inhibition",
+        "url_params": "resources=SIGNOR&genesymbols=yes&organisms={taxid}",
         "species": {"human": 9606, "mouse": 10090},
         "source_name": "SIGNOR",
         "source_version": "October 2026",
@@ -66,7 +66,7 @@ def fetch_omnipath(dataset: str, species: str) -> list[dict]:
         print(f"  ERROR fetching {dataset} {species}: {e}")
         return []
 
-    rows = []
+    rows = {}
     reader = csv.DictReader(io.StringIO(text), delimiter="\t")
     for record in reader:
         tf = record.get("source_genesymbol", "").strip()
@@ -74,8 +74,8 @@ def fetch_omnipath(dataset: str, species: str) -> list[dict]:
         if not tf or not target:
             continue
 
-        is_stim = record.get("is_stimulation", "0") == "1"
-        is_inhib = record.get("is_inhibition", "0") == "1"
+        is_stim = record.get("is_stimulation", "").strip() in ("1", "True")
+        is_inhib = record.get("is_inhibition", "").strip() in ("1", "True")
 
         if is_stim and not is_inhib:
             sign = "activation"
@@ -87,16 +87,23 @@ def fetch_omnipath(dataset: str, species: str) -> list[dict]:
         pmids = record.get("references", "")
         pmid_list = [p.strip() for p in pmids.split(";") if p.strip().isdigit()] if pmids else []
 
-        rows.append({
+        key = f"{dataset}:{tf}:{target}:{species}"
+        if key in rows:
+            rows[key]["pmids"] = list(set(rows[key]["pmids"] + pmid_list))
+            if rows[key]["sign"] == "regulation" and sign != "regulation":
+                rows[key]["sign"] = sign
+            continue
+        rows[key] = {
             "tf_symbol": tf,
             "target_symbol": target,
             "sign": sign,
             "pmids": pmid_list,
-            "record_key": f"{dataset}:{tf}:{target}:{species}",
-        })
+            "record_key": key,
+        }
 
-    print(f"  Got {len(rows)} edges from {dataset} {species}", flush=True)
-    return rows
+    result = list(rows.values())
+    print(f"  Got {len(result)} unique edges from {dataset} {species}", flush=True)
+    return result
 
 
 def resolve_rows(rows: list[dict], species: str, conn: sqlite3.Connection,
