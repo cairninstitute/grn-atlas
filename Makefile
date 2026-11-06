@@ -51,7 +51,7 @@ help:
 	@echo "make scrna-data     - fetch public scRNA-seq datasets (human PBMC, mouse marrow, arabidopsis root)"
 	@echo "make geneformer-embeddings - generate Geneformer cell embeddings from scRNA-seq (needs GPU)"
 	@echo "make celltype-regulation - derive cell-type-specific regulatory edges from scRNA-seq"
-	@echo "make evo2-scores    - score promoters with Evo2 DNA model (needs NVIDIA_NIM_API_KEY)"
+	@echo "make evo2-scores    - score promoters with Evo2 DNA model (needs NVIDIA_NIM_API_KEY + make structural-predictions first)"
 	@echo "make grassius-data  - load GRASSIUS grass TF regulatory data (rice, maize)"
 	@echo "make cistrome-data  - load Cistrome DB ChIP-seq TF binding (human, mouse)"
 	@echo "make omnipath-refresh - re-fetch CollecTRI + SIGNOR edges with citations from OmniPath"
@@ -73,9 +73,9 @@ bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expans
 	@echo "GPU:     make bootstrap-gpu  (ESM2 + Geneformer; requires pip install -r backend/requirements-gpu.txt)"
 	@echo "API:     make bootstrap-api  (Evo2 + structural predictions; requires NVIDIA_NIM_API_KEY)"
 
-bootstrap-gpu: esm2-embeddings geneformer-embeddings
+bootstrap-gpu: geneformer-embeddings esm2-embeddings
 
-bootstrap-api: evo2-scores structural-predictions alphafold-features
+bootstrap-api: structural-predictions alphafold-features evo2-scores
 
 setup:
 	python3 -m venv venv
