@@ -143,7 +143,19 @@ def main():
             counts[f"source:{source}"] = stored
             if stored < minimum:
                 failures.append(f"{source}: {stored:,} evidence rows; expected at least {minimum:,}")
-        known_gaps = {}
+        ea_import = imports.get("Expression Atlas reviewed perturbations", {})
+        ea_counts = ea_import.get("counts", {})
+        known_gaps = {
+            "Expression Atlas reviewed perturbations": {
+                "unmapped_targets": ea_counts.get("unmapped_or_self", 0),
+                "unmapped_regulators": ea_counts.get("unmapped_regulator", 0),
+                "reason": (
+                    "Rice Expression Atlas results use RAP-DB gene IDs; "
+                    "crosswalk covers TFs in the atlas gene table but most "
+                    "target genes (non-TFs) are absent from the gene table"
+                ),
+            },
+        }
         for source, gap_info in known_gaps.items():
             stored = scalar(
                 conn, "SELECT COUNT(*) FROM regulatory_evidence WHERE source_name=?", (source,)

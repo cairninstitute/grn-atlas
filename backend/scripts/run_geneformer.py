@@ -212,6 +212,12 @@ def store_geneformer_embeddings(
             PRIMARY KEY (species, cluster_id)
         );
     """)
+    for table in ("geneformer_cell_embeddings", "geneformer_cluster_embeddings"):
+        existing = {r[1] for r in conn.execute(f"PRAGMA table_info({table})").fetchall()}
+        if "model_version" not in existing:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN model_version TEXT")
+        if "computed_at" not in existing:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN computed_at TEXT")
 
     conn.execute("DELETE FROM geneformer_cell_embeddings WHERE species = ?", (species,))
     conn.execute("DELETE FROM geneformer_cluster_embeddings WHERE species = ?", (species,))
