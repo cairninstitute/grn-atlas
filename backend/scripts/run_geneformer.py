@@ -193,39 +193,45 @@ def store_geneformer_embeddings(
     cluster_embeddings: dict[str, np.ndarray],
 ) -> dict:
     """Store Geneformer embeddings in the database."""
-    conn.execute("""
+    conn.executescript("""
         CREATE TABLE IF NOT EXISTS geneformer_cell_embeddings (
             species        TEXT NOT NULL,
             cell_id        TEXT NOT NULL,
             embedding      BLOB NOT NULL,
+            model_version  TEXT,
+            computed_at    TEXT,
             PRIMARY KEY (species, cell_id)
-        )
-    """)
-    conn.execute("""
+        );
         CREATE TABLE IF NOT EXISTS geneformer_cluster_embeddings (
             species        TEXT NOT NULL,
             cluster_id     TEXT NOT NULL,
             embedding      BLOB NOT NULL,
             embedding_dim  INTEGER NOT NULL,
+            model_version  TEXT,
+            computed_at    TEXT,
             PRIMARY KEY (species, cluster_id)
-        )
+        );
     """)
 
     conn.execute("DELETE FROM geneformer_cell_embeddings WHERE species = ?", (species,))
     conn.execute("DELETE FROM geneformer_cluster_embeddings WHERE species = ?", (species,))
 
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc).isoformat()
     conn.executemany(
-        "INSERT INTO geneformer_cell_embeddings (species, cell_id, embedding) "
-        "VALUES (?, ?, ?)",
-        [(species, cid, cell_embeddings[i].tobytes())
+        "INSERT INTO geneformer_cell_embeddings "
+        "(species, cell_id, embedding, model_version, computed_at) "
+        "VALUES (?, ?, ?, ?, ?)",
+        [(species, cid, cell_embeddings[i].tobytes(), MODEL_NAME, now)
          for i, cid in enumerate(cell_ids)],
     )
 
     embedding_dim = cell_embeddings.shape[1] if cell_embeddings.size > 0 else 0
     conn.executemany(
         "INSERT INTO geneformer_cluster_embeddings "
-        "(species, cluster_id, embedding, embedding_dim) VALUES (?, ?, ?, ?)",
-        [(species, cid, emb.tobytes(), embedding_dim)
+        "(species, cluster_id, embedding, embedding_dim, model_version, computed_at) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        [(species, cid, emb.tobytes(), embedding_dim, MODEL_NAME, now)
          for cid, emb in cluster_embeddings.items()],
     )
 

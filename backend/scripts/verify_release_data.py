@@ -128,7 +128,7 @@ def main():
             "ReMap": 600_000,
             "UniBind": 100_000,
             "DirectBinding": 150_000,
-            "Expression Atlas reviewed perturbations": 0,
+            "Expression Atlas reviewed perturbations": 10,
             "ConnecTF experiment evidence": 140_000,
             "Perturbation sign consensus": 80_000,
             "Conserved signed orthology": 13_000,
@@ -143,8 +143,16 @@ def main():
             counts[f"source:{source}"] = stored
             if stored < minimum:
                 failures.append(f"{source}: {stored:,} evidence rows; expected at least {minimum:,}")
+        known_gaps = {}
+        for source, gap_info in known_gaps.items():
+            stored = scalar(
+                conn, "SELECT COUNT(*) FROM regulatory_evidence WHERE source_name=?", (source,)
+            )
+            counts[f"source:{source}"] = stored
+            gap_info["evidence_rows"] = stored
     else:
         imports = {}
+        known_gaps = {}
     conn.close()
 
     report = {
@@ -153,6 +161,7 @@ def main():
         "files": file_counts,
         "counts": counts,
         "external_imports": imports,
+        "known_gaps": known_gaps,
         "failures": failures,
         "note": (
             "Expression quantification, inferred_edges, and genome-scale motif scans are "

@@ -156,7 +156,7 @@ external-regulation:
 		--report backend/data/external_regulatory_benchmark.json
 
 evidence-expansion:
-	venv/bin/python backend/scripts/load_rice_id_aliases.py
+	venv/bin/python backend/scripts/load_rice_id_aliases.py || venv/bin/python backend/scripts/load_rice_rap_aliases.py
 	venv/bin/python backend/scripts/load_tflink.py
 	venv/bin/python backend/scripts/load_chip_atlas.py
 	venv/bin/python backend/scripts/load_expression_atlas_perturbations.py backend/source_manifests/expression_atlas_reviewed.json

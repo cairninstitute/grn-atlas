@@ -28,7 +28,19 @@ MAX_SEQ_LEN = 1022
 
 
 def ensure_table(conn: sqlite3.Connection) -> None:
-    conn.execute("""
+    conn.executescript("""
+        CREATE TABLE IF NOT EXISTS protein_sequences (
+            gene_id       TEXT NOT NULL,
+            species       TEXT NOT NULL,
+            uniprot_acc   TEXT,
+            sequence      TEXT,
+            sequence_len  INTEGER,
+            fetch_status  TEXT NOT NULL DEFAULT 'pending',
+            fetched_at    TEXT,
+            PRIMARY KEY (gene_id, species)
+        );
+        CREATE INDEX IF NOT EXISTS idx_protseq_status
+            ON protein_sequences(fetch_status);
         CREATE TABLE IF NOT EXISTS esm2_embeddings (
             gene_id TEXT NOT NULL,
             species TEXT NOT NULL,
@@ -38,9 +50,8 @@ def ensure_table(conn: sqlite3.Connection) -> None:
             model_version TEXT NOT NULL,
             computed_at TEXT NOT NULL,
             PRIMARY KEY (gene_id, species)
-        )
+        );
     """)
-    conn.commit()
 
 
 def load_sequences(conn: sqlite3.Connection) -> list[dict]:
