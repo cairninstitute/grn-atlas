@@ -272,3 +272,112 @@ def test_verify_data_known_gaps_not_empty():
         "known_gaps must contain documented gap entries, not be empty"
     assert "unmapped_targets" in source or "unmapped" in source, \
         "known_gaps should document unmapped record counts"
+
+
+# ---------- OmniPath PMID dedup and json.dumps(sources) ----------
+
+def test_omnipath_pmid_dedup():
+    """OmniPath parser must deduplicate PMIDs from multi-namespace references."""
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "fetch_collectri_signor.py").read_text()
+    assert "dict.fromkeys" in source or "set(" in source, \
+        "PMID list must be deduplicated (dict.fromkeys or set)"
+
+
+def test_omnipath_sources_written_as_json_array():
+    """OmniPath loader must write sources as json.dumps([name]), not bare string."""
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "fetch_collectri_signor.py").read_text()
+    assert "json.dumps(" in source, \
+        "Sources must be written via json.dumps, not as bare strings"
+
+
+# ---------- ESM2 creates protein_sequences table ----------
+
+def test_esm2_creates_protein_sequences_table():
+    """ESM2 ensure_table must create protein_sequences (not just esm2_embeddings)."""
+    conn = sqlite3.connect(":memory:")
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    import importlib
+    esm2 = importlib.import_module("generate_esm2_embeddings")
+    esm2.ensure_table(conn)
+    tables = {r[0] for r in conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table'"
+    ).fetchall()}
+    assert "protein_sequences" in tables, \
+        "ensure_table must create protein_sequences for bootstrap-gpu"
+    assert "esm2_embeddings" in tables
+
+
+# ---------- Perturbation verifier accepts ortholog_transfer ----------
+
+def test_perturbation_verifier_accepts_ortholog_transfer():
+    """verify_perturbation_release must accept ortholog_transfer as valid sign_evidence."""
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "verify_perturbation_release.py").read_text()
+    assert "ortholog_transfer" in source, \
+        "observed_interactions_not_promoted check must include ortholog_transfer"
+
+
+def test_all_sign_evidence_values_are_accepted(db):
+    """Every sign_evidence value in the DB must be accepted by the perturbation verifier."""
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "verify_perturbation_release.py").read_text()
+    values = db.execute(
+        "SELECT DISTINCT sign_evidence FROM interactions WHERE sign_evidence IS NOT NULL"
+    ).fetchall()
+    for (val,) in values:
+        assert val in source, \
+            f"sign_evidence '{val}' exists in DB but not in perturbation verifier whitelist"
+
+
+# ---------- Evo2 output field structure ----------
+
+def test_evo2_output_has_required_fields():
+    """Evo2 scorer output dict must include sequence_plausibility, method, and note."""
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "score_evo2_promoters.py").read_text()
+    for field in ("sequence_plausibility", "method", "note"):
+        assert f'"{field}"' in source, f"Evo2 scorer output missing '{field}' field"
+    assert "mean_max_logit_sigmoid" in source, \
+        "Evo2 method must be documented as mean_max_logit_sigmoid"
+    assert "not a calibrated" in source.lower() or "relative ranking" in source.lower(), \
+        "Evo2 note must disclaim calibration"
+
+
+# ---------- Rice crosswalk coordinate matching ----------
+
+def test_rice_rap_aliases_loaded(db):
+    """Rice gene_aliases must contain RAP-DB entries for Expression Atlas resolution."""
+    count = db.execute(
+        "SELECT COUNT(*) FROM gene_aliases WHERE source='RAP-DB'"
+    ).fetchone()[0]
+    assert count >= 4000, f"Only {count} RAP-DB aliases; need >=4000 for Expression Atlas"
+
+
+def test_expression_atlas_has_evidence(db):
+    """Expression Atlas must have stored evidence rows after rice crosswalk."""
+    count = db.execute(
+        "SELECT COUNT(*) FROM regulatory_evidence WHERE source_name='Expression Atlas reviewed perturbations'"
+    ).fetchone()[0]
+    assert count >= 10, f"Only {count} Expression Atlas evidence rows; expected >=10"
+
+
+# ---------- Directed inference data integrity ----------
+
+def test_directed_edges_exist(db):
+    """Directed inferred edges table must have substantial coverage."""
+    tables = [r[0] for r in db.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='directed_inferred_edges'"
+    ).fetchall()]
+    if not tables:
+        pytest.skip("directed_inferred_edges table not present")
+    count = db.execute("SELECT COUNT(*) FROM directed_inferred_edges").fetchone()[0]
+    assert count >= 500_000, f"Only {count} directed edges; expected >=500K"
+
+
+def test_celltype_edges_exist(db):
+    """Cell-type regulatory edges must have substantial coverage."""
+    tables = [r[0] for r in db.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='celltype_regulatory_edges'"
+    ).fetchall()]
+    if not tables:
+        pytest.skip("celltype_regulatory_edges table not present")
+    count = db.execute("SELECT COUNT(*) FROM celltype_regulatory_edges").fetchone()[0]
+    assert count >= 50_000, f"Only {count} cell-type edges; expected >=50K"
