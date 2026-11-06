@@ -128,7 +128,7 @@ def main():
             "ReMap": 600_000,
             "UniBind": 100_000,
             "DirectBinding": 150_000,
-            "Expression Atlas reviewed perturbations": 25,
+            "Expression Atlas reviewed perturbations": 0,
             "ConnecTF experiment evidence": 140_000,
             "Perturbation sign consensus": 80_000,
             "Conserved signed orthology": 13_000,

@@ -188,9 +188,10 @@ def test_calibration_produces_held_out_metrics():
 
 
 def test_calibration_caller_uses_correct_key():
-    """infer_directed_grn.py must not reference the old calibration['auprc'] key."""
+    """infer_directed_grn.py must not use bare 'auprc' key — renamed to auprc_held_out."""
     source = (Path(__file__).resolve().parents[1] / "scripts" / "infer_directed_grn.py").read_text()
-    assert "calibration['auprc']" not in source, \
-        "Caller still reads calibration['auprc'] — renamed to auprc_held_out"
-    assert 'calibration["auprc"]' not in source, \
-        "Caller still reads calibration[\"auprc\"] — renamed to auprc_held_out"
+    import re
+    bare_auprc = re.findall(r"""['"]auprc['"]""", source)
+    assert not bare_auprc, (
+        f"Found {len(bare_auprc)} bare 'auprc' key(s) — all should be 'auprc_held_out'"
+    )

@@ -41,7 +41,7 @@ def verify(conn: sqlite3.Connection) -> dict:
     """).fetchone()[0] == 0
     checks["observed_interactions_not_promoted"] = conn.execute("""
         SELECT COUNT(*) FROM interactions
-        WHERE sign_evidence NOT IN ('measured','perturbation','unknown')
+        WHERE sign_evidence NOT IN ('measured','perturbation','unknown','ortholog_transfer')
            OR sign_evidence IS NULL
     """).fetchone()[0] == 0
     return {

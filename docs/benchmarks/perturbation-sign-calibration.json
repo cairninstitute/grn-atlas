@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-17T15:33:14.566860+00:00",
+  "generated_at": "2026-11-06T06:36:53.396049+00:00",
   "model_version": "perturbation-calibration-v1",
   "leakage_controls": [
     "literature_curated observations are excluded from consensus generation",
@@ -9,7 +9,7 @@
     "release gates are evaluated separately by species and predicted sign"
   ],
   "excluded_overlaps": {
-    "conflicting_truth": 56
+    "conflicting_truth": 1
   },
   "thresholds": {
     "minimum_cases": 50,
@@ -18,76 +18,76 @@
     "wilson_lower_must_exceed_base_rate": true
   },
   "overall": {
-    "cases": 4293,
-    "accuracy": 0.5563,
-    "species_majority_baseline": 0.8556,
+    "cases": 2819,
+    "accuracy": 0.5857,
+    "species_majority_baseline": 0.8361,
     "passes_global_baseline": false
   },
   "classes": [
     {
       "species": "arabidopsis",
       "relation_type": "activation",
-      "cases": 33,
-      "agreements": 33,
-      "precision": 1.0,
-      "baseline_rate": 1.0,
-      "lift": 0.0,
-      "wilson_lower_95": 0.8957,
+      "cases": 49,
+      "agreements": 48,
+      "precision": 0.9796,
+      "baseline_rate": 0.9123,
+      "lift": 0.0673,
+      "wilson_lower_95": 0.8931,
       "gate_pass": false
     },
     {
       "species": "arabidopsis",
       "relation_type": "repression",
-      "cases": 2,
-      "agreements": 0,
-      "precision": 0.0,
-      "baseline_rate": 0.0,
-      "lift": 0.0,
-      "wilson_lower_95": 0.0,
+      "cases": 8,
+      "agreements": 4,
+      "precision": 0.5,
+      "baseline_rate": 0.0877,
+      "lift": 0.4123,
+      "wilson_lower_95": 0.2152,
       "gate_pass": false
     },
     {
       "species": "human",
       "relation_type": "activation",
-      "cases": 2250,
-      "agreements": 1990,
-      "precision": 0.8844,
-      "baseline_rate": 0.8552,
-      "lift": 0.0293,
-      "wilson_lower_95": 0.8706,
+      "cases": 1497,
+      "agreements": 1310,
+      "precision": 0.8751,
+      "baseline_rate": 0.8362,
+      "lift": 0.0389,
+      "wilson_lower_95": 0.8574,
       "gate_pass": true
     },
     {
       "species": "human",
       "relation_type": "repression",
-      "cases": 1989,
-      "agreements": 354,
-      "precision": 0.178,
-      "baseline_rate": 0.1448,
-      "lift": 0.0331,
-      "wilson_lower_95": 0.1618,
+      "cases": 1219,
+      "agreements": 258,
+      "precision": 0.2116,
+      "baseline_rate": 0.1638,
+      "lift": 0.0478,
+      "wilson_lower_95": 0.1896,
       "gate_pass": false
     },
     {
       "species": "mouse",
       "relation_type": "activation",
-      "cases": 7,
-      "agreements": 6,
-      "precision": 0.8571,
-      "baseline_rate": 0.6842,
-      "lift": 0.1729,
-      "wilson_lower_95": 0.4869,
+      "cases": 27,
+      "agreements": 23,
+      "precision": 0.8519,
+      "baseline_rate": 0.7391,
+      "lift": 0.1127,
+      "wilson_lower_95": 0.6752,
       "gate_pass": false
     },
     {
       "species": "mouse",
       "relation_type": "repression",
-      "cases": 12,
-      "agreements": 5,
-      "precision": 0.4167,
-      "baseline_rate": 0.3158,
-      "lift": 0.1009,
-      "wilson_lower_95": 0.1933,
+      "cases": 19,
+      "agreements": 8,
+      "precision": 0.4211,
+      "baseline_rate": 0.2609,
+      "lift": 0.1602,
+      "wilson_lower_95": 0.2314,
       "gate_pass": false
     }
   ],

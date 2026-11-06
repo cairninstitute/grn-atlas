@@ -165,7 +165,7 @@ def calibrate_threshold(
     """
     gt_set = set(ground_truth.keys())
     if not gt_set or not inferred:
-        return 0.0, {"auprc": 0.0, "n_gt": 0, "n_inferred": 0}
+        return 0.0, {"auprc_held_out": 0.0, "n_gt": 0, "n_inferred": 0}
 
     gt_tfs = sorted({tf for tf, _ in gt_set})
     rng = np.random.RandomState(42)
@@ -188,7 +188,7 @@ def calibrate_threshold(
     test_labels, test_scores = _score_split(test_tfs)
 
     if train_labels.sum() == 0 or test_labels.sum() == 0:
-        return 0.0, {"auprc": 0.0, "n_gt": len(gt_set), "n_inferred": len(inferred),
+        return 0.0, {"auprc_held_out": 0.0, "n_gt": len(gt_set), "n_inferred": len(inferred),
                       "note": "too few ground-truth edges for train/test split"}
 
     train_prec, train_rec, train_thresh = precision_recall_curve(train_labels, train_scores)
@@ -460,7 +460,7 @@ def main() -> int:
         print(f"  Curated-signed: {result.get('n_existing_signed', 0):,}")
         print(f"  Expression-only: {result['n_expression_only']:,}")
         print(f"  Signs: {result['sign_counts']}")
-        print(f"  Calibration AUPRC: {result['calibration']['auprc']}")
+        print(f"  Calibration AUPRC (held-out): {result['calibration'].get('auprc_held_out', 'N/A')}")
         if not args.dry_run:
             print(f"  Stored: {n_stored:,} edges")
 
