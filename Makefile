@@ -1,8 +1,10 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding promote-evidence esm2-embeddings alphafold-features structural-predictions directed-inference scrna-data geneformer-embeddings celltype-regulation evo2-scores grassius-data cistrome-data data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap bootstrap-gpu bootstrap-api setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding omnipath-refresh promote-evidence rebuild-derived esm2-embeddings alphafold-features structural-predictions directed-inference scrna-data geneformer-embeddings celltype-regulation evo2-scores grassius-data cistrome-data data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
-	@echo "make bootstrap      - release data setup from a fresh clone, including all external evidence and KnockTF species"
+	@echo "make bootstrap      - full CPU/network-backed atlas from a fresh clone (sources → promotion → derived → verify)"
+	@echo "make bootstrap-gpu  - GPU layers: ESM2 embeddings + Geneformer cell embeddings"
+	@echo "make bootstrap-api  - API layers: Evo2 scores + structural predictions + AlphaFold features"
 	@echo "make setup          - create venv + install backend & frontend deps"
 	@echo "make fetch          - fetch source data (core+light tiers) into backend/data/"
 	@echo "make fetch-all      - fetch everything incl. heavy layers (needs kallisto/BLAST, slow)"
@@ -52,18 +54,28 @@ help:
 	@echo "make evo2-scores    - score promoters with Evo2 DNA model (needs NVIDIA_NIM_API_KEY)"
 	@echo "make grassius-data  - load GRASSIUS grass TF regulatory data (rice, maize)"
 	@echo "make cistrome-data  - load Cistrome DB ChIP-seq TF binding (human, mouse)"
-	@echo "make data-expansion - run all enrichment steps including new binding sources"
+	@echo "make omnipath-refresh - re-fetch CollecTRI + SIGNOR edges with citations from OmniPath"
+	@echo "make data-expansion - load all expansion sources (before promotion/derived layers)"
+	@echo "make rebuild-derived - rebuild promotion, tissue weights, directed inference, cell-type edges"
+
+.NOTPARALLEL:
 
 # One command to take a fresh clone to the verified release source-data profile. Each step is
-# individually re-runnable. Some download stages self-skip on transient failures, but the final
-# verifier rejects a degraded build that is missing a release-required layer.
-bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion direct-binding allele-pwms chromatin-peaks qualify-evidence verify-data data-expansion
+# individually re-runnable and must be run sequentially (SQLite is single-writer).
+# Phase 1: core DB + all source ingestion (before any promotion or derived layers)
+# Phase 2: promotion + derived layers (after all sources are loaded)
+# Phase 3: verification (last)
+bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion direct-binding allele-pwms chromatin-peaks data-expansion rebuild-derived qualify-evidence verify-data
 	@echo ""
 	@echo "=== GRN Atlas bootstrap complete ==="
 	@echo "Verify:  make test-backend"
 	@echo "Run:     make backend        (API on :8000)   then   make frontend (UI on :3001)"
-	@echo "GPU:     make esm2-embeddings  (requires pip install -r backend/requirements-gpu.txt)"
-	@echo "Boltz-2: make structural-predictions  (requires NVIDIA_NIM_API_KEY)"
+	@echo "GPU:     make bootstrap-gpu  (ESM2 + Geneformer; requires pip install -r backend/requirements-gpu.txt)"
+	@echo "API:     make bootstrap-api  (Evo2 + structural predictions; requires NVIDIA_NIM_API_KEY)"
+
+bootstrap-gpu: esm2-embeddings geneformer-embeddings
+
+bootstrap-api: evo2-scores structural-predictions alphafold-features
 
 setup:
 	python3 -m venv venv
@@ -312,13 +324,14 @@ grassius-data:
 cistrome-data:
 	venv/bin/python backend/scripts/load_cistrome.py
 
-data-expansion: connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding promote-evidence directed-inference scrna-data celltype-regulation
-	@echo "Data expansion complete. Additional optional steps:"
-	@echo "  make structural-predictions   (needs NVIDIA_NIM_API_KEY; populates protein_sequences)"
-	@echo "  make alphafold-features       (needs protein_sequences table populated by structural-predictions)"
-	@echo "  make esm2-embeddings          (needs torch + GPU)"
-	@echo "  make geneformer-embeddings    (needs torch + GPU; run after scrna-data)"
-	@echo "  make evo2-scores              (needs NVIDIA_NIM_API_KEY)"
+omnipath-refresh:
+	venv/bin/python backend/scripts/fetch_collectri_signor.py
+
+data-expansion: connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding omnipath-refresh scrna-data
+	@echo "Data expansion sources loaded."
+
+rebuild-derived: promote-evidence tissue-weights directed-inference celltype-regulation
+	@echo "Derived layers rebuilt."
 
 clean-db:
 	rm -f backend/data/grn.sqlite3

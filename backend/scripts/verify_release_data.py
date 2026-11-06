@@ -44,6 +44,8 @@ def main():
         "perturbation_sign_calibration",
         "orthology_transfer_mappings", "orthology_transfer_candidates",
         "cross_species_transfer_calibration",
+        "directed_inferred_edges", "scrna_datasets", "scrna_clusters",
+        "scrna_cluster_expression", "celltype_regulatory_edges",
     }
     missing_tables = sorted(required_tables - tables)
     if missing_tables:
@@ -84,6 +86,15 @@ def main():
             "ranked_candidate_impacts": (
                 "SELECT COUNT(*) FROM regulatory_candidate_impacts", (), 35_000,
             ),
+            "directed_inferred_edges": (
+                "SELECT COUNT(*) FROM directed_inferred_edges", (), 500_000,
+            ),
+            "scrna_datasets": (
+                "SELECT COUNT(*) FROM scrna_datasets", (), 2,
+            ),
+            "celltype_regulatory_edges": (
+                "SELECT COUNT(*) FROM celltype_regulatory_edges", (), 50_000,
+            ),
         }
         for label, (query, params, minimum) in checks.items():
             count = scalar(conn, query, params)
@@ -97,6 +108,15 @@ def main():
         ):
             imports[name] = {"status": status, "counts": json.loads(raw_counts)}
 
+        bad_json = scalar(
+            conn,
+            "SELECT COUNT(*) FROM interactions "
+            "WHERE sources IS NOT NULL AND sources != '' AND json_valid(sources) = 0",
+        )
+        counts["malformed_sources"] = bad_json
+        if bad_json > 0:
+            failures.append(f"interactions.sources: {bad_json:,} rows with invalid JSON")
+
         required_sources = {
             "CollecTRI": 40_000,
             "SIGNOR": 2_000,
@@ -104,6 +124,10 @@ def main():
             "AGRIS AtRegNet expanded": 6_000,
             "TFLink small-scale": 15_000,
             "ChIP-Atlas": 800_000,
+            "PlantTFDB": 800_000,
+            "ReMap": 600_000,
+            "UniBind": 100_000,
+            "DirectBinding": 150_000,
             "Expression Atlas reviewed perturbations": 25,
             "ConnecTF experiment evidence": 140_000,
             "Perturbation sign consensus": 80_000,
