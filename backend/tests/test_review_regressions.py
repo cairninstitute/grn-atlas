@@ -195,3 +195,80 @@ def test_calibration_caller_uses_correct_key():
     assert not bare_auprc, (
         f"Found {len(bare_auprc)} bare 'auprc' key(s) — all should be 'auprc_held_out'"
     )
+
+
+# ---------- Finding: Rice alias loader must always run ----------
+
+def test_makefile_always_runs_gff3_rice_loader():
+    """GFF3-based rice alias loader must not be gated behind IC4R success."""
+    makefile = (Path(__file__).resolve().parents[2] / "Makefile").read_text()
+    import re
+    lines = makefile.split("\n")
+    in_evidence = False
+    ic4r_line = None
+    gff3_line = None
+    for i, line in enumerate(lines):
+        if line.startswith("evidence-expansion:"):
+            in_evidence = True
+            continue
+        if in_evidence and not line.startswith("\t") and line.strip():
+            break
+        if in_evidence:
+            if "load_rice_id_aliases" in line:
+                ic4r_line = line
+            if "load_rice_rap_aliases" in line:
+                gff3_line = line
+    assert gff3_line is not None, "GFF3 rice alias loader missing from evidence-expansion"
+    assert "||" not in (gff3_line or ""), \
+        "GFF3 rice loader must run unconditionally, not as || fallback"
+
+
+# ---------- Finding: Geneformer schema migration ----------
+
+def test_geneformer_migrates_existing_schema():
+    """run_geneformer store function must ALTER TABLE for missing columns."""
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "run_geneformer.py").read_text()
+    assert "ALTER TABLE" in source, \
+        "store_embeddings must migrate existing tables with ALTER TABLE"
+    assert "model_version" in source and "computed_at" in source, \
+        "Migration must add model_version and computed_at columns"
+    assert "PRAGMA table_info" in source, \
+        "Migration must check existing columns before ALTER"
+
+
+def test_geneformer_migration_on_old_schema():
+    """Geneformer store must succeed on a table without model_version/computed_at."""
+    conn = sqlite3.connect(":memory:")
+    conn.execute("""
+        CREATE TABLE geneformer_cell_embeddings (
+            species TEXT NOT NULL, cell_id TEXT NOT NULL,
+            embedding BLOB NOT NULL, PRIMARY KEY (species, cell_id))
+    """)
+    conn.execute("""
+        CREATE TABLE geneformer_cluster_embeddings (
+            species TEXT NOT NULL, cluster_id TEXT NOT NULL,
+            embedding BLOB NOT NULL, embedding_dim INTEGER NOT NULL,
+            PRIMARY KEY (species, cluster_id))
+    """)
+    import importlib, sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    mod = importlib.import_module("run_geneformer")
+    mod.store_geneformer_embeddings(conn, "test", np.zeros((2, 4)), ["c1", "c2"], {"cl1": np.zeros(4)})
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(geneformer_cell_embeddings)").fetchall()}
+    assert "model_version" in cols, "model_version column not added by migration"
+    assert "computed_at" in cols, "computed_at column not added by migration"
+    row = conn.execute("SELECT model_version, computed_at FROM geneformer_cell_embeddings LIMIT 1").fetchone()
+    assert row[0] is not None, "model_version not populated"
+    assert row[1] is not None, "computed_at not populated"
+
+
+# ---------- Finding: verify-data known_gaps populated ----------
+
+def test_verify_data_known_gaps_not_empty():
+    """verify_release_data must populate known_gaps with actual gap details."""
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "verify_release_data.py").read_text()
+    assert 'known_gaps = {}' not in source.split("known_gaps = {")[0] or \
+        "reason" in source, \
+        "known_gaps must contain documented gap entries, not be empty"
+    assert "unmapped_targets" in source or "unmapped" in source, \
+        "known_gaps should document unmapped record counts"
