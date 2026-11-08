@@ -1,6 +1,8 @@
 """Regression tests for findings from independent review (2026-11-05).
 
 Each test targets a specific defect that was found and fixed.
+Tests that only inspect source code or use in-memory DBs run without grn.sqlite3.
+Tests that query the built database are marked with @needs_db.
 """
 import json
 import sqlite3
@@ -10,11 +12,13 @@ import numpy as np
 import pytest
 
 DB = Path(__file__).resolve().parents[1] / "data" / "grn.sqlite3"
-pytestmark = pytest.mark.skipif(not DB.exists(), reason="grn.sqlite3 not built")
+needs_db = pytest.mark.skipif(not DB.exists(), reason="grn.sqlite3 not built")
 
 
 @pytest.fixture(scope="module")
 def db():
+    if not DB.exists():
+        pytest.skip("grn.sqlite3 not built")
     conn = sqlite3.connect(DB)
     conn.row_factory = sqlite3.Row
     yield conn
@@ -23,6 +27,7 @@ def db():
 
 # ---------- Finding #1: OmniPath malformed sources ----------
 
+@needs_db
 def test_interaction_sources_are_valid_json(db):
     """Every non-empty sources column must be a valid JSON array."""
     bad = db.execute(
@@ -32,6 +37,7 @@ def test_interaction_sources_are_valid_json(db):
     assert bad == 0, f"{bad} interactions have non-JSON sources column"
 
 
+@needs_db
 def test_interaction_sources_are_json_arrays(db):
     """sources column must be a JSON array, not a bare string."""
     rows = db.execute(
@@ -50,20 +56,20 @@ def test_evo2_scorer_returns_method_field():
     import sys
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from scripts.score_evo2_promoters import score_sequence_loglikelihood
-    # We can't call the real API, but we verify the docstring disclaims SAE
     assert "not" in score_sequence_loglikelihood.__doc__.lower() or \
            "NOT" in score_sequence_loglikelihood.__doc__
 
 
-def test_evo2_scores_table_exists(db):
-    """evo2_promoter_scores table must exist if scores were loaded."""
+@needs_db
+def test_evo2_scores_have_rows_when_table_exists(db):
+    """evo2_promoter_scores table, if present, must contain scored rows."""
     tables = [r[0] for r in db.execute(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='evo2_promoter_scores'"
     ).fetchall()]
     if not tables:
         pytest.skip("evo2_promoter_scores table not present")
     count = db.execute("SELECT COUNT(*) FROM evo2_promoter_scores").fetchone()[0]
-    assert count >= 0
+    assert count > 0, "evo2_promoter_scores table exists but is empty"
 
 
 # ---------- Finding #3: Geneformer mean pooling ----------
@@ -93,22 +99,35 @@ def test_derive_celltype_batches_all_genes():
     assert "[:999]" not in source, "derive_celltype_regulation still truncates gene list to 999"
 
 
-def test_celltype_regulation_covers_all_expressed_genes(db):
-    """Cell-type analysis must query all expressed genes, not a subset."""
+@needs_db
+def test_celltype_edges_span_full_gene_set(db):
+    """Cell-type edges must cover more genes than the old truncation limit."""
     scrna = db.execute(
         "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='scrna_cluster_expression'"
     ).fetchone()[0]
     if not scrna:
         pytest.skip("no scrna data loaded")
     row = db.execute(
-        "SELECT dataset_id, cluster_id, COUNT(*) FROM scrna_cluster_expression "
-        "GROUP BY dataset_id, cluster_id ORDER BY COUNT(*) DESC LIMIT 1"
+        "SELECT dataset_id, cluster_id, COUNT(*) AS n FROM scrna_cluster_expression "
+        "GROUP BY dataset_id, cluster_id ORDER BY n DESC LIMIT 1"
     ).fetchone()
     if not row:
         pytest.skip("no cluster expression data")
-    n_genes = row[2]
-    if n_genes <= 500:
-        pytest.skip(f"cluster only has {n_genes} genes, need >500 to test truncation")
+    n_expressed = row[2]
+    if n_expressed <= 500:
+        pytest.skip(f"cluster only has {n_expressed} genes, need >500 to test")
+    ct_tables = db.execute(
+        "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='celltype_regulatory_edges'"
+    ).fetchone()[0]
+    if not ct_tables:
+        pytest.skip("celltype_regulatory_edges not materialized")
+    n_targets = db.execute(
+        "SELECT COUNT(DISTINCT target_id) FROM celltype_regulatory_edges"
+    ).fetchone()[0]
+    assert n_targets > 999, (
+        f"Only {n_targets} distinct targets in cell-type edges; "
+        f"should exceed old 999 truncation limit given {n_expressed} expressed genes"
+    )
 
 
 # ---------- Finding #5: Trajectory honest labeling ----------
@@ -197,16 +216,15 @@ def test_calibration_caller_uses_correct_key():
     )
 
 
-# ---------- Finding: Rice alias loader must always run ----------
+# ---------- Rice alias loader ordering in Makefile ----------
 
-def test_makefile_always_runs_gff3_rice_loader():
-    """GFF3-based rice alias loader must not be gated behind IC4R success."""
+def test_makefile_rice_loader_before_expression_atlas():
+    """GFF3 rice alias loader must run unconditionally and before Expression Atlas."""
     makefile = (Path(__file__).resolve().parents[2] / "Makefile").read_text()
-    import re
     lines = makefile.split("\n")
     in_evidence = False
-    ic4r_line = None
-    gff3_line = None
+    gff3_idx = None
+    atlas_idx = None
     for i, line in enumerate(lines):
         if line.startswith("evidence-expansion:"):
             in_evidence = True
@@ -214,16 +232,21 @@ def test_makefile_always_runs_gff3_rice_loader():
         if in_evidence and not line.startswith("\t") and line.strip():
             break
         if in_evidence:
-            if "load_rice_id_aliases" in line:
-                ic4r_line = line
             if "load_rice_rap_aliases" in line:
-                gff3_line = line
-    assert gff3_line is not None, "GFF3 rice alias loader missing from evidence-expansion"
-    assert "||" not in (gff3_line or ""), \
-        "GFF3 rice loader must run unconditionally, not as || fallback"
+                gff3_idx = i
+                assert "||" not in line, \
+                    "GFF3 rice loader must run unconditionally, not as || fallback"
+                assert not line.strip().startswith("-"), \
+                    "GFF3 rice loader must not be prefixed with - (failure must halt)"
+            if "load_expression_atlas" in line:
+                atlas_idx = i
+    assert gff3_idx is not None, "GFF3 rice alias loader missing from evidence-expansion"
+    assert atlas_idx is not None, "Expression Atlas loader missing from evidence-expansion"
+    assert gff3_idx < atlas_idx, \
+        f"GFF3 rice loader (line {gff3_idx}) must run before Expression Atlas (line {atlas_idx})"
 
 
-# ---------- Finding: Geneformer schema migration ----------
+# ---------- Geneformer schema migration ----------
 
 def test_geneformer_migrates_existing_schema():
     """run_geneformer store function must ALTER TABLE for missing columns."""
@@ -262,16 +285,16 @@ def test_geneformer_migration_on_old_schema():
     assert row[1] is not None, "computed_at not populated"
 
 
-# ---------- Finding: verify-data known_gaps populated ----------
+# ---------- verify-data known_gaps populated ----------
 
-def test_verify_data_known_gaps_not_empty():
-    """verify_release_data must populate known_gaps with actual gap details."""
+def test_verify_data_known_gaps_populated():
+    """verify_release_data known_gaps dict must contain at least one entry with a reason."""
     source = (Path(__file__).resolve().parents[1] / "scripts" / "verify_release_data.py").read_text()
-    assert 'known_gaps = {}' not in source.split("known_gaps = {")[0] or \
-        "reason" in source, \
-        "known_gaps must contain documented gap entries, not be empty"
-    assert "unmapped_targets" in source or "unmapped" in source, \
-        "known_gaps should document unmapped record counts"
+    import re
+    assignments = re.findall(r'known_gaps\s*=\s*\{([^}]*)\}', source, re.DOTALL)
+    has_populated = any('"reason"' in a or "'reason'" in a for a in assignments)
+    assert has_populated, \
+        "known_gaps must contain at least one entry with a 'reason' field, not be empty"
 
 
 # ---------- OmniPath PMID dedup and json.dumps(sources) ----------
@@ -317,6 +340,7 @@ def test_perturbation_verifier_accepts_ortholog_transfer():
         "observed_interactions_not_promoted check must include ortholog_transfer"
 
 
+@needs_db
 def test_all_sign_evidence_values_are_accepted(db):
     """Every sign_evidence value in the DB must be accepted by the perturbation verifier."""
     source = (Path(__file__).resolve().parents[1] / "scripts" / "verify_perturbation_release.py").read_text()
@@ -341,8 +365,9 @@ def test_evo2_output_has_required_fields():
         "Evo2 note must disclaim calibration"
 
 
-# ---------- Rice crosswalk coordinate matching ----------
+# ---------- Rice crosswalk data integrity ----------
 
+@needs_db
 def test_rice_rap_aliases_loaded(db):
     """Rice gene_aliases must contain RAP-DB entries for Expression Atlas resolution."""
     count = db.execute(
@@ -351,6 +376,7 @@ def test_rice_rap_aliases_loaded(db):
     assert count >= 4000, f"Only {count} RAP-DB aliases; need >=4000 for Expression Atlas"
 
 
+@needs_db
 def test_expression_atlas_has_evidence(db):
     """Expression Atlas must have stored evidence rows after rice crosswalk."""
     count = db.execute(
@@ -361,6 +387,7 @@ def test_expression_atlas_has_evidence(db):
 
 # ---------- Directed inference data integrity ----------
 
+@needs_db
 def test_directed_edges_exist(db):
     """Directed inferred edges table must have substantial coverage."""
     tables = [r[0] for r in db.execute(
@@ -372,6 +399,7 @@ def test_directed_edges_exist(db):
     assert count >= 500_000, f"Only {count} directed edges; expected >=500K"
 
 
+@needs_db
 def test_celltype_edges_exist(db):
     """Cell-type regulatory edges must have substantial coverage."""
     tables = [r[0] for r in db.execute(
