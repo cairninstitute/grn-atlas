@@ -2,7 +2,6 @@ import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useStat
 import Sidebar from './components/Sidebar';
 import Toolbar from './components/Toolbar';
 import ViewTabs from './components/ViewTabs';
-import { COLLECTIONS } from './collections';
 import AppNavigation from './components/app/AppNavigation';
 import ArtifactDrawer from './components/artifacts/ArtifactDrawer';
 import ResearchContextBar from './components/context/ResearchContextBar';
@@ -25,6 +24,8 @@ const RegulatoryWeatherMap = lazy(() => import('./components/RegulatoryWeatherMa
 const FeedbackControlView = lazy(() => import('./components/FeedbackControlView'));
 const CloneLabWorkspace = lazy(() => import('./components/clonelab/CloneLabWorkspace'));
 const CrisprVsDsrnaPanel = lazy(() => import('./components/CrisprVsDsrnaPanel'));
+const HomeWorkspace = lazy(() => import('./components/home/HomeWorkspace'));
+const ControlAtlasDemo = lazy(() => import('./components/demo/ControlAtlasDemo'));
 
 const SPECIES_TO_KINGDOM = {
   human: 'Animalia',
@@ -36,30 +37,57 @@ const SPECIES_TO_KINGDOM = {
 };
 
 const EXPLORE_TABS = [
-  { id: 'network', label: 'Explorer', icon: '🔗' },
-  { id: 'crossview', label: 'Cross-species', icon: '🌍' },
-  { id: 'organism', label: 'Organism', icon: '🌐' },
-  { id: 'feedback', label: 'Feedback', icon: '↻' },
-  { id: 'pathways', label: 'Paths', icon: '🛤️' },
-  { id: 'comparison', label: 'Orthology', icon: '⚖️' },
-  { id: 'genome', label: 'Genome', icon: '🧬' },
-  { id: 'weathermap', label: 'TF Map', icon: '🗺️' },
+  { id: 'network', label: 'Gene network', requiresGene: true, description: 'Regulators and targets around one focus gene' },
+  { id: 'feedback', label: 'Control systems', description: 'Feedback circuits and connected control cores' },
+  { id: 'organism', label: 'Species overview', description: 'Coverage and high-level structure for one species' },
+  { id: 'crossview', label: 'Cross-species', requiresGene: true, description: 'Compare a focus gene across species' },
+  { id: 'pathways', label: 'Regulatory paths', requiresGene: true, description: 'Trace signed routes between genes' },
+  { id: 'comparison', label: 'Orthologs', requiresGene: true, description: 'Inspect corresponding genes in other species' },
+  { id: 'genome', label: 'Genome context', description: 'Compare genome-scale regulatory context' },
+  { id: 'weathermap', label: 'TF landscape', description: 'Survey transcription-factor programs' },
 ];
 
 const DESIGN_TABS = [
-  { id: 'intervention', label: 'Intervention', icon: '✏️' },
-  { id: 'clonelab', label: 'CloneLab', icon: 'CL' },
-  { id: 'crispr-compare', label: 'CRISPR vs dsRNA', icon: '⚖️' },
+  { id: 'intervention', label: 'Choose an intervention', requiresGene: true, description: 'Plan how to alter a candidate gene or network' },
+  { id: 'crispr-compare', label: 'Compare CRISPR / RNAi', requiresGene: true, description: 'Compare intervention modes for a target' },
+  { id: 'clonelab', label: 'Build & verify DNA', description: 'Design a construct and diagnostic assay in CloneLab' },
 ];
+
+const VIEW_GUIDANCE = {
+  network: ['Gene regulatory neighborhood', 'Inspect who regulates the focus gene, what it regulates, and how strongly each edge is supported.'],
+  feedback: ['Feedback and control systems', 'Discover signed circuits, connected cores, and larger control architectures across a species.'],
+  organism: ['Species overview', 'Start with coverage, network composition, and prominent regulators for one organism.'],
+  crossview: ['Cross-species comparison', 'Ask whether a regulatory role or neighborhood is conserved across organisms.'],
+  pathways: ['Regulatory paths', 'Trace plausible signed routes from an upstream regulator to a downstream target.'],
+  comparison: ['Ortholog mapping', 'Find corresponding genes and assess how safely conclusions transfer across species.'],
+  genome: ['Genome context', 'Compare regulatory organization at genome scale.'],
+  weathermap: ['Transcription-factor landscape', 'Survey broad regulator activity and coverage patterns.'],
+  intervention: ['Intervention planning', 'Translate the current network hypothesis into a candidate perturbation strategy.'],
+  'crispr-compare': ['CRISPR or RNAi?', 'Compare editing and silencing strategies for the current target.'],
+  clonelab: ['CloneLab', 'Build a sequence-defined construct and choose an assay that distinguishes expected outcomes.'],
+  toolbox: ['Analysis tools', 'Use focused analyses when you already know the method or output you need.'],
+};
 
 const EXPLORE_VIEW_IDS = new Set(EXPLORE_TABS.map(t => t.id));
 const DESIGN_VIEW_IDS = new Set(DESIGN_TABS.map(t => t.id));
 
+function getInitialRoute() {
+  const params = new URLSearchParams(window.location.search);
+  const requested = params.get('view');
+  if (EXPLORE_VIEW_IDS.has(requested)) return { mode: 'explore', subView: requested };
+  if (DESIGN_VIEW_IDS.has(requested)) return { mode: 'design', subView: requested };
+  if (requested === 'toolbox') return { mode: 'toolbox', subView: 'network' };
+  if (requested === 'control-demo') return { mode: 'demo', subView: 'network' };
+  if (params.get('gene')) return { mode: 'explore', subView: 'network' };
+  return { mode: 'home', subView: 'network' };
+}
+
 function ExplorerInner() {
   const { dispatch } = useResearchSession();
+  const initialRoute = useMemo(getInitialRoute, []);
   const [selectedGene, setSelectedGene] = useState(null);
-  const [viewMode, setViewMode] = useState('explore');
-  const [subView, setSubView] = useState('network');
+  const [viewMode, setViewMode] = useState(initialRoute.mode);
+  const [subView, setSubView] = useState(initialRoute.subView);
   const [filters, setFilters] = useState({
     kingdom: [],
     species: [],
@@ -82,10 +110,10 @@ function ExplorerInner() {
   const [dsRnaTarget, setDsRnaTarget] = useState(null);
   const [dsRnaCompareTarget, setDsRnaCompareTarget] = useState(null);
   const [dsRnaSet, setDsRnaSet] = useState([]);
-  const [collection, setCollection] = useState(null);
   const [chromeCollapsed, setChromeCollapsed] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [disambiguationChoices, setDisambiguationChoices] = useState(null);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const renderWithSuspense = useCallback((node, fallback = 'Loading workspace…') => (
     <Suspense fallback={<div className="empty-state">{fallback}</div>}>
@@ -131,13 +159,16 @@ function ExplorerInner() {
 
   const handlePrimaryModeChange = useCallback((mode) => {
     setViewMode(mode);
-    if (mode === 'explore') setSubView('network');
-    else if (mode === 'design') setSubView('intervention');
-  }, []);
+    if (mode === 'explore' && !EXPLORE_VIEW_IDS.has(subView)) setSubView('network');
+    else if (mode === 'design' && !DESIGN_VIEW_IDS.has(subView)) setSubView('intervention');
+    setMobileSidebarOpen(false);
+  }, [subView]);
 
   const handleNavigate = useCallback((target) => {
     if (!target) return;
-    if (EXPLORE_VIEW_IDS.has(target)) {
+    if (target === 'home') {
+      setViewMode('home');
+    } else if (EXPLORE_VIEW_IDS.has(target)) {
       setSubView(target);
       setViewMode('explore');
     } else if (DESIGN_VIEW_IDS.has(target)) {
@@ -145,9 +176,12 @@ function ExplorerInner() {
       setViewMode('design');
     } else if (target === 'toolbox') {
       setViewMode('toolbox');
+    } else if (target === 'control-demo') {
+      setViewMode('demo');
     } else {
       setViewMode('explore');
     }
+    setMobileSidebarOpen(false);
   }, []);
 
   const focusGeneByRecord = useCallback(async (geneLike) => {
@@ -211,20 +245,6 @@ function ExplorerInner() {
 
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
-    const requestedView = p.get('view');
-    if (requestedView) {
-      if (EXPLORE_VIEW_IDS.has(requestedView)) {
-        setViewMode('explore');
-        setSubView(requestedView);
-      } else if (DESIGN_VIEW_IDS.has(requestedView)) {
-        setViewMode('design');
-        setSubView(requestedView);
-      } else if (requestedView === 'toolbox') {
-        setViewMode('toolbox');
-      } else {
-        setViewMode('explore');
-      }
-    }
     const fp = {};
     if (p.get('species')) fp.species = p.get('species').split(',');
     if (p.get('reg')) fp.regulationType = p.get('reg').split(',');
@@ -239,7 +259,7 @@ function ExplorerInner() {
   useEffect(() => {
     const p = new URLSearchParams();
     if (selectedGene) p.set('gene', selectedGene.symbol);
-    p.set('view', viewMode === 'toolbox' ? 'toolbox' : subView);
+    p.set('view', ['home', 'toolbox', 'demo'].includes(viewMode) ? (viewMode === 'demo' ? 'control-demo' : viewMode) : subView);
     if (filters.species?.length) p.set('species', filters.species.join(','));
     p.set('reg', filters.regulationType.join(','));
     p.set('conf', String(filters.minConfidence));
@@ -253,11 +273,6 @@ function ExplorerInner() {
     const sessionSpecies = selectedGene?.species || filters?.species?.[0] || null;
     dispatch({ type: 'SET_SPECIES', species: sessionSpecies });
   }, [dispatch, filters, selectedGene]);
-
-  const openCollection = useCallback((col) => {
-    setCollection(col);
-    setShowGeneSet(true);
-  }, []);
 
   const analysisGeneIds = useMemo(() => {
     if (!selectedGene) return [];
@@ -323,33 +338,32 @@ function ExplorerInner() {
     });
   }, []);
 
-  const renderEmptyState = () => (
-    <div className="empty-state">
-      <div className="empty-icon">🧬</div>
-      <h2>Gene Regulatory Network Atlas</h2>
-      <p>Search for a gene, or try an example:</p>
+  const renderEmptyState = (title = 'Choose a gene to begin') => (
+    <div className="empty-state gene-required-state">
+      <span className="empty-state-kicker">Focus gene required</span>
+      <h2>{title}</h2>
+      <p>Use gene search to load a regulatory neighborhood, or start with a documented example.</p>
+      <button
+        className="mobile-filter-trigger empty-search-trigger"
+        onClick={() => {
+          setViewMode('explore');
+          setSubView('network');
+          setMobileSidebarOpen(true);
+        }}
+      >
+        Find a gene
+      </button>
       <div className="example-genes">
         {[
-          { symbol: 'TP53', note: 'human tumor suppressor' },
-          { symbol: 'MYC', note: 'human oncogene' },
+          { symbol: 'AN2', note: 'petunia pigmentation' },
           { symbol: 'LHY', note: 'Arabidopsis clock' },
-          { symbol: 'LFY', note: 'plant flowering' },
+          { symbol: 'TP53', note: 'human tumor suppressor' },
         ].map((ex) => (
           <button key={ex.symbol} className="example-gene-btn" onClick={() => handleGeneSearch(ex.symbol)}>
             <strong>{ex.symbol}</strong>
             <span>{ex.note}</span>
           </button>
         ))}
-      </div>
-      <div className="collections">
-        <div className="collections-label">Curated collections</div>
-        <div className="collection-btns">
-          {COLLECTIONS.map((col) => (
-            <button key={col.id} className="collection-btn" onClick={() => openCollection(col)} title={col.description}>
-              {col.name}
-            </button>
-          ))}
-        </div>
       </div>
     </div>
   );
@@ -445,11 +459,13 @@ function ExplorerInner() {
       return renderWithSuspense(<CloneLabWorkspace />, 'Loading CloneLab…');
     }
     if (subView === 'crispr-compare') {
+      if (!selectedGene) return renderEmptyState('Select a target before comparing CRISPR and RNAi');
       return renderWithSuspense(
         <CrisprVsDsrnaPanel currentGene={selectedGene} currentSpecies={filters?.species?.[0] || ''} />,
         'Loading CRISPR comparison…',
       );
     }
+    if (!selectedGene) return renderEmptyState('Select a target before planning an intervention');
     return renderWithSuspense(
       <InterventionDesigner gene={selectedGene} networkData={networkData} />,
       'Loading intervention designer…',
@@ -457,63 +473,83 @@ function ExplorerInner() {
   };
 
   const currentSubTabs = viewMode === 'explore' ? EXPLORE_TABS : viewMode === 'design' ? DESIGN_TABS : null;
+  const currentGuidance = VIEW_GUIDANCE[viewMode === 'toolbox' ? 'toolbox' : subView];
+  const sidebarRelevant = viewMode === 'explore' && ['network', 'crossview', 'pathways', 'comparison'].includes(subView);
 
   return (
-    <div className="grn-explorer">
-      <Sidebar
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onGeneSearch={handleGeneSearch}
-        loading={loading}
-        selectedGene={selectedGene}
-      />
+    <div className={`grn-explorer${sidebarRelevant ? '' : ' no-sidebar'}`}>
+      {sidebarRelevant && (
+        <>
+          <Sidebar
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onGeneSearch={handleGeneSearch}
+            loading={loading}
+            selectedGene={selectedGene}
+            mobileOpen={mobileSidebarOpen}
+            onMobileClose={() => setMobileSidebarOpen(false)}
+          />
+          {mobileSidebarOpen && <button className="sidebar-mobile-backdrop" onClick={() => setMobileSidebarOpen(false)} aria-label="Close gene search" />}
+        </>
+      )}
 
       <div className="main-content">
         {!chromeCollapsed && (
           <>
-            {selectedGene && (
+            <AppNavigation mode={viewMode === 'demo' ? 'home' : viewMode} onChange={handlePrimaryModeChange} />
+            {!['home', 'demo'].includes(viewMode) && <ResearchContextBar />}
+            {selectedGene && viewMode === 'explore' && subView === 'network' && (
               <Toolbar gene={selectedGene} stats={networkData?.stats} cyRef={cyInstanceRef} />
             )}
-            <AppNavigation mode={viewMode} onChange={handlePrimaryModeChange} />
-            <ResearchContextBar />
           </>
         )}
 
-        <div className="tabs-row">
-          <button
-            className="chrome-collapse-btn"
-            onClick={() => setChromeCollapsed((c) => !c)}
-            title={chromeCollapsed ? 'Show toolbar' : 'Hide toolbar'}
-          >
-            {chromeCollapsed ? '▼' : '▲'}
-          </button>
-          {currentSubTabs && (
-            <ViewTabs viewMode={subView} onViewChange={setSubView} tabs={currentSubTabs} />
-          )}
-          <div className="tabs-actions">
-            <button className="copy-link-btn" onClick={() => setShowArtifacts(true)} title="Open the current workflow artifacts">
-              🗂 Artifacts
-            </button>
-            <button className="copy-link-btn" onClick={() => setShowGeneSet(true)} title="GO enrichment and network metrics for a gene set">
-              📊 Analyze
-            </button>
-            <button
-              className="copy-link-btn"
-              onClick={() => {
-                setDsRnaTarget(selectedGene || null);
-                setDsRnaCompareTarget(null);
-                setDsRnaSet(analysisGeneIds);
-                setShowDsRna(true);
-              }}
-              title="Design a dsRNA / predict RNAi silencing + off-targets"
-            >
-              🧬 dsRNA
-            </button>
-            <button className="copy-link-btn" onClick={copyLink} title="Copy a shareable link to this view">
-              {linkCopied ? '✓ Copied' : '🔗 Copy link'}
-            </button>
+        {!['home', 'demo'].includes(viewMode) && (
+          <div className="workspace-chrome">
+            <div className="tabs-row">
+              {sidebarRelevant && (
+                <button className="mobile-filter-trigger" onClick={() => setMobileSidebarOpen(true)}>
+                  Find gene / filters
+                </button>
+              )}
+              {currentSubTabs && (
+                <ViewTabs viewMode={subView} onViewChange={setSubView} tabs={currentSubTabs} hasGene={!!selectedGene} />
+              )}
+              <details className="workspace-actions">
+                <summary>Actions</summary>
+                <div className="workspace-actions-menu">
+                  <button onClick={() => setShowGeneSet(true)} title="GO enrichment and network metrics for a gene set">Analyze a gene set</button>
+                  <button
+                    onClick={() => {
+                      setDsRnaTarget(selectedGene || null);
+                      setDsRnaCompareTarget(null);
+                      setDsRnaSet(analysisGeneIds);
+                      setShowDsRna(true);
+                    }}
+                    title="Design a dsRNA / predict RNAi silencing + off-targets"
+                  >Design dsRNA</button>
+                  <button onClick={() => setShowArtifacts(true)} title="Open the current workflow artifacts">View generated outputs</button>
+                  <button onClick={copyLink} title="Copy a shareable link to this view">{linkCopied ? 'Link copied' : 'Copy link to this view'}</button>
+                  <button onClick={() => setChromeCollapsed((c) => !c)}>{chromeCollapsed ? 'Show application header' : 'Focus on workspace'}</button>
+                </div>
+              </details>
+            </div>
+            {currentGuidance && (
+              <div className="workspace-guide">
+                <div>
+                  <span>{viewMode === 'design' ? 'Design' : viewMode === 'toolbox' ? 'Tools' : 'Explore'}</span>
+                  <strong>{currentGuidance[0]}</strong>
+                  <p>{currentGuidance[1]}</p>
+                </div>
+                {sidebarRelevant && selectedGene && (
+                  <button onClick={() => setMobileSidebarOpen(true)} className="workspace-focus-chip">
+                    Focus: {selectedGene.label || selectedGene.symbol || selectedGene.id}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
         <div className="content-area">
           {error && (
@@ -548,6 +584,24 @@ function ExplorerInner() {
             </div>
           )}
 
+          {viewMode === 'home' && renderWithSuspense(
+            <HomeWorkspace
+              onNavigate={handleNavigate}
+              onGeneSearch={handleGeneSearch}
+              onOpenGeneSet={() => setShowGeneSet(true)}
+            />,
+            'Loading Darwin…',
+          )}
+          {viewMode === 'demo' && renderWithSuspense(
+            <ControlAtlasDemo
+              onBack={() => handleNavigate('home')}
+              onOpenControl={(species) => {
+                handleSpeciesChange(species);
+                handleNavigate('feedback');
+              }}
+            />,
+            'Loading control-system demonstration…',
+          )}
           {viewMode === 'explore' && renderExploreView()}
           {viewMode === 'design' && renderDesignView()}
           {viewMode === 'toolbox' && renderWithSuspense(
@@ -585,9 +639,9 @@ function ExplorerInner() {
 
         <GeneSetPanel
           open={showGeneSet}
-          onClose={() => { setShowGeneSet(false); setCollection(null); }}
-          initialGeneIds={collection ? collection.geneIds : analysisGeneIds}
-          species={collection ? collection.species : selectedGene?.species}
+          onClose={() => setShowGeneSet(false)}
+          initialGeneIds={analysisGeneIds}
+          species={selectedGene?.species}
           includeInferred={filters.includeInferred}
         />
       </Suspense>

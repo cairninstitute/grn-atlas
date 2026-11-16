@@ -182,6 +182,41 @@ def _score_tf_activity(db, species: str, expressed_genes: dict[str, float],
     return results[:top]
 
 
+def _materialized_tf_activity(db, dataset_id: str, cluster_id: str,
+                              top: int = 25) -> list[dict] | None:
+    """Read precomputed cell-type edges, or signal that callers should fall back."""
+    try:
+        rows = db.conn.execute(
+            "SELECT e.source_id, COALESCE(g.symbol, e.source_id), COUNT(*), "
+            "AVG(e.confidence), SUM(e.activity_score), MAX(e.tf_expression), "
+            "SUM(CASE WHEN e.regulation_type = 'activation' THEN 1 ELSE 0 END), "
+            "SUM(CASE WHEN e.regulation_type = 'repression' THEN 1 ELSE 0 END) "
+            "FROM celltype_regulatory_edges e "
+            "LEFT JOIN genes g ON g.id = e.source_id "
+            "WHERE e.dataset_id = ? AND e.cluster_id = ? "
+            "GROUP BY e.source_id ORDER BY SUM(e.activity_score) DESC LIMIT ?",
+            (dataset_id, cluster_id, top),
+        ).fetchall()
+    except Exception:
+        return None
+
+    results = []
+    for rank, row in enumerate(rows, 1):
+        activating, repressing = row[6], row[7]
+        dominant_mode = "activator" if activating > repressing else (
+            "repressor" if repressing > activating else "mixed")
+        results.append({
+            "gene_id": row[0], "symbol": row[1], "regulon_size": row[2],
+            "overlap": row[2], "mean_overlap_confidence": round(row[3], 4),
+            "score": round(row[4], 4), "expressed": True,
+            "tf_mean_expr": round(row[5] or 0.0, 4),
+            "dominant_mode": dominant_mode,
+            "n_activating": activating, "n_repressing": repressing,
+            "rank": rank, "score_basis": "materialized_celltype_activity",
+        })
+    return results
+
+
 def celltype_regulation(db, species: str, gene_ids: list[str] | None = None) -> dict[str, Any]:
     if not _has_scrna_data(db, species):
         readiness = context.build_readiness_report(db, species, "expression", gene_ids[0] if gene_ids else None)
@@ -194,12 +229,15 @@ def celltype_regulation(db, species: str, gene_ids: list[str] | None = None) -> 
             "requested_gene_ids": gene_ids or [],
         }
 
+    dataset_id = f"scrna_{species}"
     clusters = _get_scrna_clusters(db, species)
     cluster_results = []
 
     for cluster in clusters:
         expressed = _cluster_expressed_genes(db, species, cluster["cluster_id"])
-        regulators = _score_tf_activity(db, species, expressed)
+        regulators = _materialized_tf_activity(db, dataset_id, cluster["cluster_id"])
+        if regulators is None:
+            regulators = _score_tf_activity(db, species, expressed)
 
         cluster_results.append({
             "cluster_id": cluster["cluster_id"],

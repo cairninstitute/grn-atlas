@@ -89,11 +89,22 @@ export default function ToolboxView({ gene, networkData, filters, onNodeAction, 
 
   return (
     <div className="toolbox-view">
+      <div className="toolbox-intro">
+        <div>
+          <span className="toolbox-intro-kicker">Method library</span>
+          <h2>Choose an analysis by the question it answers.</h2>
+          <p>
+            Search by outcome, regulator, evidence, or intervention. Tools open in place and retain
+            the current {gene ? `focus gene (${gene.symbol || gene.id})` : 'species context'} when possible.
+          </p>
+        </div>
+        {!gene && <span className="toolbox-context-note">No focus gene selected</span>}
+      </div>
       <div className="toolbox-controls">
         <input
           className="toolbox-search"
           type="text"
-          placeholder="Search tools…"
+          placeholder="What do you need to do? Try 'upstream', 'motif', 'validation', or 'export'…"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />

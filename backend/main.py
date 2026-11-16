@@ -309,6 +309,7 @@ class CentralityRequest(BaseModel):
 
 DB_PATH = FilePath(os.environ.get("GRN_DB") or (FilePath(__file__).parent / "data" / "grn.sqlite3"))
 DATA_DIR = DB_PATH.parent
+ATLAS_SUMMARY_PATH = DATA_DIR / "atlas_summary.json"
 
 
 class GeneDatabase:
@@ -4628,16 +4629,43 @@ async def genome_detail(species: str):
 
 @app.get("/api/v1/stats")
 async def get_stats():
-    """Get overall database statistics from live data"""
+    """Get release statistics without scanning large analysis tables per request."""
     cur = db.conn.execute
-    total_genes = cur("SELECT COUNT(*) FROM genes").fetchone()[0]
-    total_interactions = cur("SELECT COUNT(*) FROM interactions").fetchone()[0]
     species_list = [r[0] for r in cur("SELECT DISTINCT species FROM genes ORDER BY species").fetchall()]
+    summary = {}
+    try:
+        summary = json.loads(ATLAS_SUMMARY_PATH.read_text())
+    except (OSError, ValueError, TypeError):
+        pass
+
+    # Core counts preserve compatibility with older or lightweight databases.
+    # Optional multimillion-row layers deliberately require the build summary.
+    total_genes = summary.get("genes")
+    total_interactions = summary.get("interactions")
+    if not isinstance(total_genes, int):
+        total_genes = cur("SELECT COUNT(*) FROM genes").fetchone()[0]
+    if not isinstance(total_interactions, int):
+        total_interactions = cur("SELECT COUNT(*) FROM interactions").fetchone()[0]
+
+    layer_names = (
+        "directed_inferred_edges",
+        "celltype_regulatory_edges",
+        "perturbation_observations",
+        "orthology_transfer_candidates",
+        "chromatin_peaks",
+        "structural_binding_predictions",
+    )
+    stored_layers = summary.get("analysis_layers", {})
+    analysis_layers = {
+        name: stored_layers.get(name, 0) if isinstance(stored_layers.get(name, 0), int) else 0
+        for name in layer_names
+    }
     return {
         "species": len(species_list),
         "species_list": species_list,
         "genes": total_genes,
         "interactions": total_interactions,
+        "analysis_layers": analysis_layers,
         "databases": ["TRRUST", "PlantRegMap"],
         "version": "1.0.0"
     }

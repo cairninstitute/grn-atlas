@@ -5,13 +5,17 @@ Tests that only inspect source code or use in-memory DBs run without grn.sqlite3
 Tests that query the built database are marked with @needs_db.
 """
 import json
+import os
 import sqlite3
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-DB = Path(__file__).resolve().parents[1] / "data" / "grn.sqlite3"
+DB = Path(os.environ.get(
+    "GRN_DB",
+    Path(__file__).resolve().parents[1] / "data" / "grn.sqlite3",
+))
 needs_db = pytest.mark.skipif(not DB.exists(), reason="grn.sqlite3 not built")
 
 

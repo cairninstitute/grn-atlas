@@ -18,9 +18,10 @@ export default function Toolbar({ gene, stats, cyRef }) {
 
   if (!gene) return null;
 
-  const regulatorCount = stats?.regulators?.length || 0;
-  const targetCount = stats?.targets?.length || 0;
-  const pathCount = stats?.paths?.length || 0;
+  const metricCount = (value) => typeof value === 'number' ? value : value?.length || 0;
+  const regulatorCount = metricCount(stats?.regulators);
+  const targetCount = metricCount(stats?.targets);
+  const pathCount = metricCount(stats?.paths);
 
   const download = (blob, filename) => {
     const url = URL.createObjectURL(blob);

@@ -51,9 +51,14 @@ vi.mock('./components/PathwayView', () => ({
   default: () => <div>PathwayView</div>,
 }));
 
+vi.mock('./components/FeedbackControlView', () => ({
+  default: () => <div>FeedbackControlView</div>,
+}));
+
 describe('GeneNetworkExplorer', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    window.history.replaceState({}, '', '/');
     global.fetch = vi.fn(async (url) => {
       const urlText = String(url);
       if (urlText.includes('/api/v1/expression/differential')) {
@@ -66,15 +71,45 @@ describe('GeneNetworkExplorer', () => {
     });
   });
 
-  it('opens the dsRNA modal from the top-level button without blanking the app', async () => {
+  it('opens the dsRNA modal from the contextual actions menu without blanking the app', async () => {
     render(<GeneNetworkExplorer />);
 
+    fireEvent.click(screen.getByRole('button', { name: 'Explore networks' }));
+    await waitFor(() => expect(screen.getByText('Gene regulatory neighborhood')).toBeInTheDocument());
     fireEvent.click(screen.getByTitle('Design a dsRNA / predict RNAi silencing + off-targets'));
 
     await waitFor(() => expect(screen.getByText('Design a dsRNA (RNAi)')).toBeInTheDocument());
     expect(screen.getByPlaceholderText('target gene — type a name (e.g. AN2)')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('second target — type a name (e.g. JAF13)')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('gene names/ids, space or comma separated (e.g. AN2, DFR, JAF13)')).toBeInTheDocument();
+  });
+
+  it('opens with a question-led home instead of expert filters', async () => {
+    render(<GeneNetworkExplorer />);
+
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'What do you want to understand?' })).toBeInTheDocument());
+    expect(screen.getByText('Choose a starting point')).toBeInTheDocument();
+    expect(screen.queryByText('Sidebar')).not.toBeInTheDocument();
+  });
+
+  it('routes a whole-species question directly to feedback control', async () => {
+    render(<GeneNetworkExplorer />);
+
+    fireEvent.click(await screen.findByRole('button', { name: /Find feedback and control systems/ }));
+
+    await waitFor(() => expect(screen.getByText('FeedbackControlView')).toBeInTheDocument());
+    expect(screen.getByText('Feedback and control systems')).toBeInTheDocument();
+  });
+
+  it('opens the featured control-architecture walkthrough from home', async () => {
+    render(<GeneNetworkExplorer />);
+
+    fireEvent.click(await screen.findByRole('button', { name: /From millions of interactions to biological control architecture/ }));
+
+    await waitFor(() => expect(screen.getByRole('heading', {
+      name: 'From millions of interactions to biological control architecture',
+    })).toBeInTheDocument());
+    expect(window.location.search).toContain('view=control-demo');
   });
 
   it('syncs the research context species to the selected gene species', async () => {

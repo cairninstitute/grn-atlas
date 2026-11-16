@@ -12,7 +12,10 @@ from pathlib import Path
 
 import pytest
 
-REAL_DB = Path(__file__).resolve().parents[1] / "data" / "grn.sqlite3"
+REAL_DB = Path(os.environ.get(
+    "GRN_DB",
+    Path(__file__).resolve().parents[1] / "data" / "grn.sqlite3",
+))
 pytestmark = pytest.mark.skipif(not REAL_DB.exists(), reason="need built DB for schema")
 
 
@@ -87,17 +90,46 @@ def _build_fixture(path):
 def client(tmp_path_factory):
     path = tmp_path_factory.mktemp("db") / "fixture.sqlite3"
     _build_fixture(path)
+    previous_db = os.environ.get("GRN_DB")
     os.environ["GRN_DB"] = str(path)
     import main
     importlib.reload(main)
     from fastapi.testclient import TestClient
     with TestClient(main.app) as c:
         yield c
-    os.environ.pop("GRN_DB", None)
+    if previous_db is None:
+        os.environ.pop("GRN_DB", None)
+    else:
+        os.environ["GRN_DB"] = previous_db
 
 
 def test_health(client):
     assert client.get("/health").json()["status"] == "healthy"
+
+
+def test_stats_uses_generated_release_summary(client):
+    import main
+
+    summary = {
+        "genes": 142_253,
+        "interactions": 4_243_875,
+        "species_list": ["arabidopsis", "human"],
+        "analysis_layers": {
+            "directed_inferred_edges": 600_000,
+            "celltype_regulatory_edges": 1_295_130,
+            "perturbation_observations": 2_111_309,
+        },
+    }
+    main.ATLAS_SUMMARY_PATH.write_text(json.dumps(summary))
+    try:
+        result = client.get("/api/v1/stats").json()
+    finally:
+        main.ATLAS_SUMMARY_PATH.unlink(missing_ok=True)
+
+    assert result["genes"] == summary["genes"]
+    assert result["interactions"] == summary["interactions"]
+    assert result["analysis_layers"]["directed_inferred_edges"] == 600_000
+    assert result["analysis_layers"]["structural_binding_predictions"] == 0
 
 
 def test_search(client):
@@ -209,8 +241,8 @@ def test_provenance_freshness(client):
     by = {s["key"]: s for s in f["sources"]}
     # every manifest source appears with a status
     assert all(s["status"] in ("current", "stale", "unknown") for s in f["sources"])
-    # PLAZA 4.5 is known-stale (dicots 5.0 exists) per the committed audit cache
-    assert by["plaza"]["status"] == "stale" and by["plaza"]["latest_version"]
+    # The manifest and committed audit cache now track PLAZA Dicots 5.
+    assert by["plaza"]["status"] == "current" and by["plaza"]["latest_version"]
 
 
 def test_external_evidence_endpoints(client):

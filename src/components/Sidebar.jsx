@@ -31,7 +31,7 @@ function groupSpecies(presentSymbols) {
   return { byKingdom, kingdoms };
 }
 
-export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading, selectedGene }) {
+export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading, selectedGene, mobileOpen = false, onMobileClose }) {
   const [collapsed, setCollapsed] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -104,6 +104,7 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
     setSearchInput('');
     setSuggestions([]);
     setShowSuggestions(false);
+    onMobileClose?.();
   };
 
   const handleKingdomToggle = (kingdom) => {
@@ -119,12 +120,18 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
       const newSpecies = new Set(selectedSpecies);
       speciesByKingdom[kingdom]?.forEach(s => newSpecies.delete(s.symbol));
       setSelectedSpecies(newSpecies);
+      onFilterChange({
+        ...filters,
+        kingdom: Array.from(newKingdoms),
+        species: Array.from(newSpecies),
+      });
+      return;
     }
 
     onFilterChange({
       ...filters,
       kingdom: Array.from(newKingdoms),
-      species: Array.from(selectedSpecies)
+      species: Array.from(selectedSpecies),
     });
   };
 
@@ -186,7 +193,7 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
 
   if (collapsed) {
     return (
-      <div className="sidebar sidebar-collapsed">
+      <div className={`sidebar sidebar-collapsed${mobileOpen ? ' mobile-open' : ''}`}>
         <button className="sidebar-expand-btn" onClick={() => setCollapsed(false)} title="Expand sidebar">
           <span className="sidebar-expand-icon">&#9654;</span>
         </button>
@@ -217,22 +224,26 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
   }
 
   return (
-    <div className="sidebar">
+    <aside className={`sidebar${mobileOpen ? ' mobile-open' : ''}`} aria-label="Gene search and network filters">
       <div className="sidebar-header">
+        <div>
+          <span className="sidebar-eyebrow">Explore</span>
+          <strong>Find a gene</strong>
+        </div>
+        <button className="sidebar-mobile-close" onClick={onMobileClose} aria-label="Close gene search">×</button>
         <button className="sidebar-collapse-btn" onClick={() => setCollapsed(true)} title="Collapse sidebar">
           <span className="sidebar-collapse-icon">&#9664;</span>
         </button>
       </div>
 
-      <div className="sidebar-section">
-        <h3 className="sidebar-title">Gene search</h3>
+      <div className="sidebar-section sidebar-search-section">
         <div className="search-container">
           <div className="search-input-wrapper">
             <input
               ref={searchInputRef}
               type="text"
               className="search-input"
-              placeholder="Search genes..."
+              placeholder="Symbol, name, or locus…"
               value={searchInput}
               onChange={(e) => {
                 setSearchInput(e.target.value);
@@ -282,8 +293,15 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
             );
           })()}
         </div>
+        <p className="sidebar-search-help">Choose a result to load its regulators and targets.</p>
       </div>
 
+      <details className="sidebar-filter-details">
+        <summary>
+          <span>Network filters</span>
+          <small>{selectedSpecies.size ? `${selectedSpecies.size} species selected` : `Confidence ≥ ${confidence.toFixed(2)}`}</small>
+        </summary>
+        <div className="sidebar-filter-body">
       <div className="sidebar-section">
         <h3 className="sidebar-title">Kingdom</h3>
         <div className="filter-group">
@@ -370,6 +388,8 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
           <option value="targets">Targets only</option>
         </select>
       </div>
+        </div>
+      </details>
 
       <div className="sidebar-info">
         <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
@@ -389,6 +409,6 @@ export default function Sidebar({ filters, onFilterChange, onGeneSearch, loading
       </div>
 
       <DataSourcesPanel open={showDataSources} onClose={() => setShowDataSources(false)} />
-    </div>
+    </aside>
   );
 }

@@ -4,121 +4,131 @@ test.setTimeout(60000);
 
 const gotoApp = async (page) => {
   await page.goto('/');
-  await expect(page.locator('h1', { hasText: 'Choose the way your research question starts.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'What do you want to understand?' })).toBeVisible();
 };
 
-const primaryNav = (page) => page.locator('.app-navigation');
+const primaryNav = (page) => page.getByRole('tablist', { name: 'Primary workflows' });
 
-const openPrimaryWorkflow = async (page, label, expectedHeading) => {
+const openPrimaryWorkflow = async (page, label, expectedView) => {
   await primaryNav(page).getByRole('button', { name: label }).click();
-  await expect(page.locator('h1', { hasText: expectedHeading })).toBeVisible();
+  await expect(page).toHaveURL(new RegExp(`view=${expectedView}`));
 };
 
-const openAdvancedTab = async (page, tabLabel, expectedLocator) => {
-  await page.getByRole('button', { name: 'Advanced tools' }).click();
-  await expect(page.locator('.tabs-row')).toBeVisible();
-  await page.getByRole('button', { name: tabLabel }).click();
-  await expect(expectedLocator).toBeVisible();
+const openActions = async (page) => {
+  await page.getByText('Actions', { exact: true }).click();
+  await expect(page.locator('.workspace-actions-menu')).toBeVisible();
 };
 
-test.describe('workflow-first navigation', () => {
-  test('landing page renders home mode and all primary workflows', async ({ page }) => {
+test.describe('question-led navigation', () => {
+  test('landing page renders the current primary workflows and live atlas summary', async ({ page }) => {
     await gotoApp(page);
-    for (const label of [
-      'Home',
-      'Start from a gene',
-      'Start from a list',
-      'Start from a phenotype',
-      'Decide and hand off',
-      'Advanced tools',
-    ]) {
+    for (const label of ['Home', 'Explore networks', 'Design experiments', 'Analysis tools']) {
       await expect(primaryNav(page).getByRole('button', { name: label })).toBeVisible();
     }
+    await expect(page.getByRole('complementary', { name: 'Atlas summary' })).toContainText('species');
+    await expect(page.getByRole('button', { name: /Understand a regulatory neighborhood/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Find feedback and control systems/ })).toBeVisible();
   });
 
-  test('home cards navigate into the new workflow entry modes', async ({ page }) => {
+  test('home research paths open the corresponding workspaces', async ({ page }) => {
     await gotoApp(page);
-    await page.getByRole('button', { name: 'Start from a gene Known target exploration: network, expression, perturbation, orthology, and assay follow-up.' }).click();
-    await expect(page.locator('h1', { hasText: 'Explore a known target and choose the next action.' })).toBeVisible();
+    await page.getByRole('button', { name: /Understand a regulatory neighborhood/ }).click();
+    await expect(page).toHaveURL(/view=network/);
+    await expect(page.getByText('Gene regulatory neighborhood', { exact: true })).toBeVisible();
+
+    await primaryNav(page).getByRole('button', { name: 'Home' }).click();
+    await page.getByRole('button', { name: /Find feedback and control systems/ }).click();
+    await expect(page).toHaveURL(/view=feedback/);
+    await expect(page.getByText('Feedback and control systems', { exact: true })).toBeVisible();
   });
 
-  test('primary navigation switches across workflow modes and updates the URL', async ({ page }) => {
+  test('primary navigation switches among explore, design, and analysis tools', async ({ page }) => {
     await gotoApp(page);
 
-    await openPrimaryWorkflow(page, 'Start from a gene', 'Explore a known target and choose the next action.');
-    await expect(page).toHaveURL(/view=gene/);
+    await openPrimaryWorkflow(page, 'Explore networks', 'network');
+    await expect(page.getByRole('tab', { name: 'Gene network' })).toHaveAttribute('aria-selected', 'true');
 
-    await openPrimaryWorkflow(page, 'Start from a list', 'Normalize, map, interpret, and rank a user-provided gene set.');
-    await expect(page).toHaveURL(/view=dataset/);
+    await openPrimaryWorkflow(page, 'Design experiments', 'intervention');
+    await expect(page.getByText('Select a target before planning an intervention')).toBeVisible();
 
-    await openPrimaryWorkflow(page, 'Start from a phenotype', 'Move from phenotype or intervention goal to species-grounded candidate genes.');
-    await expect(page).toHaveURL(/view=phenotype/);
-
-    await openPrimaryWorkflow(page, 'Decide and hand off', 'Turn current evidence into a recommendation, next step, and handoff artifact.');
-    await expect(page).toHaveURL(/view=decision/);
+    await openPrimaryWorkflow(page, 'Analysis tools', 'toolbox');
+    await expect(page.getByRole('heading', { name: 'Choose an analysis by the question it answers.' })).toBeVisible();
   });
 
-  test('artifact drawer opens from the shared action rail', async ({ page }) => {
+  test('featured control-architecture demonstration opens and returns home', async ({ page }) => {
     await gotoApp(page);
-    await page.getByTitle('Open the current workflow artifacts').click();
+    await page.getByRole('button', { name: /Featured guided demonstration/ }).click();
+    await expect(page).toHaveURL(/view=control-demo/);
+    await expect(page.getByRole('heading', { name: 'From millions of interactions to biological control architecture' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'AP3–PI–SUP maintains the stamen–carpel boundary' })).toBeVisible();
+    await page.getByRole('button', { name: 'Darwin home' }).click();
+    await expect(page.getByRole('heading', { name: 'What do you want to understand?' })).toBeVisible();
+  });
+
+  test('generated-output drawer opens from the workspace action menu', async ({ page }) => {
+    await gotoApp(page);
+    await openPrimaryWorkflow(page, 'Explore networks', 'network');
+    await openActions(page);
+    await page.getByRole('button', { name: 'View generated outputs' }).click();
     await expect(page.locator('.artifact-drawer.open')).toBeVisible();
-    await expect(page.locator('h2', { hasText: 'Current workflow outputs' })).toBeVisible();
-    await expect(page.locator('.artifact-card', { hasText: 'First-pass interpretation' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Current workflow outputs' })).toBeVisible();
     await page.locator('.artifact-close').click();
     await expect(page.locator('.artifact-drawer.open')).toHaveCount(0);
   });
 });
 
-test.describe('workflow panels', () => {
-  test('dataset workflow shows the hit-list import entry point', async ({ page }) => {
+test.describe('research workspaces', () => {
+  test('whole-species feedback view loads from the home journey', async ({ page }) => {
     await gotoApp(page);
-    await openPrimaryWorkflow(page, 'Start from a list', 'Normalize, map, interpret, and rank a user-provided gene set.');
-    await expect(page.locator('h2', { hasText: '3. Import a hit list' })).toBeVisible();
-    await expect(page.locator('textarea[placeholder*="TP53"]')).toBeVisible();
+    await page.getByRole('button', { name: /Find feedback and control systems/ }).click();
+    await expect(page.locator('.feedback-view')).toBeVisible();
+    await expect(page.getByText('Feedback and control systems', { exact: true })).toBeVisible();
   });
 
-  test('phenotype workflow shows literature-first ideation', async ({ page }) => {
+  test('CloneLab loads from the molecular-validation journey', async ({ page }) => {
     await gotoApp(page);
-    await openPrimaryWorkflow(page, 'Start from a phenotype', 'Move from phenotype or intervention goal to species-grounded candidate genes.');
-    await expect(page.locator('h2', { hasText: '2. Start from a phenotype question' })).toBeVisible();
-    await expect(page.getByPlaceholder('Which genes are the best targets for changing flower color in this species?')).toBeVisible();
+    await page.getByRole('button', { name: /Build and verify a DNA construct/ }).click();
+    await expect(page).toHaveURL(/view=clonelab/);
+    await expect(page.locator('.clonelab-workspace')).toBeVisible();
   });
 
-  test('decision workflow shows planner controls', async ({ page }) => {
+  test('gene-list analysis remains available from home', async ({ page }) => {
     await gotoApp(page);
-    await openPrimaryWorkflow(page, 'Decide and hand off', 'Turn current evidence into a recommendation, next step, and handoff artifact.');
-    await expect(page.locator('h2', { hasText: '5. Convert evidence into an execution plan' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Build study plan' })).toBeVisible();
+    await page.getByRole('button', { name: 'Analyze a gene list instead' }).click();
+    await expect(page.getByRole('heading', { name: 'Gene-set analysis' })).toBeVisible();
   });
 
-  test('top-level dsRNA action opens the modal shell', async ({ page }) => {
+  test('dsRNA design remains available from workspace actions', async ({ page }) => {
     await gotoApp(page);
-    await page.getByTitle('Design a dsRNA / predict RNAi silencing + off-targets').click();
-    await expect(page.locator('h2', { hasText: 'Design a dsRNA (RNAi)' })).toBeVisible();
+    await openPrimaryWorkflow(page, 'Explore networks', 'network');
+    await openActions(page);
+    await page.getByRole('button', { name: 'Design dsRNA' }).click();
+    await expect(page.getByRole('heading', { name: 'Design a dsRNA (RNAi)' })).toBeVisible();
     await expect(page.getByPlaceholder('target gene — type a name (e.g. AN2)')).toBeVisible();
   });
-});
 
-test.describe('advanced tools', () => {
-  test('advanced mode exposes the legacy tab set', async ({ page }) => {
+  test('explore mode exposes the renamed biological views', async ({ page }) => {
     await gotoApp(page);
-    await page.getByRole('button', { name: 'Advanced tools' }).click();
-    for (const label of ['Explorer', 'Organism', 'Paths', 'Orthology', 'Genome', 'Design', 'Lab']) {
-      await expect(page.getByRole('button', { name: label })).toBeVisible();
+    await openPrimaryWorkflow(page, 'Explore networks', 'network');
+    for (const label of [
+      'Gene network',
+      'Control systems',
+      'Species overview',
+      'Cross-species',
+      'Regulatory paths',
+      'Orthologs',
+      'Genome context',
+      'TF landscape',
+    ]) {
+      await expect(page.getByRole('tab', { name: label })).toBeVisible();
     }
   });
 
-  test('organism and lab views load through the new navigation model', async ({ page }) => {
+  test('design mode exposes intervention comparison and CloneLab', async ({ page }) => {
     await gotoApp(page);
-    await openAdvancedTab(page, 'Organism', page.locator('.organism-view'));
-    await openAdvancedTab(page, 'Lab', page.locator('.analysis-view'));
-  });
-
-  test('analysis lab still exposes the major panel families', async ({ page }) => {
-    await gotoApp(page);
-    await openAdvancedTab(page, 'Lab', page.locator('.analysis-view'));
-    for (const section of ['Regulon & Upstream', 'Network Structure', 'Inference & Comparison', 'Export']) {
-      await expect(page.locator('.analysis-section-title', { hasText: section })).toBeVisible();
+    await openPrimaryWorkflow(page, 'Design experiments', 'intervention');
+    for (const label of ['Choose an intervention', 'Compare CRISPR / RNAi', 'Build & verify DNA']) {
+      await expect(page.getByRole('tab', { name: label })).toBeVisible();
     }
   });
 });

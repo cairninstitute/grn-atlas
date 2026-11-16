@@ -9,6 +9,7 @@ from pathlib import Path
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 DB = DATA / "grn.sqlite3"
+SUMMARY = DATA / "atlas_summary.json"
 
 
 def scalar(conn, query, params=()):
@@ -165,6 +166,31 @@ def main():
     else:
         imports = {}
         known_gaps = {}
+    analysis_tables = {
+        "directed_inferred_edges": ("directed_inferred_edges", "inferred_edges"),
+        "celltype_regulatory_edges": ("celltype_regulatory_edges",),
+        "perturbation_observations": ("perturbation_observations",),
+        "orthology_transfer_candidates": ("orthology_transfer_candidates",),
+        "chromatin_peaks": ("chromatin_peaks",),
+        "structural_binding_predictions": ("structural_binding_predictions",),
+    }
+    summary = {
+        "verified": not failures,
+        "genes": scalar(conn, "SELECT COUNT(*) FROM genes") if "genes" in tables else 0,
+        "interactions": scalar(conn, "SELECT COUNT(*) FROM interactions") if "interactions" in tables else 0,
+        "species_list": [
+            row[0] for row in conn.execute(
+                "SELECT DISTINCT species FROM genes ORDER BY species"
+            )
+        ] if "genes" in tables else [],
+        "analysis_layers": {},
+    }
+    for label, candidates in analysis_tables.items():
+        table = next((candidate for candidate in candidates if candidate in tables), None)
+        summary["analysis_layers"][label] = (
+            scalar(conn, f'SELECT COUNT(*) FROM "{table}"') if table else 0
+        )
+    SUMMARY.write_text(json.dumps(summary, indent=2) + "\n")
     conn.close()
 
     report = {

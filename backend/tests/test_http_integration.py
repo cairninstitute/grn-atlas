@@ -86,6 +86,8 @@ class TestSpecies:
         assert status == 200
         assert data["genes"] > 0
         assert data["interactions"] > 0
+        assert "analysis_layers" in data
+        assert "directed_inferred_edges" in data["analysis_layers"]
 
 
 # ─── Network & Regulon ───

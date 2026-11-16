@@ -26,7 +26,6 @@ import pickle
 import sqlite3
 from pathlib import Path
 
-import anndata as ad
 import numpy as np
 
 REPO = Path(__file__).resolve().parents[1]
@@ -250,6 +249,8 @@ def store_geneformer_embeddings(
 
 
 def main() -> int:
+    import anndata as ad
+
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--species", required=True)

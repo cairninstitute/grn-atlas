@@ -58,23 +58,23 @@ export default function GeneDetailPanel({ gene, data, onDesignDsRna }) {
         <div className="info-grid">
           <div className="info-item">
             <label>Symbol</label>
-            <value className="value-primary">{geneLabel(gene).label}</value>
+            <span className="value-primary">{geneLabel(gene).label}</span>
           </div>
           
           <div className="info-item">
             <label>Name</label>
-            <value className="value-secondary">{gene.name}</value>
+            <span className="value-secondary">{gene.name}</span>
           </div>
           
           <div className="info-item">
             <label>Species</label>
-            <value className="value-secondary">{gene.species}</value>
+            <span className="value-secondary">{gene.species}</span>
           </div>
 
           {gene.ensembl_id && (
             <div className="info-item">
               <label>Ensembl ID</label>
-              <value className="value-mono">{gene.ensembl_id}</value>
+              <span className="value-mono">{gene.ensembl_id}</span>
             </div>
           )}
 
@@ -377,31 +377,31 @@ function ProteinFeatures({ geneId }) {
         {esm2 && (
           <div className="info-item">
             <label>ESM2 embedding</label>
-            <value className="value-secondary">
+            <span className="value-secondary">
               {esm2.embedding_dim}D, {esm2.sequence_len} aa
               <span style={{ fontSize: '0.7rem', color: 'var(--text-3)', marginLeft: 4 }}>(predicted)</span>
-            </value>
+            </span>
           </div>
         )}
         {alphafold && (
           <>
             <div className="info-item">
               <label>AlphaFold pLDDT</label>
-              <value className="value-secondary">
+              <span className="value-secondary">
                 <span style={{ color: plddtColor, fontWeight: 600 }}>{plddt?.toFixed(1)}</span>
                 <span style={{ fontSize: '0.7rem', color: 'var(--text-3)', marginLeft: 4 }}>
                   ({alphafold.protein_length} aa)
                 </span>
-              </value>
+              </span>
             </div>
             <div className="info-item">
               <label>Low-confidence fraction</label>
-              <value className="value-secondary">
+              <span className="value-secondary">
                 {(alphafold.disorder_fraction * 100).toFixed(0)}%
                 <span style={{ fontSize: '0.7rem', color: 'var(--text-3)', marginLeft: 4 }}>
                   (pLDDT &lt; 50; high-conf: {(alphafold.high_confidence_fraction * 100).toFixed(0)}%)
                 </span>
-              </value>
+              </span>
             </div>
           </>
         )}
