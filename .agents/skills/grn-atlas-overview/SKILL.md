@@ -97,6 +97,7 @@ below complete the catalog; the authoritative, always-current list is every
 | `grn-module` | Detect co-regulated modules/communities in a species network (leiden/louvain/infomap) |
 | `grn-motif` / `grn-motif-query` | Query TF binding-motif hits in promoters (JASPAR 2024 PWMs) |
 | `grn-signaling-to-tf` | Trace a receptor/ligand to downstream TF targets through the network |
+| `grn-signaling-layer` | Query the curated protein-level layer (SIGNOR, human/mouse) — what a protein regulates post-translationally, and which signalling proteins reach a TF. Excluded from the transcriptional graph; `grn-signaling-to-tf` answers the same question *through* that graph |
 | `grn-ligand-receptor` | Find candidate ligand-receptor signaling pairs from the network |
 | `grn-family-rescue` | Rescue sparse edges by aggregating ortholog evidence across species (reduced confidence) |
 | `grn-transfer-risk` | Assess orthology transfer risk for a gene across species |
