@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap bootstrap-gpu bootstrap-api setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data audit-evidence audit-signs digest digest-check source-lock source-lock-check audit-all validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding omnipath-refresh phase1-migrations promote-evidence rebuild-derived esm2-embeddings alphafold-features structural-predictions directed-inference scrna-data geneformer-embeddings celltype-regulation evo2-scores grassius-data cistrome-data data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap bootstrap-gpu bootstrap-api setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data audit-evidence audit-signs digest digest-check source-lock source-lock-check audit-all validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding omnipath-refresh phase1-migrations promote-evidence rebuild-derived esm2-embeddings alphafold-features structural-predictions directed-inference scrna-data geneformer-embeddings celltype-regulation evo2-scores grassius-data cistrome-data cis-support data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - full CPU/network-backed atlas from a fresh clone (sources → promotion → derived → verify)"
@@ -64,6 +64,7 @@ help:
 	@echo "make omnipath-refresh - re-fetch CollecTRI + SIGNOR edges with citations from OmniPath"
 	@echo "make data-expansion - load all expansion sources (before promotion/derived layers)"
 	@echo "make phase1-migrations - split SIGNOR layers, gate uncalibrated signs (after data-expansion)"
+	@echo "make cis-support     - score projected plant edges with per-edge cis-regulatory motif support"
 	@echo "make rebuild-derived - rebuild promotion, tissue weights, directed inference, cell-type edges"
 
 .NOTPARALLEL:
@@ -73,7 +74,7 @@ help:
 # Phase 1: core DB + all source ingestion (before any promotion or derived layers)
 # Phase 2: promotion + derived layers (after all sources are loaded)
 # Phase 3: verification (last)
-bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion direct-binding allele-pwms chromatin-peaks data-expansion phase1-migrations rebuild-derived qualify-evidence verify-data audit-all source-lock
+bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion direct-binding allele-pwms chromatin-peaks data-expansion phase1-migrations rebuild-derived cis-support qualify-evidence verify-data audit-all source-lock
 	@echo ""
 	@echo "=== GRN Atlas bootstrap complete ==="
 	@echo "Verify:  make test-backend"
@@ -367,6 +368,9 @@ omnipath-refresh:
 
 data-expansion: connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding omnipath-refresh scrna-data
 	@echo "Data expansion sources loaded."
+
+cis-support:
+	venv/bin/python backend/scripts/score_cis_support.py
 
 rebuild-derived: promote-evidence tissue-weights directed-inference celltype-regulation
 	@echo "Derived layers rebuilt."

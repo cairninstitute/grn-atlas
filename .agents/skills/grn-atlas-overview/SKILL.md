@@ -77,6 +77,8 @@ GRN Atlas is a multi-species gene regulatory network database covering the speci
 | `grn-combinatorial-perturbation` | Rank pairwise or triple perturbation combinations by predicted downstream impact |
 | `grn-species-onboarding-plan` | Generate a staged plan for onboarding a new species |
 | `grn-binding-prediction` | Query or trigger structural binding predictions — scores whether a TF protein can bind a target promoter (Boltz-2) |
+| `grn-build-diff` | Compare two atlas builds using content digest and source lock files — tables changed, rows gained/lost, source drift |
+| `grn-kinetic-model` | Hill-function ODE simulation of a signed regulatory circuit — sweep parameters to classify oscillatory/bistable/monostable dynamics |
 
 ## Additional skills
 
@@ -164,6 +166,8 @@ below complete the catalog; the authoritative, always-current list is every
 28. **Compare regulatory wiring between two tissues/conditions**: `grn-tissue-coexpression` → `grn-differential-network`
 29. **Simulate a circuit's steady state / attractor after a perturbation**: `grn-regulon` → `grn-dynamics`
 30. **Find feedback loops and biological control systems**: `grn-feedback-control` → `grn-dynamics` / `grn-evidence-synthesis`
+31. **Test whether a feedback circuit can oscillate**: `grn-feedback-control` → `grn-kinetic-model`
+32. **Compare two atlas builds for drift**: `grn-build-diff` (before/after digest + lock files)
 
 ## Execution Modes
 

@@ -3164,6 +3164,144 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# grn-build-diff (pure file-based; writes small fixture JSONs to compare)
+# =====================================================================
+import tempfile
+
+_bd_dir = Path(tempfile.mkdtemp(prefix="grn-build-diff-test-"))
+
+_bd_before = _bd_dir / "before.json"
+_bd_before.write_text(json.dumps({
+    "generated_at": "2026-11-01T00:00:00Z",
+    "tables": {
+        "genes": {"rows": 1000, "digest": "aaa"},
+        "interactions": {"rows": 5000, "digest": "bbb"},
+        "old_table": {"rows": 10, "digest": "ccc"},
+    },
+    "atlas_digest": "digest_before",
+}))
+
+_bd_after = _bd_dir / "after.json"
+_bd_after.write_text(json.dumps({
+    "generated_at": "2026-11-02T00:00:00Z",
+    "tables": {
+        "genes": {"rows": 1005, "digest": "aaa2"},
+        "interactions": {"rows": 5000, "digest": "bbb"},
+        "new_table": {"rows": 7, "digest": "ddd"},
+    },
+    "atlas_digest": "digest_after",
+}))
+
+_bd_lock_before = _bd_dir / "lock_before.json"
+_bd_lock_before.write_text(json.dumps({"sources": {
+    "CollecTRI|v1": {"source_name": "CollecTRI", "sha256": "h1"},
+    "GRASSIUS|v1": {"source_name": "GRASSIUS", "sha256": "g1"},
+}}))
+
+_bd_lock_after = _bd_dir / "lock_after.json"
+_bd_lock_after.write_text(json.dumps({"sources": {
+    "CollecTRI|v1": {"source_name": "CollecTRI", "sha256": "h2"},
+    "SIGNOR|v1": {"source_name": "SIGNOR", "sha256": "s1"},
+}}))
+
+r = run_skill("grn-build-diff", ["--before", str(_bd_before), "--after", str(_bd_after)],
+              "build-diff: tables only, no lock files")
+grade(r, [
+    ("genes flagged changed", lambda d: "genes" in d["tables_changed"]),
+    ("interactions not flagged (same digest)", lambda d: "interactions" not in d["tables_changed"]),
+    ("new_table added", lambda d: d["tables_added"] == ["new_table"]),
+    ("old_table removed", lambda d: d["tables_removed"] == ["old_table"]),
+    ("genes row delta is +5", lambda d: d["row_changes"]["genes"]["delta"] == 5),
+    ("no source drift checked", lambda d: d["sources_drifted"] == [] and
+     "not checked" in d["summary"]),
+])
+results.append(r)
+
+r = run_skill("grn-build-diff", [
+    "--before", str(_bd_before), "--after", str(_bd_after),
+    "--lock-before", str(_bd_lock_before), "--lock-after", str(_bd_lock_after),
+], "build-diff: tables + source lock drift")
+grade(r, [
+    ("CollecTRI flagged as drifted", lambda d: "CollecTRI|v1" in d["sources_drifted"]),
+    ("SIGNOR flagged as added", lambda d: "SIGNOR|v1" in d["sources_added"]),
+    ("GRASSIUS flagged as removed", lambda d: "GRASSIUS|v1" in d["sources_removed"]),
+    ("summary mentions drift", lambda d: "drifted" in d["summary"]),
+])
+results.append(r)
+
+r = run_skill("grn-build-diff", ["--before", str(_bd_before), "--after", str(_bd_before)],
+              "build-diff: identical digests yield no changes")
+grade(r, [
+    ("no tables changed", lambda d: d["tables_changed"] == []),
+    ("no tables added", lambda d: d["tables_added"] == []),
+    ("no tables removed", lambda d: d["tables_removed"] == []),
+    ("empty row_changes", lambda d: d["row_changes"] == {}),
+])
+results.append(r)
+
+r = run_skill("grn-build-diff", ["--before", str(_bd_dir / "does_not_exist.json"),
+                                 "--after", str(_bd_after)],
+              "build-diff: missing before file reports a clean error")
+grade(r, [
+    ("reports missing file", lambda d: "not found" in d.get("error", "")),
+])
+results.append(r)
+
+# =====================================================================
+# grn-kinetic-model (Hill-function ODE; uses DB for signed edges)
+# =====================================================================
+
+r = run_skill("grn-kinetic-model",
+              ["--genes", "AT2G46830,AT1G01060,AT5G61380"],
+              "kinetic: Arabidopsis clock CCA1,LHY,TOC1")
+grade(r, [
+    ("returns dict", lambda d: isinstance(d, dict)),
+    ("has circuit", lambda d: "circuit" in d),
+    ("has parameter_sweep", lambda d: isinstance(d.get("parameter_sweep"), list)),
+    ("has summary", lambda d: "summary" in d),
+    ("genes match", lambda d: set(d["circuit"]["genes"]) == {"AT2G46830", "AT1G01060", "AT5G61380"}),
+    ("edges found", lambda d: d["circuit"]["edge_count"] > 0),
+])
+results.append(r)
+
+r = run_skill("grn-kinetic-model",
+              ["--genes", "TP53,MDM2"],
+              "kinetic: TP53-MDM2 pair")
+grade(r, [
+    ("returns dict", lambda d: isinstance(d, dict)),
+    ("has summary", lambda d: "summary" in d),
+    ("classification present", lambda d: d["summary"]["classification"] in ("oscillatory", "bistable", "monostable")),
+])
+results.append(r)
+
+r = run_skill("grn-kinetic-model",
+              ["--genes", "FAKEGENE1,FAKEGENE2"],
+              "kinetic: nonexistent genes (no edges)")
+grade(r, [
+    ("handles gracefully", lambda d: "error" in d),
+])
+results.append(r)
+
+r = run_skill("grn-kinetic-model",
+              ["--genes", "AT2G46830,AT1G01060,AT5G61380", "--hill-range", "2,4", "--deg-range", "0.5,1.0"],
+              "kinetic: reduced sweep")
+grade(r, [
+    ("4 sweep results", lambda d: len(d.get("parameter_sweep", [])) == 4),
+    ("parameters_tested=4", lambda d: d["summary"]["parameters_tested"] == 4),
+])
+results.append(r)
+
+r = run_skill("grn-kinetic-model",
+              ["--genes", "TP53,E2F1"],
+              "kinetic: TP53-E2F1 mutual regulation")
+grade(r, [
+    ("has edges", lambda d: d.get("circuit", {}).get("edge_count", 0) > 0),
+    ("has summary", lambda d: "summary" in d),
+])
+results.append(r)
+
+
+# =====================================================================
 # REPORT
 # =====================================================================
 print("=" * 70)
