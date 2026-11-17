@@ -209,6 +209,13 @@ class PathFindingRequest(BaseModel):
     regulation_type: List[str] = ["activation", "repression", "regulation"]
     include_inferred: bool = True
 
+class PathFindingResult(BaseModel):
+    paths: List[Path]
+    # True when the traversal hit its expansion or frontier bound. While this is
+    # true, the absence of a path is not evidence that no path exists.
+    search_truncated: bool = False
+    expansions: int = 0
+
 class NeighborhoodRequest(BaseModel):
     max_depth: int = 1
     direction: str = "both"
@@ -411,7 +418,16 @@ class GeneDatabase:
         if not include_inferred:
             sql += " AND i.sources NOT LIKE '%Inferred%'"
         rows = self.conn.execute(sql, (gene_id, min_confidence)).fetchall()
-        return [self._row_to_interaction(r) for r in rows]
+        # Deterministic order, sorted here rather than in SQL. An ORDER BY on
+        # this query moves SQLite off its source/target index onto a temp sort,
+        # and these accessors run thousands of times per perturbation or screen,
+        # which was enough to push four previously-passing cases past their
+        # timeout. Unordered, SQLite returns rows in whatever order the plan
+        # yields -- which shifts when rows are deleted, so any caller that
+        # truncates a traversal gets different results from identical content.
+        out = [self._row_to_interaction(r) for r in rows]
+        out.sort(key=lambda x: (-(x.confidence or 0.0), x.id))
+        return out
 
     def get_targets(self, gene_id: str, min_confidence: float = 0.0,
                     include_inferred: bool = True) -> List[GeneInteraction]:
@@ -425,7 +441,16 @@ class GeneDatabase:
         if not include_inferred:
             sql += " AND i.sources NOT LIKE '%Inferred%'"
         rows = self.conn.execute(sql, (gene_id, min_confidence)).fetchall()
-        return [self._row_to_interaction(r) for r in rows]
+        # Deterministic order, sorted here rather than in SQL. An ORDER BY on
+        # this query moves SQLite off its source/target index onto a temp sort,
+        # and these accessors run thousands of times per perturbation or screen,
+        # which was enough to push four previously-passing cases past their
+        # timeout. Unordered, SQLite returns rows in whatever order the plan
+        # yields -- which shifts when rows are deleted, so any caller that
+        # truncates a traversal gets different results from identical content.
+        out = [self._row_to_interaction(r) for r in rows]
+        out.sort(key=lambda x: (-(x.confidence or 0.0), x.id))
+        return out
 
     def get_edge_sign(self, source_id: str, target_id: str) -> Optional[dict]:
         """Return the directional sign for a TF->target edge, or None if the edge is absent.
@@ -651,7 +676,7 @@ async def get_neighborhood(gene_id: str, request: NeighborhoodRequest = Neighbor
             "max_depth": max_depth,
         }
     )
-@app.post("/api/v1/pathways/pathfinding", response_model=Dict[str, List[Path]])
+@app.post("/api/v1/pathways/pathfinding", response_model=PathFindingResult)
 async def find_paths(request: PathFindingRequest):
     """
     Find regulatory paths between two genes using BFS algorithm
@@ -673,8 +698,20 @@ async def find_paths(request: PathFindingRequest):
     paths = []
     queue = [(request.source_gene_id, [source], [], [], [], {request.source_gene_id})]
     max_queue = 50000
+    # Bound the work by how many nodes are expanded, not by how large the
+    # frontier grows. The frontier bound used to sit in the while condition, so
+    # a high-degree source ended the search the moment its targets were queued,
+    # leaving most of them unexamined -- and which paths survived then depended
+    # on the order SQLite returned rows in.
+    max_expansions = 50000
+    expansions = 0
+    search_truncated = False
 
-    while queue and len(paths) < request.limit and len(queue) < max_queue:
+    while queue and len(paths) < request.limit:
+        if expansions >= max_expansions:
+            search_truncated = True
+            break
+        expansions += 1
         current_id, current_path, regulations, confidences, edge_sources, path_visited = queue.pop(0)
 
         if current_id == target_gene.id:
@@ -695,6 +732,9 @@ async def find_paths(request: PathFindingRequest):
                 if target.id not in path_visited and target.regulation_type in request.regulation_type:
                     target_gene_obj = db.get_gene(target.id)
                     if target_gene_obj:
+                        if len(queue) >= max_queue:
+                            search_truncated = True
+                            break
                         queue.append((
                             target.id,
                             current_path + [target_gene_obj],
@@ -705,7 +745,8 @@ async def find_paths(request: PathFindingRequest):
                         ))
 
     paths.sort(key=lambda p: (-p.overall_confidence, len(p.genes)))
-    return {"paths": paths}
+    return PathFindingResult(paths=paths, search_truncated=search_truncated,
+                             expansions=expansions)
 
 @app.post("/api/v1/pathway/predict-cascade", response_model=CascadeResult)
 async def predict_cascade(request: CascadeRequest):
@@ -780,28 +821,49 @@ async def perturb(request: PerturbRequest):
     # frontier: (gene_id, sign, magnitude, level, path_symbols, uses_inferred, unknown)
     frontier = [(gid, s, 1.0, 0, [sym], False, False) for gid, (s, sym) in seeds.items()]
 
+    # A node is re-expanded whenever a stronger route to it turns up, so the
+    # walk revisits the same genes roughly ten times over: a TP53 knock-out at
+    # depth 4 made 164,061 get_targets calls across 17,607 distinct genes, and
+    # those calls were 94% of a 164 s run. Memoising them for the life of one
+    # request is exact -- get_targets is deterministic for a given gene and
+    # filter against an unchanging database -- and measured 11.3x faster with
+    # byte-identical results (backend/scripts/verify_perturb_cache.py). The
+    # per-edge tuple also lifts the "Inferred" scan out of the inner loop,
+    # where it ran once per traversal (16.3M) rather than once per edge (1.6M).
+    target_cache = {}
+
+    def _cached_targets(gene_id):
+        hit = target_cache.get(gene_id)
+        if hit is None:
+            hit = [(t.id, t.symbol, _EDGE_SIGN.get(t.regulation_type, 0),
+                    t.confidence,
+                    any(str(s).startswith("Inferred") for s in t.source_databases))
+                   for t in db.get_targets(
+                       gene_id, min_confidence=request.min_confidence,
+                       include_inferred=request.include_inferred)]
+            target_cache[gene_id] = hit
+        return hit
+
     while frontier:
         gid, sign, mag, level, path, inf, unknown = frontier.pop()
         if level >= depth:
             continue
-        for t in db.get_targets(gid, min_confidence=request.min_confidence,
-                                include_inferred=request.include_inferred):
-            esign = _EDGE_SIGN.get(t.regulation_type, 0)
+        for t_id, t_symbol, esign, t_conf, t_inf in _cached_targets(gid):
             n_unknown = unknown or esign == 0
             n_sign = sign * (esign if esign else 1)
-            n_mag = mag * max(t.confidence, 0.01) * _PERTURB_DECAY
-            n_inf = inf or any(str(s).startswith("Inferred") for s in t.source_databases)
+            n_mag = mag * max(t_conf, 0.01) * _PERTURB_DECAY
+            n_inf = inf or t_inf
             if n_mag < request.min_effect:
                 continue
-            prev = best.get(t.id)
-            if t.id not in seeds and (prev is None or n_mag > prev["magnitude"]):
-                best[t.id] = {"symbol": t.symbol, "magnitude": round(n_mag, 4),
+            prev = best.get(t_id)
+            if t_id not in seeds and (prev is None or n_mag > prev["magnitude"]):
+                best[t_id] = {"symbol": t_symbol, "magnitude": round(n_mag, 4),
                               "sign": n_sign, "unknown": n_unknown, "level": level + 1,
-                              "path": path + [t.symbol], "uses_inferred": n_inf}
+                              "path": path + [t_symbol], "uses_inferred": n_inf}
             # keep expanding as long as this route is the strongest seen for t
             if prev is None or n_mag > prev["magnitude"]:
-                frontier.append((t.id, n_sign, n_mag, level + 1,
-                                 path + [t.symbol], n_inf, n_unknown))
+                frontier.append((t_id, n_sign, n_mag, level + 1,
+                                 path + [t_symbol], n_inf, n_unknown))
 
     def direction(e):
         if e["unknown"]:

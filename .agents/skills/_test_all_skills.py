@@ -3045,8 +3045,14 @@ results.append(r)
 # grn-dynamics (2 tests)
 # =====================================================================
 
+# Gene set chosen for signed edges that survive calibration gating: nine
+# observed signed edges run strictly between these seven, inside the 726-gene
+# module 1C left intact. The previous set (AT5G04760 and six others) had six
+# edges between its genes and 1C moved every one to perturbation_exploratory,
+# so the module arrived unsigned and this failed for the data, not the code.
+# Re-derive with backend/scripts/find_signed_modules.py if gating changes.
 r = run_skill("grn-dynamics",
-              ["--genes", "AT5G04760,AT1G01780,AT1G03360,AT1G07830,AT1G09800,AT1G10360,AT1G13550",
+              ["--genes", "AT2G20180,AT4G18960,AT3G24650,AT5G61850,AT1G32640,AT1G69120,AT2G46830",
                "--species", "arabidopsis"],
               "dynamics: signed module reaches an attractor")
 grade(r, [
@@ -3062,6 +3068,98 @@ r = run_skill("grn-dynamics", ["--genes", "AT5G11260", "--species", "arabidopsis
 grade(r, [
     ("errors or notes insufficient genes",
      lambda d: "error" in d or "detail" in d or d.get("n_signed_edges", 0) == 0 or "note" in d),
+])
+results.append(r)
+
+# =====================================================================
+# GRN-SIGNALING-LAYER
+# =====================================================================
+r = run_skill("grn-signaling-layer", ["--summary"],
+              "signaling-layer: summary")
+grade(r, [
+    ("available", lambda d: d.get("available") is True),
+    ("has edges", lambda d: d.get("total_edges", 0) > 10000),
+    ("human and mouse present", lambda d: {"human", "mouse"} <=
+     {x["species"] for x in d.get("breakdown", [])}),
+    ("layers are valid names", lambda d: {x["regulatory_layer"] for x in
+     d.get("breakdown", [])} <= {"protein_activity", "protein_degradation",
+     "post_transcriptional", "complex_formation"}),
+    ("states the evidence boundary", lambda d: "not transcription" in
+     d.get("evidence_boundary", "")),
+])
+results.append(r)
+
+r = run_skill("grn-signaling-layer", ["--gene-id", "SRC"],
+              "signaling-layer: hub neighbourhood")
+grade(r, [
+    ("species derived without --species", lambda d: d.get("species") == "human"),
+    ("has downstream", lambda d: d.get("downstream_count", 0) > 100),
+    ("tf targets not above total", lambda d:
+     d.get("tf_targets_in_layer", 0) <= d.get("downstream_count", 0)),
+])
+results.append(r)
+
+# Regression guard: counts must describe everything found, not the truncated
+# payload. This returned 200 of SRC's 213 edges and reported 200 until the
+# November 2026 fix, so an agent quoted a short count as fact.
+r = run_skill("grn-signaling-layer", ["--gene-id", "SRC", "--limit", "10"],
+              "signaling-layer: count survives truncation")
+grade(r, [
+    ("returned exactly the limit", lambda d: d.get("downstream_returned") == 10),
+    ("payload honours the limit", lambda d: len(d.get("downstream", [])) == 10),
+    ("count exceeds what was returned", lambda d:
+     d.get("downstream_count", 0) > d.get("downstream_returned", 0)),
+    ("truncation is flagged", lambda d: d.get("downstream_truncated") is True),
+    ("tf count is over all edges, not the payload", lambda d:
+     d.get("tf_targets_in_layer", 0) > 10),
+])
+results.append(r)
+
+r = run_skill("grn-signaling-layer", ["--gene-id", "JUN", "--direction", "upstream"],
+              "signaling-layer: TF seen from upstream")
+grade(r, [
+    ("JUN is a TF", lambda d: d.get("is_tf") is True),
+    ("has upstream", lambda d: d.get("upstream_count", 0) > 0),
+    ("upstream-only payload", lambda d: len(d.get("downstream", [])) == 0),
+])
+results.append(r)
+
+r = run_skill("grn-signaling-layer", ["--gene-id", "JUN", "--trace", "--depth", "2"],
+              "signaling-layer: trace depth 2 stays specific")
+grade(r, [
+    ("reached some genes", lambda d: d.get("reached_count", 0) > 0),
+    ("reports its fraction", lambda d: "reached_fraction" in d),
+    ("not saturated at depth 2", lambda d: d.get("saturated") is False),
+    ("saturated agrees with fraction", lambda d:
+     d.get("saturated") == (d.get("reached_fraction", 0) > 0.10)),
+])
+results.append(r)
+
+r = run_skill("grn-signaling-layer", ["--gene-id", "JUN", "--trace", "--depth", "3"],
+              "signaling-layer: trace depth 3 admits saturation")
+grade(r, [
+    ("saturated at depth 3", lambda d: d.get("saturated") is True),
+    ("carries a warning", lambda d: "saturation_warning" in d),
+    ("edge payload capped", lambda d: d.get("edges_truncated") is True),
+    ("edge payload actually bounded", lambda d:
+     sum(len(v) for v in d.get("edges_by_node", {}).values()) <= 500),
+])
+results.append(r)
+
+r = run_skill("grn-signaling-layer", ["--summary", "--http", "http://127.0.0.1:1"],
+              "signaling-layer: no HTTP endpoint, says so")
+grade(r, [
+    ("reports 501", lambda d: d.get("status_code") == 501),
+    ("names the cause", lambda d: "no HTTP endpoint" in d.get("error", "")),
+])
+results.append(r)
+
+r = run_skill("grn-signaling-layer", ["--gene-id", "NOT_A_REAL_GENE_XYZ"],
+              "signaling-layer: unknown gene errors cleanly")
+grade(r, [
+    ("flags the id as unknown", lambda d: d.get("gene_known") is False),
+    ("does not pass it off as absence of signalling", lambda d:
+     "unresolved identifier" in d.get("error", "")),
 ])
 results.append(r)
 
