@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap bootstrap-gpu bootstrap-api setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data audit-evidence audit-signs digest digest-check audit-all validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding omnipath-refresh phase1-migrations promote-evidence rebuild-derived esm2-embeddings alphafold-features structural-predictions directed-inference scrna-data geneformer-embeddings celltype-regulation evo2-scores grassius-data cistrome-data data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap bootstrap-gpu bootstrap-api setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data audit-evidence audit-signs digest digest-check source-lock source-lock-check audit-all validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding omnipath-refresh phase1-migrations promote-evidence rebuild-derived esm2-embeddings alphafold-features structural-predictions directed-inference scrna-data geneformer-embeddings celltype-regulation evo2-scores grassius-data cistrome-data data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - full CPU/network-backed atlas from a fresh clone (sources → promotion → derived → verify)"
@@ -29,6 +29,8 @@ help:
 	@echo "make audit-signs    - report signed coverage and what could still be signed"
 	@echo "make digest         - content digest of the database (core/accelerated/session layers)"
 	@echo "make digest-check   - fail unless the core layer matches backend/data/content_digest.baseline.json"
+	@echo "make source-lock    - export source_import_runs to backend/data/sources.lock.json"
+	@echo "make source-lock-check - verify current build inputs match the lock file"
 	@echo "make audit-all      - run every audit plus the digest check"
 	@echo "make clonelab-data  - fetch/index CloneLab plasmid, transcript, Arabidopsis, and petunia references"
 	@echo "make verify-clonelab-data - verify registered CloneLab reference checksums"
@@ -71,7 +73,7 @@ help:
 # Phase 1: core DB + all source ingestion (before any promotion or derived layers)
 # Phase 2: promotion + derived layers (after all sources are loaded)
 # Phase 3: verification (last)
-bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion direct-binding allele-pwms chromatin-peaks data-expansion phase1-migrations rebuild-derived qualify-evidence verify-data
+bootstrap: setup fetch db external-regulation enrich knocktf-all evidence-expansion direct-binding allele-pwms chromatin-peaks data-expansion phase1-migrations rebuild-derived qualify-evidence verify-data audit-all source-lock
 	@echo ""
 	@echo "=== GRN Atlas bootstrap complete ==="
 	@echo "Verify:  make test-backend"
@@ -203,7 +205,13 @@ digest-check:
 	venv/bin/python backend/scripts/content_digest.py \
 		--check backend/data/content_digest.baseline.json --layer core
 
-audit-all: audit-evidence audit-signs digest-check
+source-lock:
+	venv/bin/python backend/scripts/export_source_lock.py
+
+source-lock-check:
+	venv/bin/python backend/scripts/export_source_lock.py --check
+
+audit-all: audit-evidence audit-signs digest-check source-lock-check
 	@echo "Audits complete."
 
 enrich:

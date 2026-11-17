@@ -24,6 +24,7 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
+import hashlib as _hashlib
 from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
 
 DB = BACKEND / "data" / "grn.sqlite3"
@@ -137,7 +138,7 @@ def parse_html_tf_table(html: str) -> list[dict]:
     return tfs
 
 
-def try_fetch_regulations() -> list[dict]:
+def try_fetch_regulations(hasher=None) -> list[dict]:
     """Try to fetch regulatory edges from GRASSIUS."""
     for url in GRASSIUS_URLS["regulation"]:
         print(f"  Trying regulation data: {url}...", flush=True)
@@ -154,6 +155,8 @@ def try_fetch_regulations() -> list[dict]:
 
         edges = parse_regulation_csv(text)
         if edges:
+            if hasher is not None:
+                hasher.update(data)
             return edges
 
         time.sleep(1)
@@ -178,11 +181,11 @@ def parse_regulation_csv(text: str) -> list[dict]:
     return edges if len(edges) > 10 else []
 
 
-def load_edges(edges: list[dict], conn: sqlite3.Connection) -> Counter:
+def load_edges(edges: list[dict], conn: sqlite3.Connection, sha256: str | None = None) -> Counter:
     stats = Counter()
     resolve = gene_resolver(conn, "rice")
 
-    run_id = begin_import(conn, SOURCE_NAME, SOURCE_VERSION, "https://grassius.org", sha256=None)
+    run_id = begin_import(conn, SOURCE_NAME, SOURCE_VERSION, "https://grassius.org", sha256=sha256)
 
     evidence_rows = []
     for edge in edges:
@@ -238,10 +241,11 @@ def main():
             print(f"    {tf}", flush=True)
 
     # Fetch regulatory edges
-    edges = try_fetch_regulations()
+    hasher = _hashlib.sha256()
+    edges = try_fetch_regulations(hasher=hasher)
     results["edges_found"] = len(edges)
     if edges:
-        stats = load_edges(edges, conn)
+        stats = load_edges(edges, conn, sha256=hasher.hexdigest())
         results["load_stats"] = dict(stats)
         print(f"  Loaded edges: {dict(stats)}", flush=True)
     else:

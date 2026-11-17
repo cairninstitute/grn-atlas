@@ -21,6 +21,7 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
+import hashlib as _hashlib
 from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
 
 DB = BACKEND / "data" / "grn.sqlite3"
@@ -76,7 +77,7 @@ def find_genes_near_peak(tss_list: list[tuple[str, int]], peak_center: int,
 
 
 def process_species(conn: sqlite3.Connection, species: str, window: int,
-                    max_targets_per_tf: int, cache_dir: Path) -> tuple[list[dict], Counter]:
+                    max_targets_per_tf: int, cache_dir: Path, hasher=None) -> tuple[list[dict], Counter]:
     cfg = NR_BEDS.get(species)
     if not cfg:
         return [], Counter()
@@ -106,6 +107,9 @@ def process_species(conn: sqlite3.Connection, species: str, window: int,
             return [], Counter({"download_error": 1})
     else:
         print(f"  [{species}] Using cached {cache_file}", flush=True)
+
+    if hasher is not None:
+        hasher.update(cache_file.read_bytes())
 
     edges: dict[str, dict[str, float]] = defaultdict(dict)
 
@@ -195,11 +199,12 @@ def main():
     all_evidence = []
     all_stats = {}
     fetched_species = []
+    hasher = _hashlib.sha256()
 
     for species in args.species:
         print(f"\n[{species}] Processing ReMap data...", flush=True)
         evidence_rows, stats = process_species(
-            conn, species, args.window, args.max_targets_per_tf, args.cache_dir)
+            conn, species, args.window, args.max_targets_per_tf, args.cache_dir, hasher=hasher)
         if evidence_rows:
             all_evidence.extend(evidence_rows)
             fetched_species.append(species)
@@ -207,7 +212,7 @@ def main():
 
     if all_evidence:
         run_id = begin_import(conn, SOURCE, VERSION,
-                              "https://remap.univ-amu.fr/", sha256=None)
+                              "https://remap.univ-amu.fr/", sha256=hasher.hexdigest())
         replace_source_evidence(conn, SOURCE, VERSION, run_id, all_evidence,
                                 species=fetched_species)
         finish_import(conn, run_id, {k: v for s in all_stats.values() for k, v in s.items()})

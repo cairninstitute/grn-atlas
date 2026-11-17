@@ -25,6 +25,7 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
+import hashlib as _hashlib
 from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
 
 DB = BACKEND / "data" / "grn.sqlite3"
@@ -79,7 +80,7 @@ def fetch_url(url: str, timeout: int = 120) -> bytes | None:
         return None
 
 
-def fetch_tf_list(species: str) -> list[dict]:
+def fetch_tf_list(species: str, hasher=None) -> list[dict]:
     cfg = PLANTTFDB_TF_LISTS.get(species)
     if not cfg:
         return []
@@ -88,6 +89,8 @@ def fetch_tf_list(species: str) -> list[dict]:
     data = fetch_url(cfg["url"])
     if not data:
         return []
+    if hasher is not None:
+        hasher.update(data)
 
     try:
         text = gzip.decompress(data).decode("utf-8")
@@ -110,7 +113,7 @@ def fetch_tf_list(species: str) -> list[dict]:
     return tfs
 
 
-def fetch_regulation_edges(species: str) -> list[dict]:
+def fetch_regulation_edges(species: str, hasher=None) -> list[dict]:
     urls = PLANTREGMAP_REGULATION.get(species, [])
     for url in urls:
         label = "FTP" if url.startswith("ftp://") else "HTTP"
@@ -120,6 +123,8 @@ def fetch_regulation_edges(species: str) -> list[dict]:
             text = data.decode("utf-8", errors="replace")
             parsed = parse_regulation_file(text, species)
             if parsed:
+                if hasher is not None:
+                    hasher.update(data)
                 print(f"    Got {len(parsed)} edges from PlantRegMap ({label})", flush=True)
                 return parsed
 
@@ -134,6 +139,8 @@ def fetch_regulation_edges(species: str) -> list[dict]:
                 text = data.decode("utf-8", errors="replace")
             parsed = parse_binding_predictions(text, species)
             if parsed:
+                if hasher is not None:
+                    hasher.update(data)
                 print(f"    Got {len(parsed)} edges from PlantTFDB predictions", flush=True)
                 return parsed
 
@@ -238,15 +245,16 @@ def main():
     all_evidence = []
     combined_stats = Counter()
     fetched_species = []
+    hasher = _hashlib.sha256()
 
     for species in args.species:
         print(f"\n[{species}] Fetching PlantTFDB data...", flush=True)
 
-        tfs = fetch_tf_list(species)
+        tfs = fetch_tf_list(species, hasher=hasher)
         if tfs:
             all_stats[f"{species}_tfs"] = len(tfs)
 
-        edges = fetch_regulation_edges(species)
+        edges = fetch_regulation_edges(species, hasher=hasher)
         if edges:
             evidence_rows, stats = resolve_edges(edges, species, conn)
             all_evidence.extend(evidence_rows)
@@ -261,7 +269,7 @@ def main():
 
     if all_evidence:
         run_id = begin_import(conn, SOURCE_NAME, SOURCE_VERSION,
-                              "https://planttfdb.gao-lab.org", sha256=None)
+                              "https://planttfdb.gao-lab.org", sha256=hasher.hexdigest())
         replace_source_evidence(conn, SOURCE_NAME, SOURCE_VERSION, run_id, all_evidence,
                                 species=fetched_species)
         finish_import(conn, run_id, dict(combined_stats))

@@ -174,6 +174,32 @@ confirm the build is complete.
    required release layer was skipped or fell below its expected coverage, preventing a
    degraded build from being mistaken for the release dataset.
 
+### Reproducibility
+
+A `make bootstrap` from a fresh clone aims for **content-identical** builds: two
+runs assert the same biology, verified by `make digest-check`. Bit-identical is
+not achievable (timestamps, surrogate IDs, SQLite page layout vary).
+
+Three things make this possible:
+
+- **Pinned inputs.** Every loader records the SHA-256 of its upstream data into
+  `source_import_runs`. `make source-lock` exports these to a committed lock file
+  (`backend/data/sources.lock.json`); `make source-lock-check` fails if any hash
+  drifts. For live APIs without upstream versioning, the response body is hashed so
+  drift is at least detected.
+- **Pinned compute.** `requirements.txt` pins the full scientific stack exactly
+  (`scikit-learn`, `pandas`, `numpy`, etc.) because tree-based inference produces
+  different edges under different library versions with the same seed.
+- **Deterministic inference.** `infer_grn.py` and `infer_directed_grn.py` use
+  `--seed 42` with per-target `RandomState(seed + target_idx)`, making results
+  independent of parallel scheduling.
+
+**What a clone cannot reproduce:** GPU-dependent layers (ESM2, Geneformer) and
+API-dependent layers (Evo2, structural predictions) require specific hardware or
+API keys and are outside the CPU bootstrap. Sources classified as `verify-only` in
+the lock file can be verified against their hash but may not be redistributable
+under upstream licensing terms.
+
 ### Regenerating the Arabidopsis core
 
 `fetch_sources.py` automatically runs `fetch_arabidopsis_regulation.py`. The script downloads

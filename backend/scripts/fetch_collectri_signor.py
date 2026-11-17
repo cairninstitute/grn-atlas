@@ -26,6 +26,7 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
+import hashlib as _hashlib
 from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
 
 DB = BACKEND / "data" / "grn.sqlite3"
@@ -54,7 +55,7 @@ SOURCES = {
 }
 
 
-def fetch_omnipath(dataset: str, species: str) -> list[dict]:
+def fetch_omnipath(dataset: str, species: str, hasher=None) -> list[dict]:
     cfg = SOURCES[dataset]
     taxid = cfg["species"].get(species)
     if not taxid:
@@ -66,7 +67,10 @@ def fetch_omnipath(dataset: str, species: str) -> list[dict]:
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (grn-atlas-build)"})
     try:
         resp = urllib.request.urlopen(req, timeout=120)
-        text = resp.read().decode("utf-8")
+        raw = resp.read()
+        if hasher is not None:
+            hasher.update(raw)
+        text = raw.decode("utf-8")
     except Exception as e:
         print(f"  ERROR fetching {dataset} {species}: {e}")
         return []
@@ -177,9 +181,10 @@ def main():
         all_promotions = []
         combined_stats = Counter()
         fetched_species = []
+        hasher = _hashlib.sha256()
 
         for species in args.species:
-            rows = fetch_omnipath(dataset, species)
+            rows = fetch_omnipath(dataset, species, hasher=hasher)
             if rows:
                 evidence_rows, promotion_rows, stats = resolve_rows(
                     rows, species, conn, evidence_layer=cfg["evidence_layer"])
@@ -195,7 +200,7 @@ def main():
 
         if all_evidence:
             run_id = begin_import(conn, cfg["source_name"], cfg["source_version"],
-                                  f"https://omnipathdb.org ({dataset})", sha256=None)
+                                  f"https://omnipathdb.org ({dataset})", sha256=hasher.hexdigest())
             replace_source_evidence(conn, cfg["source_name"], cfg["source_version"],
                                     run_id, all_evidence, species=fetched_species)
             for pr in all_promotions:

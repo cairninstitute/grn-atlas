@@ -56,7 +56,7 @@ def main():
     if not missing_tables:
         checks = {
             "genes": ("SELECT COUNT(*) FROM genes", (), 140_000),
-            "interactions": ("SELECT COUNT(*) FROM interactions", (), 1_300_000),
+            "interactions": ("SELECT COUNT(*) FROM interactions", (), 4_000_000),
             "connectf_observations": (
                 "SELECT COUNT(*) FROM perturbation_observations WHERE dataset_label='connectf_target'",
                 (), 100_000,
@@ -73,19 +73,19 @@ def main():
                 "SELECT COUNT(*) FROM perturbation_observations WHERE dataset_label='knocktf' AND species='mouse'",
                 (), 300_000,
             ),
-            "external_evidence": ("SELECT COUNT(*) FROM regulatory_evidence", (), 1_000_000),
+            "external_evidence": ("SELECT COUNT(*) FROM regulatory_evidence", (), 6_000_000),
             "regulatory_candidates": (
-                "SELECT COUNT(*) FROM regulatory_edge_candidates", (), 150_000,
+                "SELECT COUNT(*) FROM regulatory_edge_candidates", (), 220_000,
             ),
             "perturbation_consensus": (
                 "SELECT COUNT(*) FROM perturbation_sign_consensus WHERE status='accepted'",
-                (), 80_000,
+                (), 100_000,
             ),
             "cross_species_transfer_candidates": (
-                "SELECT COUNT(*) FROM orthology_transfer_candidates", (), 13_000,
+                "SELECT COUNT(*) FROM orthology_transfer_candidates", (), 40_000,
             ),
             "ranked_candidate_impacts": (
-                "SELECT COUNT(*) FROM regulatory_candidate_impacts", (), 35_000,
+                "SELECT COUNT(*) FROM regulatory_candidate_impacts", (), 115_000,
             ),
             "directed_inferred_edges": (
                 "SELECT COUNT(*) FROM directed_inferred_edges", (), 500_000,
@@ -94,7 +94,7 @@ def main():
                 "SELECT COUNT(*) FROM scrna_datasets", (), 2,
             ),
             "celltype_regulatory_edges": (
-                "SELECT COUNT(*) FROM celltype_regulatory_edges", (), 50_000,
+                "SELECT COUNT(*) FROM celltype_regulatory_edges", (), 1_000_000,
             ),
         }
         for label, (query, params, minimum) in checks.items():
