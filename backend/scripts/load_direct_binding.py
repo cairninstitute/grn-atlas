@@ -21,6 +21,8 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
+import hashlib as _hashlib
+
 from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
 
 DB = BACKEND / "data" / "grn.sqlite3"
@@ -151,8 +153,10 @@ def load(conn: sqlite3.Connection) -> dict:
     all_evidence: list[dict] = []
     stats: Counter = Counter()
     per_file: dict[str, dict] = {}
+    hasher = _hashlib.sha256()
 
     for path in tsv_files:
+        hasher.update(path.read_bytes())
         species = parse_species(path.name)
         source_label = parse_source_label(path.name)
         resolve = gene_resolver(conn, species)
@@ -173,7 +177,7 @@ def load(conn: sqlite3.Connection) -> dict:
     # Store evidence via external_evidence helpers
     source_name = "DirectBinding"
     version = "batch"
-    run_id = begin_import(conn, source_name, version, str(BINDING_DIR), None)
+    run_id = begin_import(conn, source_name, version, str(BINDING_DIR), hasher.hexdigest())
     stats["stored"] = replace_source_evidence(
         conn, source_name, version, run_id, all_evidence,
     )

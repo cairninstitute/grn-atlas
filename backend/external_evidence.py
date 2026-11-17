@@ -72,6 +72,13 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def multi_sha256(*parts: bytes | str) -> str:
+    digest = hashlib.sha256()
+    for p in parts:
+        digest.update(p.encode("utf-8") if isinstance(p, str) else p)
+    return digest.hexdigest()
+
+
 def gene_resolver(conn: sqlite3.Connection, species: str):
     """Return a strict case-insensitive symbol/ID resolver for one species."""
     exact: dict[str, str | None] = {}

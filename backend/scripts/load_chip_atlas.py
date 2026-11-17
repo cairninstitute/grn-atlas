@@ -17,6 +17,8 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
+import hashlib as _hashlib
+
 from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
 
 DB = BACKEND / "data" / "grn.sqlite3"
@@ -27,17 +29,24 @@ SOURCE = "ChIP-Atlas"
 VERSION = "live-target-gene-index"
 
 
-def fetch_text(url: str, max_lines: int | None = None, timeout: int = 60) -> str:
+def fetch_text(url: str, max_lines: int | None = None, timeout: int = 60,
+               hasher: _hashlib._Hash | None = None) -> str:
     req = urllib.request.Request(url, headers={"User-Agent": "grn-atlas/1.0"})
     with urllib.request.urlopen(req, timeout=timeout) as response:
         if max_lines is None:
-            return response.read().decode("utf-8", "replace")
+            raw = response.read()
+            if hasher is not None:
+                hasher.update(raw)
+            return raw.decode("utf-8", "replace")
         lines = []
         for index, line in enumerate(response):
             if index >= max_lines:
                 break
-            lines.append(line.decode("utf-8", "replace"))
-        return "".join(lines)
+            lines.append(line)
+        raw = b"".join(lines)
+        if hasher is not None:
+            hasher.update(raw)
+        return raw.decode("utf-8", "replace")
 
 
 def parse_target_table(text: str, tf_id: str, resolve, species: str, antigen: str,
@@ -83,7 +92,9 @@ def parse_target_table(text: str, tf_id: str, resolve, species: str, antigen: st
 
 def load(conn: sqlite3.Connection, max_targets: int, workers: int = 12,
          request_timeout: int = 60) -> dict:
-    index = json.loads(fetch_text(INDEX_URL))
+    hasher = _hashlib.sha256()
+    index_text = fetch_text(INDEX_URL, hasher=hasher)
+    index = json.loads(index_text)
     all_rows, stats = [], Counter()
     tasks = []
     seen_antigens = set()
@@ -102,13 +113,17 @@ def load(conn: sqlite3.Connection, max_targets: int, workers: int = 12,
                 continue
             tasks.append((genome, species, antigen, tf_id, resolve))
 
+    lock = __import__("threading").Lock()
+
     def fetch_one(task):
         genome, species, antigen, tf_id, resolve = task
         encoded = urllib.parse.quote(antigen, safe="")
         text = fetch_text(
             BASE_URL.format(genome=genome, antigen=encoded), max_targets + 1,
-            timeout=request_timeout,
+            timeout=request_timeout, hasher=None,
         )
+        with lock:
+            hasher.update(text.encode("utf-8"))
         return parse_target_table(text, tf_id, resolve, species, antigen, max_targets)
 
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
@@ -122,7 +137,7 @@ def load(conn: sqlite3.Connection, max_targets: int, workers: int = 12,
             all_rows.extend(parsed)
             stats.update(parsed_stats)
             stats["antigens_loaded"] += 1
-    run_id = begin_import(conn, SOURCE, VERSION, INDEX_URL, None)
+    run_id = begin_import(conn, SOURCE, VERSION, INDEX_URL, hasher.hexdigest())
     stats["stored"] = replace_source_evidence(conn, SOURCE, VERSION, run_id, all_rows)
     finish_import(conn, run_id, dict(stats))
     return dict(stats)

@@ -15,8 +15,10 @@ from pathlib import Path
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
 
+import hashlib as _hashlib
+
 from external_evidence import (  # noqa: E402
-    begin_import, finish_import, gene_resolver, replace_source_evidence,
+    begin_import, file_sha256, finish_import, gene_resolver, replace_source_evidence,
 )
 
 DB = BACKEND / "data" / "grn.sqlite3"
@@ -63,6 +65,7 @@ def perturbation_mode(path: Path, metadata: dict[str, str], species: str | None 
 def load(conn: sqlite3.Connection, release: Path) -> dict:
     rows: list[dict] = []
     stats = Counter()
+    hasher = _hashlib.sha256()
     for species, folder in (("arabidopsis", "arabidopsis"), ("rice", "rice")):
         data_dir = release / folder / "data"
         meta_dir = release / folder / "metadata"
@@ -72,6 +75,7 @@ def load(conn: sqlite3.Connection, release: Path) -> dict:
         for path in sorted(data_dir.glob("*.csv")):
             if path.name.startswith("._"):
                 continue
+            hasher.update(path.read_bytes())
             metadata = parse_metadata(meta_dir / f"{path.stem}.txt")
             tf_label = metadata.get("transcription_factor_id")
             if not tf_label:
@@ -157,7 +161,7 @@ def load(conn: sqlite3.Connection, release: Path) -> dict:
                         },
                     })
                     stats[layer] += 1
-    run_id = begin_import(conn, SOURCE, VERSION, URL, None)
+    run_id = begin_import(conn, SOURCE, VERSION, URL, hasher.hexdigest())
     stats["stored"] = replace_source_evidence(conn, SOURCE, VERSION, run_id, rows)
     finish_import(conn, run_id, dict(stats))
     return dict(stats)

@@ -21,6 +21,8 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
+import hashlib as _hashlib
+
 from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
 
 DB = BACKEND / "data" / "grn.sqlite3"
@@ -47,15 +49,22 @@ def promoter_index(conn: sqlite3.Connection, species: str, flank: int):
     return {chrom: (sorted(rows), [row[0] for row in sorted(rows)]) for chrom, rows in by_chrom.items()}
 
 
-def download_bed(run: str, remote_species: str) -> str:
+def download_bed(run: str, remote_species: str,
+                 hasher: _hashlib._Hash | None = None) -> str:
     data = urllib.parse.urlencode({"file": run, "type": "bed", "species": remote_species}).encode()
     request = urllib.request.Request(URL, data=data, headers={"User-Agent": "grn-atlas/1.0"})
     with urllib.request.urlopen(request, timeout=180) as response:
-        return response.read().decode("utf-8", "replace")
+        raw = response.read()
+        if hasher is not None:
+            hasher.update(raw)
+        return raw.decode("utf-8", "replace")
 
 
 def load(conn: sqlite3.Connection, manifest_path: Path, flank: int) -> dict:
-    manifest = json.loads(manifest_path.read_text())
+    hasher = _hashlib.sha256()
+    manifest_bytes = manifest_path.read_bytes()
+    hasher.update(manifest_bytes)
+    manifest = json.loads(manifest_bytes)
     rows_by_key, stats = {}, Counter()
     indices = {}
     for dataset in manifest.get("datasets", []):
@@ -71,7 +80,7 @@ def load(conn: sqlite3.Connection, manifest_path: Path, flank: int) -> dict:
         indices.setdefault(species, promoter_index(conn, species, flank))
         index = indices[species]
         for run in dataset["runs"]:
-            bed = download_bed(run, dataset["remote_species"])
+            bed = download_bed(run, dataset["remote_species"], hasher=hasher)
             for line in io.StringIO(bed):
                 fields = line.rstrip().split("\t")
                 if len(fields) < 3:
@@ -96,7 +105,7 @@ def load(conn: sqlite3.Connection, manifest_path: Path, flank: int) -> dict:
                                      "source_assembly": dataset["source_assembly"]},
                     }
             stats["runs_loaded"] += 1
-    run_id = begin_import(conn, SOURCE, VERSION, URL, None)
+    run_id = begin_import(conn, SOURCE, VERSION, URL, hasher.hexdigest())
     stats["stored"] = replace_source_evidence(conn, SOURCE, VERSION, run_id, rows_by_key.values())
     finish_import(conn, run_id, dict(stats))
     return dict(stats)

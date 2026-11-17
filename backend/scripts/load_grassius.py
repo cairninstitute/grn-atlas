@@ -28,6 +28,8 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
+import hashlib as _hashlib
+
 from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
 
 DB = BACKEND / "data" / "grn.sqlite3"
@@ -152,12 +154,14 @@ def load_species(
     conn: sqlite3.Connection, species: str, dry_run: bool = False,
 ) -> dict:
     stats = Counter()
+    hasher = _hashlib.sha256()
     resolve = gene_resolver(conn, species)
 
     for url in TF_LIST_URLS.get(species, []):
         print(f"  Trying TF list: {url}", flush=True)
         data = fetch_url(url)
         if data:
+            hasher.update(data)
             tfs = parse_tf_list(data.decode("utf-8", errors="replace"))
             stats["tf_list_entries"] = len(tfs)
             mapped = sum(1 for tf in tfs if resolve(tf["gene_id"]))
@@ -171,6 +175,7 @@ def load_species(
         print(f"  Trying regulation: {url}", flush=True)
         data = fetch_url(url)
         if data:
+            hasher.update(data)
             raw_edges = parse_regulation(data.decode("utf-8", errors="replace"))
             source_url = url
             stats["input_edges"] = len(raw_edges)
@@ -197,7 +202,7 @@ def load_species(
 
     if edges and not dry_run:
         import_run_id = begin_import(
-            conn, SOURCE_NAME, SOURCE_VERSION, source_url, None)
+            conn, SOURCE_NAME, SOURCE_VERSION, source_url, hasher.hexdigest())
         stored = replace_source_evidence(
             conn, SOURCE_NAME, SOURCE_VERSION, import_run_id,
             edges, species=[species])

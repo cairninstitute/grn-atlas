@@ -14,7 +14,7 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
-from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
+from external_evidence import begin_import, finish_import, gene_resolver, multi_sha256, replace_source_evidence  # noqa: E402
 
 DB = BACKEND / "data" / "grn.sqlite3"
 BASE = "https://cdn.netbiol.org/tflink/download_files/TFLink_{organism}_interactions_SS_simpleFormat_v1.0.tsv"
@@ -28,13 +28,15 @@ def parse_pmids(raw: str) -> list[str]:
 
 
 def load(conn: sqlite3.Connection) -> dict:
-    rows_by_key, stats = {}, Counter()
+    rows_by_key, stats, raw_parts = {}, Counter(), []
     for organism, species in SPECIES.items():
         url = BASE.format(organism=organism)
         resolver = gene_resolver(conn, species)
         request = urllib.request.Request(url, headers={"User-Agent": "grn-atlas/1.0"})
         with urllib.request.urlopen(request, timeout=180) as response:
-            reader = csv.DictReader((line.decode("utf-8", "replace") for line in response), delimiter="\t")
+            raw = response.read()
+            raw_parts.append(raw)
+            reader = csv.DictReader(raw.decode("utf-8", "replace").splitlines(), delimiter="\t")
             for record in reader:
                 stats["input"] += 1
                 source_id = resolver(record.get("Name.TF")) or resolver(record.get("NCBI.GeneID.TF"))
@@ -56,7 +58,8 @@ def load(conn: sqlite3.Connection) -> dict:
         row["pmids"] = sorted(set(row["pmids"]))
         row["metadata"]["methods"] = sorted(set(row["metadata"]["methods"]))
         row["metadata"]["upstream_sources"] = sorted(set(row["metadata"]["upstream_sources"]))
-    run_id = begin_import(conn, SOURCE, VERSION, "https://tflink.net/download/", None)
+    digest = multi_sha256(*raw_parts)
+    run_id = begin_import(conn, SOURCE, VERSION, "https://tflink.net/download/", digest)
     stats["stored"] = replace_source_evidence(conn, SOURCE, VERSION, run_id, rows_by_key.values())
     finish_import(conn, run_id, dict(stats))
     return dict(stats)

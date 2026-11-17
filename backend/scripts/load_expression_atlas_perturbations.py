@@ -20,6 +20,8 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
+import hashlib as _hashlib
+
 from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
 from perturbation_evidence import ensure_schema as ensure_perturbation_schema  # noqa: E402
 
@@ -28,12 +30,19 @@ SOURCE = "Expression Atlas reviewed perturbations"
 VERSION = "manifest-v1"
 
 
-def read_text(location: str, manifest_dir: Path) -> str:
+def read_text(location: str, manifest_dir: Path,
+              hasher: _hashlib._Hash | None = None) -> str:
     if location.startswith(("http://", "https://")):
         request = urllib.request.Request(location, headers={"User-Agent": "grn-atlas/1.0"})
         with urllib.request.urlopen(request, timeout=180) as response:
-            return response.read().decode("utf-8", "replace")
-    return (manifest_dir / location).read_text()
+            raw = response.read()
+            if hasher is not None:
+                hasher.update(raw)
+            return raw.decode("utf-8", "replace")
+    data = (manifest_dir / location).read_bytes()
+    if hasher is not None:
+        hasher.update(data)
+    return data.decode("utf-8", "replace")
 
 
 def relation_for(log2fc: float, perturbation_type: str) -> str:
@@ -43,7 +52,10 @@ def relation_for(log2fc: float, perturbation_type: str) -> str:
 
 
 def load(conn: sqlite3.Connection, manifest_path: Path) -> dict:
-    manifest = json.loads(manifest_path.read_text())
+    hasher = _hashlib.sha256()
+    manifest_bytes = manifest_path.read_bytes()
+    hasher.update(manifest_bytes)
+    manifest = json.loads(manifest_bytes)
     evidence_rows, observations, stats = [], [], Counter()
     for contrast in manifest.get("contrasts", []):
         if contrast.get("review_status") != "approved":
@@ -56,7 +68,7 @@ def load(conn: sqlite3.Connection, manifest_path: Path) -> dict:
             stats["unmapped_regulator"] += 1
             continue
         columns = contrast["columns"]
-        text = read_text(contrast["results"], manifest_path.parent)
+        text = read_text(contrast["results"], manifest_path.parent, hasher=hasher)
         reader = csv.DictReader(io.StringIO(text), delimiter=contrast.get("delimiter", "\t"))
         label = f"ExpressionAtlas:{contrast['accession']}:{contrast['contrast']}"
         for record in reader:
@@ -98,7 +110,7 @@ def load(conn: sqlite3.Connection, manifest_path: Path) -> dict:
     ensure_perturbation_schema(conn)
     conn.execute("DELETE FROM perturbation_observations WHERE dataset_label LIKE 'ExpressionAtlas:%'")
     conn.executemany("INSERT INTO perturbation_observations (species,perturbed_gene,perturbation_type,affected_gene,observed_log2fc,observed_significant,dataset_label,metadata) VALUES (?,?,?,?,?,?,?,?)", observations)
-    run_id = begin_import(conn, SOURCE, VERSION, "https://www.ebi.ac.uk/gxa/", None)
+    run_id = begin_import(conn, SOURCE, VERSION, "https://www.ebi.ac.uk/gxa/", hasher.hexdigest())
     stats["observations"] = len(observations)
     stats["stored"] = replace_source_evidence(conn, SOURCE, VERSION, run_id, evidence_rows)
     finish_import(conn, run_id, dict(stats))

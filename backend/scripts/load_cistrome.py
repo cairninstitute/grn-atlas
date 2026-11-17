@@ -27,6 +27,8 @@ from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
+import hashlib as _hashlib
+
 from external_evidence import begin_import, finish_import, gene_resolver, replace_source_evidence  # noqa: E402
 
 DB = BACKEND / "data" / "grn.sqlite3"
@@ -52,11 +54,15 @@ SPECIES_PARAMS = {
 HEADERS = {"User-Agent": "grn-atlas/1.0 (research)"}
 
 
-def fetch_json(url: str, timeout: int = 30) -> dict | list | None:
+def fetch_json(url: str, timeout: int = 30,
+               hasher: _hashlib._Hash | None = None) -> dict | list | None:
     req = urllib.request.Request(url, headers=HEADERS)
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
-            data = resp.read().decode("utf-8", errors="replace")
+            raw = resp.read()
+            if hasher is not None:
+                hasher.update(raw)
+            data = raw.decode("utf-8", errors="replace")
             if "Page not found" in data or "Error 404" in data:
                 return None
             return json.loads(data)
@@ -106,9 +112,10 @@ def find_working_host() -> str | None:
     return None
 
 
-def fetch_tf_targets(host: str, sample_id: int) -> list[dict] | None:
+def fetch_tf_targets(host: str, sample_id: int,
+                     hasher: _hashlib._Hash | None = None) -> list[dict] | None:
     url = f"{host}/api/inspector?id={sample_id}"
-    return fetch_json(url, timeout=30)
+    return fetch_json(url, timeout=30, hasher=hasher)
 
 
 def load_species(
@@ -116,13 +123,15 @@ def load_species(
     max_samples: int = 500, dry_run: bool = False,
 ) -> dict:
     stats = Counter()
+    hasher = _hashlib.sha256()
     resolve = gene_resolver(conn, species)
     params = SPECIES_PARAMS[species]
 
     query = "&".join(f"{k}={v.replace(' ', '+')}" for k, v in params.items())
     url = f"{host}/api/main_filter_bindct?{query}"
+    source_url = url
     print(f"  Fetching sample index: {url}", flush=True)
-    samples = fetch_json(url, timeout=60)
+    samples = fetch_json(url, timeout=60, hasher=hasher)
     if not samples or not isinstance(samples, list):
         print(f"  No samples available for {species}")
         return dict(stats)
@@ -131,7 +140,6 @@ def load_species(
     print(f"  Found {len(samples)} TF ChIP-seq samples")
 
     edges = []
-    source_url = url
     samples_to_process = samples[:max_samples]
 
     for i, sample in enumerate(samples_to_process):
@@ -145,7 +153,7 @@ def load_species(
             continue
 
         stats["samples_processed"] += 1
-        detail = fetch_tf_targets(host, sample_id)
+        detail = fetch_tf_targets(host, sample_id, hasher=hasher)
         if not detail or not isinstance(detail, dict):
             stats["fetch_errors"] += 1
             time.sleep(0.5)
@@ -202,7 +210,7 @@ def load_species(
 
     if deduped and not dry_run:
         import_run_id = begin_import(
-            conn, SOURCE_NAME, SOURCE_VERSION, source_url, None)
+            conn, SOURCE_NAME, SOURCE_VERSION, source_url, hasher.hexdigest())
         stored = replace_source_evidence(
             conn, SOURCE_NAME, SOURCE_VERSION, import_run_id,
             deduped, species=[species])
