@@ -3,45 +3,45 @@
   "go_coverage": 11667,
   "regulon_coherence": {
     "tfs_tested": 610,
-    "mean_real_coherence": 0.12587,
-    "mean_random_coherence": 0.10812,
-    "enrichment": 1.16,
-    "fraction_tfs_above_random": 0.826
+    "mean_real_coherence": 0.12619,
+    "mean_random_coherence": 0.10787,
+    "enrichment": 1.17,
+    "fraction_tfs_above_random": 0.834
   },
   "permutation_test": {
-    "real_coherence": 0.1239,
-    "mean_permuted": 0.10778,
-    "std_permuted": 0.00057,
+    "real_coherence": 0.12687,
+    "mean_permuted": 0.10849,
+    "std_permuted": 0.00059,
     "p_value": 0.0099,
     "n_permutations": 100,
-    "effect_size_sigma": 28.48
+    "effect_size_sigma": 31.33
   },
   "multi_evidence": {
-    "single_source_n": 1556,
-    "multi_source_n": 1655,
-    "single_mean_overlap": 0.13558,
-    "multi_mean_overlap": 0.148,
-    "ratio": 1.092,
-    "single_any_overlap": 0.97,
-    "multi_any_overlap": 0.978,
-    "mann_whitney_z": 4.34
+    "single_source_n": 1604,
+    "multi_source_n": 1683,
+    "single_mean_overlap": 0.14293,
+    "multi_mean_overlap": 0.15027,
+    "ratio": 1.051,
+    "single_any_overlap": 0.978,
+    "multi_any_overlap": 0.973,
+    "mann_whitney_z": 2.77
   },
   "expression_coherence": {
     "interaction_edges_sampled": 5000,
     "coexpressed_count": 46,
     "coexpression_rate": 0.0092,
-    "random_coexpression_rate": 0.0081,
-    "coexpression_rate_ratio": 1.13,
-    "mean_importance_real": 0.06985,
-    "mean_importance_random": 0.06424,
-    "importance_ratio": 1.09
+    "random_coexpression_rate": 0.0061,
+    "coexpression_rate_ratio": 1.51,
+    "mean_importance_real": 0.06215,
+    "mean_importance_random": 0.05311,
+    "importance_ratio": 1.17
   },
   "motif_enrichment": {
     "tfs_tested": 403,
     "mean_target_motif_rate": 0.3357,
-    "mean_nontarget_motif_rate": 0.0065,
-    "mean_enrichment": 30.65,
-    "median_enrichment": 25.26,
+    "mean_nontarget_motif_rate": 0.0062,
+    "mean_enrichment": 29.9,
+    "median_enrichment": 23.6,
     "fraction_enriched": 1.0
   }
 }

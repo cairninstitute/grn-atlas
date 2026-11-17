@@ -2,29 +2,29 @@
   "species": "human",
   "go_coverage": 2041,
   "regulon_coherence": {
-    "tfs_tested": 191,
-    "mean_real_coherence": 0.06084,
-    "mean_random_coherence": 0.0546,
-    "enrichment": 1.11,
-    "fraction_tfs_above_random": 0.503
+    "tfs_tested": 1828,
+    "mean_real_coherence": 0.06552,
+    "mean_random_coherence": 0.05466,
+    "enrichment": 1.2,
+    "fraction_tfs_above_random": 0.858
   },
   "permutation_test": {
-    "real_coherence": 0.06055,
-    "mean_permuted": 0.05067,
-    "std_permuted": 0.0014,
+    "real_coherence": 0.06196,
+    "mean_permuted": 0.05215,
+    "std_permuted": 0.00183,
     "p_value": 0.0099,
     "n_permutations": 100,
-    "effect_size_sigma": 7.07
+    "effect_size_sigma": 5.35
   },
   "multi_evidence": {
-    "single_source_n": 809,
-    "multi_source_n": 2000,
-    "single_mean_overlap": 0.07787,
-    "multi_mean_overlap": 0.07005,
-    "ratio": 0.9,
-    "single_any_overlap": 0.975,
-    "multi_any_overlap": 0.95,
-    "mann_whitney_z": -2.97
+    "single_source_n": 362,
+    "multi_source_n": 1439,
+    "single_mean_overlap": 0.08464,
+    "multi_mean_overlap": 0.091,
+    "ratio": 1.075,
+    "single_any_overlap": 0.956,
+    "multi_any_overlap": 0.963,
+    "mann_whitney_z": 0.46
   },
   "expression_coherence": {
     "interaction_edges_sampled": 5000,

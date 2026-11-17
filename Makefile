@@ -1,5 +1,5 @@
 # GRN Atlas — common tasks. See README.md / docs/DEVELOPMENT.md.
-.PHONY: bootstrap bootstrap-gpu bootstrap-api setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding omnipath-refresh promote-evidence rebuild-derived esm2-embeddings alphafold-features structural-predictions directed-inference scrna-data geneformer-embeddings celltype-regulation evo2-scores grassius-data cistrome-data data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
+.PHONY: bootstrap bootstrap-gpu bootstrap-api setup fetch fetch-all infer db signs perturbation-truth allele-pwms chromatin-peaks knocktf knocktf-all perturbation-evidence discover-plant-perturbations cross-species-transfer benchmark-plant-transfer external-regulation evidence-expansion direct-binding qualify-evidence enrich tissue-weights clonelab-data verify-clonelab-data validate-clonelab-release verify-data audit-evidence audit-signs digest digest-check audit-all validate benchmark validate-suite connectf-api jaspar-vertebrate ortholog-signs planttfdb-edges remap-binding unibind-binding omnipath-refresh promote-evidence rebuild-derived esm2-embeddings alphafold-features structural-predictions directed-inference scrna-data geneformer-embeddings celltype-regulation evo2-scores grassius-data cistrome-data data-expansion backend frontend test test-backend test-frontend test-skills clean-db help
 
 help:
 	@echo "make bootstrap      - full CPU/network-backed atlas from a fresh clone (sources → promotion → derived → verify)"
@@ -25,6 +25,11 @@ help:
 	@echo "make direct-binding  - fetch+load direct TF-binding data (GTRD, Cistrome, GEO) for all species"
 	@echo "make qualify-evidence - build conflict-aware candidates and source qualification report"
 	@echo "make verify-data    - fail unless all release data layers and minimum coverage are present"
+	@echo "make audit-evidence - report which sources/tiers feed the observed signed graph; fail on ungated sign classes"
+	@echo "make audit-signs    - report signed coverage and what could still be signed"
+	@echo "make digest         - content digest of the database (core/accelerated/session layers)"
+	@echo "make digest-check   - fail unless the core layer matches backend/data/content_digest.baseline.json"
+	@echo "make audit-all      - run every audit plus the digest check"
 	@echo "make clonelab-data  - fetch/index CloneLab plasmid, transcript, Arabidopsis, and petunia references"
 	@echo "make verify-clonelab-data - verify registered CloneLab reference checksums"
 	@echo "make validate-clonelab-release - validate gel calibration and both species demonstrations"
@@ -183,6 +188,22 @@ qualify-evidence:
 
 verify-data:
 	venv/bin/python backend/scripts/verify_release_data.py
+
+audit-evidence:
+	venv/bin/python backend/scripts/audit_evidence_tiers.py
+
+audit-signs:
+	venv/bin/python backend/scripts/audit_sign_coverage.py
+
+digest:
+	venv/bin/python backend/scripts/content_digest.py
+
+digest-check:
+	venv/bin/python backend/scripts/content_digest.py \
+		--check backend/data/content_digest.baseline.json --layer core
+
+audit-all: audit-evidence audit-signs digest-check
+	@echo "Audits complete."
 
 enrich:
 	@if [ ! -d /tmp/connectf_data_release_v1 ]; then \

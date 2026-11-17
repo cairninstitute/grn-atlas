@@ -5,29 +5,34 @@
     "prediction_source": "PlantRegMap + ATRM",
     "n_predictions": 22015,
     "n_positives": 8999,
-    "auroc": 0.8801,
-    "auprc": 0.699,
-    "early_precision_100": 0.9,
-    "early_precision_500": 0.846,
-    "early_precision_1000": 0.556
+    "auroc": 0.8803,
+    "auprc": 0.7011,
+    "early_precision_100": 1.0,
+    "early_precision_500": 0.844,
+    "early_precision_1000": 0.578
   },
   {
     "species": "human",
     "ground_truth": "TRRUST",
     "prediction_source": "DoRothEA",
-    "n_predictions": 14651,
-    "n_positives": 2030,
-    "auroc": 1.0,
-    "auprc": 1.0,
-    "early_precision_100": 1.0,
-    "early_precision_500": 1.0
+    "status": "retired_not_independent",
+    "reason": "TRRUST is one of DoRothEA's curated input resources; scoring DoRothEA against it measures self-overlap",
+    "independence": {
+      "source_edges": 15117,
+      "truth_edges": 4859,
+      "overlap": 2030,
+      "fraction_of_source_in_truth": 0.1343,
+      "fraction_of_truth_in_source": 0.4178
+    },
+    "independence_threshold": 0.1,
+    "independent": false
   },
   {
     "test": "multi_evidence_go_quality",
-    "n_multi": 31491,
-    "n_single": 902633,
-    "mean_multi_jaccard": 0.161,
-    "mean_single_jaccard": 0.1666,
-    "quality_ratio": 0.97
+    "n_multi": 305437,
+    "n_single": 1792742,
+    "mean_multi_jaccard": 0.1832,
+    "mean_single_jaccard": 0.1805,
+    "quality_ratio": 1.01
   }
 ]

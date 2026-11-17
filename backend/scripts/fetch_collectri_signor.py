@@ -40,7 +40,12 @@ SOURCES = {
         "evidence_layer": "direct_signed",
     },
     "signor": {
-        "url_params": "resources=SIGNOR&genesymbols=yes&organisms={taxid}&fields=references",
+        # types=transcriptional is what makes the docstring above true: without it
+        # OmniPath returns SIGNOR's post-translational records too, and those end
+        # up in `interactions`, where feedback_control.py labels every edge
+        # transcriptional by construction. See migrate_signor_layers.py.
+        "url_params": "resources=SIGNOR&types=transcriptional&genesymbols=yes"
+                      "&organisms={taxid}&fields=references",
         "species": {"human": 9606, "mouse": 10090},
         "source_name": "SIGNOR",
         "source_version": "October 2026",

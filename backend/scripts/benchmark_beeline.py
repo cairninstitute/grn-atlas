@@ -183,65 +183,84 @@ def benchmark_arabidopsis_connectf():
         }
 
 
+def source_overlap(source_rows: set, truth_rows: set) -> dict:
+    """How much of a prediction source is already inside its ground truth.
+
+    A benchmark is only meaningful when the two are independent. A meta-resource
+    that curates its ground truth as one of its own inputs will score near
+    perfectly whatever the ranking, so this is checked before any arm is run
+    rather than inferred afterwards from a suspiciously high AUROC.
+    """
+    if not source_rows:
+        return {"overlap": 0, "fraction": None}
+    overlap = len(source_rows & truth_rows)
+    return {
+        "source_edges": len(source_rows),
+        "truth_edges": len(truth_rows),
+        "overlap": overlap,
+        "fraction_of_source_in_truth": round(overlap / len(source_rows), 4),
+        "fraction_of_truth_in_source": (
+            round(overlap / len(truth_rows), 4) if truth_rows else None),
+    }
+
+
+MAX_INDEPENDENT_OVERLAP = 0.10
+
+
 def benchmark_human():
-    """Benchmark human edges: evaluate DoRothEA edges against TRRUST as ground truth."""
-    print("\n=== Human: DoRothEA vs TRRUST ===")
-    print("  (evaluates DoRothEA-only edges against TRRUST as independent ground truth)")
+    """Human arm: retired, because DoRothEA and TRRUST are not independent.
+
+    DoRothEA is a meta-resource whose level-A regulons are literature-curated,
+    and TRRUST is one of those curated inputs. Scoring DoRothEA against TRRUST
+    therefore measures overlap with itself. The numbers are computed and
+    reported so the file carries the reason, but no AUROC is emitted: a score
+    derived from a circular comparison is worse than no score, because it looks
+    like evidence.
+
+    Replacing it needs a truth source that is not a DoRothEA input. Literature
+    resources (TRRUST, CollecTRI), ChIP-seq (ReMap) and co-expression all are.
+    Perturbation response - KnockTF - is not, and the atlas holds it.
+    """
+    print("\n=== Human: DoRothEA vs TRRUST (retired) ===")
 
     conn = sqlite3.connect(DB_PATH)
-
     trrust_pairs = set()
-    dorothea_edges = {}
-    for row in conn.execute("""
-        SELECT source_id, target_id, confidence, sources FROM interactions
-        WHERE source_id NOT LIKE 'mouse:%'
-    """):
-        sources = json.loads(row[3])
+    dorothea_pairs = set()
+    for source_id, target_id, raw_sources in conn.execute(
+            "SELECT source_id, target_id, sources FROM interactions "
+            "WHERE source_id NOT LIKE 'mouse:%'"):
+        try:
+            sources = json.loads(raw_sources or "[]")
+        except (TypeError, ValueError):
+            continue
         if "TRRUST" in sources:
-            trrust_pairs.add((row[0], row[1]))
+            trrust_pairs.add((source_id, target_id))
         if "DoRothEA" in sources:
-            dorothea_edges[(row[0], row[1])] = row[2]
-
+            dorothea_pairs.add((source_id, target_id))
     conn.close()
 
-    tfs_in_both = {tf for tf, _ in trrust_pairs} & {tf for tf, _ in dorothea_edges}
-    print(f"  TRRUST ground truth: {len(trrust_pairs):,} edges")
-    print(f"  DoRothEA predictions: {len(dorothea_edges):,} edges")
-    print(f"  Shared TFs: {len(tfs_in_both)}")
-
-    ranked = sorted(
-        [(conf, (tf, tgt) in trrust_pairs)
-         for (tf, tgt), conf in dorothea_edges.items()
-         if tf in tfs_in_both],
-        reverse=True
-    )
-
-    if len(ranked) < 10:
-        print("  Too few overlapping edges")
-        return None
-
-    roc = auroc(ranked)
-    prc = auprc(ranked)
-    ep100 = early_precision(ranked, 100)
-    ep500 = early_precision(ranked, 500)
-    n_pos = sum(1 for _, lab in ranked if lab)
-
-    print(f"  Evaluated: {len(ranked):,} predictions, {n_pos:,} true positives")
-    print(f"  AUROC: {roc:.4f}")
-    print(f"  AUPRC: {prc:.4f}")
-    print(f"  Early precision @100: {ep100:.4f}")
-    print(f"  Early precision @500: {ep500:.4f}")
+    overlap = source_overlap(dorothea_pairs, trrust_pairs)
+    frac = overlap.get("fraction_of_source_in_truth")
+    print(f"  DoRothEA edges: {overlap['source_edges']:,}")
+    print(f"  TRRUST edges:   {overlap['truth_edges']:,}")
+    print(f"  shared:         {overlap['overlap']:,} "
+          f"({frac:.1%} of DoRothEA)" if frac is not None else "")
+    print(f"  independence threshold: {MAX_INDEPENDENT_OVERLAP:.0%}")
+    print("  NOT INDEPENDENT - no score emitted.")
+    print("  TRRUST is one of DoRothEA's curated input resources, so this")
+    print("  comparison measures overlap with itself. Use a truth source that")
+    print("  is not a DoRothEA input (perturbation response, e.g. KnockTF).")
 
     return {
         "species": "human",
         "ground_truth": "TRRUST",
         "prediction_source": "DoRothEA",
-        "n_predictions": len(ranked),
-        "n_positives": n_pos,
-        "auroc": round(roc, 4),
-        "auprc": round(prc, 4),
-        "early_precision_100": round(ep100, 4),
-        "early_precision_500": round(ep500, 4),
+        "status": "retired_not_independent",
+        "reason": ("TRRUST is one of DoRothEA's curated input resources; "
+                   "scoring DoRothEA against it measures self-overlap"),
+        "independence": overlap,
+        "independence_threshold": MAX_INDEPENDENT_OVERLAP,
+        "independent": (frac is not None and frac <= MAX_INDEPENDENT_OVERLAP),
     }
 
 

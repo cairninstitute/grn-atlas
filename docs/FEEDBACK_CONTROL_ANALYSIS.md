@@ -158,7 +158,16 @@ is equivalent to ordinary database growth.
 ## Evidence-tier benchmark
 
 `backend/scripts/benchmark_feedback_evidence_tiers.py` compares all four graph views
-and writes `docs/benchmarks/feedback-evidence-tiers.json`. In the October 2026 rebuild:
+and writes `docs/benchmarks/feedback-evidence-tiers.json`.
+
+> **Superseded by the November 2026 evidence-tier work.** The October figures below were
+> measured before SIGNOR's non-transcriptional records were moved to `regulatory_layer_edges`,
+> before uncalibrated perturbation classes were held on `perturbation_exploratory`, and before
+> projected plant signs were moved to `ortholog_transfer`. Human observed feedback genes are now
+> 1,057, not 288; the Arabidopsis observed graph is 1,434 signed edges, not 26,057. Re-run the
+> benchmark before citing. Current counts: [docs/ATLAS_FACTS.md](ATLAS_FACTS.md).
+
+In the October 2026 rebuild:
 
 | Species | Observed genes | Supported genes | Exploratory genes | Multilayer genes |
 | --- | ---: | ---: | ---: | ---: |

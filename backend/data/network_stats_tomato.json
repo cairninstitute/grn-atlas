@@ -2,46 +2,46 @@
   "species": "tomato",
   "go_coverage": 12939,
   "regulon_coherence": {
-    "tfs_tested": 730,
-    "mean_real_coherence": 0.12984,
-    "mean_random_coherence": 0.10809,
-    "enrichment": 1.2,
-    "fraction_tfs_above_random": 0.89
+    "tfs_tested": 737,
+    "mean_real_coherence": 0.12674,
+    "mean_random_coherence": 0.10823,
+    "enrichment": 1.17,
+    "fraction_tfs_above_random": 0.826
   },
   "permutation_test": {
-    "real_coherence": 0.12966,
-    "mean_permuted": 0.10922,
-    "std_permuted": 0.00043,
+    "real_coherence": 0.12828,
+    "mean_permuted": 0.10914,
+    "std_permuted": 0.00056,
     "p_value": 0.0099,
     "n_permutations": 100,
-    "effect_size_sigma": 47.37
+    "effect_size_sigma": 34.45
   },
   "multi_evidence": {
-    "single_source_n": 1315,
-    "multi_source_n": 1558,
-    "single_mean_overlap": 0.14026,
-    "multi_mean_overlap": 0.14731,
-    "ratio": 1.05,
-    "single_any_overlap": 0.962,
-    "multi_any_overlap": 0.968,
-    "mann_whitney_z": 2.21
+    "single_source_n": 1252,
+    "multi_source_n": 1439,
+    "single_mean_overlap": 0.14293,
+    "multi_mean_overlap": 0.14056,
+    "ratio": 0.983,
+    "single_any_overlap": 0.964,
+    "multi_any_overlap": 0.969,
+    "mann_whitney_z": 0.87
   },
   "expression_coherence": {
     "interaction_edges_sampled": 5000,
-    "coexpressed_count": 35,
-    "coexpression_rate": 0.007,
-    "random_coexpression_rate": 0.0069,
-    "coexpression_rate_ratio": 1.02,
-    "mean_importance_real": 0.06422,
-    "mean_importance_random": 0.05342,
-    "importance_ratio": 1.2
+    "coexpressed_count": 42,
+    "coexpression_rate": 0.0084,
+    "random_coexpression_rate": 0.0063,
+    "coexpression_rate_ratio": 1.33,
+    "mean_importance_real": 0.07358,
+    "mean_importance_random": 0.06564,
+    "importance_ratio": 1.12
   },
   "motif_enrichment": {
     "tfs_tested": 442,
-    "mean_target_motif_rate": 0.4032,
-    "mean_nontarget_motif_rate": 0.0064,
-    "mean_enrichment": 38.2,
-    "median_enrichment": 28.45,
+    "mean_target_motif_rate": 0.3175,
+    "mean_nontarget_motif_rate": 0.0061,
+    "mean_enrichment": 33.01,
+    "median_enrichment": 25.13,
     "fraction_enriched": 1.0
   }
 }

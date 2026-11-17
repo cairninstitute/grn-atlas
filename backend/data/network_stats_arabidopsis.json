@@ -2,39 +2,39 @@
   "species": "arabidopsis",
   "go_coverage": 17349,
   "regulon_coherence": {
-    "tfs_tested": 584,
-    "mean_real_coherence": 0.17318,
-    "mean_random_coherence": 0.16991,
-    "enrichment": 1.02,
-    "fraction_tfs_above_random": 0.461
+    "tfs_tested": 727,
+    "mean_real_coherence": 0.19411,
+    "mean_random_coherence": 0.16971,
+    "enrichment": 1.14,
+    "fraction_tfs_above_random": 0.696
   },
   "permutation_test": {
-    "real_coherence": 0.17268,
-    "mean_permuted": 0.17044,
-    "std_permuted": 0.00107,
-    "p_value": 0.0198,
+    "real_coherence": 0.18601,
+    "mean_permuted": 0.16196,
+    "std_permuted": 0.00108,
+    "p_value": 0.0099,
     "n_permutations": 100,
-    "effect_size_sigma": 2.1
+    "effect_size_sigma": 22.21
   },
   "multi_evidence": {
-    "single_source_n": 1240,
-    "multi_source_n": 1967,
-    "single_mean_overlap": 0.18868,
-    "multi_mean_overlap": 0.2008,
-    "ratio": 1.064,
+    "single_source_n": 1351,
+    "multi_source_n": 1722,
+    "single_mean_overlap": 0.21848,
+    "multi_mean_overlap": 0.22835,
+    "ratio": 1.045,
     "single_any_overlap": 1.0,
     "multi_any_overlap": 1.0,
-    "mann_whitney_z": 0.67
+    "mann_whitney_z": 0.9
   },
   "expression_coherence": {
     "interaction_edges_sampled": 5000,
-    "coexpressed_count": 32,
-    "coexpression_rate": 0.0064,
-    "random_coexpression_rate": 0.0055,
-    "coexpression_rate_ratio": 1.16,
-    "mean_importance_real": 0.04594,
-    "mean_importance_random": 0.05553,
-    "importance_ratio": 0.83
+    "coexpressed_count": 36,
+    "coexpression_rate": 0.0072,
+    "random_coexpression_rate": 0.0069,
+    "coexpression_rate_ratio": 1.05,
+    "mean_importance_real": 0.05676,
+    "mean_importance_random": 0.05694,
+    "importance_ratio": 1.0
   },
   "motif_enrichment": {
     "tfs_tested": 0,

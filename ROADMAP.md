@@ -98,7 +98,11 @@ Last updated: 2026-11-03 · Current broad status: 116 documented skills (115 cal
   matches get expression.)
 - ~~No dynamics~~ ✅ shipped: `grn-dynamics` Boolean/threshold attractor simulation on signed subnetworks.
 - **Petunia edges are inferred** — hypotheses, not evidence; no measured petunia GRN.
-- **No accessibility (ATAC), PPI/complexes, or phenotype/QTL linkage.**
+- ~~No accessibility (ATAC)~~ ✅ shipped: 176,531 chromatin peaks (Plant Cistrome DAP-seq),
+  94,266 peak-gene links, 85,074 cis-support edges. **PPI/complexes**: a non-transcriptional
+  layer now exists (`regulatory_layer_edges`, 19,098 curated protein-activity edges for
+  human and mouse), but it is signalling rather than complexes. **Phenotype/QTL linkage**
+  remains absent.
 - **Data currency** — PLAZA 4.5 is 2018 (dicots 5.0 now exists, flagged by the freshness
   audit); TRRUST v2 is older. Currency is now *surfaced*; actual re-fetch/rebuild to newer
   releases (and adding species e.g. wheat/cotton) remains future work.
