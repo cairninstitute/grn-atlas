@@ -8561,5 +8561,237 @@
         "value": "human"
       }
     ]
+  },
+
+  {
+    "skill": "grn-signaling-layer",
+    "label": "signaling: kinase cascade to TF",
+    "question": "What signaling proteins phosphorylate MYC2 in Arabidopsis? Trace the kinase cascade upstream.",
+    "expected_tools": [
+      "grn_signaling_layer"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_signaling_layer"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-signaling-layer",
+    "label": "signaling: post-translational targets of MAPK3",
+    "question": "Which proteins does MAPK3 regulate post-translationally in human? Show me its downstream signaling targets.",
+    "expected_tools": [
+      "grn_signaling_layer"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_signaling_layer"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+  {
+    "skill": "grn-signaling-layer",
+    "label": "signaling: summary of protein-level regulation",
+    "question": "Give me a summary of the signaling layer — how many protein-level regulatory edges are there in human and mouse?",
+    "expected_tools": [
+      "grn_signaling_layer"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_signaling_layer"
+        ]
+      }
+    ]
+  },
+
+  {
+    "skill": "grn-build-diff",
+    "label": "build-diff: compare two atlas builds",
+    "question": "Compare the content digest files from before and after the latest rebuild to see what changed.",
+    "expected_tools": [
+      "grn_build_diff"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_build_diff"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-build-diff",
+    "label": "build-diff: source drift detection",
+    "question": "Which source imports drifted between the November and October builds? Use the digest and lock files to identify what moved.",
+    "expected_tools": [
+      "grn_build_diff"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_build_diff"
+        ]
+      }
+    ]
+  },
+
+  {
+    "skill": "grn-kinetic-model",
+    "label": "kinetic: oscillation test for feedback loop",
+    "question": "Can the HY5-COP1-PIF4 feedback loop in Arabidopsis oscillate? Simulate it as an ODE system and classify the dynamics.",
+    "expected_tools": [
+      "grn_kinetic_model"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_kinetic_model"
+        ]
+      }
+    ]
+  },
+  {
+    "skill": "grn-kinetic-model",
+    "label": "kinetic: bistability of toggle switch",
+    "question": "Test whether the TP53-MDM2 circuit in human is bistable. Sweep Hill coefficients and degradation rates.",
+    "expected_tools": [
+      "grn_kinetic_model"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_kinetic_model"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "human"
+      }
+    ]
+  },
+
+  {
+    "skill": "grn-projection-validation",
+    "label": "projection: independent evidence for tomato edges",
+    "question": "What fraction of orthology-projected edges in tomato have independent cis-support from JASPAR motifs?",
+    "expected_tools": [
+      "grn_projection_validation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_projection_validation"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "tomato"
+      }
+    ]
+  },
+  {
+    "skill": "grn-projection-validation",
+    "label": "projection: specific edge validation",
+    "question": "Does the projected edge from WRKY33 to PDF1.2 in Arabidopsis have any independent support — motif hits, chromatin peaks, or expression data?",
+    "expected_tools": [
+      "grn_projection_validation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_projection_validation"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-projection-validation",
+    "label": "projection: all-species summary",
+    "question": "Across all plant species, how well supported are the orthology-transferred edges? Give me a summary of independent evidence coverage.",
+    "expected_tools": [
+      "grn_projection_validation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_projection_validation"
+        ]
+      }
+    ]
+  },
+
+  {
+    "skill": "grn-natural-variation",
+    "label": "natural-variation: promoter variant effect",
+    "question": "Which promoter variants across Arabidopsis accessions gain or lose a binding site for HY5?",
+    "expected_tools": [
+      "grn_natural_variation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_natural_variation"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "arabidopsis"
+      }
+    ]
+  },
+  {
+    "skill": "grn-natural-variation",
+    "label": "natural-variation: readiness status",
+    "question": "Is natural variation analysis ready for rice? What variant data would be needed?",
+    "expected_tools": [
+      "grn_natural_variation"
+    ],
+    "checks": [
+      {
+        "type": "tool_in",
+        "tools": [
+          "grn_natural_variation"
+        ]
+      },
+      {
+        "type": "arg_equals",
+        "arg": "species",
+        "value": "rice"
+      }
+    ]
   }
 ]
