@@ -79,6 +79,8 @@ GRN Atlas is a multi-species gene regulatory network database covering the speci
 | `grn-binding-prediction` | Query or trigger structural binding predictions — scores whether a TF protein can bind a target promoter (Boltz-2) |
 | `grn-build-diff` | Compare two atlas builds using content digest and source lock files — tables changed, rows gained/lost, source drift |
 | `grn-kinetic-model` | Hill-function ODE simulation of a signed regulatory circuit — sweep parameters to classify oscillatory/bistable/monostable dynamics |
+| `grn-projection-validation` | Assess whether orthology-transferred edges have independent cis-regulatory evidence in the recipient species |
+| `grn-natural-variation` | Query promoter variant impact on TF binding sites across accessions; reports readiness and existing motif infrastructure |
 
 ## Additional skills
 

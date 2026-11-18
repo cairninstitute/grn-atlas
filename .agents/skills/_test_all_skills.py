@@ -3248,6 +3248,105 @@ grade(r, [
 results.append(r)
 
 # =====================================================================
+# grn-natural-variation (promoter variant impact on TF binding)
+# =====================================================================
+
+r = run_skill("grn-natural-variation", ["--status"],
+              "nat-var: readiness status")
+grade(r, [
+    ("returns dict", lambda d: isinstance(d, dict)),
+    ("has readiness", lambda d: "readiness" in d),
+    ("has infrastructure", lambda d: "infrastructure" in d),
+    ("has variant_tables", lambda d: "variant_tables" in d),
+])
+results.append(r)
+
+r = run_skill("grn-natural-variation",
+              ["--gene-id", "AT5G11260", "--species", "arabidopsis"],
+              "nat-var: HY5 motif sites")
+grade(r, [
+    ("returns dict", lambda d: isinstance(d, dict)),
+    ("gene_id=AT5G11260", lambda d: d.get("gene_id") == "AT5G11260"),
+    ("has motif_hits count", lambda d: "motif_hits" in d),
+])
+results.append(r)
+
+r = run_skill("grn-natural-variation",
+              ["--source-id", "AT2G43010", "--target-id", "AT5G11260"],
+              "nat-var: PIF4->HY5 edge motif sites")
+grade(r, [
+    ("returns dict", lambda d: isinstance(d, dict)),
+    ("source=PIF4", lambda d: d.get("source_id") == "AT2G43010"),
+    ("target=HY5", lambda d: d.get("target_id") == "AT5G11260"),
+])
+results.append(r)
+
+r = run_skill("grn-natural-variation",
+              ["--gene-id", "FAKEGENE999"],
+              "nat-var: nonexistent gene")
+grade(r, [
+    ("handles gracefully", lambda d: "error" in d or d.get("motif_hits", 0) == 0),
+])
+results.append(r)
+
+r = run_skill("grn-natural-variation",
+              ["--source-id", "TP53", "--target-id", "BAX"],
+              "nat-var: human edge motif sites")
+grade(r, [
+    ("returns dict", lambda d: isinstance(d, dict)),
+])
+results.append(r)
+
+
+# =====================================================================
+# grn-projection-validation (cis-support for orthology-transferred edges)
+# =====================================================================
+
+r = run_skill("grn-projection-validation", ["--species", "tomato"],
+              "proj-val: tomato species summary")
+grade(r, [
+    ("returns dict", lambda d: isinstance(d, dict)),
+    ("has species field", lambda d: d.get("species") == "tomato"),
+    ("has projected_edges", lambda d: "projected_edges" in d),
+])
+results.append(r)
+
+r = run_skill("grn-projection-validation", ["--all"],
+              "proj-val: all species summary")
+grade(r, [
+    ("returns dict", lambda d: isinstance(d, dict)),
+    ("has species_summaries", lambda d: "species_summaries" in d),
+    ("has total_projected", lambda d: "total_projected" in d),
+])
+results.append(r)
+
+r = run_skill("grn-projection-validation",
+              ["--source-id", "TP53", "--target-id", "BAX"],
+              "proj-val: human edge (not projected)")
+grade(r, [
+    ("returns dict", lambda d: isinstance(d, dict)),
+    ("has source_id", lambda d: d.get("source_id") == "TP53"),
+])
+results.append(r)
+
+r = run_skill("grn-projection-validation",
+              ["--source-id", "FAKEGENE1", "--target-id", "FAKEGENE2"],
+              "proj-val: nonexistent edge")
+grade(r, [
+    ("handles gracefully", lambda d: "error" in d or d.get("cis_support") is None),
+])
+results.append(r)
+
+r = run_skill("grn-projection-validation", ["--species", "arabidopsis"],
+              "proj-val: arabidopsis (may have zero projected)")
+grade(r, [
+    ("returns dict", lambda d: isinstance(d, dict)),
+    ("species=arabidopsis", lambda d: d.get("species") == "arabidopsis"),
+])
+results.append(r)
+
+
+# =====================================================================
 # grn-kinetic-model (Hill-function ODE; uses DB for signed edges)
 # =====================================================================
 
