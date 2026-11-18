@@ -1,0 +1,56 @@
+.evidence-tier-slider { flex: 1; overflow-y: auto; padding: 32px max(30px, calc((100vw - 1100px) / 2)) 60px; color: #173f39; background: #f5f6f0; }
+.evidence-tier-header { margin-bottom: 28px; }
+.evidence-tier-header h2 { margin: 0 0 8px; font: 500 36px/1.1 Georgia, serif; }
+.evidence-tier-header p { max-width: 700px; margin: 0 0 18px; color: #526760; font-size: 15px; line-height: 1.6; }
+.evidence-tier-species { display: flex; flex-wrap: wrap; gap: 6px; }
+.evidence-tier-species button { padding: 6px 14px; border: 1px solid #c5d4cc; border-radius: 20px; background: #eef3ef; color: #3a6859; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; }
+.evidence-tier-species button:hover { background: #d9e6de; }
+.evidence-tier-species button.active { background: #17473f; color: white; border-color: #17473f; }
+
+.evidence-loading { padding: 40px; text-align: center; color: #7a8e87; }
+.evidence-error { padding: 12px; border: 1px solid #d8a79a; background: #fff0eb; border-radius: 8px; color: #8b4432; font-size: 13px; }
+.evidence-empty { padding: 40px; text-align: center; color: #7a8e87; font-size: 14px; }
+.evidence-empty code { padding: 2px 6px; background: #e4ebe6; border-radius: 4px; font-size: 12px; }
+
+.evidence-timeline { margin-bottom: 24px; }
+.evidence-timeline-track { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 12px; }
+.evidence-run-card { display: flex; flex-direction: column; gap: 4px; min-width: 110px; padding: 10px 12px; border: 1px solid #d3dfd8; border-radius: 10px; background: #f9faf7; text-align: left; cursor: pointer; transition: all .15s; flex-shrink: 0; }
+.evidence-run-card:hover { border-color: #76a392; transform: translateY(-1px); }
+.evidence-run-card.selected { border-color: #17473f; background: #e3ede8; box-shadow: 0 2px 8px rgba(23,71,63,.12); }
+.evidence-run-date { font-size: 12px; font-weight: 700; color: #347762; }
+.evidence-run-stats { display: flex; flex-direction: column; gap: 2px; }
+.evidence-run-stats span { font-size: 11px; color: #526760; }
+.evidence-run-cores { font-weight: 600; }
+.evidence-run-hash { font-size: 9px; font-family: monospace; color: #9aaea7; }
+
+.evidence-slider { width: 100%; margin-top: 4px; accent-color: #17473f; }
+
+.evidence-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+@media (max-width: 800px) { .evidence-detail { grid-template-columns: 1fr; } }
+
+.evidence-selected, .evidence-comparison { padding: 20px; border: 1px solid #d7e0da; border-radius: 14px; background: rgba(255,255,255,.86); }
+.evidence-selected h3, .evidence-comparison h3 { margin: 0 0 14px; font: 500 18px/1.2 Georgia, serif; }
+
+.evidence-metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.evidence-metric { padding: 12px; border: 1px solid #dbe4de; border-radius: 8px; background: #f4f7f4; }
+.evidence-metric-value { display: block; font: 500 24px Georgia, serif; color: #17473f; }
+.evidence-metric-label { font-size: 11px; color: #7a8e87; text-transform: uppercase; letter-spacing: .05em; }
+.evidence-graph-hash { margin-top: 10px; font-size: 11px; color: #7a8e87; }
+.evidence-graph-hash code { padding: 2px 6px; background: #e4ebe6; border-radius: 4px; font-family: monospace; font-size: 11px; }
+
+.evidence-comparison-row { display: grid; grid-template-columns: 90px 1fr 60px; gap: 8px; align-items: center; margin-bottom: 8px; }
+.evidence-comparison-label { font-size: 12px; font-weight: 600; color: #3a6859; }
+.evidence-comparison-bars { display: flex; flex-direction: column; gap: 3px; }
+.evidence-bar { height: 16px; border-radius: 3px; display: flex; align-items: center; padding: 0 6px; font-size: 10px; color: white; font-weight: 600; min-width: 24px; transition: width .3s ease; }
+.evidence-bar.before { background: #9aaea7; }
+.evidence-bar.after { background: #4a8876; }
+.evidence-comparison-delta { font-size: 12px; font-weight: 700; text-align: right; }
+.evidence-comparison-delta.up { color: #2e7d5f; }
+.evidence-comparison-delta.down { color: #c0583e; }
+.evidence-hash-change { margin-top: 10px; font-size: 11px; color: #7a8e87; }
+.evidence-hash-change code { padding: 2px 5px; background: #e4ebe6; border-radius: 3px; font-family: monospace; font-size: 10px; }
+
+.evidence-distinct-states { padding: 20px; border: 1px solid #d7e0da; border-radius: 14px; background: rgba(255,255,255,.86); }
+.evidence-distinct-states h3 { margin: 0 0 10px; font: 500 16px/1.2 Georgia, serif; }
+.evidence-state-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.evidence-state-chip { padding: 5px 10px; border: 1px solid #d3dfd8; border-radius: 16px; font-size: 11px; color: #526760; background: #f4f7f4; font-family: monospace; }

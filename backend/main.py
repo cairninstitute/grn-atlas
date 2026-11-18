@@ -1622,6 +1622,64 @@ async def latest_feedback_control_analysis(species: str):
     return result
 
 
+@app.get("/api/v1/network/feedback-control/{species}/timeline")
+async def feedback_control_timeline(
+    species: str,
+    limit: int = Query(20, ge=1, le=100),
+):
+    """Return how feedback cores evolved across runs for the evidence-tier slider."""
+    normalized = _normalize_species_input(species)
+    store_path = FilePath(
+        os.environ.get("GRN_FEEDBACK_DB") or (DATA_DIR / "feedback_analysis.sqlite3")
+    )
+    fdb = sqlite3.connect(f"file:{store_path}?mode=ro", uri=True)
+    try:
+        rows = fdb.execute(
+            """SELECT r.run_id, r.graph_hash, r.generated_at, r.parameters_json,
+                      COUNT(c.core_id) AS cores,
+                      COALESCE(SUM(c.node_count), 0) AS total_nodes,
+                      COALESCE(SUM(c.edge_count), 0) AS total_edges,
+                      MAX(c.node_count) AS largest_core_nodes
+               FROM feedback_runs r
+               LEFT JOIN feedback_cores c ON c.run_id = r.run_id
+               WHERE r.species = ?
+               GROUP BY r.run_id
+               ORDER BY r.generated_at DESC
+               LIMIT ?""",
+            (normalized, limit),
+        ).fetchall()
+    finally:
+        fdb.close()
+
+    timeline = []
+    for run_id, graph_hash, generated_at, params_json, cores, nodes, edges, largest in rows:
+        try:
+            params = json.loads(params_json)
+        except (json.JSONDecodeError, TypeError):
+            params = {}
+        timeline.append({
+            "run_id": run_id,
+            "graph_hash": graph_hash,
+            "generated_at": generated_at,
+            "evidence_tiers": params.get("evidence_tiers", []),
+            "min_confidence": params.get("min_confidence"),
+            "cores": cores,
+            "total_nodes": nodes,
+            "total_edges": edges,
+            "largest_core_nodes": largest or 0,
+        })
+
+    timeline.reverse()
+    return {
+        "species": normalized,
+        "runs": timeline,
+        "note": (
+            "Each run reflects the feedback structure under a different graph state. "
+            "Compare runs to see how adding/removing evidence sources changes the core."
+        ),
+    }
+
+
 @app.post("/api/v1/network/centrality")
 async def get_centrality(request: CentralityRequest):
     """Compute degree centrality metrics for genes in a network."""

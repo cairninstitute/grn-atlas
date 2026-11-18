@@ -116,12 +116,26 @@ export default function HomeWorkspace({ onNavigate, onGeneSearch, onOpenGeneSet 
       </section>
 
       <section className="home-journeys" aria-labelledby="home-journeys-title">
-        <button className="home-featured-demo" type="button" onClick={() => onNavigate('control-demo')}>
-          <span className="home-featured-label">Featured guided demonstration</span>
-          <span className="home-featured-title">From millions of interactions to biological control architecture</span>
-          <span className="home-featured-copy">Discover feedback cores across eight species, connect them into larger systems, and identify structural controller genes.</span>
-          <span className="home-featured-action">Start the demonstration →</span>
-        </button>
+        <div className="home-featured-demos">
+          <button className="home-featured-demo" type="button" onClick={() => onNavigate('control-demo')}>
+            <span className="home-featured-label">Featured guided demonstration</span>
+            <span className="home-featured-title">From millions of interactions to biological control architecture</span>
+            <span className="home-featured-copy">Discover feedback cores across eight species, connect them into larger systems, and identify structural controller genes.</span>
+            <span className="home-featured-action">Start the demonstration →</span>
+          </button>
+          <button className="home-featured-demo secondary" type="button" onClick={() => onNavigate('evidence-tier')}>
+            <span className="home-featured-label">Evidence integrity tool</span>
+            <span className="home-featured-title">Evidence-tier slider</span>
+            <span className="home-featured-copy">Watch the feedback core grow and shrink as evidence sources are toggled. Compare graph states across atlas builds.</span>
+            <span className="home-featured-action">Open the slider →</span>
+          </button>
+          <button className="home-featured-demo secondary" type="button" onClick={() => onNavigate('sign-analysis')}>
+            <span className="home-featured-label">Sign prediction analysis</span>
+            <span className="home-featured-title">Where sign prediction breaks</span>
+            <span className="home-featured-copy">Four independent methods all fail on the same task. See why predicting activation vs repression resists global models.</span>
+            <span className="home-featured-action">View the analysis →</span>
+          </button>
+        </div>
         <div className="home-section-heading">
           <div>
             <p className="home-section-kicker">Research paths</p>
