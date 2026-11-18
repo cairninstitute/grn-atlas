@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>HY5 Social Card — Square</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; overflow: hidden; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; background: #0f172a; color: #f8fafc; }
+  .card { width: 1080px; height: 1080px; display: flex; flex-direction: column; position: relative; }
+  .top { padding: 48px 56px 24px; z-index: 2; }
+  .middle { flex: 1; display: flex; justify-content: center; align-items: center; padding: 0 24px; }
+  .bottom { padding: 20px 56px 44px; z-index: 2; }
+  .badge { display: inline-block; background: #0f766e; color: #fff; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; padding: 6px 16px; border-radius: 20px; margin-bottom: 16px; text-transform: uppercase; }
+  h1 { font-size: 44px; font-weight: 800; line-height: 1.12; letter-spacing: -0.5px; }
+  h1 .accent { color: #5eead4; }
+  .subtitle { font-size: 18px; color: #94a3b8; line-height: 1.5; margin-top: 12px; }
+  .stats { display: flex; gap: 40px; justify-content: center; }
+  .stat-box { text-align: center; }
+  .stat-num { font-size: 32px; font-weight: 800; color: #5eead4; }
+  .stat-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+  .divider { width: 100%; height: 1px; background: #1e293b; margin: 16px 0; }
+  .brand { font-size: 15px; color: #64748b; text-align: center; }
+  .brand strong { color: #94a3b8; font-weight: 600; }
+  .glow1 { position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(15,118,110,0.2) 0%, transparent 70%); top: 35%; left: 50%; transform: translate(-50%,-50%); z-index: 0; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow1"></div>
+  <div class="top">
+    <div class="badge">Live Demo</div>
+    <h1>Dissecting <span class="accent">HY5</span> — The Plant<br/>Master Light Switch</h1>
+    <p class="subtitle">AI-powered deep dive into the regulatory architecture of a single transcription factor</p>
+  </div>
+  <div class="middle">
+    <svg viewBox="0 0 960 520" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" width="960" height="520">
+      <defs>
+        <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker>
+        <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5eead4"/></marker>
+        <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker>
+      </defs>
+      <!-- Upstream zone -->
+      <rect x="30" y="10" width="240" height="500" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="150" y="40" text-anchor="middle" font-size="12" font-weight="600" fill="#64748b" letter-spacing="0.5">UPSTREAM REGULATORS</text>
+      <text x="150" y="58" text-anchor="middle" font-size="11" fill="#475569">455 TFs</text>
+      <rect x="50" y="72" width="200" height="56" rx="8" fill="rgba(139,92,246,0.12)" stroke="#8b5cf6" stroke-width="0.75"/>
+      <text x="62" y="93" font-size="10" font-weight="600" fill="#a78bfa" letter-spacing="0.3">SHADE & WARMTH</text>
+      <text x="62" y="113" font-size="13" fill="#e2e8f0">PIF4, HAT22</text>
+      <rect x="50" y="140" width="200" height="56" rx="8" fill="rgba(168,85,247,0.12)" stroke="#a855f7" stroke-width="0.75"/>
+      <text x="62" y="161" font-size="10" font-weight="600" fill="#c084fc" letter-spacing="0.3">ABA & DROUGHT</text>
+      <text x="62" y="181" font-size="13" fill="#e2e8f0">GBF3, GBF2, ABF1, ABF4</text>
+      <rect x="50" y="208" width="200" height="56" rx="8" fill="rgba(14,165,233,0.12)" stroke="#0ea5e9" stroke-width="0.75"/>
+      <text x="62" y="229" font-size="10" font-weight="600" fill="#38bdf8" letter-spacing="0.3">SALT & COLD STRESS</text>
+      <text x="62" y="249" font-size="13" fill="#e2e8f0">ZAT6, DREB2A, HB6</text>
+      <rect x="50" y="276" width="200" height="56" rx="8" fill="rgba(244,63,94,0.12)" stroke="#f43f5e" stroke-width="0.75"/>
+      <text x="62" y="297" font-size="10" font-weight="600" fill="#fb7185" letter-spacing="0.3">FLOWERING TIME</text>
+      <text x="62" y="317" font-size="13" fill="#e2e8f0">FBH3</text>
+      <rect x="50" y="344" width="200" height="56" rx="8" fill="rgba(234,179,8,0.12)" stroke="#eab308" stroke-width="0.75"/>
+      <text x="62" y="365" font-size="10" font-weight="600" fill="#facc15" letter-spacing="0.3">METABOLISM & AGING</text>
+      <text x="62" y="385" font-size="13" fill="#e2e8f0">MYB3, NAC032</text>
+      <text x="150" y="428" text-anchor="middle" font-size="11" fill="#475569">+ 443 more</text>
+      <!-- HY5 hub -->
+      <rect x="400" y="208" width="160" height="70" rx="24" fill="rgba(15,118,110,0.3)" stroke="#5eead4" stroke-width="2.5"/>
+      <text x="480" y="237" text-anchor="middle" font-size="22" font-weight="800" fill="#5eead4">HY5</text>
+      <text x="480" y="260" text-anchor="middle" font-size="12" fill="#94a3b8">bZIP TF</text>
+      <!-- Downstream zone -->
+      <rect x="690" y="10" width="240" height="500" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="810" y="40" text-anchor="middle" font-size="12" font-weight="600" fill="#64748b" letter-spacing="0.5">DOWNSTREAM TARGETS</text>
+      <text x="810" y="58" text-anchor="middle" font-size="11" fill="#475569">2,606 genes</text>
+      <rect x="710" y="72" width="200" height="68" rx="8" fill="rgba(34,197,94,0.12)" stroke="#22c55e" stroke-width="0.75"/>
+      <text x="722" y="93" font-size="10" font-weight="600" fill="#4ade80" letter-spacing="0.3">LIGHT RESPONSE</text>
+      <text x="722" y="113" font-size="13" fill="#e2e8f0">CAB1, CAB2, ELIP1</text>
+      <text x="722" y="131" font-size="13" fill="#e2e8f0">FHY1, FHL, ELF4</text>
+      <rect x="710" y="152" width="200" height="56" rx="8" fill="rgba(6,182,212,0.12)" stroke="#06b6d4" stroke-width="0.75"/>
+      <text x="722" y="173" font-size="10" font-weight="600" fill="#22d3ee" letter-spacing="0.3">NUTRIENT UPTAKE</text>
+      <text x="722" y="193" font-size="13" fill="#e2e8f0">NRT1.1, NIA2, PHR1</text>
+      <rect x="710" y="220" width="200" height="56" rx="8" fill="rgba(168,85,247,0.12)" stroke="#a855f7" stroke-width="0.75"/>
+      <text x="722" y="241" font-size="10" font-weight="600" fill="#c084fc" letter-spacing="0.3">HORMONE SIGNALING</text>
+      <text x="722" y="261" font-size="13" fill="#e2e8f0">IAA7, IAA14, ABI5</text>
+      <rect x="710" y="288" width="200" height="56" rx="8" fill="rgba(239,68,68,0.12)" stroke="#ef4444" stroke-width="0.75"/>
+      <text x="722" y="309" font-size="10" font-weight="600" fill="#f87171" letter-spacing="0.3">FLAVONOID BIOSYNTHESIS</text>
+      <text x="722" y="329" font-size="13" fill="#e2e8f0">TT4, LDOX, MYB12</text>
+      <text x="810" y="376" text-anchor="middle" font-size="11" fill="#475569">+ 2,590 more</text>
+      <!-- Feedback zone -->
+      <rect x="360" y="380" width="240" height="100" rx="14" fill="rgba(15,118,110,0.08)" stroke="#5eead4" stroke-width="0.75" stroke-dasharray="4 4"/>
+      <text x="480" y="404" text-anchor="middle" font-size="11" font-weight="600" fill="#5eead4">FEEDBACK LOOPS</text>
+      <text x="480" y="424" text-anchor="middle" font-size="12.5" fill="#cbd5e1">GBF3, GBF2, ABF1, MYB3, FBH3</text>
+      <text x="480" y="442" text-anchor="middle" font-size="12.5" fill="#cbd5e1">NAC032, ABF4, DREB2A, HB5, HB6</text>
+      <text x="480" y="462" text-anchor="middle" font-size="10.5" fill="#475569">20 mutual regulators</text>
+      <!-- Connectors -->
+      <g fill="none" stroke-width="1.25">
+        <path d="M250 100C340 100 340 220 398 220" stroke="#475569" marker-end="url(#a1)"/>
+        <path d="M250 168C340 168 340 235 398 235" stroke="#475569" marker-end="url(#a1)"/>
+        <path d="M250 236C340 236 340 243 398 243" stroke="#475569" marker-end="url(#a1)"/>
+        <path d="M250 304C340 304 340 255 398 255" stroke="#f87171" marker-end="url(#a3)"/>
+        <path d="M250 372C340 372 340 265 398 265" stroke="#475569" marker-end="url(#a1)"/>
+        <path d="M560 220H710" stroke="#4ade80" marker-end="url(#a2)"/>
+        <path d="M560 235H710" stroke="#4ade80" marker-end="url(#a2)"/>
+        <path d="M560 250H710" stroke="#4ade80" marker-end="url(#a2)"/>
+        <path d="M560 265H710" stroke="#f87171" marker-end="url(#a3)"/>
+        <path d="M480 278V380" stroke="#5eead4" stroke-width="1.5" marker-end="url(#a2)"/>
+        <path d="M440 380Q400 330 398 258" stroke="#5eead4" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a2)"/>
+      </g>
+      <text x="624" y="218" font-size="11" fill="#4ade80">activates</text>
+      <text x="624" y="272" font-size="11" fill="#f87171">represses</text>
+      <text x="330" y="290" font-size="11" fill="#f87171">represses</text>
+      <text x="395" y="360" font-size="11" fill="#5eead4">mutual</text>
+    </svg>
+  </div>
+  <div class="bottom">
+    <div class="stats">
+      <div class="stat-box"><div class="stat-num">142,253</div><div class="stat-label">Genes</div></div>
+      <div class="stat-box"><div class="stat-num">4.2M</div><div class="stat-label">Interactions</div></div>
+      <div class="stat-box"><div class="stat-num">7M</div><div class="stat-label">Evidence records</div></div>
+      <div class="stat-box"><div class="stat-num">8</div><div class="stat-label">Species</div></div>
+    </div>
+    <div class="divider"></div>
+    <p class="brand"><strong>Darwin</strong> · Gene Regulatory Network Atlas · CAIRN Institute</p>
+  </div>
+</div>
+</body>
+</html>

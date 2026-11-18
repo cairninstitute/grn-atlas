@@ -54,7 +54,7 @@ NULL = b"\x00NULL"
 # user imported at runtime, not atlas content - neither belongs in a
 # reproducibility check of the atlas itself.
 LAYERS = {
-    "session": ("imported_*", "scrna_*"),
+    "session": ("imported_*", "scrna_*", "build_metadata"),
     "accelerated": ("geneformer_*", "esm2_*", "evo2_*", "alphafold_*",
                     "structural_binding_predictions", "protein_sequences",
                     "promoter_dna_sequences"),

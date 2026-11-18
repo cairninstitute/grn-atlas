@@ -10,6 +10,8 @@ from pathlib import Path
 DATA = Path(__file__).resolve().parent.parent / "data"
 DB = DATA / "grn.sqlite3"
 SUMMARY = DATA / "atlas_summary.json"
+EXPECTED_DIGEST = DATA / "expected_digest.sha256"
+CONTENT_DIGEST = DATA / "content_digest.json"
 
 
 def scalar(conn, query, params=()):
@@ -170,6 +172,16 @@ def main():
     else:
         imports = {}
         known_gaps = {}
+
+    if EXPECTED_DIGEST.exists() and CONTENT_DIGEST.exists():
+        expected = EXPECTED_DIGEST.read_text().strip()
+        actual = json.loads(CONTENT_DIGEST.read_text()).get("atlas_digest", "")
+        counts["content_digest_match"] = expected == actual
+        if expected != actual:
+            failures.append(
+                f"content digest mismatch: expected {expected[:16]}… got {actual[:16]}…"
+            )
+
     analysis_tables = {
         "directed_inferred_edges": ("directed_inferred_edges", "inferred_edges"),
         "celltype_regulatory_edges": ("celltype_regulatory_edges",),

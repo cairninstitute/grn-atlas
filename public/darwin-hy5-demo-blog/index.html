@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dissecting HY5: What One Question to Darwin Reveals About a Master Regulator</title>
+  <meta name="description" content="A live demonstration of Darwin's cross-layer analysis: from a single question about Arabidopsis HY5, Darwin returns 2,606 targets, 427 reciprocal binding partners, cell-type resolution across 4 root tissues, and evidence provenance from 8 independent sources." />
+  <link rel="canonical" href="https://www.cairninstitute.com/blogs/Darwin/darwin-hy5-demo-blog/" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Dissecting HY5: What One Question to Darwin Reveals About a Master Regulator" />
+  <meta property="og:description" content="2,606 targets, 427 reciprocal binding partners, 4 cell types, 8 evidence sources — all from one question to Darwin." />
+  <meta property="og:url" content="https://www.cairninstitute.com/blogs/Darwin/darwin-hy5-demo-blog/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Dissecting HY5: What One Question to Darwin Reveals About a Master Regulator" />
+  <meta name="twitter:description" content="A live demonstration of Darwin's cross-layer regulatory analysis on Arabidopsis HY5." />
+  <style>
+    :root { --fg:#111827; --muted:#4b5563; --border:#d1d5db; --bg:#fff; --accent:#0f766e; --code-bg:#f3f4f6; --accent-light:#f0fdfa; }
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.65; }
+    main { max-width:920px; margin:0 auto; padding:40px 24px 80px; }
+    h1,h2,h3 { line-height:1.25; margin-top:1.6em; margin-bottom:.6em; }
+    h1:first-child { margin-top:0; }
+    p,ul,ol,table,blockquote { margin:0 0 1em; }
+    .meta { color:var(--muted); margin-bottom:.4em; }
+    .tags { color:var(--accent); font-weight:600; margin-bottom:1.4em; }
+    table { width:100%; border-collapse:collapse; font-size:.96rem; }
+    th,td { border:1px solid var(--border); padding:10px 12px; text-align:left; vertical-align:top; }
+    th { background:#f9fafb; }
+    code { background:var(--code-bg); padding:.16em .38em; border-radius:4px; font-size:.94em; }
+    .hero-link { display:inline-block; margin:.4em 0 1.2em; color:var(--accent); font-weight:700; text-decoration:none; }
+    .hero-link:hover { text-decoration:underline; }
+    .site-header { display:flex; align-items:center; justify-content:space-between; max-width:920px; margin:0 auto; padding:16px 24px; }
+    .site-header a { color:var(--fg); text-decoration:none; }
+    .logo-group { display:flex; align-items:center; gap:12px; }
+    .logo-group img { width:40px; height:40px; border-radius:6px; }
+    .logo-group span { font-size:1.1rem; font-weight:700; }
+    .site-header nav { display:flex; gap:24px; font-size:.95rem; }
+    .site-header nav a { color:var(--muted); }
+    .site-header nav a:hover { color:var(--accent); }
+    .header-rule { max-width:920px; margin:0 auto; border:0; border-top:1px solid var(--border); }
+    .callout { border-left:4px solid var(--accent); background:var(--accent-light); padding:14px 18px; margin:1.25em 0; }
+    .footer { margin-top:2.5em; color:var(--muted); font-size:.95rem; }
+    blockquote { border-left:4px solid var(--accent); background:var(--accent-light); padding:14px 18px; margin:1.25em 0; font-style:italic; font-size:1.08rem; }
+    blockquote p { margin:0; }
+    figure { margin:1.35em 0 1.7em; }
+    figure svg { width:100%; border:1px solid var(--border); border-radius:10px; display:block; background:#fff; }
+    figcaption { color:var(--muted); font-size:.95rem; margin-top:.55em; }
+    .summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:1.2em 0 1.6em; }
+    .summary-card { border:1px solid var(--border); border-radius:10px; padding:16px 20px; }
+    .summary-card .num { font-size:1.7rem; font-weight:700; color:var(--accent); line-height:1.2; }
+    .summary-card .label { color:var(--muted); font-size:.92rem; margin-top:4px; }
+    .highlight { background:var(--accent-light); border-radius:6px; padding:2px 6px; }
+    hr { border:0; border-top:1px solid var(--border); margin:2em 0; }
+    @media (max-width:640px) {
+      main { padding:28px 18px 56px; }
+      .site-header { padding:14px 18px; }
+      .site-header nav { gap:12px; font-size:.85rem; }
+      .site-header nav a:nth-child(2),.site-header nav a:nth-child(3) { display:none; }
+      table { font-size:.88rem; }
+      th,td { padding:8px; }
+      .summary-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="https://www.cairninstitute.com/" class="logo-group">
+      <img src="cairn-logo.jpg" alt="CAIRN Institute" />
+      <span>CAIRN Institute</span>
+    </a>
+    <nav>
+      <a href="https://www.cairninstitute.com/">Home</a>
+      <a href="https://www.cairninstitute.com/about">About</a>
+      <a href="https://www.cairninstitute.com/projects">Projects</a>
+      <a href="mailto:info@cairninstitute.com">Contact</a>
+    </nav>
+  </header>
+  <hr class="header-rule" />
+  <main>
+    <h1>Dissecting HY5: What One Question to Darwin Reveals About a Master Regulator</h1>
+    <p class="meta">Author: CAIRN Institute</p>
+    <p class="meta">Published: November 9, 2026</p>
+    <p class="meta">Read time: 8&ndash;10 minutes</p>
+    <p class="tags">#GeneRegulation #Arabidopsis #PlantScience #CrossSpecies #SingleCell #AIforScience</p>
+    <a class="hero-link" href="https://www.cairninstitute.com/Darwin/">Explore Darwin &rarr;</a>
+    <p class="meta"><em>Darwin is powered by the CAIRN Institute GRN Atlas.</em></p>
+
+    <h2>The Question</h2>
+    <blockquote>
+      <p>&ldquo;Tell me everything about HY5 &mdash; who regulates it, what it controls, how that changes between cell types, and where the evidence comes from.&rdquo;</p>
+    </blockquote>
+    <p>That&rsquo;s a single question to Darwin. What follows is what it found &mdash; all from one query against its atlas of 142,000 genes, 4.2 million interactions, and 7 million evidence records across 8 species.</p>
+    <p><strong>HY5</strong> (ELONGATED HYPOCOTYL 5, AT5G11260) is a bZIP transcription factor and the master integrator of light signaling in plants. It sits at the crossroads of photomorphogenesis, hormone signaling, nutrient uptake, and flavonoid biosynthesis. It&rsquo;s one of the most-studied TFs in plant biology &mdash; and Darwin&rsquo;s atlas reflects that depth.</p>
+
+    <div class="summary-grid">
+      <div class="summary-card"><div class="num">2,606</div><div class="label">downstream targets</div></div>
+      <div class="summary-card"><div class="num">455</div><div class="label">upstream regulators</div></div>
+      <div class="summary-card"><div class="num">4,100</div><div class="label">cell-type-specific edges across 4 root tissues</div></div>
+      <div class="summary-card"><div class="num">11,554</div><div class="label">evidence records from 8 independent sources</div></div>
+      <div class="summary-card"><div class="num">427</div><div class="label">reciprocal binding partners</div></div>
+      <div class="summary-card"><div class="num">19 / 3</div><div class="label">signed edges (perturbation &amp; curation)</div></div>
+    </div>
+
+    <h2>HY5&rsquo;s Regulatory Neighborhood</h2>
+
+    <figure>
+      <svg viewBox="0 0 760 480" role="img" aria-label="HY5 regulatory neighborhood: 455 upstream regulators, 2606 downstream targets, 427 reciprocal binding partners" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="12">
+        <defs>
+          <marker id="net-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6b7280"/></marker>
+          <marker id="net-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker>
+          <marker id="net-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#dc2626"/></marker>
+        </defs>
+        <text x="24" y="30" font-size="15" font-weight="600" fill="#111827">HY5 sits at the center of a massive regulatory network</text>
+        <text x="24" y="48" font-size="11.5" fill="#6b7280">455 upstream regulators, 2,606 downstream targets, 427 reciprocal binding partners</text>
+        <!-- Upstream zone -->
+        <rect x="16" y="68" width="200" height="370" rx="12" fill="#f9fafb" stroke="#d1d5db"/>
+        <text x="116" y="92" text-anchor="middle" font-size="11" font-weight="600" fill="#6b7280">UPSTREAM REGULATORS</text>
+        <text x="116" y="108" text-anchor="middle" font-size="10.5" fill="#6b7280">455 TFs</text>
+        <!-- Shade & Warmth -->
+        <rect x="36" y="120" width="160" height="48" rx="8" fill="#7c3aed" fill-opacity="0.08" stroke="#7c3aed" stroke-width="1"/>
+        <text x="46" y="138" font-size="10.5" font-weight="600" fill="#6b7280">SHADE &amp; WARMTH</text>
+        <text x="46" y="156" font-size="11.5" fill="#111827">PIF4, HAT22</text>
+        <!-- ABA & Drought -->
+        <rect x="36" y="180" width="160" height="48" rx="8" fill="#a855f7" fill-opacity="0.08" stroke="#a855f7" stroke-width="1"/>
+        <text x="46" y="198" font-size="10.5" font-weight="600" fill="#6b7280">ABA &amp; DROUGHT</text>
+        <text x="46" y="216" font-size="11.5" fill="#111827">GBF3, GBF2, ABF1, ABF4</text>
+        <!-- Salt & Cold Stress -->
+        <rect x="36" y="240" width="160" height="48" rx="8" fill="#0284c7" fill-opacity="0.08" stroke="#0284c7" stroke-width="1"/>
+        <text x="46" y="258" font-size="10.5" font-weight="600" fill="#6b7280">SALT &amp; COLD STRESS</text>
+        <text x="46" y="276" font-size="11.5" fill="#111827">ZAT6, DREB2A, HB6</text>
+        <!-- Flowering Time -->
+        <rect x="36" y="300" width="160" height="48" rx="8" fill="#dc2626" fill-opacity="0.08" stroke="#dc2626" stroke-width="1"/>
+        <text x="46" y="318" font-size="10.5" font-weight="600" fill="#6b7280">FLOWERING TIME</text>
+        <text x="46" y="336" font-size="11.5" fill="#111827">FBH3</text>
+        <!-- Metabolism & Aging -->
+        <rect x="36" y="360" width="160" height="48" rx="8" fill="#ca8a04" fill-opacity="0.08" stroke="#ca8a04" stroke-width="1"/>
+        <text x="46" y="378" font-size="10.5" font-weight="600" fill="#6b7280">METABOLISM &amp; AGING</text>
+        <text x="46" y="396" font-size="11.5" fill="#111827">MYB3, NAC032</text>
+        <text x="116" y="428" text-anchor="middle" font-size="11" fill="#6b7280">+ 443 more regulators</text>
+        <!-- HY5 hub -->
+        <rect x="320" y="212" width="120" height="56" rx="20" fill="#0f766e" fill-opacity="0.18" stroke="#0f766e" stroke-width="2.5"/>
+        <text x="380" y="233" text-anchor="middle" font-size="16" font-weight="700" fill="#111827">HY5</text>
+        <text x="380" y="252" text-anchor="middle" font-size="10.5" fill="#6b7280">bZIP TF</text>
+        <!-- Downstream zone -->
+        <rect x="544" y="68" width="200" height="370" rx="12" fill="#f9fafb" stroke="#d1d5db"/>
+        <text x="644" y="92" text-anchor="middle" font-size="11" font-weight="600" fill="#6b7280">DOWNSTREAM TARGETS</text>
+        <text x="644" y="108" text-anchor="middle" font-size="10.5" fill="#6b7280">2,606 genes</text>
+        <!-- Light response -->
+        <rect x="564" y="120" width="160" height="60" rx="8" fill="#16a34a" fill-opacity="0.08" stroke="#16a34a" stroke-width="1"/>
+        <text x="574" y="138" font-size="10.5" font-weight="600" fill="#6b7280">LIGHT RESPONSE</text>
+        <text x="574" y="156" font-size="11.5" fill="#111827">CAB1, CAB2, ELIP1</text>
+        <text x="574" y="172" font-size="11.5" fill="#111827">FHY1, FHL, ELF4</text>
+        <!-- Nutrient -->
+        <rect x="564" y="192" width="160" height="48" rx="8" fill="#0891b2" fill-opacity="0.08" stroke="#0891b2" stroke-width="1"/>
+        <text x="574" y="210" font-size="10.5" font-weight="600" fill="#6b7280">NUTRIENT UPTAKE</text>
+        <text x="574" y="228" font-size="11.5" fill="#111827">NRT1.1, NIA2, PHR1</text>
+        <!-- Hormone -->
+        <rect x="564" y="252" width="160" height="48" rx="8" fill="#9333ea" fill-opacity="0.08" stroke="#9333ea" stroke-width="1"/>
+        <text x="574" y="270" font-size="10.5" font-weight="600" fill="#6b7280">HORMONE SIGNALING</text>
+        <text x="574" y="288" font-size="11.5" fill="#111827">IAA7, IAA14, ABI5</text>
+        <!-- Flavonoid -->
+        <rect x="564" y="312" width="160" height="48" rx="8" fill="#dc2626" fill-opacity="0.08" stroke="#dc2626" stroke-width="1"/>
+        <text x="574" y="330" font-size="10.5" font-weight="600" fill="#6b7280">FLAVONOID BIOSYNTHESIS</text>
+        <text x="574" y="348" font-size="11.5" fill="#111827">TT4, LDOX, MYB12</text>
+        <text x="644" y="392" text-anchor="middle" font-size="11" fill="#6b7280">+ 2,590 more targets</text>
+        <!-- Feedback zone -->
+        <rect x="280" y="382" width="200" height="84" rx="12" fill="#0f766e" fill-opacity="0.06" stroke="#0f766e" stroke-width="1" stroke-dasharray="4 4"/>
+        <text x="380" y="402" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0f766e">RECIPROCAL BINDING</text>
+        <text x="380" y="420" text-anchor="middle" font-size="11.5" fill="#111827">GBF3, GBF2, ABF1, MYB3, FBH3</text>
+        <text x="380" y="436" text-anchor="middle" font-size="11.5" fill="#111827">NAC032, ABF4, DREB2A, HB5, HB6</text>
+        <text x="380" y="454" text-anchor="middle" font-size="10.5" fill="#6b7280">20 of 427 reciprocal partners (selected)</text>
+        <!-- Connectors: curved from upstream categories to HY5 -->
+        <g fill="none" stroke-width="1.25">
+          <path d="M196 144C262 144 262 220 318 220" stroke="#6b7280" marker-end="url(#net-arrow)"/>
+          <path d="M196 204C262 204 262 230 318 230" stroke="#6b7280" marker-end="url(#net-arrow)"/>
+          <path d="M196 264C262 264 262 240 318 240" stroke="#6b7280" marker-end="url(#net-arrow)"/>
+          <path d="M196 324C262 324 262 250 318 250" stroke="#dc2626" marker-end="url(#net-red)"/>
+          <path d="M196 384C262 384 262 258 318 258" stroke="#6b7280" marker-end="url(#net-arrow)"/>
+          <path d="M440 220H564" stroke="#16a34a" marker-end="url(#net-green)"/>
+          <path d="M440 232H564" stroke="#16a34a" marker-end="url(#net-green)"/>
+          <path d="M440 244H564" stroke="#16a34a" marker-end="url(#net-green)"/>
+          <path d="M440 256H544" stroke="#dc2626" marker-end="url(#net-red)"/>
+          <path d="M380 268V382" stroke="#0f766e" stroke-width="1.5" marker-end="url(#net-arrow)"/>
+          <path d="M350 382Q320 340 318 260" stroke="#0f766e" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#net-arrow)"/>
+        </g>
+        <text x="502" y="218" font-size="10.5" fill="#16a34a">activates</text>
+        <text x="502" y="262" font-size="10.5" fill="#dc2626">represses</text>
+        <text x="268" y="298" font-size="10.5" fill="#dc2626">represses</text>
+        <text x="304" y="334" font-size="10.5" fill="#0f766e">mutual</text>
+      </svg>
+      <figcaption>HY5&rsquo;s regulatory neighborhood from Darwin&rsquo;s atlas. Arrows show regulatory direction; green = activation, red = repression, dashed = reciprocal binding. All edges backed by evidence from 8 independent sources.</figcaption>
+    </figure>
+
+    <p>HY5 doesn&rsquo;t just regulate genes &mdash; it anchors an interconnected web. Its 2,606 targets span light response (the photosynthetic apparatus), nutrient signaling (nitrate and phosphate uptake), hormone pathways (auxin via IAA7/IAA14), and secondary metabolism (flavonoid biosynthesis via TT4 and MYB12). Of the 22 signed edges from perturbation and curation sources, 19 are activations and 3 are repressions &mdash; HY5 is predominantly an activator. The remaining edges rest on binding evidence (ChIP-seq, DAP-seq, motif prediction) which establishes physical occupancy but not regulatory direction. Of its 455 upstream regulators, 427 also appear as downstream targets, making them reciprocal binding partners (dashed). Whether reciprocal binding reflects true mutual regulation or co-occupancy between abundant TFs is an open question that requires signed evidence to resolve.</p>
+
+    <h2>Cell-Type Resolution</h2>
+
+    <figure>
+      <svg viewBox="0 0 760 520" role="img" aria-label="HY5 target genes by cell type: some ubiquitous, others tissue-specific" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="12">
+        <text x="24" y="28" font-size="15" font-weight="600" fill="#111827">Same TF, different targets in every cell type</text>
+        <text x="24" y="46" font-size="11.5" fill="#6b7280">HY5 activates 6 targets in all 4 root cell types, but 13 others are tissue-specific</text>
+        <!-- Column headers -->
+        <text x="175" y="78" text-anchor="middle" font-size="11.5" font-weight="600" fill="#111827">Cortex</text>
+        <text x="285" y="78" text-anchor="middle" font-size="11.5" font-weight="600" fill="#111827">Epidermis</text>
+        <text x="395" y="78" text-anchor="middle" font-size="11.5" font-weight="600" fill="#111827">Meristem</text>
+        <text x="505" y="78" text-anchor="middle" font-size="11.5" font-weight="600" fill="#111827">Stele</text>
+        <line x1="120" y1="86" x2="560" y2="86" stroke="#d1d5db"/>
+        <!-- Grid lines -->
+        <line x1="175" y1="86" x2="175" y2="494" stroke="#d1d5db" stroke-width="0.75"/>
+        <line x1="285" y1="86" x2="285" y2="494" stroke="#d1d5db" stroke-width="0.75"/>
+        <line x1="395" y1="86" x2="395" y2="494" stroke="#d1d5db" stroke-width="0.75"/>
+        <line x1="505" y1="86" x2="505" y2="494" stroke="#d1d5db" stroke-width="0.75"/>
+        <!-- Ubiquitous targets (rows 0-5, y starts at 100) -->
+        <!-- MYB12 - flavonoid -->
+        <text x="112" y="104" text-anchor="end" font-size="11.5" fill="#111827">MYB12</text>
+        <circle cx="175" cy="100" r="7" fill="#a855f7" fill-opacity="0.7" stroke="#a855f7" stroke-width="1.25"/>
+        <circle cx="285" cy="100" r="7" fill="#a855f7" fill-opacity="0.7" stroke="#a855f7" stroke-width="1.25"/>
+        <circle cx="395" cy="100" r="7" fill="#a855f7" fill-opacity="0.7" stroke="#a855f7" stroke-width="1.25"/>
+        <circle cx="505" cy="100" r="7" fill="#a855f7" fill-opacity="0.7" stroke="#a855f7" stroke-width="1.25"/>
+        <!-- IAA7 - hormone -->
+        <text x="112" y="126" text-anchor="end" font-size="11.5" fill="#111827">IAA7</text>
+        <circle cx="175" cy="122" r="7" fill="#9333ea" fill-opacity="0.7" stroke="#9333ea" stroke-width="1.25"/>
+        <circle cx="285" cy="122" r="7" fill="#9333ea" fill-opacity="0.7" stroke="#9333ea" stroke-width="1.25"/>
+        <circle cx="395" cy="122" r="7" fill="#9333ea" fill-opacity="0.7" stroke="#9333ea" stroke-width="1.25"/>
+        <circle cx="505" cy="122" r="7" fill="#9333ea" fill-opacity="0.7" stroke="#9333ea" stroke-width="1.25"/>
+        <!-- IAA14 - hormone -->
+        <text x="112" y="148" text-anchor="end" font-size="11.5" fill="#111827">IAA14</text>
+        <circle cx="175" cy="144" r="7" fill="#9333ea" fill-opacity="0.7" stroke="#9333ea" stroke-width="1.25"/>
+        <circle cx="285" cy="144" r="7" fill="#9333ea" fill-opacity="0.7" stroke="#9333ea" stroke-width="1.25"/>
+        <circle cx="395" cy="144" r="7" fill="#9333ea" fill-opacity="0.7" stroke="#9333ea" stroke-width="1.25"/>
+        <circle cx="505" cy="144" r="7" fill="#9333ea" fill-opacity="0.7" stroke="#9333ea" stroke-width="1.25"/>
+        <!-- LZF1 - light -->
+        <text x="112" y="170" text-anchor="end" font-size="11.5" fill="#111827">LZF1</text>
+        <circle cx="175" cy="166" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <circle cx="285" cy="166" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <circle cx="395" cy="166" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <circle cx="505" cy="166" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <!-- ELF4 - light -->
+        <text x="112" y="192" text-anchor="end" font-size="11.5" fill="#111827">ELF4</text>
+        <circle cx="175" cy="188" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <circle cx="285" cy="188" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <circle cx="395" cy="188" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <circle cx="505" cy="188" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <!-- HEMA1 - light -->
+        <text x="112" y="214" text-anchor="end" font-size="11.5" fill="#111827">HEMA1</text>
+        <circle cx="175" cy="210" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <circle cx="285" cy="210" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <circle cx="395" cy="210" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <circle cx="505" cy="210" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <!-- Divider line -->
+        <line x1="120" y1="231" x2="560" y2="231" stroke="#0f766e" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="572" y="160" font-size="10.5" fill="#0f766e">ubiquitous</text>
+        <text x="572" y="360" font-size="10.5" fill="#6b7280">tissue-specific</text>
+        <!-- Tissue-specific targets -->
+        <!-- CAB1 - epidermis only, light -->
+        <text x="112" y="258" text-anchor="end" font-size="11.5" font-weight="600" fill="#111827">CAB1</text>
+        <circle cx="175" cy="254" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="285" cy="254" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <circle cx="395" cy="254" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="505" cy="254" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <!-- NRT1.1 - cortex only, nutrient -->
+        <text x="112" y="280" text-anchor="end" font-size="11.5" font-weight="600" fill="#111827">NRT1.1</text>
+        <circle cx="175" cy="276" r="7" fill="#0891b2" fill-opacity="0.7" stroke="#0891b2" stroke-width="1.25"/>
+        <circle cx="285" cy="276" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="395" cy="276" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="505" cy="276" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <!-- PHR1 - stele only, nutrient -->
+        <text x="112" y="302" text-anchor="end" font-size="11.5" font-weight="600" fill="#111827">PHR1</text>
+        <circle cx="175" cy="298" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="285" cy="298" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="395" cy="298" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="505" cy="298" r="7" fill="#0891b2" fill-opacity="0.7" stroke="#0891b2" stroke-width="1.25"/>
+        <!-- ABI5 - cortex only, hormone -->
+        <text x="112" y="324" text-anchor="end" font-size="11.5" font-weight="600" fill="#111827">ABI5</text>
+        <circle cx="175" cy="320" r="7" fill="#9333ea" fill-opacity="0.7" stroke="#9333ea" stroke-width="1.25"/>
+        <circle cx="285" cy="320" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="395" cy="320" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="505" cy="320" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <!-- TT4 - epidermis only, flavonoid -->
+        <text x="112" y="346" text-anchor="end" font-size="11.5" font-weight="600" fill="#111827">TT4</text>
+        <circle cx="175" cy="342" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="285" cy="342" r="7" fill="#a855f7" fill-opacity="0.7" stroke="#a855f7" stroke-width="1.25"/>
+        <circle cx="395" cy="342" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="505" cy="342" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <!-- NIA2 - cortex + epidermis, nutrient -->
+        <text x="112" y="368" text-anchor="end" font-size="11.5" font-weight="600" fill="#111827">NIA2</text>
+        <circle cx="175" cy="364" r="7" fill="#0891b2" fill-opacity="0.7" stroke="#0891b2" stroke-width="1.25"/>
+        <circle cx="285" cy="364" r="7" fill="#0891b2" fill-opacity="0.7" stroke="#0891b2" stroke-width="1.25"/>
+        <circle cx="395" cy="364" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="505" cy="364" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <!-- ELIP1 - epidermis, light -->
+        <text x="112" y="390" text-anchor="end" font-size="11.5" font-weight="600" fill="#111827">ELIP1</text>
+        <circle cx="175" cy="386" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="285" cy="386" r="7" fill="#0f766e" fill-opacity="0.7" stroke="#0f766e" stroke-width="1.25"/>
+        <circle cx="395" cy="386" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="505" cy="386" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <!-- NCED9 - meristem, hormone -->
+        <text x="112" y="412" text-anchor="end" font-size="11.5" font-weight="600" fill="#111827">NCED9</text>
+        <circle cx="175" cy="408" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="285" cy="408" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="395" cy="408" r="7" fill="#9333ea" fill-opacity="0.7" stroke="#9333ea" stroke-width="1.25"/>
+        <circle cx="505" cy="408" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <!-- HB-8 - stele, hormone -->
+        <text x="112" y="434" text-anchor="end" font-size="11.5" font-weight="600" fill="#111827">HB-8</text>
+        <circle cx="175" cy="430" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="285" cy="430" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="395" cy="430" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="505" cy="430" r="7" fill="#9333ea" fill-opacity="0.7" stroke="#9333ea" stroke-width="1.25"/>
+        <!-- OPT3 - stele, nutrient -->
+        <text x="112" y="456" text-anchor="end" font-size="11.5" font-weight="600" fill="#111827">OPT3</text>
+        <circle cx="175" cy="452" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="285" cy="452" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="395" cy="452" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="505" cy="452" r="7" fill="#0891b2" fill-opacity="0.7" stroke="#0891b2" stroke-width="1.25"/>
+        <!-- LCD - meristem -->
+        <text x="112" y="478" text-anchor="end" font-size="11.5" font-weight="600" fill="#111827">LCD</text>
+        <circle cx="175" cy="474" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="285" cy="474" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <circle cx="395" cy="474" r="7" fill="#6b7280" fill-opacity="0.5" stroke="#6b7280" stroke-width="1.25"/>
+        <circle cx="505" cy="474" r="2" fill="#d1d5db" fill-opacity="0.4"/>
+        <!-- Legend -->
+        <circle cx="36" cy="506" r="5" fill="#0f766e" fill-opacity="0.7"/>
+        <text x="48" y="510" font-size="10.5" fill="#6b7280">light</text>
+        <circle cx="96" cy="506" r="5" fill="#0891b2" fill-opacity="0.7"/>
+        <text x="108" y="510" font-size="10.5" fill="#6b7280">nutrient</text>
+        <circle cx="172" cy="506" r="5" fill="#9333ea" fill-opacity="0.7"/>
+        <text x="184" y="510" font-size="10.5" fill="#6b7280">hormone</text>
+        <circle cx="248" cy="506" r="5" fill="#a855f7" fill-opacity="0.7"/>
+        <text x="260" y="510" font-size="10.5" fill="#6b7280">flavonoid</text>
+      </svg>
+      <figcaption>Cell-type-specific regulation by HY5 across 4 Arabidopsis root cell types (from scRNA-seq integration). Filled dots = HY5 actively regulates this target in this cell type. The 6 ubiquitous targets above the dashed line are core light-response genes; the tissue-specific targets below reveal how HY5 wires different functions into different cell identities.</figcaption>
+    </figure>
+
+    <p>Bulk databases would tell you HY5 regulates IAA7. Darwin tells you it regulates IAA7 in <em>all four root cell types</em> but PHR1 only in the stele and TT4 only in the epidermis. This is the difference between knowing a gene&rsquo;s targets and understanding where those targets actually matter. The 6 ubiquitous targets (above the dashed line) are core light-response genes; the 13 tissue-specific targets reveal how HY5 wires different functions into different cell identities.</p>
+
+    <h2>Evidence Audit</h2>
+
+    <figure>
+      <svg viewBox="0 0 760 400" role="img" aria-label="HY5 evidence from 8 independent sources totaling 11,554 records" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="12">
+        <text x="24" y="28" font-size="15" font-weight="600" fill="#111827">11,554 evidence records from 8 independent sources</text>
+        <text x="24" y="46" font-size="11.5" fill="#6b7280">No single database is trusted alone &mdash; confidence comes from independent agreement</text>
+        <line x1="160" y1="72" x2="160" y2="348" stroke="#6b7280" stroke-width="1.25"/>
+        <!-- ConnecTF -->
+        <text x="152" y="94" text-anchor="end" font-size="11.5" fill="#111827">ConnecTF</text>
+        <rect x="160" y="80" width="494" height="28" rx="4" fill="#0f766e" fill-opacity="0.6" stroke="#0f766e" stroke-width="1"/>
+        <text x="662" y="98" font-size="11.5" font-weight="600" fill="#111827">8,117</text>
+        <!-- PlantTFDB -->
+        <text x="152" y="130" text-anchor="end" font-size="11.5" fill="#111827">PlantTFDB</text>
+        <rect x="160" y="116" width="74" height="28" rx="4" fill="#0891b2" fill-opacity="0.6" stroke="#0891b2" stroke-width="1"/>
+        <text x="242" y="134" font-size="11.5" font-weight="600" fill="#111827">1,217</text>
+        <!-- UniBind -->
+        <text x="152" y="166" text-anchor="end" font-size="11.5" fill="#111827">UniBind</text>
+        <rect x="160" y="152" width="30" height="28" rx="4" fill="#0891b2" fill-opacity="0.6" stroke="#0891b2" stroke-width="1"/>
+        <text x="198" y="170" font-size="11.5" font-weight="600" fill="#111827">500</text>
+        <!-- ReMap -->
+        <text x="152" y="202" text-anchor="end" font-size="11.5" fill="#111827">ReMap</text>
+        <rect x="160" y="188" width="30" height="28" rx="4" fill="#0891b2" fill-opacity="0.6" stroke="#0891b2" stroke-width="1"/>
+        <text x="198" y="206" font-size="11.5" font-weight="600" fill="#111827">500</text>
+        <!-- DirectBinding -->
+        <text x="152" y="238" text-anchor="end" font-size="11.5" fill="#111827">DirectBinding</text>
+        <rect x="160" y="224" width="26" height="28" rx="4" fill="#0891b2" fill-opacity="0.6" stroke="#0891b2" stroke-width="1"/>
+        <text x="194" y="242" font-size="11.5" font-weight="600" fill="#111827">423</text>
+        <!-- ChIP-Atlas -->
+        <text x="152" y="274" text-anchor="end" font-size="11.5" fill="#111827">ChIP-Atlas</text>
+        <rect x="160" y="260" width="22" height="28" rx="4" fill="#0891b2" fill-opacity="0.6" stroke="#0891b2" stroke-width="1"/>
+        <text x="190" y="278" font-size="11.5" font-weight="600" fill="#111827">350</text>
+        <!-- AGRIS expanded -->
+        <text x="152" y="310" text-anchor="end" font-size="11.5" fill="#111827">AGRIS expanded</text>
+        <rect x="160" y="296" width="14" height="28" rx="4" fill="#a855f7" fill-opacity="0.6" stroke="#a855f7" stroke-width="1"/>
+        <text x="182" y="314" font-size="11.5" font-weight="600" fill="#111827">225</text>
+        <!-- AGRIS AtRegNet -->
+        <text x="152" y="346" text-anchor="end" font-size="11.5" fill="#111827">AGRIS AtRegNet</text>
+        <rect x="160" y="332" width="14" height="28" rx="4" fill="#a855f7" fill-opacity="0.6" stroke="#a855f7" stroke-width="1"/>
+        <text x="182" y="350" font-size="11.5" font-weight="600" fill="#111827">222</text>
+        <!-- Legend -->
+        <rect x="36" y="380" width="12" height="12" rx="3" fill="#0f766e" fill-opacity="0.6"/>
+        <text x="54" y="390" font-size="10.5" fill="#6b7280">perturbation</text>
+        <rect x="146" y="380" width="12" height="12" rx="3" fill="#0891b2" fill-opacity="0.6"/>
+        <text x="164" y="390" font-size="10.5" fill="#6b7280">ChIP / binding</text>
+        <rect x="260" y="380" width="12" height="12" rx="3" fill="#a855f7" fill-opacity="0.6"/>
+        <text x="278" y="390" font-size="10.5" fill="#6b7280">literature-curated</text>
+      </svg>
+      <figcaption>Evidence breakdown for HY5 (AT5G11260) across all loaded sources in Darwin&rsquo;s atlas. Colors indicate evidence type: perturbation experiments, ChIP-seq/binding assays, and literature curation.</figcaption>
+    </figure>
+
+    <p>Darwin doesn&rsquo;t just say &ldquo;HY5 regulates CAB1&rdquo; &mdash; it says <em>why it thinks so</em>, tracing each claim to its source. ConnecTF dominates with 8,117 perturbation experiment records (knockout/overexpression with measured downstream effects). Five independent ChIP-seq and binding databases add 2,990 physical binding records. Two literature-curated databases contribute 447 manually reviewed interactions. When Darwin reports a high-confidence edge, it&rsquo;s because multiple independent lines of evidence &mdash; perturbation, binding, and curation &mdash; all agree.</p>
+
+    <h2>Reciprocal Binding Partners</h2>
+    <p>Of HY5&rsquo;s 427 reciprocal binding partners, we highlight 20 that span the major pathway categories. These are TFs with binding evidence in both directions &mdash; each binds HY5&rsquo;s promoter and HY5 binds theirs. None of these 20 pairs currently carries a regulatory sign in both directions, so the loop-type classifications below are interpretive (based on known gene function), not computed from the atlas.</p>
+
+    <table>
+      <thead>
+        <tr><th>Partner</th><th>Their targets</th><th>Function</th><th>Likely loop type (interpretation)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>GBF3</td><td>17,044</td><td>bZIP TF, light and ABA signaling</td><td>Reinforcing</td></tr>
+        <tr><td>GBF2</td><td>14,458</td><td>bZIP TF, blue light response</td><td>Reinforcing</td></tr>
+        <tr><td>ABF1</td><td>10,390</td><td>ABA-responsive element binding</td><td>Cross-pathway</td></tr>
+        <tr><td>ABF3</td><td>13,657</td><td>ABA signaling, stress response</td><td>Cross-pathway</td></tr>
+        <tr><td>ABF4</td><td>10,391</td><td>ABA signaling, drought tolerance</td><td>Cross-pathway</td></tr>
+        <tr><td>MYB3</td><td>8,419</td><td>Phenylpropanoid repressor</td><td>Balancing</td></tr>
+        <tr><td>FBH3</td><td>4,680</td><td>Flowering time, photoperiod</td><td>Cross-pathway</td></tr>
+        <tr><td>DREB2A</td><td>3,415</td><td>Drought/heat stress response</td><td>Cross-pathway</td></tr>
+        <tr><td>HB5</td><td>17,552</td><td>HD-Zip TF, shade avoidance</td><td>Reinforcing</td></tr>
+        <tr><td>HB6</td><td>14,219</td><td>HD-Zip TF, ABA signaling</td><td>Cross-pathway</td></tr>
+        <tr><td>NAC032</td><td>9,196</td><td>NAC TF, senescence</td><td>Balancing</td></tr>
+        <tr><td>NAC102</td><td>5,922</td><td>NAC TF, stress tolerance</td><td>Cross-pathway</td></tr>
+        <tr><td>NF-YB2</td><td>18,945</td><td>CCAAT-box binding, flowering</td><td>Cross-pathway</td></tr>
+        <tr><td>NF-YC2</td><td>10,030</td><td>CCAAT-box binding subunit</td><td>Cross-pathway</td></tr>
+        <tr><td>RD26</td><td>14,420</td><td>Drought-responsive NAC</td><td>Cross-pathway</td></tr>
+        <tr><td>ZAT6</td><td>14,481</td><td>Zinc finger, phosphate starvation</td><td>Cross-pathway</td></tr>
+        <tr><td>HAT22</td><td>11,763</td><td>HD-Zip II, auxin signaling</td><td>Cross-pathway</td></tr>
+        <tr><td>MYBR1</td><td>13,322</td><td>MYB-related, light signaling</td><td>Reinforcing</td></tr>
+        <tr><td>HB-7</td><td>15,227</td><td>HD-Zip TF, ABA response</td><td>Cross-pathway</td></tr>
+        <tr><td>AT5G04760</td><td>15,335</td><td>Uncharacterized TF</td><td>Unknown</td></tr>
+      </tbody>
+    </table>
+
+    <p>The pattern is striking: these 20 selected partners collectively regulate over 200,000 targets. This suggests a densely interconnected control architecture where light signaling, hormone response (ABA, auxin), stress tolerance, and flowering time are all wired together through mutual binding. Whether these reciprocal binding relationships reflect true regulatory feedback &mdash; where perturbing one partner changes the other&rsquo;s expression &mdash; remains to be tested with perturbation experiments for most pairs.</p>
+
+    <h2>Cross-Species: From Arabidopsis to Crop</h2>
+    <p>HY5 isn&rsquo;t just an Arabidopsis gene. Darwin finds the tomato ortholog (Solyc08g061130.2) already in the atlas with 874 regulatory targets and 394 evidence records from PlantTFDB binding predictions. The cross-species view reveals what&rsquo;s conserved and what&rsquo;s diverged.</p>
+
+    <table>
+      <thead>
+        <tr><th>Species</th><th>HY5 ortholog</th><th>Targets</th><th>Evidence records</th><th>Top evidence source</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Arabidopsis</td><td><code>AT5G11260</code></td><td>2,606</td><td>11,554</td><td>ConnecTF (8,117 perturbation)</td></tr>
+        <tr><td>Tomato</td><td><code>Solyc08g061130.2</code></td><td>874</td><td>394</td><td>PlantTFDB (binding)</td></tr>
+      </tbody>
+    </table>
+
+    <p>This is where Darwin&rsquo;s cross-kingdom design pays off. The 2,606 HY5 targets in Arabidopsis &mdash; supported by perturbation, ChIP-seq, and binding-prediction evidence &mdash; become <em>hypotheses</em> for the tomato ortholog. Darwin&rsquo;s orthology transfer pipeline identifies conserved targets across species, scores them by evidence strength, and flags them as <strong>inferred</strong> (never as measured). A tomato breeder asking &ldquo;which genes does HY5 regulate in my crop?&rdquo; gets both the direct tomato evidence <em>and</em> the much richer Arabidopsis knowledge, clearly labeled by source. Note that the 394 tomato evidence records come from PlantTFDB binding predictions, not perturbation experiments.</p>
+
+    <p>The same principle extends across all 8 species in the atlas:</p>
+
+    <table>
+      <thead>
+        <tr><th>Species</th><th>TFs with edges</th><th>Total interactions</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Arabidopsis</td><td>859</td><td>2,022,227</td></tr>
+        <tr><td>Human</td><td>5,104</td><td>1,176,703</td></tr>
+        <tr><td>Tomato</td><td>866</td><td>393,741</td></tr>
+        <tr><td>Mouse</td><td>3,151</td><td>346,417</td></tr>
+        <tr><td>Petunia</td><td>700</td><td>236,745</td></tr>
+        <tr><td>Rice</td><td>343</td><td>54,421</td></tr>
+        <tr><td>Potato</td><td>252</td><td>11,409</td></tr>
+        <tr><td>Pepper</td><td>99</td><td>2,212</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout"><strong>Evidence boundary:</strong> Every edge in every species carries its full provenance. Darwin never claims a binding prediction is a perturbation result, and never promotes an orthology transfer into a measured interaction. The honesty is the point: a researcher can trust the confidence scores because they know exactly what&rsquo;s behind them.</div>
+
+    <hr />
+
+    <p>This entire analysis &mdash; the network map, the cell-type resolution, the evidence audit, the feedback architecture, and the cross-species comparison &mdash; came from a single question to Darwin. No manual database queries, no spreadsheet joins, no literature mining. Just: <em>&ldquo;Tell me everything about HY5.&rdquo;</em></p>
+
+    <p class="footer">Explore <a href="https://www.cairninstitute.com/Darwin/">Darwin</a> and learn more about the <a href="https://www.cairninstitute.com/">CAIRN Institute</a>.</p>
+  </main>
+</body>
+</html>

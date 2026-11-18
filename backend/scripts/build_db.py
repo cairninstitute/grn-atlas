@@ -833,8 +833,24 @@ def build():
             fetched_at               TEXT,
             PRIMARY KEY (gene_id, species)
         );
+
+        CREATE TABLE build_metadata (
+            key   TEXT PRIMARY KEY,
+            value TEXT NOT NULL
+        );
     """)
     ensure_schema(conn)
+
+    import importlib.metadata as _md
+    _py_ver = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    _pkgs = {d.name: d.version for d in sorted(_md.distributions(), key=lambda d: d.name.lower())}
+    conn.execute("INSERT INTO build_metadata (key, value) VALUES (?, ?)",
+                 ("python_version", _py_ver))
+    conn.execute("INSERT INTO build_metadata (key, value) VALUES (?, ?)",
+                 ("packages", json.dumps(_pkgs, sort_keys=True)))
+    conn.execute("INSERT INTO build_metadata (key, value) VALUES (?, ?)",
+                 ("built_at", __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()))
+    conn.commit()
 
     # Insert human genes
     conn.executemany(
@@ -933,7 +949,7 @@ def build():
         "VALUES (?, ?, ?, ?, ?, ?)",
         [(gid, g.get("symbol", gid), g.get("name", gid), g["species"],
           1 if g.get("is_tf") else 0, "protein_coding")
-         for gid, g in extra_genes.items()],
+         for gid, g in sorted(extra_genes.items())],
     )
 
     valid_ids = set(human_genes) | set(mouse_genes) | set(arab_all) | set(rice_all) | set(extra_genes)
