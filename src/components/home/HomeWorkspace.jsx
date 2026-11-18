@@ -141,6 +141,12 @@ export default function HomeWorkspace({ onNavigate, onGeneSearch, onOpenGeneSet 
             <span className="home-featured-copy">The Arabidopsis circadian scaffold with candidate return arms. Each linked to the experiment that would test it.</span>
             <span className="home-featured-action">Explore the circuit →</span>
           </button>
+          <button className="home-featured-demo secondary" type="button" onClick={() => onNavigate('root-celltype')}>
+            <span className="home-featured-label">Cell-type resolution</span>
+            <span className="home-featured-title">Root cell-type regulatory map</span>
+            <span className="home-featured-copy">TF activity painted on an Arabidopsis root cross-section. 4,727 cells, four zones, 1.2M cell-type edges.</span>
+            <span className="home-featured-action">View the map →</span>
+          </button>
         </div>
         <div className="home-section-heading">
           <div>

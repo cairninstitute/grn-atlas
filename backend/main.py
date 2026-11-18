@@ -7965,6 +7965,56 @@ async def scrna_cluster_expression(species: str, cluster_id: str, limit: int = 1
             "genes": [{"gene_id": r[0], "mean_expression": r[1], "symbol": r[2]} for r in rows]}
 
 
+@app.get("/api/v1/celltype/{species}/tf-activity")
+async def celltype_tf_activity(species: str, dataset_id: str = None, limit: int = 30):
+    """Top TFs with expression breakdown by cell-type cluster."""
+    conn = db.conn
+    ds = dataset_id or f"scrna_{species}"
+    try:
+        clusters = conn.execute(
+            "SELECT cluster_id, cluster_name FROM scrna_clusters WHERE dataset_id = ? ORDER BY cluster_id",
+            (ds,),
+        ).fetchall()
+    except Exception:
+        raise HTTPException(status_code=404, detail=f"No scRNA-seq data for {species}")
+    if not clusters:
+        raise HTTPException(status_code=404, detail=f"No scRNA-seq clusters for {species}")
+    cluster_ids = [c[0] for c in clusters]
+    cluster_names = {c[0]: c[1] for c in clusters}
+    tfs = conn.execute(
+        "SELECT DISTINCT re.source_id, g.symbol "
+        "FROM celltype_regulatory_edges re "
+        "JOIN genes g ON g.id = re.source_id "
+        "WHERE re.dataset_id = ? "
+        "ORDER BY g.symbol LIMIT ?",
+        (ds, limit * 5),
+    ).fetchall()
+    if not tfs:
+        raise HTTPException(status_code=404, detail="No cell-type regulatory edges found")
+    tf_ids = [t[0] for t in tfs]
+    tf_symbols = {t[0]: t[1] for t in tfs}
+    placeholders = ",".join("?" * len(tf_ids))
+    expr_rows = conn.execute(
+        f"SELECT gene_id, cluster_id, mean_expression FROM scrna_cluster_expression "
+        f"WHERE dataset_id = ? AND gene_id IN ({placeholders})",
+        [ds] + tf_ids,
+    ).fetchall()
+    expr_map = {}
+    for gene_id, cluster_id, mean_expr in expr_rows:
+        expr_map.setdefault(gene_id, {})[cluster_names.get(cluster_id, cluster_id)] = round(mean_expr, 3)
+    result = []
+    for gene_id in tf_ids:
+        if gene_id not in expr_map:
+            continue
+        total = sum(expr_map[gene_id].values())
+        if total <= 0:
+            continue
+        result.append({"gene_id": gene_id, "symbol": tf_symbols.get(gene_id, gene_id),
+                        "expression": expr_map[gene_id], "total_expression": round(total, 3)})
+    result.sort(key=lambda x: x["total_expression"], reverse=True)
+    return {"species": species, "dataset_id": ds, "tfs": result[:limit]}
+
+
 @app.get("/api/v1/directed-network/{species}/stats")
 async def directed_network_stats(species: str):
     """Get statistics for the directed inferred network."""

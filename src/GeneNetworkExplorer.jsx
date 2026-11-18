@@ -29,6 +29,7 @@ const ControlAtlasDemo = lazy(() => import('./components/demo/ControlAtlasDemo')
 const EvidenceTierSlider = lazy(() => import('./components/demo/EvidenceTierSlider'));
 const SignPredictionAnalysis = lazy(() => import('./components/demo/SignPredictionAnalysis'));
 const ClosingTheClock = lazy(() => import('./components/demo/ClosingTheClock'));
+const RootCelltypeMap = lazy(() => import('./components/demo/RootCelltypeMap'));
 
 const SPECIES_TO_KINGDOM = {
   human: 'Animalia',
@@ -84,6 +85,7 @@ function getInitialRoute() {
   if (requested === 'evidence-tier') return { mode: 'evidence-tier', subView: 'network' };
   if (requested === 'sign-analysis') return { mode: 'sign-analysis', subView: 'network' };
   if (requested === 'closing-clock') return { mode: 'closing-clock', subView: 'network' };
+  if (requested === 'root-celltype') return { mode: 'root-celltype', subView: 'network' };
   if (params.get('gene')) return { mode: 'explore', subView: 'network' };
   return { mode: 'home', subView: 'network' };
 }
@@ -190,6 +192,8 @@ function ExplorerInner() {
       setViewMode('sign-analysis');
     } else if (target === 'closing-clock') {
       setViewMode('closing-clock');
+    } else if (target === 'root-celltype') {
+      setViewMode('root-celltype');
     } else {
       setViewMode('explore');
     }
@@ -271,7 +275,7 @@ function ExplorerInner() {
   useEffect(() => {
     const p = new URLSearchParams();
     if (selectedGene) p.set('gene', selectedGene.symbol);
-    p.set('view', ['home', 'toolbox', 'demo', 'evidence-tier', 'sign-analysis', 'closing-clock'].includes(viewMode) ? (viewMode === 'demo' ? 'control-demo' : viewMode) : subView);
+    p.set('view', ['home', 'toolbox', 'demo', 'evidence-tier', 'sign-analysis', 'closing-clock', 'root-celltype'].includes(viewMode) ? (viewMode === 'demo' ? 'control-demo' : viewMode) : subView);
     if (filters.species?.length) p.set('species', filters.species.join(','));
     p.set('reg', filters.regulationType.join(','));
     p.set('conf', String(filters.minConfidence));
@@ -508,7 +512,7 @@ function ExplorerInner() {
       <div className="main-content">
         {!chromeCollapsed && (
           <>
-            <AppNavigation mode={['demo', 'evidence-tier', 'sign-analysis', 'closing-clock'].includes(viewMode) ? 'home' : viewMode} onChange={handlePrimaryModeChange} />
+            <AppNavigation mode={['demo', 'evidence-tier', 'sign-analysis', 'closing-clock', 'root-celltype'].includes(viewMode) ? 'home' : viewMode} onChange={handlePrimaryModeChange} />
             {!['home', 'demo'].includes(viewMode) && <ResearchContextBar />}
             {selectedGene && viewMode === 'explore' && subView === 'network' && (
               <Toolbar gene={selectedGene} stats={networkData?.stats} cyRef={cyInstanceRef} />
@@ -625,6 +629,10 @@ function ExplorerInner() {
           {viewMode === 'closing-clock' && renderWithSuspense(
             <ClosingTheClock />,
             'Loading circadian clock analysis…',
+          )}
+          {viewMode === 'root-celltype' && renderWithSuspense(
+            <RootCelltypeMap />,
+            'Loading root cell-type map…',
           )}
           {viewMode === 'explore' && renderExploreView()}
           {viewMode === 'design' && renderDesignView()}
