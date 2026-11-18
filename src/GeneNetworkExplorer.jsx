@@ -28,6 +28,7 @@ const HomeWorkspace = lazy(() => import('./components/home/HomeWorkspace'));
 const ControlAtlasDemo = lazy(() => import('./components/demo/ControlAtlasDemo'));
 const EvidenceTierSlider = lazy(() => import('./components/demo/EvidenceTierSlider'));
 const SignPredictionAnalysis = lazy(() => import('./components/demo/SignPredictionAnalysis'));
+const ClosingTheClock = lazy(() => import('./components/demo/ClosingTheClock'));
 
 const SPECIES_TO_KINGDOM = {
   human: 'Animalia',
@@ -82,6 +83,7 @@ function getInitialRoute() {
   if (requested === 'control-demo') return { mode: 'demo', subView: 'network' };
   if (requested === 'evidence-tier') return { mode: 'evidence-tier', subView: 'network' };
   if (requested === 'sign-analysis') return { mode: 'sign-analysis', subView: 'network' };
+  if (requested === 'closing-clock') return { mode: 'closing-clock', subView: 'network' };
   if (params.get('gene')) return { mode: 'explore', subView: 'network' };
   return { mode: 'home', subView: 'network' };
 }
@@ -186,6 +188,8 @@ function ExplorerInner() {
       setViewMode('evidence-tier');
     } else if (target === 'sign-analysis') {
       setViewMode('sign-analysis');
+    } else if (target === 'closing-clock') {
+      setViewMode('closing-clock');
     } else {
       setViewMode('explore');
     }
@@ -267,7 +271,7 @@ function ExplorerInner() {
   useEffect(() => {
     const p = new URLSearchParams();
     if (selectedGene) p.set('gene', selectedGene.symbol);
-    p.set('view', ['home', 'toolbox', 'demo', 'evidence-tier', 'sign-analysis'].includes(viewMode) ? (viewMode === 'demo' ? 'control-demo' : viewMode) : subView);
+    p.set('view', ['home', 'toolbox', 'demo', 'evidence-tier', 'sign-analysis', 'closing-clock'].includes(viewMode) ? (viewMode === 'demo' ? 'control-demo' : viewMode) : subView);
     if (filters.species?.length) p.set('species', filters.species.join(','));
     p.set('reg', filters.regulationType.join(','));
     p.set('conf', String(filters.minConfidence));
@@ -504,7 +508,7 @@ function ExplorerInner() {
       <div className="main-content">
         {!chromeCollapsed && (
           <>
-            <AppNavigation mode={['demo', 'evidence-tier', 'sign-analysis'].includes(viewMode) ? 'home' : viewMode} onChange={handlePrimaryModeChange} />
+            <AppNavigation mode={['demo', 'evidence-tier', 'sign-analysis', 'closing-clock'].includes(viewMode) ? 'home' : viewMode} onChange={handlePrimaryModeChange} />
             {!['home', 'demo'].includes(viewMode) && <ResearchContextBar />}
             {selectedGene && viewMode === 'explore' && subView === 'network' && (
               <Toolbar gene={selectedGene} stats={networkData?.stats} cyRef={cyInstanceRef} />
@@ -617,6 +621,10 @@ function ExplorerInner() {
           {viewMode === 'sign-analysis' && renderWithSuspense(
             <SignPredictionAnalysis />,
             'Loading sign prediction analysis…',
+          )}
+          {viewMode === 'closing-clock' && renderWithSuspense(
+            <ClosingTheClock />,
+            'Loading circadian clock analysis…',
           )}
           {viewMode === 'explore' && renderExploreView()}
           {viewMode === 'design' && renderDesignView()}

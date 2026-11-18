@@ -1,0 +1,52 @@
+.closing-clock { flex: 1; overflow-y: auto; padding: 32px max(30px, calc((100vw - 1050px) / 2)) 60px; color: #173f39; background: #f5f6f0; }
+.clock-header { margin-bottom: 28px; }
+.clock-header h2 { margin: 0 0 10px; font: 500 36px/1.1 Georgia, serif; }
+.clock-header p { max-width: 750px; margin: 0; color: #526760; font-size: 15px; line-height: 1.6; }
+
+.clock-layout { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 16px; margin-bottom: 24px; }
+@media (max-width: 800px) { .clock-layout { grid-template-columns: 1fr; } }
+
+.clock-diagram-section, .clock-genes-section, .clock-candidates, .clock-kinetic { padding: 24px; border: 1px solid #d7e0da; border-radius: 14px; background: rgba(255,255,255,.86); }
+.clock-diagram-section h3, .clock-genes-section h3, .clock-candidates h3, .clock-kinetic h3 { margin: 0 0 14px; font: 500 18px Georgia, serif; }
+
+.clock-diagram { max-width: 400px; margin: 0 auto; }
+.clock-svg { width: 100%; height: auto; }
+.clock-edge.confirmed.activation { stroke: #4a8876; stroke-width: 0.5; }
+.clock-edge.confirmed.repression { stroke: #c0583e; stroke-width: 0.5; }
+.clock-edge.candidate { stroke: #d08955; stroke-width: 0.5; }
+.clock-node { fill: #17473f; }
+.clock-label { font-size: 3.2px; fill: #17473f; font-weight: 700; font-family: system-ui, sans-serif; }
+
+.clock-legend { display: flex; gap: 16px; justify-content: center; margin-top: 12px; }
+.clock-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #526760; }
+.clock-dot { width: 10px; height: 3px; border-radius: 2px; }
+.clock-dot.confirmed.activation { background: #4a8876; }
+.clock-dot.confirmed.repression { background: #c0583e; }
+.clock-dot.candidate { background: #d08955; border: 1px dashed #d08955; }
+
+.clock-gene-list { display: flex; flex-direction: column; gap: 8px; }
+.clock-gene-row { padding: 10px 12px; border: 1px solid #dbe4de; border-radius: 8px; background: #f4f7f4; }
+.clock-gene-row strong { display: block; color: #17473f; font-size: 15px; }
+.clock-gene-row span { display: block; color: #526760; font-size: 12px; margin-top: 2px; }
+.clock-gene-row code { display: block; color: #9aaea7; font-size: 10px; font-family: monospace; margin-top: 2px; }
+
+.clock-candidates { margin-bottom: 24px; }
+.clock-note { margin: 0 0 14px; color: #526760; font-size: 13px; line-height: 1.55; }
+.clock-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.clock-table th { text-align: left; padding: 8px 10px; border-bottom: 2px solid #d7e0da; color: #3a6859; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+.clock-table td { padding: 8px 10px; border-bottom: 1px solid #e8ede9; color: #526760; vertical-align: top; }
+.clock-table tr:last-child td { border-bottom: none; }
+.clock-sign { font-weight: 700; text-transform: capitalize; }
+.clock-sign.repression { color: #c0583e; }
+.clock-sign.activation { color: #4a8876; }
+.clock-sign.unknown { color: #7f94a7; }
+.clock-sign.unsigned { color: #9a7598; font-style: italic; }
+.clock-unsigned { background: #f9f5fc; }
+.clock-experiment { font-style: italic; color: #7a8e87; }
+
+.clock-kinetic { margin-bottom: 0; }
+.clock-boundary { }
+.clock-boundary p { margin: 0 0 10px; color: #526760; font-size: 13px; line-height: 1.6; }
+.clock-boundary p:last-child { margin-bottom: 0; }
+.clock-boundary strong { color: #17473f; }
+.clock-boundary code { padding: 1px 5px; background: #e4ebe6; border-radius: 3px; font-size: 12px; }

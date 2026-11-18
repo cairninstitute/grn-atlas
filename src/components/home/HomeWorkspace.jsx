@@ -135,6 +135,12 @@ export default function HomeWorkspace({ onNavigate, onGeneSearch, onOpenGeneSet 
             <span className="home-featured-copy">Four independent methods all fail on the same task. See why predicting activation vs repression resists global models.</span>
             <span className="home-featured-action">View the analysis →</span>
           </button>
+          <button className="home-featured-demo secondary" type="button" onClick={() => onNavigate('closing-clock')}>
+            <span className="home-featured-label">Circadian clock case study</span>
+            <span className="home-featured-title">Closing the clock</span>
+            <span className="home-featured-copy">The Arabidopsis circadian scaffold with candidate return arms. Each linked to the experiment that would test it.</span>
+            <span className="home-featured-action">Explore the circuit →</span>
+          </button>
         </div>
         <div className="home-section-heading">
           <div>
