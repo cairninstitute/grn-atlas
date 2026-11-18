@@ -92,11 +92,11 @@ Arabidopsis vs DAP-seq:
 - AUPRC: `0.6990`
 - precision@100: `0.9000`
 
-Human DoRothEA vs TRRUST:
+Human DoRothEA vs TRRUST — RETIRED (TRRUST overlaps DoRothEA inputs; not independent):
 
-- AUROC: `1.0000`
-- AUPRC: `1.0000`
-- precision@100: `1.0000`
+- ~~AUROC: `1.0000`~~ (not independent)
+- ~~AUPRC: `1.0000`~~ (not independent)
+- ~~precision@100: `1.0000`~~ (not independent)
 
 ### Population-level network validation
 

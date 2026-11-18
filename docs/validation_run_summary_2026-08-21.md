@@ -102,11 +102,15 @@ Headline results:
 - AUPRC: **0.6990**
 - precision@100: **0.9000**
 
-#### Human DoRothEA vs TRRUST
+#### Human DoRothEA vs TRRUST — RETIRED
 
-- AUROC: **1.0000**
-- AUPRC: **1.0000**
-- precision@100: **1.0000**
+This benchmark was retired because TRRUST is one of DoRothEA's curated input
+resources (41.8% of TRRUST edges appear in DoRothEA). The AUROC of 1.0
+measured self-overlap, not prediction quality.
+
+- ~~AUROC: 1.0000~~ (not independent)
+- ~~AUPRC: 1.0000~~ (not independent)
+- ~~precision@100: 1.0000~~ (not independent)
 
 #### Multi-evidence GO quality
 

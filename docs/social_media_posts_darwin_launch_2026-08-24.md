@@ -73,7 +73,7 @@ Then the biological validation layer:
 - Petunia gold-standard recall: 93.8% at 100% specificity
 - Tomato gold-standard recall: 84.2% at 100% specificity
 - Arabidopsis vs DAP-seq AUROC: 0.88
-- Human DoRothEA vs TRRUST AUROC: 1.00
+- Human DoRothEA vs TRRUST: retired (TRRUST overlaps DoRothEA inputs; not independent)
 
 Three independent validation layers. One system.
 
@@ -137,7 +137,7 @@ How we validated it:
 - Nemotron-3-Ultra: 255/258 single-skill, 37/40 orchestration
 - 647 deterministic tests across the full stack
 - Biological benchmarks: 93.8% petunia recall, 84.2% tomato recall, both at 100% specificity
-- Arabidopsis AUROC 0.88 against DAP-seq, Human AUROC 1.00 against TRRUST
+- Arabidopsis AUROC 0.88 against DAP-seq (human TRRUST benchmark retired — not independent of source data)
 
 Darwin isn't a chatbot with a genomics wrapper. It runs structured analyses against real biological data and tells you what's evidence vs. what's inference.
 
@@ -174,7 +174,7 @@ Validated with external LLMs (no fine-tuning):
 GPT-5.4: 386/386 single-skill, 111/111 orchestration
 Nemotron-3-Ultra: 255/258 single, 37/40 orchestration
 
-Plus biological benchmarks: 93.8% petunia recall, 0.88 Arabidopsis AUROC, 1.00 human AUROC — all at 100% specificity.
+Plus biological benchmarks: 93.8% petunia recall, 0.88 Arabidopsis AUROC — all at 100% specificity.
 
 **Post 4:**
 Full validation post with methodology, benchmark tables, and LLM comparison:
@@ -259,7 +259,7 @@ GPT-5.4: 386/386 single-skill, 111/111 orchestration
 Nemotron: 255/258 single, 37/40 orchestration
 Petunia recall: 93.8% at 100% specificity
 Arabidopsis AUROC: 0.88 vs DAP-seq
-Human AUROC: 1.00 vs TRRUST
+Human TRRUST benchmark: retired (not independent of source data)
 Plus 647 deterministic tests.
 
 Full post: cairninstitute.com/blogs/Darwin/darwin-validation-update-blog/

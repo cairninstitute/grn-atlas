@@ -116,9 +116,7 @@ We also reran the independent benchmark surfaces:
 | Arabidopsis vs DAP-seq AUROC | 0.8801 |
 | Arabidopsis vs DAP-seq AUPRC | 0.6990 |
 | Arabidopsis vs DAP-seq precision@100 | 0.9000 |
-| Human DoRothEA vs TRRUST AUROC | 1.0000 |
-| Human DoRothEA vs TRRUST AUPRC | 1.0000 |
-| Human DoRothEA vs TRRUST precision@100 | 1.0000 |
+| Human DoRothEA vs TRRUST | Retired (not independent — TRRUST overlaps DoRothEA inputs) |
 
 These are important for two reasons:
 

@@ -47,6 +47,7 @@ def main():
         "cross_species_transfer_calibration",
         "directed_inferred_edges", "scrna_datasets", "scrna_clusters",
         "scrna_cluster_expression", "celltype_regulatory_edges",
+        "cis_support_scores",
     }
     missing_tables = sorted(required_tables - tables)
     if missing_tables:
@@ -55,8 +56,8 @@ def main():
     counts = {}
     if not missing_tables:
         checks = {
-            "genes": ("SELECT COUNT(*) FROM genes", (), 140_000),
-            "interactions": ("SELECT COUNT(*) FROM interactions", (), 4_000_000),
+            "genes": ("SELECT COUNT(*) FROM genes", (), 142_000),
+            "interactions": ("SELECT COUNT(*) FROM interactions", (), 4_200_000),
             "connectf_observations": (
                 "SELECT COUNT(*) FROM perturbation_observations WHERE dataset_label='connectf_target'",
                 (), 100_000,
@@ -73,9 +74,9 @@ def main():
                 "SELECT COUNT(*) FROM perturbation_observations WHERE dataset_label='knocktf' AND species='mouse'",
                 (), 300_000,
             ),
-            "external_evidence": ("SELECT COUNT(*) FROM regulatory_evidence", (), 6_000_000),
+            "external_evidence": ("SELECT COUNT(*) FROM regulatory_evidence", (), 7_000_000),
             "regulatory_candidates": (
-                "SELECT COUNT(*) FROM regulatory_edge_candidates", (), 220_000,
+                "SELECT COUNT(*) FROM regulatory_edge_candidates", (), 270_000,
             ),
             "perturbation_consensus": (
                 "SELECT COUNT(*) FROM perturbation_sign_consensus WHERE status='accepted'",
@@ -85,7 +86,7 @@ def main():
                 "SELECT COUNT(*) FROM orthology_transfer_candidates", (), 40_000,
             ),
             "ranked_candidate_impacts": (
-                "SELECT COUNT(*) FROM regulatory_candidate_impacts", (), 115_000,
+                "SELECT COUNT(*) FROM regulatory_candidate_impacts", (), 140_000,
             ),
             "directed_inferred_edges": (
                 "SELECT COUNT(*) FROM directed_inferred_edges", (), 500_000,
@@ -94,7 +95,10 @@ def main():
                 "SELECT COUNT(*) FROM scrna_datasets", (), 2,
             ),
             "celltype_regulatory_edges": (
-                "SELECT COUNT(*) FROM celltype_regulatory_edges", (), 1_000_000,
+                "SELECT COUNT(*) FROM celltype_regulatory_edges", (), 1_200_000,
+            ),
+            "cis_support_scores": (
+                "SELECT COUNT(*) FROM cis_support_scores", (), 400_000,
             ),
         }
         for label, (query, params, minimum) in checks.items():
@@ -120,7 +124,7 @@ def main():
 
         required_sources = {
             "CollecTRI": 40_000,
-            "SIGNOR": 2_000,
+            "SIGNOR": 1_000,
             "AGRIS AtRegNet": 3_500,
             "AGRIS AtRegNet expanded": 6_000,
             "TFLink small-scale": 15_000,

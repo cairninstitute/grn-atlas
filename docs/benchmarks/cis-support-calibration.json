@@ -1,0 +1,24 @@
+{
+  "calibration": "cis-support-scores-vs-gold-standard",
+  "date": "2026-11-17",
+  "result": "insufficient_overlap",
+  "summary": "The cis-support scoring layer cannot be calibrated against existing gold-standard edges because the overlap is too small. Only 3 of 94 gold-standard edges (petunia + tomato) are in the projected edge set that cis_support_scores covers. None of those 3 have JASPAR motif hits.",
+  "gold_standard": {
+    "petunia": {"total": 44, "unresolved": 29, "in_interactions": 11, "projected": 1},
+    "tomato": {"total": 50, "unresolved": 35, "in_interactions": 11, "projected": 2}
+  },
+  "cis_support_coverage": {
+    "petunia": {"projected_edges": 155182, "with_motif_hit": 30972, "motif_rate": 0.200},
+    "tomato": {"projected_edges": 240194, "with_motif_hit": 2974, "motif_rate": 0.012},
+    "rice": {"projected_edges": 16933, "with_motif_hit": 0, "motif_rate": 0.0},
+    "pepper": {"projected_edges": 2212, "with_motif_hit": 0, "motif_rate": 0.0}
+  },
+  "gold_standard_overlap": {
+    "edges_in_cis_support": 3,
+    "edges_with_motif_hit": 0,
+    "gold_motif_rate": 0.0,
+    "background_motif_rate": 0.086
+  },
+  "conclusion": "Cis-support scores are publishable as a ranking that prioritises validation candidates, but NOT as a promotion gate. The gold standard is too small (94 edges), too poorly resolved (64 of 94 gene symbols missing from the atlas), and too narrowly overlapping (3 projected edges) to calibrate a threshold. This matches the plan's expected outcome.",
+  "recommendation": "Report cis_support as a separate evidence layer, clearly labeled as computational motif evidence, not as measured regulation. Use it to rank projected edges for experimental follow-up, not to auto-promote them into the observed graph."
+}
