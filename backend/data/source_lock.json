@@ -1,0 +1,72 @@
+{
+  "AGRIS AtRegNet": {
+    "sha256": "a9e3c0b3fa50005afd03efbd52b8eb73a9f9d7614ba64f899d001a491b91b86a",
+    "source_url": "https://agris-knowledgebase.org/Downloads/AtRegNet.zip",
+    "source_version": "2019-03-11"
+  },
+  "AGRIS AtRegNet expanded": {
+    "sha256": "a9e3c0b3fa50005afd03efbd52b8eb73a9f9d7614ba64f899d001a491b91b86a",
+    "source_url": "https://agris-knowledgebase.org/Downloads/AtRegNet.zip",
+    "source_version": "2019-03-11"
+  },
+  "ChIP-Atlas": {
+    "sha256": "code:3341b9717ff1053e1d48c50903211ff683187421f77ec88696121804538e4f0b",
+    "source_url": "https://chip-atlas.org/data/target_genes_analysis.json",
+    "source_version": "live-target-gene-index"
+  },
+  "CollecTRI": {
+    "sha256": "a6ec24ba02bef1c8b3e6d2a1a3254a82060fff7efa6629a57228837857bf0e03",
+    "source_url": "https://omnipathdb.org/interactions?datasets=collectri&organisms=9606&format=tsv&genesymbols=1&fields=sources%2Creferences%2Ccuration_effort",
+    "source_version": "OmniPath current"
+  },
+  "ConnecTF experiment evidence": {
+    "sha256": "code:de2c7fa35a839b2a29aaac44bf8fb34d9c49fad73fc1099e32338689124db0eb",
+    "source_url": "https://connectf.s3.amazonaws.com/connectf_data_release_v1.tar.gz",
+    "source_version": "release-v1"
+  },
+  "Conserved signed orthology": {
+    "sha256": null,
+    "source_url": "local://orthologs+signed-interactions",
+    "source_version": "v2"
+  },
+  "DirectBinding": {
+    "sha256": "95e4b4c0c098c751dc4be297c2904c3c208a7f94f2d472079f4956318b837d65",
+    "source_url": "/home/kjanik/grn-atlas/backend/data/direct_binding",
+    "source_version": "batch"
+  },
+  "Expression Atlas reviewed perturbations": {
+    "sha256": "code:955102b03ef0879029a6aa54bfde58fc66fea1dc806658a084136e0056dc7efd",
+    "source_url": "https://www.ebi.ac.uk/gxa/",
+    "source_version": "manifest-v1"
+  },
+  "Perturbation sign consensus": {
+    "sha256": null,
+    "source_url": "derived:perturbation_observations",
+    "source_version": "consensus-v1"
+  },
+  "PlantTFDB": {
+    "sha256": "code:1e669ae0ba3fb9fe27e61ec4dcdd3425959a96acfcec23ec0fc20c37e5bc83ba",
+    "source_url": "https://planttfdb.gao-lab.org",
+    "source_version": "5.0"
+  },
+  "ReMap": {
+    "sha256": "9f6452012231dfc98df29553e1c54cd66d8c43494e037737b7ada6953b8daa7c",
+    "source_url": "https://remap.univ-amu.fr/",
+    "source_version": "2022-v1.0"
+  },
+  "SIGNOR": {
+    "sha256": "d85a7d66890aab3efb27ec0b7e991e3e1d10245f2c24d47531b6ce035f007a3b",
+    "source_url": "https://signor.uniroma2.it/scripts/downloadTranscriptional.php",
+    "source_version": "October 2026"
+  },
+  "TFLink small-scale": {
+    "sha256": "code:f7762b96c43bb3c7463dee28bc45ee64a1db922fb2f5fb546aa957bb2b2f737c",
+    "source_url": "https://tflink.net/download/",
+    "source_version": "1.0"
+  },
+  "UniBind": {
+    "sha256": "4e073d96cb2a42743131e85b1ec4e1ac4edc29d888f771a8bebeec695625d3df",
+    "source_url": "https://unibind.uio.no/",
+    "source_version": "2022-Robust"
+  }
+}

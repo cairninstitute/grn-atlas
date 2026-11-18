@@ -12,6 +12,7 @@ DB = DATA / "grn.sqlite3"
 SUMMARY = DATA / "atlas_summary.json"
 EXPECTED_DIGEST = DATA / "expected_digest.sha256"
 CONTENT_DIGEST = DATA / "content_digest.json"
+SOURCE_LOCK = DATA / "source_lock.json"
 
 
 def scalar(conn, query, params=()):
@@ -180,6 +181,27 @@ def main():
         if expected != actual:
             failures.append(
                 f"content digest mismatch: expected {expected[:16]}… got {actual[:16]}…"
+            )
+
+    if SOURCE_LOCK.exists() and not missing_tables:
+        lock = json.loads(SOURCE_LOCK.read_text())
+        db_hashes = {}
+        for name, sha in conn.execute(
+            "SELECT source_name, sha256 FROM source_import_runs "
+            "WHERE status='complete' ORDER BY import_run_id DESC"
+        ):
+            if name not in db_hashes:
+                db_hashes[name] = sha
+        lock_mismatches = []
+        for name, info in lock.items():
+            expected_sha = info.get("sha256")
+            actual_sha = db_hashes.get(name)
+            if expected_sha and actual_sha and expected_sha != actual_sha:
+                lock_mismatches.append(name)
+        counts["source_lock_mismatches"] = len(lock_mismatches)
+        if lock_mismatches:
+            failures.append(
+                f"source hash mismatch vs lock: {', '.join(lock_mismatches)}"
             )
 
     analysis_tables = {
