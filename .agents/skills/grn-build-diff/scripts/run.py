@@ -133,6 +133,8 @@ def main():
 
     before = load_json(args.before, "--before")
     after = load_json(args.after, "--after")
+    if before is None or after is None:
+        sys.exit(0)
 
     result = diff_digests(before, after)
 

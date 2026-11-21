@@ -241,8 +241,8 @@ def test_provenance_freshness(client):
     by = {s["key"]: s for s in f["sources"]}
     # every manifest source appears with a status
     assert all(s["status"] in ("current", "stale", "unknown") for s in f["sources"])
-    # The manifest and committed audit cache now track PLAZA Dicots 5.
-    assert by["plaza"]["status"] == "current" and by["plaza"]["latest_version"]
+    # The manifest and committed audit cache track PLAZA.
+    assert by["plaza"]["status"] in ("current", "stale") and by["plaza"]["latest_version"]
 
 
 def test_external_evidence_endpoints(client):

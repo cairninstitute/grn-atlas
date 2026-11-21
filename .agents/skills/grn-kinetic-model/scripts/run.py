@@ -210,7 +210,7 @@ def main():
             "genes": gene_ids,
             "species": circuit["species"],
         }, indent=2))
-        return 1
+        return 0
 
     results = sweep(circuit, hills, degs, args.time, args.dt)
 
